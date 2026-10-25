@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import { NextResponse } from 'next/server'
 import { loadStore, saveStore, generateMagicToken, FLAGSHIP_TERRITORY_ID } from '@/lib/store'
 import { sendListingWhatsAppCard } from '@/lib/whatsapp-cloud-api'
@@ -9,8 +10,7 @@ export async function GET(req: Request) {
   const token = searchParams.get('hub.verify_token')
   const challenge = searchParams.get('hub.challenge')
 
-  const store = loadStore()
-  const expectedToken = store.settings.whatsappVerifyToken || 'choutuppal_verify_token'
+  const expectedToken = process.env.WHATSAPP_VERIFY_TOKEN || 'choutuppal_verify_token'
 
   if (mode === 'subscribe' && token === expectedToken) {
     return new Response(challenge, { status: 200 })
@@ -20,7 +20,25 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
+    const rawBody = await req.text()
+
+    // 1. Meta Webhook HMAC-SHA256 Signature Verification
+    const appSecret = process.env.WHATSAPP_APP_SECRET
+    const signatureHeader = req.headers.get('x-hub-signature-256')
+
+    if (appSecret && signatureHeader) {
+      const signature = signatureHeader.replace('sha256=', '').trim()
+      const expectedSignature = crypto.createHmac('sha256', appSecret).update(rawBody).digest('hex')
+      
+      const sigBuffer = Buffer.from(signature)
+      const expectedBuffer = Buffer.from(expectedSignature)
+
+      if (sigBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {
+        return NextResponse.json({ success: false, error: 'Invalid webhook signature' }, { status: 401 })
+      }
+    }
+
+    const body = JSON.parse(rawBody || '{}')
     const store = loadStore()
 
     // Extract Meta webhook message details

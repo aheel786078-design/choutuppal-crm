@@ -1,17 +1,23 @@
 import { NextResponse } from 'next/server'
 import { loadStore, saveStore, syncListingToCrm, generateMagicToken, FLAGSHIP_TERRITORY_ID, logAuditEvent } from '@/lib/store'
 import { ApprovalItem, Listing, Territory, Franchise, TerritoryDomain } from '@/lib/types'
+import { requireAuth, requireTerritoryAccess, requireSuperAdmin } from '@/lib/auth-server'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
   try {
+    const auth = await requireAuth(req)
+    if (auth.errorResponse) return auth.errorResponse
+
     const store = loadStore()
     const { searchParams } = new URL(req.url)
     const territoryId = searchParams.get('territoryId')
 
     let approvals = store.approvals || []
-    if (territoryId && territoryId !== 'all') {
+    if (auth.user.role !== 'SUPER_ADMIN') {
+      approvals = approvals.filter((a) => (a.territoryId || FLAGSHIP_TERRITORY_ID) === auth.user.territoryId)
+    } else if (territoryId && territoryId !== 'all') {
       approvals = approvals.filter((a) => (a.territoryId || FLAGSHIP_TERRITORY_ID) === territoryId)
     }
 
@@ -35,6 +41,9 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    const auth = await requireAuth(req)
+    if (auth.errorResponse) return auth.errorResponse
+
     const body = await req.json()
     const { id, action, adminNotes } = body
 
@@ -49,9 +58,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'Approval item not found' }, { status: 404 })
     }
 
+    const itemTerritoryId = item.territoryId || FLAGSHIP_TERRITORY_ID
+
+    // Franchise applications require Super Admin authorization
+    if (item.type === 'FRANCHISE_APP' && auth.user.role !== 'SUPER_ADMIN') {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden: Only Super Administrator can approve franchise applications.' },
+        { status: 403 }
+      )
+    }
+
+    // Verify caller has access to the item's territory
+    const access = await requireTerritoryAccess(req, itemTerritoryId)
+    if (access.errorResponse) return access.errorResponse
+
     item.reviewedAt = new Date().toISOString()
     item.adminNotes = adminNotes || ''
-    const itemTerritoryId = item.territoryId || FLAGSHIP_TERRITORY_ID
 
     if (action === 'approve') {
       item.status = 'approved'

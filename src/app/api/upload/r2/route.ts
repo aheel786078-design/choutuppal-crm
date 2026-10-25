@@ -1,11 +1,23 @@
 import { NextResponse } from 'next/server'
 import { getR2PresignedUploadUrl, uploadBufferToR2, isR2Configured } from '@/lib/r2-storage'
+import { requireAuth } from '@/lib/auth-server'
+
+const ALLOWED_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'video/mp4',
+])
 
 export async function POST(req: Request) {
   try {
+    const auth = await requireAuth(req)
+    if (auth.errorResponse) return auth.errorResponse
+
     const contentType = req.headers.get('content-type') || ''
 
-    // 1. JSON Request for presigned upload URL (preferred for fast client-side direct upload)
+    // 1. JSON Request for presigned upload URL
     if (contentType.includes('application/json')) {
       const body = await req.json()
       const { filename, fileType } = body
@@ -14,8 +26,15 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'filename is required' }, { status: 400 })
       }
 
+      const mime = (fileType || 'image/jpeg').toLowerCase()
+      if (!ALLOWED_MIME_TYPES.has(mime)) {
+        return NextResponse.json(
+          { error: 'Invalid file type. Only JPEG, PNG, WebP, GIF, and MP4 are permitted.' },
+          { status: 400 }
+        )
+      }
+
       if (!isR2Configured) {
-        // Fallback for development before R2 keys are provided
         const mockUrl = `https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=800`
         return NextResponse.json({
           success: true,
@@ -26,7 +45,7 @@ export async function POST(req: Request) {
         })
       }
 
-      const presigned = await getR2PresignedUploadUrl(filename, fileType || 'image/jpeg')
+      const presigned = await getR2PresignedUploadUrl(filename, mime)
       return NextResponse.json({
         success: true,
         ...presigned,
@@ -42,6 +61,22 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
       }
 
+      const mime = (file.type || 'image/jpeg').toLowerCase()
+      if (!ALLOWED_MIME_TYPES.has(mime)) {
+        return NextResponse.json(
+          { error: 'Invalid file type. Only JPEG, PNG, WebP, GIF, and MP4 are permitted.' },
+          { status: 400 }
+        )
+      }
+
+      // Max 10MB limit
+      if (file.size > 10 * 1024 * 1024) {
+        return NextResponse.json(
+          { error: 'File size exceeds 10MB limit.' },
+          { status: 400 }
+        )
+      }
+
       if (!isR2Configured) {
         const mockUrl = `https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=800`
         return NextResponse.json({
@@ -52,7 +87,7 @@ export async function POST(req: Request) {
       }
 
       const buffer = Buffer.from(await file.arrayBuffer())
-      const publicUrl = await uploadBufferToR2(buffer, file.name, file.type || 'image/jpeg')
+      const publicUrl = await uploadBufferToR2(buffer, file.name, mime)
 
       return NextResponse.json({
         success: true,

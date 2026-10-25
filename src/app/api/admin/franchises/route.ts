@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { loadStore, saveStore, logAuditEvent, FLAGSHIP_TERRITORY_ID } from '@/lib/store'
 import { Franchise, Territory, TerritoryDomain, FranchiseStatus } from '@/lib/types'
+import { requireSuperAdmin, getAuthenticatedUser } from '@/lib/auth-server'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,12 +11,30 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const territoryId = searchParams.get('territoryId')
 
-    let franchises = store.franchises || []
-    if (territoryId && territoryId !== 'all') {
-      franchises = franchises.filter((f) => f.territoryId === territoryId)
+    const user = await getAuthenticatedUser(req)
+    if (!user) {
+      // Unauthenticated: Return public active territory/domain directory only (no sensitive financials or audit logs)
+      return NextResponse.json({
+        success: true,
+        isPublic: true,
+        territories: (store.territories || []).filter((t) => t.status === 'active'),
+        domains: (store.territoryDomains || []).filter((d) => d.isVerified),
+      })
     }
 
-    // Network-wide stats
+    let franchises = store.franchises || []
+    let auditLogs = store.auditLogs || []
+
+    if (user.role !== 'SUPER_ADMIN') {
+      // Scoped Franchise Admin: Isolate strictly to assigned territory
+      franchises = franchises.filter((f) => f.territoryId === user.territoryId)
+      auditLogs = auditLogs.filter((a) => a.territoryId === user.territoryId)
+    } else if (territoryId && territoryId !== 'all') {
+      franchises = franchises.filter((f) => f.territoryId === territoryId)
+      auditLogs = auditLogs.filter((a) => a.territoryId === territoryId)
+    }
+
+    // Network-wide stats (scoped if franchise admin)
     const totalFranchises = franchises.length
     const activeFranchises = franchises.filter((f) => f.status === 'active').length
     const pendingFranchises = franchises.filter(
@@ -33,9 +52,9 @@ export async function GET(req: Request) {
         totalTerritories: (store.territories || []).length,
       },
       franchises,
-      territories: store.territories || [],
-      domains: store.territoryDomains || [],
-      auditLogs: (store.auditLogs || []).slice(0, 50),
+      territories: user.role === 'SUPER_ADMIN' ? (store.territories || []) : (store.territories || []).filter((t) => t.id === user.territoryId),
+      domains: user.role === 'SUPER_ADMIN' ? (store.territoryDomains || []) : (store.territoryDomains || []).filter((d) => d.territoryId === user.territoryId),
+      auditLogs: auditLogs.slice(0, 50),
     })
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 })
@@ -44,6 +63,10 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
+    // Strictly enforce Super Admin role for all franchise mutations
+    const auth = await requireSuperAdmin(req)
+    if (auth.errorResponse) return auth.errorResponse
+
     const body = await req.json()
     const { action, ...data } = body
     const store = loadStore()

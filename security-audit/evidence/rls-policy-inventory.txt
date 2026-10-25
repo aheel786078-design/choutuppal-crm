@@ -1,0 +1,64 @@
+================================================================================
+SUPABASE & POSTGRESQL RLS POLICY INVENTORY (BASELINE AUDIT)
+Target: supabase/schema.sql
+Timestamp: 2026-10-25T21:16:00Z
+================================================================================
+
+[TABLE 1: public.territories]
+RLS Enabled: FALSE
+Policies: None
+Exposure: CRITICAL - Full table read/write accessible via public anon key.
+
+[TABLE 2: public.franchises]
+RLS Enabled: FALSE
+Policies: None
+Exposure: CRITICAL - Franchise commercial terms, revenue share, applicant contact details exposed.
+
+[TABLE 3: public.territory_domains]
+RLS Enabled: FALSE
+Policies: None
+Exposure: HIGH - Domain verification status and SSL tracking records exposed.
+
+[TABLE 4: public.profiles]
+RLS Enabled: FALSE
+Policies: None
+Exposure: CRITICAL - User IDs, phone numbers, and role assignments (SUPER_ADMIN, MERCHANT, USER) exposed. Any user could update their own role column to SUPER_ADMIN.
+
+[TABLE 5: public.franchise_staff]
+RLS Enabled: FALSE
+Policies: None
+Exposure: CRITICAL - Staff permissions, emails, phone numbers exposed without authentication.
+
+[TABLE 6: public.listings]
+RLS Enabled: FALSE
+Policies: None
+Exposure: CRITICAL - Unpublished, draft, or rejected listings readable; cross-tenant updates/deletions unconstrained.
+
+[TABLE 7: public.approvals]
+RLS Enabled: FALSE
+Policies: None
+Exposure: CRITICAL - Full moderation queue, pending citizen reports, and franchise applications readable/approvable by anyone.
+
+[TABLE 8: public.stories]
+RLS Enabled: FALSE
+Policies: None
+Exposure: HIGH - Pending user stories readable before moderation approval.
+
+[TABLE 9: public.offers]
+RLS Enabled: FALSE
+Policies: None
+Exposure: HIGH - Pending promotional discount terms readable before moderation approval.
+
+[TABLE 10: public.contacts]
+RLS Enabled: FALSE
+Policies: None
+Exposure: CRITICAL - Inbound CRM customer leads, private phone numbers, customer notes accessible across all franchises.
+
+[TABLE 11: public.audit_logs]
+RLS Enabled: FALSE
+Policies: None
+Exposure: CRITICAL - Tamper-evident security logs readable and modifiable without restriction.
+
+================================================================================
+END OF BASELINE POLICY INVENTORY
+================================================================================

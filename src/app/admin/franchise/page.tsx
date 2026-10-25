@@ -256,16 +256,35 @@ export default function FranchiseNetworkPage() {
     }
   }
 
-  // Magic Login Link Generation
-  const handleGenerateMagicLink = (franchise: Franchise) => {
-    const token = `mlk_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
-    const link = `https://${franchise.assignedDomain || 'choutuppal.in'}/login?magic=${token}&territory=${franchise.territorySlug}`
-    setMagicLinkData({
-      phone: franchise.applicantPhone,
-      name: franchise.applicantName,
-      link,
-    })
-    setCopiedLink(false)
+  // Cryptographically Secure Magic Login Link Generation via Server API
+  const handleGenerateMagicLink = async (franchise: Franchise) => {
+    try {
+      const res = await fetch('/api/auth/magic-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone: franchise.applicantPhone,
+          territoryId: franchise.territoryId,
+          role: 'FRANCHISE_ADMIN',
+        }),
+      })
+      const data = await res.json()
+      if (!data.success) {
+        alert(data.error || 'Failed to generate magic login link')
+        return
+      }
+
+      const domain = franchise.assignedDomain || 'choutuppal.in'
+      const link = `https://${domain}/login?magic=${data.token}&territory=${franchise.territorySlug}`
+      setMagicLinkData({
+        phone: franchise.applicantPhone,
+        name: franchise.applicantName,
+        link,
+      })
+      setCopiedLink(false)
+    } catch (err: any) {
+      alert(err.message || 'Network error while generating magic link')
+    }
   }
 
   const copyMagicLink = () => {

@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import crypto from 'crypto'
 import {
   Territory,
   Franchise,
@@ -421,22 +422,82 @@ function getFallbackStore(): AdminDataStore {
   }
 }
 
-export function generateMagicToken(phone: string): string {
-  const store = loadStore()
-  const token = `mlk_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`
-  const expiresAt = Date.now() + 15 * 60 * 1000 // 15 mins
-  store.magicTokens.push({ token, phone, expiresAt, used: false })
-  saveStore(store)
-  return token
+export function hashToken(rawToken: string): string {
+  return crypto.createHash('sha256').update(rawToken).digest('hex')
 }
 
-export function verifyMagicToken(token: string): { valid: boolean; phone?: string } {
+export function generateMagicToken(
+  phoneOrParams: string | { phone: string; territoryId?: string; role?: string }
+): string {
   const store = loadStore()
-  const item = store.magicTokens.find((t) => t.token === token)
-  if (!item) return { valid: false }
-  if (item.used || item.expiresAt < Date.now()) return { valid: false }
+  const phone = typeof phoneOrParams === 'string' ? phoneOrParams : phoneOrParams.phone
+  const territoryId = typeof phoneOrParams === 'object' ? phoneOrParams.territoryId : undefined
+  const role = typeof phoneOrParams === 'object' ? phoneOrParams.role : undefined
 
+  // Cryptographically secure random token (256-bit entropy via crypto.randomBytes)
+  const rawToken = `mlk_${crypto.randomBytes(32).toString('hex')}`
+  const tokenHash = hashToken(rawToken)
+  const expiresAt = Date.now() + 15 * 60 * 1000 // 15 mins
+
+  if (!store.magicTokens) store.magicTokens = []
+
+  // Clean expired or consumed tokens (retention cleanup)
+  store.magicTokens = store.magicTokens.filter((t) => t.expiresAt > Date.now() && !t.used)
+
+  store.magicTokens.push({
+    tokenHash,
+    phone,
+    territoryId: territoryId || (phone === '9441348175' ? FLAGSHIP_TERRITORY_ID : undefined),
+    role: role || (phone === '9441348175' ? 'SUPER_ADMIN' : 'FRANCHISE_ADMIN'),
+    expiresAt,
+    used: false,
+    createdAt: new Date().toISOString(),
+  } as any)
+
+  saveStore(store)
+  return rawToken
+}
+
+export function verifyMagicToken(rawToken: string): {
+  valid: boolean
+  phone?: string
+  territoryId?: string
+  role?: string
+  error?: string
+} {
+  const store = loadStore()
+  if (!rawToken || typeof rawToken !== 'string') {
+    return { valid: false, error: 'Token is required' }
+  }
+
+  const incomingHash = hashToken(rawToken)
+
+  // Find strictly by cryptographically hashed token
+  const item = (store.magicTokens || []).find(
+    (t: any) => t.tokenHash === incomingHash
+  )
+
+  if (!item) {
+    return { valid: false, error: 'Invalid or unrecognized token' }
+  }
+
+  if (item.used) {
+    return { valid: false, error: 'This single-use magic login link has already been consumed' }
+  }
+
+  if (item.expiresAt < Date.now()) {
+    return { valid: false, error: 'Magic login link has expired (15-minute validity)' }
+  }
+
+  // Atomically mark as used
   item.used = true
   saveStore(store)
-  return { valid: true, phone: item.phone }
+
+  return {
+    valid: true,
+    phone: item.phone,
+    territoryId: (item as any).territoryId,
+    role: (item as any).role,
+  }
 }
+

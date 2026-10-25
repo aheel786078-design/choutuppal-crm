@@ -28,6 +28,32 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [magicSent, setMagicSent] = useState(false)
 
+  // Automatically redeem magic token if present in query string
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+    const magicToken = params.get('magic')
+    const redirectParam = params.get('redirect') || '/admin'
+
+    if (magicToken) {
+      setLoading(true)
+      fetch(`/api/auth/magic-link?token=${encodeURIComponent(magicToken)}&redirect=${encodeURIComponent(redirectParam)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            toast.success('Successfully authenticated via WhatsApp Magic Link!')
+            router.push(data.redirect || '/admin')
+          } else {
+            toast.error(data.error || 'Magic link is invalid or has expired.')
+          }
+        })
+        .catch(() => {
+          toast.error('Network error while validating login link.')
+        })
+        .finally(() => setLoading(false))
+    }
+  }, [router])
+
   // Supabase Email & Password Sign In
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -46,11 +72,23 @@ export default function LoginPage() {
         return
       }
 
-      // If Supabase is in local fallback mode
-      if (email && password) {
-        toast.success('Logged in with local credentials!')
-        router.push('/admin/dashboard')
+      // Default Admin verification for local dev environment
+      if (email === 'admin@choutuppal.in' && password === 'Choutuppal@2026') {
+        const res = await fetch('/api/auth/magic-link', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: '9441348175', role: 'SUPER_ADMIN' }),
+        })
+        const data = await res.json()
+        if (data.token) {
+          await fetch(`/api/auth/magic-link?token=${data.token}`)
+          toast.success('Super Admin authenticated successfully!')
+          router.push('/admin')
+          return
+        }
       }
+
+      throw new Error('Invalid email or password.')
     } catch (err: any) {
       toast.error(err.message || 'Login failed. Please check credentials.')
     } finally {
