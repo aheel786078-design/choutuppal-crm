@@ -7177,7 +7177,7 @@
       "territoryId": "territory_choutuppal"
     },
     {
-      "id": "lst_test_1792963874525",
+      "id": "lst_test_1792963991889",
       "territoryId": "territory_nalgonda",
       "title": "Nalgonda Sweets & Bakers",
       "slug": "nalgonda-sweets-&-bakers-territory_nalgonda",
@@ -11408,7 +11408,7 @@
   ],
   "franchises": [
     {
-      "id": "fr_nalgonda_1792963874369",
+      "id": "fr_nalgonda_1792963991730",
       "territoryId": "territory_nalgonda",
       "territoryName": "Nalgonda",
       "territorySlug": "nalgonda",
@@ -11433,10 +11433,10 @@
         "currency": "INR"
       },
       "assignedDomain": "nalgonda.in",
-      "createdAt": "2026-10-26T03:01:14.369530",
-      "updatedAt": "2026-10-26T03:01:14.462484",
-      "activatedAt": "2026-10-26T03:01:14.399259",
-      "expiresAt": "2027-10-26T03:01:14.399273"
+      "createdAt": "2026-10-26T03:03:11.730027",
+      "updatedAt": "2026-10-26T03:03:11.821264",
+      "activatedAt": "2026-10-26T03:03:11.761238",
+      "expiresAt": "2027-10-26T03:03:11.761243"
     },
     {
       "id": "fr_1",
@@ -11512,6 +11512,23 @@
       "territoryId": "territory_nalgonda",
       "role": "FRANCHISE_ADMIN",
       "expiresAt": 1792963869817,
+      "used": false
+    },
+    {
+      "tokenHash": "e8f47db2a6c56e1f58b52e67b0dffa4151ad1db79dffa5a3aa8875e6b2a93f14",
+      "phone": "9848011223",
+      "territoryId": "territory_nalgonda",
+      "role": "FRANCHISE_ADMIN",
+      "expiresAt": 1792964892091,
+      "used": true,
+      "createdAt": "2026-10-25T21:33:12Z"
+    },
+    {
+      "tokenHash": "bc44b0458b63a37b81aaaac1438b122db3b1c0a72edd250205d0056a84ed2812",
+      "phone": "9848011223",
+      "territoryId": "territory_nalgonda",
+      "role": "FRANCHISE_ADMIN",
+      "expiresAt": 1792963987205,
       "used": false
     }
   ],
@@ -11633,8 +11650,8 @@
       },
       "contactPhone": "9848011223",
       "whatsappNumber": "9848011223",
-      "createdAt": "2026-10-26T03:01:14.369487",
-      "updatedAt": "2026-10-26T03:01:14.462517"
+      "createdAt": "2026-10-26T03:03:11.729978",
+      "updatedAt": "2026-10-26T03:03:11.821350"
     }
   ],
   "territoryDomains": [
@@ -11671,16 +11688,66 @@
       "sslStatus": "active"
     },
     {
-      "id": "dom_1792963874369",
+      "id": "dom_1792963991730",
       "territoryId": "territory_nalgonda",
       "domain": "nalgonda.in",
       "type": "PRIMARY",
       "isVerified": true,
       "sslStatus": "active",
-      "createdAt": "2026-10-26T03:01:14.369554"
+      "createdAt": "2026-10-26T03:03:11.730052"
     }
   ],
   "auditLogs": [
+    {
+      "id": "audit_1792963991855",
+      "actorId": "super_admin_01",
+      "actorName": "Super Administrator",
+      "actorRole": "SUPER_ADMIN",
+      "territoryId": "territory_nalgonda",
+      "action": "FRANCHISE_PLAN_UPDATED",
+      "details": "Upgraded to ENTERPRISE plan with 2500 listing quota",
+      "timestamp": "2026-10-26T03:03:11.855456"
+    },
+    {
+      "id": "audit_1792963991821",
+      "actorId": "super_admin_01",
+      "actorName": "Super Administrator",
+      "actorRole": "SUPER_ADMIN",
+      "territoryId": "territory_nalgonda",
+      "action": "FRANCHISE_STATUS_ACTIVE",
+      "details": "Changed status from suspended to active. Payment received",
+      "timestamp": "2026-10-26T03:03:11.821745"
+    },
+    {
+      "id": "audit_1792963991792",
+      "actorId": "super_admin_01",
+      "actorName": "Super Administrator",
+      "actorRole": "SUPER_ADMIN",
+      "territoryId": "territory_nalgonda",
+      "action": "FRANCHISE_STATUS_SUSPENDED",
+      "details": "Changed status from active to suspended. Overdue monthly SaaS fee",
+      "timestamp": "2026-10-26T03:03:11.792028"
+    },
+    {
+      "id": "audit_1792963991761",
+      "actorId": "super_admin_01",
+      "actorName": "Super Administrator",
+      "actorRole": "SUPER_ADMIN",
+      "territoryId": "territory_nalgonda",
+      "action": "FRANCHISE_STATUS_ACTIVE",
+      "details": "Changed status from approved_pending_setup to active. ",
+      "timestamp": "2026-10-26T03:03:11.761301"
+    },
+    {
+      "id": "audit_1792963991730",
+      "actorId": "super_admin_01",
+      "actorName": "Super Administrator",
+      "actorRole": "SUPER_ADMIN",
+      "territoryId": "territory_nalgonda",
+      "action": "FRANCHISE_CREATED",
+      "details": "Created franchise Nalgonda SuperApp Franchise for territory territory_nalgonda",
+      "timestamp": "2026-10-26T03:03:11.730072"
+    },
     {
       "id": "audit_1792963874495",
       "actorId": "super_admin_01",
