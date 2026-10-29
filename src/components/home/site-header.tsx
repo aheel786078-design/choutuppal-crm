@@ -21,6 +21,7 @@ import {
   Video,
   LayoutDashboard,
   MessageSquare,
+  AlertTriangle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -161,6 +162,9 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
           <Link href="/community" className={cn("text-xs lg:text-sm font-semibold transition hover:text-blue-600", pathname.startsWith('/community') ? 'text-blue-600 font-bold' : 'text-slate-600')}>
             Community
           </Link>
+          <Link href="/government-contacts" className={cn("text-xs lg:text-sm font-semibold transition hover:text-blue-600", pathname.startsWith('/government-contacts') ? 'text-blue-600 font-bold' : 'text-slate-600')}>
+            Govt &amp; Emergency
+          </Link>
         </nav>
 
         {/* Right: Actions */}
@@ -242,6 +246,7 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
           <MobileLink href="/shorts" icon={Video} label="రీల్స్ &amp; షార్ట్స్" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/news" icon={Newspaper} label="న్యూస్ &amp; అప్‌డేట్స్" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/community" icon={Users} label="కమ్యూనిటీ వార్డ్స్" onClick={() => setMobileOpen(false)} />
+          <MobileLink href="/government-contacts" icon={AlertTriangle} label="ప్రభుత్వ & అత్యవసర" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/admin" icon={LayoutDashboard} label="అడ్మిన్ ప్యానెల్" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/crm" icon={MessageSquare} label="CRM ఫ్లో ఇంజిన్" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/about" icon={Info} label="అబౌట్ అస్" onClick={() => setMobileOpen(false)} />

@@ -34,27 +34,28 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      const supabase = getSupabaseBrowserClient()
-      if (supabase) {
-        const { data, error } = await supabase.auth.signUp({
-          email,
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          businessName: businessName.trim(),
+          phone: phone.trim(),
+          email: email.trim(),
           password,
-          options: {
-            data: {
-              name,
-              phone,
-              business_name: businessName,
-              category_id: category,
-              village_id: village,
-              role: 'MERCHANT',
-            },
-          },
-        })
-        if (error) throw error
+          categoryId: category,
+          villageId: village,
+          role: 'MERCHANT',
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Registration failed. Please check the details.')
       }
 
-      toast.success('Registration successful! Welcome to Choutuppal Platform.')
-      router.push('/admin/listings')
+      toast.success(data.message || 'Registration successful! Welcome to Choutuppal Platform.')
+      router.push(data.redirect || '/admin/listings')
     } catch (err: any) {
       toast.error(err.message || 'Registration failed')
     } finally {

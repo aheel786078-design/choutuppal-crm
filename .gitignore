@@ -6,6 +6,7 @@ node_modules
 # Environment Files
 .env
 .env.local
+.env.staging*
 .env.development.local
 .env.test.local
 .env.production.local
@@ -44,3 +45,9 @@ pnpm-debug.log*
 __pycache__/
 *.pyc
 *.pyo
+
+# Backups and temp files
+*.bak*
+*.tmp*
+data/backups/
+*.tsbuildinfo

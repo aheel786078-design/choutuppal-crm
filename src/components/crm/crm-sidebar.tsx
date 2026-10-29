@@ -20,8 +20,8 @@ import { cn } from '@/lib/utils'
 
 const CRM_LINKS = [
   { href: '/crm/dashboard', label: 'CRM Dashboard', icon: LayoutDashboard },
-  { href: '/crm/flows', label: 'Interactive Flows', icon: Workflow, badge: '39 Live' },
-  { href: '/crm/automations', label: 'Automations (Rules)', icon: Zap, badge: '179 Active' },
+  { href: '/crm/flows', label: 'Interactive Flows', icon: Workflow, badge: '1 Flow' },
+  { href: '/crm/automations', label: 'Automations (Rules)', icon: Zap, badge: '179 Draft' },
   { href: '/crm/inbox', label: 'Team Inbox', icon: MessageSquare },
   { href: '/crm/contacts', label: 'Contacts & Tags', icon: Users },
   { href: '/crm/broadcasts', label: 'Broadcast Campaigns', icon: Send },

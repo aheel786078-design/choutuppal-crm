@@ -26,6 +26,11 @@ import {
   Table as TableIcon,
   Maximize2,
   Upload,
+  CheckSquare,
+  Square,
+  Archive,
+  AlertTriangle,
+  Layers,
 } from 'lucide-react'
 import { AdminHeader } from '@/components/admin/admin-header'
 import { ListingDualPreview } from '@/components/admin/listing-preview-card'
@@ -63,6 +68,13 @@ export default function ListingsPage() {
   const [testSendListing, setTestSendListing] = useState<Listing | null>(null)
   const [isSendingWhatsApp, setIsSendingWhatsApp] = useState(false)
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+
+  // Bulk Selection & Operations State
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [bulkModalAction, setBulkModalAction] = useState<'publish' | 'archive' | 'set_category' | 'set_featured' | null>(null)
+  const [bulkCategoryTarget, setBulkCategoryTarget] = useState(STANDARD_CATEGORIES[0]?.id || 'cat-automobile')
+  const [bulkFeaturedTarget, setBulkFeaturedTarget] = useState(true)
+  const [isBulkProcessing, setIsBulkProcessing] = useState(false)
 
   // Form Data
   const [formData, setFormData] = useState({
@@ -248,18 +260,95 @@ export default function ListingsPage() {
       const data = await res.json()
       if (data.success) {
         setTestSendListing(null)
+        const isDelivered = data.providerDelivered === true
         setFeedbackMsg({
-          text: `Listing Photo Card successfully dispatched to WhatsApp (${testSendPhone})!`,
+          text: isDelivered
+            ? `Listing Photo Card successfully dispatched to WhatsApp (${testSendPhone})!`
+            : `[Sandbox Mode] WhatsApp photo card simulated successfully for ${testSendPhone} (Meta Cloud API credentials unconfigured).`,
           type: 'success',
         })
         setTimeout(() => setFeedbackMsg(null), 5000)
       } else {
-        alert(data.error || 'WhatsApp send failed')
+        setFeedbackMsg({
+          text: data.error || 'WhatsApp send failed',
+          type: 'error',
+        })
+        setTimeout(() => setFeedbackMsg(null), 5000)
       }
     } catch (err: any) {
-      alert(err.message)
+      setFeedbackMsg({
+        text: err.message || 'WhatsApp send error',
+        type: 'error',
+      })
+      setTimeout(() => setFeedbackMsg(null), 5000)
     } finally {
       setIsSendingWhatsApp(false)
+    }
+  }
+
+  // Bulk Selection Handlers
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]))
+  }
+
+  const toggleSelectAllOnPage = () => {
+    const pageIds = paginatedListings.map((l) => l.id)
+    const allSelected = pageIds.length > 0 && pageIds.every((id) => selectedIds.includes(id))
+    if (allSelected) {
+      setSelectedIds((prev) => prev.filter((id) => !pageIds.includes(id)))
+    } else {
+      setSelectedIds((prev) => Array.from(new Set([...prev, ...pageIds])))
+    }
+  }
+
+  const clearSelection = () => {
+    setSelectedIds([])
+  }
+
+  const handleOpenBulkModal = (action: 'publish' | 'archive' | 'set_category' | 'set_featured') => {
+    setBulkModalAction(action)
+  }
+
+  const handleExecuteBulk = async () => {
+    if (!bulkModalAction || selectedIds.length === 0) return
+    try {
+      setIsBulkProcessing(true)
+      const res = await fetch('/api/admin/listings/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: bulkModalAction,
+          listingIds: selectedIds,
+          categoryId: bulkModalAction === 'set_category' ? bulkCategoryTarget : undefined,
+          isFeatured: bulkModalAction === 'set_featured' ? bulkFeaturedTarget : undefined,
+          idempotencyKey: `bulk_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setFeedbackMsg({
+          text: data.message || `Bulk ${bulkModalAction} completed: ${data.succeededCount} updated, ${data.skippedCount} skipped.`,
+          type: 'success',
+        })
+        setSelectedIds([])
+        setBulkModalAction(null)
+        fetchListings()
+        setTimeout(() => setFeedbackMsg(null), 6000)
+      } else {
+        setFeedbackMsg({
+          text: data.error || `Bulk ${bulkModalAction} operation failed.`,
+          type: 'error',
+        })
+        setTimeout(() => setFeedbackMsg(null), 6000)
+      }
+    } catch (err: any) {
+      setFeedbackMsg({
+        text: err.message || 'Network error during bulk operation.',
+        type: 'error',
+      })
+      setTimeout(() => setFeedbackMsg(null), 6000)
+    } finally {
+      setIsBulkProcessing(false)
     }
   }
 
@@ -270,7 +359,13 @@ export default function ListingsPage() {
       item.address.toLowerCase().includes(search.toLowerCase()) ||
       item.phone.includes(search)
     const matchesCategory = categoryFilter === 'ALL' || item.categoryId === categoryFilter
-    const matchesStatus = statusFilter === 'ALL' || item.status === statusFilter
+    const matchesStatus =
+      statusFilter === 'ALL' ||
+      (statusFilter === 'APPROVED'
+        ? item.status === 'APPROVED' || item.status === 'published' || item.status === 'approved'
+        : statusFilter === 'PENDING'
+        ? item.status === 'PENDING' || item.status === 'pending_approval' || item.status === 'draft'
+        : item.status === statusFilter)
     return matchesSearch && matchesCategory && matchesStatus
   })
 
@@ -420,6 +515,66 @@ export default function ListingsPage() {
           </div>
         </div>
 
+        {/* Bulk Action Bar */}
+        {selectedIds.length > 0 && (
+          <div className="bg-gradient-to-r from-blue-950/90 to-slate-900 border border-blue-600/40 rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-lg shadow-blue-950/50 animate-in fade-in slide-in-from-top-1">
+            <div className="flex items-center gap-2.5">
+              <span className="px-2.5 py-0.5 rounded-full bg-blue-600 text-white font-bold text-xs shadow-sm">
+                {selectedIds.length}
+              </span>
+              <span className="text-xs font-semibold text-blue-200">
+                Listings Selected
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                type="button"
+                onClick={() => handleOpenBulkModal('publish')}
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow transition-colors"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Publish</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleOpenBulkModal('archive')}
+                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow transition-colors"
+              >
+                <Archive className="w-3.5 h-3.5" />
+                <span>Archive</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleOpenBulkModal('set_category')}
+                className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow transition-colors"
+              >
+                <Tag className="w-3.5 h-3.5" />
+                <span>Change Category</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleOpenBulkModal('set_featured')}
+                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow transition-colors"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Toggle Featured</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={clearSelection}
+                className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-medium border border-slate-700 transition-colors ml-1"
+              >
+                Clear Selection
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* LISTINGS CONTAINER */}
         {loading ? (
           <div className="p-16 text-center text-slate-500 text-xs bg-slate-900 border border-slate-800 rounded-xl">
@@ -439,6 +594,15 @@ export default function ListingsPage() {
               <table className="w-full text-left text-xs text-slate-300">
                 <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
                   <tr>
+                    <th scope="col" className="py-3 px-3 w-10 text-center font-bold">
+                      <input
+                        type="checkbox"
+                        aria-label="Select all listings on this page"
+                        checked={paginatedListings.length > 0 && paginatedListings.every((l) => selectedIds.includes(l.id))}
+                        onChange={toggleSelectAllOnPage}
+                        className="rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-0 cursor-pointer"
+                      />
+                    </th>
                     <th scope="col" className="py-3 px-4 w-32 font-bold text-emerald-400">
                       📸 Photo &amp; Media
                     </th>
@@ -462,6 +626,17 @@ export default function ListingsPage() {
                 <tbody className="divide-y divide-slate-800/80">
                   {paginatedListings.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-950/40 transition-colors">
+                      {/* SELECTION CHECKBOX */}
+                      <td className="py-3 px-3 text-center align-top">
+                        <input
+                          type="checkbox"
+                          aria-label={`Select ${item.title}`}
+                          checked={selectedIds.includes(item.id)}
+                          onChange={() => toggleSelect(item.id)}
+                          className="rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-0 cursor-pointer mt-2"
+                        />
+                      </td>
+
                       {/* DEDICATED PHOTO ROW CELL */}
                       <td className="py-3 px-4 align-top">
                         <div className="relative group w-24 h-20 rounded-xl bg-slate-800 overflow-hidden border border-slate-700 shadow shrink-0">
@@ -604,6 +779,15 @@ export default function ListingsPage() {
                   />
                   <div className="absolute top-2 left-2 bg-slate-950/80 backdrop-blur-sm text-blue-400 text-[10px] font-semibold px-2 py-0.5 rounded">
                     {item.categoryName}
+                  </div>
+                  <div className="absolute top-2 right-2 z-10 bg-slate-950/80 backdrop-blur-sm p-1 rounded-md border border-slate-700">
+                    <input
+                      type="checkbox"
+                      aria-label={`Select ${item.title}`}
+                      checked={selectedIds.includes(item.id)}
+                      onChange={() => toggleSelect(item.id)}
+                      className="rounded border-slate-600 bg-slate-900 text-blue-600 focus:ring-0 cursor-pointer w-3.5 h-3.5 block"
+                    />
                   </div>
                   <div className="absolute bottom-2 right-2 bg-slate-950/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
                     <ImageIcon className="w-3 h-3 text-emerald-400" />
@@ -911,7 +1095,7 @@ export default function ListingsPage() {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={formData.status === 'APPROVED'}
+                      checked={formData.status === 'APPROVED' || formData.status === 'published' || formData.status === 'approved'}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
@@ -1037,6 +1221,130 @@ export default function ListingsPage() {
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>{isSendingWhatsApp ? 'Sending...' : 'Send Photo Card'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BULK OPERATIONS CONFIRMATION MODAL */}
+      {bulkModalAction && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in zoom-in-95">
+            <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center border ${
+                  bulkModalAction === 'publish'
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                    : bulkModalAction === 'archive'
+                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                    : bulkModalAction === 'set_category'
+                    ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+                    : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                }`}
+              >
+                {bulkModalAction === 'publish' ? (
+                  <CheckCircle2 className="w-5 h-5" />
+                ) : bulkModalAction === 'archive' ? (
+                  <Archive className="w-5 h-5" />
+                ) : bulkModalAction === 'set_category' ? (
+                  <Tag className="w-5 h-5" />
+                ) : (
+                  <Sparkles className="w-5 h-5" />
+                )}
+              </div>
+              <div>
+                <h3 className="font-bold text-sm text-white">
+                  Confirm Bulk {bulkModalAction.replace('_', ' ').toUpperCase()}
+                </h3>
+                <p className="text-[11px] text-slate-400">
+                  Targeting {selectedIds.length} selected listing{selectedIds.length > 1 ? 's' : ''}
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              {bulkModalAction === 'publish'
+                ? `You are about to publish and approve ${selectedIds.length} business listing(s). They will become immediately visible in the directory and synced to WhatsApp search flows.`
+                : bulkModalAction === 'archive'
+                ? `You are about to archive ${selectedIds.length} business listing(s). Archived listings will be suspended from public view and disabled in WhatsApp auto-replies.`
+                : bulkModalAction === 'set_category'
+                ? `Reassign the category for ${selectedIds.length} listing(s) simultaneously.`
+                : `Toggle the featured promotional status for ${selectedIds.length} listing(s).`}
+            </p>
+
+            {/* Category Selector if set_category */}
+            {bulkModalAction === 'set_category' && (
+              <div className="space-y-1.5 pt-1">
+                <label className="text-xs font-semibold text-slate-300">Select New Category</label>
+                <select
+                  value={bulkCategoryTarget}
+                  onChange={(e) => setBulkCategoryTarget(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-purple-500"
+                >
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} ({c.telugu})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Featured Toggle if set_featured */}
+            {bulkModalAction === 'set_featured' && (
+              <div className="space-y-1.5 pt-1">
+                <label className="text-xs font-semibold text-slate-300">Featured Promotional State</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setBulkFeaturedTarget(true)}
+                    className={`py-2 px-3 rounded-lg text-xs font-semibold border ${
+                      bulkFeaturedTarget
+                        ? 'bg-blue-600 text-white border-blue-500'
+                        : 'bg-slate-950 text-slate-400 border-slate-800'
+                    }`}
+                  >
+                    ⭐ Mark as Featured
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setBulkFeaturedTarget(false)}
+                    className={`py-2 px-3 rounded-lg text-xs font-semibold border ${
+                      !bulkFeaturedTarget
+                        ? 'bg-slate-800 text-white border-slate-700'
+                        : 'bg-slate-950 text-slate-400 border-slate-800'
+                    }`}
+                  >
+                    Standard (Unfeatured)
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setBulkModalAction(null)}
+                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isBulkProcessing}
+                onClick={handleExecuteBulk}
+                className={`px-4 py-1.5 text-white text-xs font-bold rounded-lg shadow disabled:opacity-50 ${
+                  bulkModalAction === 'publish'
+                    ? 'bg-emerald-600 hover:bg-emerald-500'
+                    : bulkModalAction === 'archive'
+                    ? 'bg-amber-600 hover:bg-amber-500'
+                    : bulkModalAction === 'set_category'
+                    ? 'bg-purple-600 hover:bg-purple-500'
+                    : 'bg-blue-600 hover:bg-blue-500'
+                }`}
+              >
+                {isBulkProcessing ? 'Processing Operation...' : `Apply Bulk ${bulkModalAction.replace('_', ' ')} (${selectedIds.length})`}
               </button>
             </div>
           </div>

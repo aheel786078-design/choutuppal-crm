@@ -1,4 +1,4 @@
-import { Category, Village } from './types'
+import type { Category, Village, GovtContactCategoryMeta } from './types'
 
 export const WHATSAPP_BOT_NUMBER = '919494348175'
 export const WHATSAPP_MEDIA_NUMBER = '919441348175'
@@ -88,3 +88,120 @@ export function getElectricianWhatsAppUrl(): string {
 export function getCommunityGroupWhatsAppUrl(wardNumber: number): string {
   return getWhatsAppUrl(`Hi Choutuppal, please add me to Ward ${wardNumber} Community WhatsApp Group`)
 }
+
+export const CHOUTUPPAL_MANDAL_VILLAGES = [
+  'Choutuppal Town',
+  'Panthangi',
+  'Malkapur',
+  'Peddakondur',
+  'Chinna Kondur',
+  'Lingoji Guda',
+  'Koyalagudem',
+  'Gundrampally',
+  'Nelapatla',
+  'Swamulavari Lingotam',
+  'Lakkaram',
+  'Peepalpahad',
+  'Thallasingaram',
+  'Tangedapally',
+]
+
+export const GOVT_CONTACT_CATEGORIES: GovtContactCategoryMeta[] = [
+  {
+    id: 'emergency_helpline',
+    name: 'Emergency Helplines',
+    telugu: 'అత్యవసర హెల్ప్‌లైన్లు',
+    icon: 'AlertTriangle',
+    description: 'National and state emergency response numbers (112, 108, etc.)',
+    displayOrder: 1,
+  },
+  {
+    id: 'police',
+    name: 'Police & Public Safety',
+    telugu: 'పోలీస్ & ప్రజా రక్షణ',
+    icon: 'Shield',
+    description: 'Police station, patrol and women safety helplines',
+    displayOrder: 2,
+  },
+  {
+    id: 'fire_rescue',
+    name: 'Fire & Rescue Services',
+    telugu: 'ఫైర్ & రెస్క్యూ సేవలు',
+    icon: 'Flame',
+    description: 'Fire control room and disaster rescue teams',
+    displayOrder: 3,
+  },
+  {
+    id: 'ambulance_health',
+    name: 'Ambulance & Public Health',
+    telugu: 'అంబులెన్స్ & ప్రజా వైద్యం',
+    icon: 'HeartPulse',
+    description: 'Primary health centers, government hospitals and ambulances',
+    displayOrder: 4,
+  },
+  {
+    id: 'electricity_utilities',
+    name: 'Electricity & Utility Complaints',
+    telugu: 'విద్యుత్ & యుటిలిటీస్ ఫిర్యాదులు',
+    icon: 'Zap',
+    description: 'TSSPDCL electricity complaints, water supply and municipal utilities',
+    displayOrder: 5,
+  },
+  {
+    id: 'municipal_panchayat',
+    name: 'Municipal / Panchayat Offices',
+    telugu: 'పురపాలక / పంచాయతీ కార్యాలయాలు',
+    icon: 'Building2',
+    description: 'Choutuppal Municipality and Gram Panchayat offices',
+    displayOrder: 6,
+  },
+  {
+    id: 'revenue_tahsildar',
+    name: 'Revenue & Tahsildar Offices',
+    telugu: 'రెవెన్యూ & తహశీల్దార్ కార్యాలయం',
+    icon: 'Landmark',
+    description: 'MRO office, VROs and land administration services',
+    displayOrder: 7,
+  },
+  {
+    id: 'mandal_offices',
+    name: 'Mandal-Level Government Offices',
+    telugu: 'మండల స్థాయి ప్రభుత్వ కార్యాలయాలు',
+    icon: 'Briefcase',
+    description: 'MPDO, Agriculture, Veterinary, Child Welfare and Education offices',
+    displayOrder: 8,
+  },
+  {
+    id: 'elected_representatives',
+    name: 'Elected Representatives',
+    telugu: 'ప్రజాప్రతినిధులు',
+    icon: 'Users',
+    description: 'MLA, MP, Municipal Chairman and Mandal Praja Parishad representatives',
+    displayOrder: 9,
+  },
+  {
+    id: 'ward_representatives',
+    name: 'Ward Representatives (Councilors)',
+    telugu: 'వార్డు ప్రజాప్రతినిధులు (కౌన్సిలర్లు)',
+    icon: 'UserCheck',
+    description: 'Municipal ward councilors and local representatives',
+    displayOrder: 10,
+  },
+  {
+    id: 'village_public_offices',
+    name: 'Village-Level Public Offices',
+    telugu: 'గ్రామ పంచాయతీ కార్యాలయాలు',
+    icon: 'Home',
+    description: 'Gram Panchayat secretaries and village community centers',
+    displayOrder: 11,
+  },
+  {
+    id: 'other_public_services',
+    name: 'Other Verified Public Services',
+    telugu: 'ఇతర ప్రభుత్వ సేవలు',
+    icon: 'FileText',
+    description: 'Postal services, RTC bus stations, MeeSeva and public utilities',
+    displayOrder: 12,
+  },
+]
+

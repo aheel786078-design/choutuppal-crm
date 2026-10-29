@@ -1,26 +1,17 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Clapperboard, Plus, Eye, Trash2, X } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Clapperboard, Plus, Eye, Trash2, X, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react'
 import { AdminHeader } from '@/components/admin/admin-header'
 import { ShortItem } from '@/lib/types'
 import { PRESET_PHOTO_COVERS } from '@/lib/constants'
 
 export default function ShortsAdminPage() {
-  const [shorts, setShorts] = useState<ShortItem[]>([
-    {
-      id: 'sh_1',
-      title: 'Famous Choutuppal Friday Cattle & Vegetable Sandha Market Tour',
-      videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      thumbnailUrl: PRESET_PHOTO_COVERS[0].url,
-      tags: ['Choutuppal', 'Market', 'LocalLife'],
-      views: 3410,
-      isActive: true,
-      createdAt: new Date().toISOString(),
-    },
-  ])
-
+  const [shorts, setShorts] = useState<ShortItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
   const [formData, setFormData] = useState({
     title: '',
     videoUrl: '',
@@ -28,27 +19,115 @@ export default function ShortsAdminPage() {
     tags: 'Choutuppal, Reels',
   })
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!formData.title) return
-
-    const newShort: ShortItem = {
-      id: `sh_${Date.now()}`,
-      title: formData.title,
-      videoUrl: formData.videoUrl || 'https://www.youtube.com',
-      thumbnailUrl: formData.thumbnailUrl || PRESET_PHOTO_COVERS[0].url,
-      tags: formData.tags.split(',').map((t) => t.trim()),
-      views: 0,
-      isActive: true,
-      createdAt: new Date().toISOString(),
+  const fetchShorts = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const res = await fetch('/api/admin/content')
+      const data = await res.json()
+      if (data.success) {
+        setShorts(data.shorts || [])
+      } else {
+        setError(data.error || 'Failed to load video shorts')
+      }
+    } catch (err: any) {
+      setError(err.message || 'Network error fetching video shorts')
+    } finally {
+      setLoading(false)
     }
-    setShorts([newShort, ...shorts])
-    setIsModalOpen(false)
   }
 
-  const handleDelete = (id: string) => {
-    if (confirm('Delete this short?')) {
-      setShorts(shorts.filter((s) => s.id !== id))
+  useEffect(() => {
+    fetchShorts()
+  }, [])
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!formData.title.trim()) return
+
+    try {
+      setSaving(true)
+      setError(null)
+      const res = await fetch('/api/admin/content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'short',
+          action: 'create',
+          item: {
+            title: formData.title.trim(),
+            videoUrl: formData.videoUrl.trim() || 'https://www.youtube.com',
+            thumbnailUrl: formData.thumbnailUrl || PRESET_PHOTO_COVERS[0].url,
+            tags: formData.tags.split(',').map((t) => t.trim()).filter(Boolean),
+            isActive: true,
+          },
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setIsModalOpen(false)
+        setFormData({
+          title: '',
+          videoUrl: '',
+          thumbnailUrl: PRESET_PHOTO_COVERS[0].url,
+          tags: 'Choutuppal, Reels',
+        })
+        fetchShorts()
+      } else {
+        setError(data.error || 'Failed to save video short')
+      }
+    } catch (err: any) {
+      setError(err.message || 'Network error saving video short')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this short?')) return
+
+    try {
+      setError(null)
+      const res = await fetch('/api/admin/content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'short',
+          action: 'delete',
+          id,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        fetchShorts()
+      } else {
+        setError(data.error || 'Failed to delete video short')
+      }
+    } catch (err: any) {
+      setError(err.message || 'Network error deleting video short')
+    }
+  }
+
+  const handleToggle = async (id: string) => {
+    try {
+      setError(null)
+      const res = await fetch('/api/admin/content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'short',
+          action: 'toggle',
+          id,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        fetchShorts()
+      } else {
+        setError(data.error || 'Failed to toggle status')
+      }
+    } catch (err: any) {
+      setError(err.message || 'Network error toggling status')
     }
   }
 
@@ -62,28 +141,62 @@ export default function ShortsAdminPage() {
       />
 
       <div className="p-6 space-y-6 max-w-7xl mx-auto w-full">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {shorts.map((item) => (
-            <div key={item.id} className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow">
-              <div className="relative h-48 bg-slate-800">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover" />
-                <span className="absolute bottom-2 left-2 bg-slate-950/80 text-white text-[10px] px-2 py-0.5 rounded font-mono">
-                  👁️ {item.views}
-                </span>
-              </div>
-              <div className="p-3 space-y-2">
-                <h4 className="font-semibold text-xs text-white line-clamp-2">{item.title}</h4>
-                <div className="flex items-center justify-between pt-1 border-t border-slate-800">
-                  <span className="text-[10px] text-blue-400 font-medium">{item.tags.join(', ')}</span>
-                  <button onClick={() => handleDelete(item.id)} className="text-red-400 hover:text-red-300">
-                    <Trash2 className="w-3.5 h-3.5" />
+        {error && (
+          <div className="bg-red-950/80 border border-red-800 text-red-200 text-xs p-3 rounded-xl flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+              <span>{error}</span>
+            </div>
+            <button onClick={() => setError(null)} className="text-red-400 hover:text-white">
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="flex items-center justify-center p-12 text-slate-400 gap-2">
+            <Loader2 className="w-5 h-5 animate-spin" />
+            <span className="text-sm">Loading video shorts...</span>
+          </div>
+        ) : shorts.length === 0 ? (
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400">
+            <Clapperboard className="w-10 h-10 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No video shorts found.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {shorts.map((item) => (
+              <div key={item.id} className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow">
+                <div className="relative h-48 bg-slate-800">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover" />
+                  <span className="absolute bottom-2 left-2 bg-slate-950/80 text-white text-[10px] px-2 py-0.5 rounded font-mono">
+                    👁️ {item.views || 0}
+                  </span>
+                  <button
+                    onClick={() => handleToggle(item.id)}
+                    className={`absolute top-2 right-2 px-2 py-0.5 rounded text-[10px] font-bold ${
+                      item.isActive ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'
+                    }`}
+                  >
+                    {item.isActive ? 'Active' : 'Hidden'}
                   </button>
                 </div>
+                <div className="p-3 space-y-2">
+                  <h4 className="font-semibold text-xs text-white line-clamp-2">{item.title}</h4>
+                  <div className="flex items-center justify-between pt-1 border-t border-slate-800">
+                    <span className="text-[10px] text-blue-400 font-medium">
+                      {Array.isArray(item.tags) ? item.tags.join(', ') : 'Reels'}
+                    </span>
+                    <button onClick={() => handleDelete(item.id)} className="text-red-400 hover:text-red-300">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {isModalOpen && (
@@ -135,9 +248,10 @@ export default function ShortsAdminPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold"
+                  disabled={saving}
+                  className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded text-xs font-bold"
                 >
-                  Save Short
+                  {saving ? 'Saving...' : 'Save Short'}
                 </button>
               </div>
             </form>

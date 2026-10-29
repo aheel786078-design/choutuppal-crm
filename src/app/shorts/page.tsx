@@ -14,6 +14,8 @@ import {
   MessageCircle,
   Eye,
   CheckCircle2,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { WHATSAPP_BOT_NUMBER } from '@/lib/constants'
@@ -95,13 +97,17 @@ export default function ShortsPage() {
   const [submitUrl, setSubmitUrl] = useState('')
   const [submitTitle, setSubmitTitle] = useState('')
   const [submitTag, setSubmitTag] = useState('Choutuppal')
+  const [submitPhone, setSubmitPhone] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null)
 
-  // Load from store via API on mount
+  // Load from persistent content API on mount
   useEffect(() => {
-    fetch('/api/admin/dashboard')
+    fetch('/api/admin/content')
       .then((res) => res.json())
       .then((data) => {
-        if (data.shorts && Array.isArray(data.shorts) && data.shorts.length > 0) {
+        if (data.success && data.shorts && Array.isArray(data.shorts) && data.shorts.length > 0) {
           const mapped = data.shorts.map((s: any) => {
             const parsed = parseVideoSource(s.videoUrl)
             return {
@@ -120,29 +126,59 @@ export default function ShortsPage() {
       .catch(() => {})
   }, [])
 
-  function handleAddReel(e: React.FormEvent) {
+  async function handleAddReel(e: React.FormEvent) {
     e.preventDefault()
+    if (submitting) return
+
     if (!submitUrl.trim()) {
-      toast.error('Please enter Instagram Reel or YouTube Shorts URL')
+      const err = 'Please enter Instagram Reel or YouTube Shorts URL'
+      setSubmitError(err)
+      toast.error(err)
       return
     }
 
-    const parsed = parseVideoSource(submitUrl)
-    const newReel: ShortVideo = {
-      id: `reel_${Date.now()}`,
-      title: submitTitle.trim() || 'New Local Reel',
-      videoUrl: submitUrl.trim(),
-      thumbnailUrl: parsed.thumbnail,
-      tags: [submitTag.trim() || 'Choutuppal'],
-      views: 1,
-      platform: parsed.platform,
-    }
+    setSubmitting(true)
+    setSubmitError(null)
+    setSubmitSuccess(null)
 
-    setShorts([newReel, ...shorts])
-    setIsSubmitOpen(false)
-    setSubmitUrl('')
-    setSubmitTitle('')
-    toast.success('Reel added successfully to feed!')
+    try {
+      const res = await fetch('/api/shorts/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: submitUrl.trim(),
+          title: submitTitle.trim() || undefined,
+          tag: submitTag.trim() || undefined,
+          phone: submitPhone.trim() || undefined,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok || !data.success) {
+        const errMsg = data.error || 'Failed to submit reel'
+        setSubmitError(errMsg)
+        toast.error(errMsg)
+        return
+      }
+
+      toast.success('Reel submitted! Queued for admin moderation.')
+      setSubmitSuccess('Thank you! Your reel has been submitted and queued for moderation. It will appear on the feed once approved.')
+      setSubmitUrl('')
+      setSubmitTitle('')
+      setSubmitPhone('')
+
+      setTimeout(() => {
+        setIsSubmitOpen(false)
+        setSubmitSuccess(null)
+      }, 3500)
+    } catch (err: any) {
+      const errMsg = err?.message || 'Network error occurred while submitting reel'
+      setSubmitError(errMsg)
+      toast.error(errMsg)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -322,7 +358,11 @@ export default function ShortsPage() {
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="relative w-full max-w-md bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-2xl">
             <button
-              onClick={() => setIsSubmitOpen(false)}
+              onClick={() => {
+                setIsSubmitOpen(false)
+                setSubmitError(null)
+                setSubmitSuccess(null)
+              }}
               className="absolute top-4 right-4 text-slate-400 hover:text-white"
             >
               <X className="h-5 w-5" />
@@ -332,10 +372,24 @@ export default function ShortsPage() {
               Submit Local Reel or Short (రీల్ లింక్ జోడించండి)
             </h3>
             <p className="text-xs text-slate-400 mt-1">
-              Paste any Instagram Reel link or YouTube Shorts link. It will automatically convert into an embedded video player!
+              Paste any Instagram Reel link or YouTube Shorts link. Submissions are queued for admin moderation before appearing publicly.
             </p>
 
-            <form onSubmit={handleAddReel} className="mt-5 space-y-4">
+            {submitError ? (
+              <div className="mt-3 flex items-start gap-2 bg-red-950/80 border border-red-800 text-red-200 text-xs p-3 rounded-xl">
+                <AlertCircle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+                <span>{submitError}</span>
+              </div>
+            ) : null}
+
+            {submitSuccess ? (
+              <div className="mt-3 flex items-start gap-2 bg-emerald-950/80 border border-emerald-800 text-emerald-200 text-xs p-3 rounded-xl">
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span>{submitSuccess}</span>
+              </div>
+            ) : null}
+
+            <form onSubmit={handleAddReel} className="mt-4 space-y-3.5">
               <div>
                 <label className="block text-xs font-bold text-slate-300 mb-1">
                   Video URL (Instagram Reel or YouTube Shorts) *
@@ -343,10 +397,11 @@ export default function ShortsPage() {
                 <input
                   type="url"
                   required
+                  disabled={submitting}
                   placeholder="https://www.instagram.com/reel/... or https://youtube.com/shorts/..."
                   value={submitUrl}
                   onChange={(e) => setSubmitUrl(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 disabled:opacity-50"
                 />
               </div>
 
@@ -357,32 +412,57 @@ export default function ShortsPage() {
                 <input
                   type="text"
                   required
+                  disabled={submitting}
                   placeholder="e.g. New Supermarket Opening at Choutuppal Bypass"
                   value={submitTitle}
                   onChange={(e) => setSubmitTitle(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 disabled:opacity-50"
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">
-                  Tag / Village
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Choutuppal, Panthangi, Food"
-                  value={submitTag}
-                  onChange={(e) => setSubmitTag(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">
+                    Tag / Village
+                  </label>
+                  <input
+                    type="text"
+                    disabled={submitting}
+                    placeholder="e.g. Choutuppal, Food"
+                    value={submitTag}
+                    onChange={(e) => setSubmitTag(e.target.value)}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">
+                    WhatsApp (Optional)
+                  </label>
+                  <input
+                    type="tel"
+                    disabled={submitting}
+                    placeholder="e.g. 9876543210"
+                    value={submitPhone}
+                    onChange={(e) => setSubmitPhone(e.target.value)}
+                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 disabled:opacity-50"
+                  />
+                </div>
               </div>
 
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black py-3 rounded-xl text-xs transition shadow-lg"
+                  disabled={submitting}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black py-3 rounded-xl text-xs transition shadow-lg flex items-center justify-center gap-2"
                 >
-                  Add Reel to Feed
+                  {submitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Submitting for Review...</span>
+                    </>
+                  ) : (
+                    <span>Submit for Moderation Approval</span>
+                  )}
                 </button>
               </div>
             </form>

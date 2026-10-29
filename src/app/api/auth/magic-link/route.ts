@@ -116,15 +116,22 @@ export async function GET(req: Request) {
     })
 
     // Set secure HTTP-only session cookie
-    response.cookies.set({
-      name: SESSION_COOKIE_NAME,
-      value: sessionToken,
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 24 * 60 * 60, // 24 hours
-    })
+    if (response.cookies?.set) {
+      response.cookies.set({
+        name: SESSION_COOKIE_NAME,
+        value: sessionToken,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 24 * 60 * 60, // 24 hours
+      })
+    } else {
+      response.headers.append(
+        'set-cookie',
+        `${SESSION_COOKIE_NAME}=${sessionToken}; Path=/; Max-Age=${24 * 60 * 60}; HttpOnly; SameSite=lax`
+      )
+    }
 
     return response
   } catch (err: any) {

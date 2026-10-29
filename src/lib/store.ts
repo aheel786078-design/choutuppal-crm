@@ -1,7 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import crypto from 'crypto'
-import {
+import type {
+  AdminDataStore,
   Territory,
   Franchise,
   FranchiseStaff,
@@ -10,6 +11,7 @@ import {
   Listing,
   CRMContact,
   CRMFlowConfig,
+  WhatsAppFlow,
   ApprovalItem,
   UserStory,
   UserOffer,
@@ -19,8 +21,20 @@ import {
   TickerItem,
   AppUser,
   WhatsAppMessage,
+  CRMDeal,
+  AutomationRule,
+  BroadcastCampaign,
+  ListingPlan,
+  ListingSubscription,
+  FeaturedPromotion,
+  PaymentOrder,
+  PaymentTransaction,
+  WebhookEvent,
+  GovernmentContact,
 } from './types'
 import { STANDARD_CATEGORIES, STANDARD_VILLAGES, PRESET_PHOTO_COVERS } from './constants'
+import { getDefaultGovernmentContacts } from './government-contacts'
+export { getDefaultGovernmentContacts } from './government-contacts'
 
 export const FLAGSHIP_TERRITORY_ID = 'territory_choutuppal'
 
@@ -50,42 +64,84 @@ export const FLAGSHIP_CHOUTUPPAL_TERRITORY: Territory = {
   updatedAt: '2026-10-25T00:00:00.000Z',
 }
 
-interface AdminDataStore {
-  territories: Territory[]
-  franchises: Franchise[]
-  franchiseStaff: FranchiseStaff[]
-  territoryDomains: TerritoryDomain[]
-  auditLogs: AuditLog[]
-  listings: Listing[]
-  contacts: CRMContact[]
-  flows: CRMFlowConfig[]
-  approvals: ApprovalItem[]
-  stories: UserStory[]
-  offers: UserOffer[]
-  news: NewsItem[]
-  shorts: ShortItem[]
-  banners: BannerItem[]
-  tickers: TickerItem[]
-  users: AppUser[]
-  messages: WhatsAppMessage[]
-  magicTokens: Array<{ token: string; phone: string; expiresAt: number; used: boolean }>
-  settings: {
-    whatsappToken: string
-    whatsappPhoneNumberId: string
-    whatsappVerifyToken: string
-    syncListingsToCrmFlow: boolean
-    autoSendListingPhotoInChat: boolean
-  }
+// Schema invariant: store deals: CRMDeal[]
+export type { AdminDataStore }
+
+export function getDefaultListingPlans(): ListingPlan[] {
+  return [
+    {
+      id: 'plan_premium_monthly',
+      name: 'Premium Listing',
+      type: 'premium',
+      price: 499,
+      currency: 'INR',
+      billingInterval: 'monthly',
+      durationDays: 30,
+      features: [
+        'Extended business description',
+        'Photo gallery & video showcase',
+        'Direct call, WhatsApp & website buttons',
+        'Enhanced profile layout',
+        'Listing analytics',
+      ],
+      isActive: true,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    },
+    {
+      id: 'plan_featured_monthly',
+      name: 'Featured Boost',
+      type: 'featured',
+      price: 199,
+      currency: 'INR',
+      billingInterval: 'monthly',
+      durationDays: 30,
+      features: [
+        'Featured badge on website & WhatsApp',
+        'Priority ranking in category & search',
+        'Priority in WhatsApp flow browser',
+        'Top of homepage featured placement',
+      ],
+      isActive: true,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    },
+    {
+      id: 'plan_bundle_monthly',
+      name: 'Premium + Featured Bundle',
+      type: 'bundle',
+      price: 599,
+      currency: 'INR',
+      billingInterval: 'monthly',
+      durationDays: 30,
+      features: [
+        'All Premium Listing features',
+        'All Featured Boost priority benefits',
+        'Dedicated merchant support',
+        'Save ₹99/month compared to individual purchase',
+      ],
+      isActive: true,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+    },
+  ]
 }
 
-const DATA_FILE = path.join(process.cwd(), 'data', 'admin_data.json')
+export function getDataFilePath(): string {
+  return process.env.CRM_DATA_FILE
+    ? path.resolve(process.env.CRM_DATA_FILE)
+    : path.join(process.cwd(), 'data', 'admin_data.json')
+}
 
-export function loadStore(): AdminDataStore {
+const DATA_FILE = getDataFilePath()
+
+export function loadStore(customPath?: string): AdminDataStore {
+  const targetFile = customPath || getDataFilePath()
   try {
-    if (!fs.existsSync(DATA_FILE)) {
+    if (!fs.existsSync(targetFile)) {
       return getFallbackStore()
     }
-    const raw = fs.readFileSync(DATA_FILE, 'utf-8')
+    const raw = fs.readFileSync(targetFile, 'utf-8')
     const parsed = JSON.parse(raw)
 
     // Ensure Territories & Flagship Choutuppal Protection
@@ -174,7 +230,72 @@ export function loadStore(): AdminDataStore {
     if (parsed.shorts) parsed.shorts = parsed.shorts.map((s: any) => ({ ...s, territoryId: s.territoryId || FLAGSHIP_TERRITORY_ID }))
     if (parsed.banners) parsed.banners = parsed.banners.map((b: any) => ({ ...b, territoryId: b.territoryId || FLAGSHIP_TERRITORY_ID }))
     if (parsed.tickers) parsed.tickers = parsed.tickers.map((t: any) => ({ ...t, territoryId: t.territoryId || FLAGSHIP_TERRITORY_ID }))
+    if (parsed.messages) parsed.messages = parsed.messages.map((m: any) => ({ ...m, territoryId: m.territoryId || FLAGSHIP_TERRITORY_ID }))
+    if (!parsed.deals || !Array.isArray(parsed.deals) || parsed.deals.length === 0) {
+      parsed.deals = getInitialSampleDeals()
+    } else {
+      parsed.deals = parsed.deals.map((d: any) => ({
+        ...d,
+        territoryId: d.territoryId || FLAGSHIP_TERRITORY_ID,
+        currency: d.currency || 'INR',
+        status: d.status || (d.stage === 'WON' ? 'WON' : d.stage === 'LOST' ? 'LOST' : 'OPEN'),
+      }))
+    }
+    if (!parsed.automations || !Array.isArray(parsed.automations)) {
+      parsed.automations = []
+    } else {
+      parsed.automations = parsed.automations.map((a: any) => ({
+        ...a,
+        territoryId: a.territoryId || FLAGSHIP_TERRITORY_ID,
+        status: a.status || (a.is_active === false || a.isActive === false ? 'paused' : 'draft'),
+      }))
+    }
+    if (!parsed.flows || !Array.isArray(parsed.flows)) {
+      parsed.flows = []
+    } else {
+      parsed.flows = parsed.flows.map((f: any) => {
+        const triggers = f.triggers && Array.isArray(f.triggers) && f.triggers.length > 0
+          ? f.triggers
+          : (f.trigger_keywords && Array.isArray(f.trigger_keywords)
+              ? f.trigger_keywords.map((kw: string) => ({ type: 'keyword', value: kw }))
+              : (f.triggerKeyword ? [{ type: 'keyword', value: f.triggerKeyword }] : [{ type: 'keyword', value: 'hi' }]))
+
+        const status = f.status || (f.isActive === false ? 'paused' : 'published')
+        const nodes = f.nodes && Array.isArray(f.nodes) ? f.nodes : []
+
+        return {
+          ...f,
+          status,
+          version: f.version || 1,
+          triggers,
+          nodes,
+          entryNodeId: f.entryNodeId || (nodes[0]?.id || 'start'),
+          updatedAt: f.updatedAt || f.createdAt || new Date().toISOString(),
+        }
+      })
+    }
     if (!parsed.magicTokens) parsed.magicTokens = []
+    if (!parsed.plans || !Array.isArray(parsed.plans) || parsed.plans.length === 0) {
+      parsed.plans = getDefaultListingPlans()
+    }
+    if (!parsed.subscriptions || !Array.isArray(parsed.subscriptions)) {
+      parsed.subscriptions = []
+    }
+    if (!parsed.featuredPromotions || !Array.isArray(parsed.featuredPromotions)) {
+      parsed.featuredPromotions = []
+    }
+    if (!parsed.orders || !Array.isArray(parsed.orders)) {
+      parsed.orders = []
+    }
+    if (!parsed.payments || !Array.isArray(parsed.payments)) {
+      parsed.payments = []
+    }
+    if (!parsed.webhookEvents || !Array.isArray(parsed.webhookEvents)) {
+      parsed.webhookEvents = []
+    }
+    if (!parsed.governmentContacts || !Array.isArray(parsed.governmentContacts) || parsed.governmentContacts.length === 0) {
+      parsed.governmentContacts = getDefaultGovernmentContacts()
+    }
 
     return parsed as AdminDataStore
   } catch (err) {
@@ -183,16 +304,257 @@ export function loadStore(): AdminDataStore {
   }
 }
 
-export function saveStore(store: AdminDataStore): void {
-  try {
-    const dir = path.dirname(DATA_FILE)
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true })
-    }
-    fs.writeFileSync(DATA_FILE, JSON.stringify(store, null, 2), 'utf-8')
-  } catch (err) {
-    console.error('[Admin Store] Save error:', err)
+export const getStore = loadStore
+
+export function saveStore(store: AdminDataStore, customPath?: string): void {
+  const targetFile = customPath || getDataFilePath()
+  if (!store || typeof store !== 'object') {
+    throw new Error('[Admin Store] Refusing to save: invalid store payload (not an object)')
   }
+  if (!Array.isArray(store.listings) || store.listings.length === 0) {
+    throw new Error('[Admin Store] Invariant Violation: refusing to save empty listings array')
+  }
+  if (!Array.isArray(store.territories) || store.territories.length === 0) {
+    throw new Error('[Admin Store] Invariant Violation: refusing to save empty territories array')
+  }
+
+  const dir = path.dirname(targetFile)
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true })
+  }
+  const tempFile = `${targetFile}.tmp.${Date.now()}.${Math.random().toString(36).substring(2, 6)}`
+  try {
+    fs.writeFileSync(tempFile, JSON.stringify(store, null, 2), 'utf-8')
+    const stat = fs.statSync(tempFile)
+    if (stat.size === 0) {
+      throw new Error('[Admin Store] Invariant Violation: temp store file is empty (0 bytes)')
+    }
+    fs.renameSync(tempFile, targetFile)
+  } catch (err) {
+    if (fs.existsSync(tempFile)) {
+      try {
+        fs.unlinkSync(tempFile)
+      } catch (_) {}
+    }
+    console.error('[Admin Store] Save error:', err)
+    throw err
+  }
+}
+
+/**
+ * In-process asynchronous FIFO mutation queue.
+ * Guarantees that concurrent mutations execute sequentially:
+ *   1. Awaits completion of any in-flight mutation.
+ *   2. Loads the fresh data store from disk (preventing stale reads).
+ *   3. Executes mutator(store).
+ *   4. Atomically persists store to disk via saveStore.
+ *   5. Discards uncommitted in-memory changes if mutator throws (no partial writes).
+ *   6. Automatically recovers queue on error so subsequent mutations are not blocked.
+ *
+ * NOTE: This protects concurrent requests within a single Node.js process.
+ * Multi-process coordination requires external locks or an ACID database engine.
+ */
+let mutationQueue: Promise<unknown> = Promise.resolve()
+
+export interface MutateStoreOptions {
+  customPath?: string
+}
+
+export async function mutateStore<T>(
+  mutator: (store: AdminDataStore) => Promise<T> | T,
+  options?: MutateStoreOptions
+): Promise<T> {
+  const previous = mutationQueue
+
+  let resolveNext: () => void
+  mutationQueue = new Promise<void>((resolve) => {
+    resolveNext = resolve
+  })
+
+  // Wait for prior mutation to settle (absorb failures to prevent cascade)
+  await previous.catch(() => {})
+
+  const targetFile = options?.customPath || getDataFilePath()
+
+  try {
+    const store = loadStore(targetFile)
+    const result = await mutator(store)
+    saveStore(store, targetFile)
+    return result
+  } finally {
+    resolveNext!()
+  }
+}
+
+export function createStoreBackup(label?: string): string {
+  const dir = path.join(path.dirname(DATA_FILE), 'backups')
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true })
+  }
+  const cleanLabel = label ? `_${label.replace(/[^a-zA-Z0-9_-]/g, '')}` : ''
+  const backupFile = path.join(dir, `admin_data_${Date.now()}${cleanLabel}.json`)
+  fs.copyFileSync(DATA_FILE, backupFile)
+  return backupFile
+}
+
+// --------------------------------------------------------------------------
+// CRM & Listing Synchronization Engine
+// --------------------------------------------------------------------------
+
+export interface SyncListingOptions {
+  callerTerritoryId?: string
+  callerRole?: string
+  inStore?: AdminDataStore
+}
+
+/**
+ * Synchronizes a listing with the store and auto-creates/updates the associated
+ * CRM merchant contact lead. Ensures idempotent upserts and cross-territory isolation.
+ */
+export function syncListingToCrm(
+  listing: Listing,
+  optionsOrStore?: AdminDataStore | SyncListingOptions
+): { listing: Listing; contact: CRMContact } {
+  if (!listing) {
+    throw new Error('Listing object is required for syncListingToCrm')
+  }
+
+  let store: AdminDataStore
+  let callerTerritoryId: string | undefined
+  let callerRole: string | undefined
+
+  if (optionsOrStore && 'listings' in optionsOrStore && Array.isArray((optionsOrStore as AdminDataStore).listings)) {
+    store = optionsOrStore as AdminDataStore
+  } else if (optionsOrStore && typeof optionsOrStore === 'object') {
+    const opts = optionsOrStore as SyncListingOptions
+    callerTerritoryId = opts.callerTerritoryId
+    callerRole = opts.callerRole
+    store = opts.inStore || loadStore()
+  } else {
+    store = loadStore()
+  }
+
+  if (!store.listings) store.listings = []
+  if (!store.contacts) store.contacts = []
+
+  if (!listing.id) {
+    listing.id = `lst_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`
+  }
+
+  const targetTerritoryId = listing.territoryId || FLAGSHIP_TERRITORY_ID
+  listing.territoryId = targetTerritoryId
+
+  const existingListingIdx = store.listings.findIndex((l) => l.id === listing.id)
+  const existingListing = existingListingIdx >= 0 ? store.listings[existingListingIdx] : null
+
+  // Defense-in-depth: Reject unauthorized cross-territory operations if caller context is provided
+  if (callerTerritoryId && callerRole !== 'SUPER_ADMIN') {
+    if (targetTerritoryId !== callerTerritoryId) {
+      throw new Error(`Forbidden: Caller from territory ${callerTerritoryId} cannot sync listing to territory ${targetTerritoryId}`)
+    }
+    if (existingListing && (existingListing.territoryId || FLAGSHIP_TERRITORY_ID) !== callerTerritoryId) {
+      throw new Error(`Forbidden: Caller from territory ${callerTerritoryId} cannot modify listing belonging to ${existingListing.territoryId}`)
+    }
+  }
+
+  // Prevent cross-territory reassignments by non-super-admins
+  if (existingListing && existingListing.territoryId && existingListing.territoryId !== targetTerritoryId) {
+    if (callerRole !== 'SUPER_ADMIN') {
+      throw new Error(`Unauthorized cross-territory modification: Cannot move listing from ${existingListing.territoryId} to ${targetTerritoryId}`)
+    }
+  }
+
+  // 1. Resolve or Create CRM Contact for Merchant Lead
+  const listingPhone = (listing.phone || listing.whatsapp || '').trim()
+
+  // Match existing contact by listingId first, then by phone within the same territory
+  let contactIdx = store.contacts.findIndex((c) => c.listingId === listing.id)
+  if (contactIdx === -1 && listingPhone) {
+    contactIdx = store.contacts.findIndex(
+      (c) => (c.territoryId || FLAGSHIP_TERRITORY_ID) === targetTerritoryId && c.phone === listingPhone
+    )
+  }
+
+  let syncedContact: CRMContact
+
+  const categoryTag = listing.categoryName ? [listing.categoryName] : []
+  const premiumTags = listing.isPremium ? ['VIP', 'Premium'] : []
+
+  if (contactIdx >= 0) {
+    const existingContact = store.contacts[contactIdx]
+    const mergedTags = Array.from(
+      new Set([...(existingContact.tags || ['Listing-Owner', 'Merchant']), ...categoryTag, ...premiumTags])
+    )
+
+    syncedContact = {
+      ...existingContact,
+      name: existingContact.name || listing.title,
+      listingId: listing.id,
+      listingTitle: listing.title,
+      phone: listingPhone || existingContact.phone,
+      email: listing.email || existingContact.email || '',
+      territoryId: targetTerritoryId,
+      franchiseId: listing.franchiseId || existingContact.franchiseId,
+      tags: mergedTags,
+      notes: existingContact.notes || `Merchant listing: ${listing.title} (${listing.categoryName || 'General'}) in ${listing.villageName || listing.location || 'Town'}.`,
+      lastContactAt: new Date().toISOString(),
+    }
+    store.contacts[contactIdx] = syncedContact
+  } else {
+    const contactId = `cnt_${listing.id.replace(/^lst_/, '')}`
+    const initialTags = Array.from(new Set(['Listing-Owner', 'Merchant', ...categoryTag, ...premiumTags]))
+
+    syncedContact = {
+      id: contactId,
+      name: listing.title,
+      phone: listingPhone || '9848012345',
+      email: listing.email || '',
+      tags: initialTags,
+      stage: 'WON',
+      territoryId: targetTerritoryId,
+      franchiseId: listing.franchiseId,
+      listingId: listing.id,
+      listingTitle: listing.title,
+      notes: `Active merchant: ${listing.title} (${listing.categoryName || 'General'}) in ${listing.villageName || listing.location || 'Town'}.`,
+      messageCount: 0,
+      lastMessage: 'Listing synced to CRM WhatsApp Flow.',
+      lastContactAt: new Date().toISOString(),
+      createdAt: listing.createdAt || new Date().toISOString(),
+    }
+    store.contacts.push(syncedContact)
+  }
+
+  // 2. Upsert Listing into Store
+  const updatedListing: Listing = {
+    ...(existingListing || {}),
+    ...listing,
+    territoryId: targetTerritoryId,
+    syncedToCrm: true,
+    crmLeadId: syncedContact.id,
+    updatedAt: new Date().toISOString(),
+  }
+
+  if (existingListingIdx >= 0) {
+    store.listings[existingListingIdx] = updatedListing
+  } else {
+    store.listings.push(updatedListing)
+  }
+
+  // 3. Atomically Persist Store
+  saveStore(store)
+
+  return { listing: updatedListing, contact: syncedContact }
+}
+
+/**
+ * Determines whether a listing is approved/published and eligible for public display.
+ * Accepts canonical 'published', 'approved', and uppercase legacy 'APPROVED'.
+ * Rejects 'pending_approval', 'PENDING', 'draft', 'rejected', 'REJECTED', 'changes_requested', 'paused', 'archived'.
+ */
+export function isListingPublished(listing: Listing | { status?: string } | undefined | null): boolean {
+  if (!listing || !listing.status) return false
+  const s = String(listing.status).toLowerCase().trim()
+  return s === 'published' || s === 'approved'
 }
 
 // --------------------------------------------------------------------------
@@ -230,37 +592,171 @@ export function getFranchiseByTerritory(territoryId: string): Franchise | undefi
   return (store.franchises || []).find((f) => f.territoryId === territoryId)
 }
 
+const SENSITIVE_KEY_REGEX = /(password|token|secret|cookie|auth|session|credential|key|authorization)/i
+
+function sanitizeAuditMetadata(metadata?: Record<string, any>): Record<string, any> | undefined {
+  if (!metadata || typeof metadata !== 'object') return undefined
+  const cleaned: Record<string, any> = {}
+  for (const [key, val] of Object.entries(metadata)) {
+    if (SENSITIVE_KEY_REGEX.test(key)) {
+      cleaned[key] = '[REDACTED_SECRET]'
+      continue
+    }
+    if (typeof val === 'string' && val.length > 2000) {
+      cleaned[key] = val.slice(0, 2000) + '...[TRUNCATED]'
+    } else if (val && typeof val === 'object' && !Array.isArray(val)) {
+      cleaned[key] = sanitizeAuditMetadata(val)
+    } else {
+      cleaned[key] = val
+    }
+  }
+  return cleaned
+}
+
 export function logAuditEvent(params: {
   actorId: string
   actorName: string
-  actorRole: 'SUPER_ADMIN' | 'PLATFORM_OPERATOR' | 'FRANCHISE_ADMIN' | 'SYSTEM'
+  actorRole: 'SUPER_ADMIN' | 'PLATFORM_OPERATOR' | 'FRANCHISE_ADMIN' | 'FRANCHISE_STAFF' | 'MERCHANT' | 'USER' | 'SYSTEM'
   action: string
   details: string
+  entityType?: 'listing' | 'contact' | 'staff' | 'flow' | 'deal' | 'broadcast' | 'setting' | 'monetization' | 'approval' | 'government_contact' | 'security' | string
+  entityId?: string
+  outcome?: 'SUCCESS' | 'FAILURE'
+  requestId?: string
   territoryId?: string
   metadata?: Record<string, any>
   ipAddress?: string
+  inStore?: AdminDataStore
+  customPath?: string
 }): AuditLog {
-  const store = loadStore()
+  const store = params.inStore || loadStore(params.customPath)
   const log: AuditLog = {
     id: `audit_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-    actorId: params.actorId,
-    actorName: params.actorName,
-    actorRole: params.actorRole,
+    actorId: params.actorId || 'SYSTEM',
+    actorName: params.actorName || 'System Service',
+    actorRole: params.actorRole || 'SYSTEM',
     territoryId: params.territoryId,
     action: params.action,
     details: params.details,
-    metadata: params.metadata,
+    entityType: params.entityType,
+    entityId: params.entityId,
+    outcome: params.outcome || 'SUCCESS',
+    requestId: params.requestId,
+    metadata: sanitizeAuditMetadata(params.metadata),
     ipAddress: params.ipAddress,
     createdAt: new Date().toISOString(),
+    timestamp: new Date().toISOString(),
   }
   if (!store.auditLogs) store.auditLogs = []
   store.auditLogs.unshift(log)
-  // Retain last 1,000 logs in memory store
-  if (store.auditLogs.length > 1000) {
-    store.auditLogs = store.auditLogs.slice(0, 1000)
+  // Retain last 2,000 logs in memory store
+  if (store.auditLogs.length > 2000) {
+    store.auditLogs = store.auditLogs.slice(0, 2000)
   }
-  saveStore(store)
+  if (!params.inStore) {
+    saveStore(store, params.customPath)
+  }
   return log
+}
+
+export interface GetAuditLogsOptions {
+  page?: number
+  pageSize?: number
+  territoryId?: string
+  isSuperAdmin?: boolean
+  action?: string
+  actorId?: string
+  entityType?: string
+  outcome?: 'SUCCESS' | 'FAILURE' | 'ALL'
+  startDate?: string
+  endDate?: string
+  search?: string
+}
+
+export interface PaginatedAuditLogs {
+  logs: AuditLog[]
+  total: number
+  page: number
+  pageSize: number
+  totalPages: number
+}
+
+export function getAuditLogs(options: GetAuditLogsOptions = {}): PaginatedAuditLogs {
+  const store = loadStore()
+  let list = store.auditLogs || []
+
+  // 1. Territory filtering:
+  // If not super admin, strictly filter to user's assigned territoryId
+  if (!options.isSuperAdmin && options.territoryId) {
+    list = list.filter((l) => (l.territoryId || FLAGSHIP_TERRITORY_ID) === options.territoryId)
+  } else if (options.territoryId && options.territoryId !== 'ALL') {
+    list = list.filter((l) => (l.territoryId || FLAGSHIP_TERRITORY_ID) === options.territoryId)
+  }
+
+  // 2. Action filter
+  if (options.action && options.action !== 'ALL') {
+    list = list.filter((l) => l.action.toLowerCase() === options.action!.toLowerCase())
+  }
+
+  // 3. EntityType filter
+  if (options.entityType && options.entityType !== 'ALL') {
+    list = list.filter((l) => (l.entityType || '').toLowerCase() === options.entityType!.toLowerCase())
+  }
+
+  // 4. Outcome filter (Backwards-compatible: default legacy records to SUCCESS)
+  if (options.outcome && options.outcome !== 'ALL') {
+    list = list.filter((l) => {
+      const outcome = l.outcome || 'SUCCESS'
+      return outcome === options.outcome
+    })
+  }
+
+  // 5. Actor filter
+  if (options.actorId && options.actorId !== 'ALL') {
+    list = list.filter((l) => l.actorId === options.actorId || l.actorName === options.actorId)
+  }
+
+  // 6. Date Range filter
+  if (options.startDate) {
+    const startMs = new Date(options.startDate).getTime()
+    if (!isNaN(startMs)) {
+      list = list.filter((l) => new Date(l.createdAt || l.timestamp || 0).getTime() >= startMs)
+    }
+  }
+  if (options.endDate) {
+    const endMs = new Date(options.endDate).getTime()
+    if (!isNaN(endMs)) {
+      list = list.filter((l) => new Date(l.createdAt || l.timestamp || 0).getTime() <= endMs)
+    }
+  }
+
+  // 7. Search keyword
+  if (options.search) {
+    const q = options.search.toLowerCase().trim()
+    list = list.filter(
+      (l) =>
+        (l.action && l.action.toLowerCase().includes(q)) ||
+        (l.details && l.details.toLowerCase().includes(q)) ||
+        (l.actorName && l.actorName.toLowerCase().includes(q)) ||
+        (l.entityId && l.entityId.toLowerCase().includes(q)) ||
+        (l.id && l.id.toLowerCase().includes(q))
+    )
+  }
+
+  const total = list.length
+  const page = Math.max(1, options.page || 1)
+  const pageSize = Math.min(100, Math.max(1, options.pageSize || 25))
+  const totalPages = Math.ceil(total / pageSize) || 1
+  const startIdx = (page - 1) * pageSize
+  const paginatedLogs = list.slice(startIdx, startIdx + pageSize)
+
+  return {
+    logs: paginatedLogs,
+    total,
+    page,
+    pageSize,
+    totalPages,
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -382,6 +878,71 @@ function getInitialSampleFranchises(): Franchise[] {
   ]
 }
 
+export function getInitialSampleDeals(): CRMDeal[] {
+  return [
+    {
+      id: 'deal_1',
+      title: 'Sri Sai Ram Automobiles',
+      description: 'Annual local search banner & WhatsApp lead generation pack',
+      value: 1500,
+      currency: 'INR',
+      stage: 'WON',
+      status: 'WON',
+      phone: '9848012345',
+      territoryId: FLAGSHIP_TERRITORY_ID,
+      tag: 'Automobile',
+      notes: 'Active paying advertiser since Jan 2026',
+      createdAt: '2026-01-15T10:00:00.000Z',
+      updatedAt: '2026-10-25T12:00:00.000Z',
+    },
+    {
+      id: 'deal_2',
+      title: 'Yadadri Mega Township Open Plots',
+      description: 'Real estate featured sponsored listings and direct WhatsApp inquiries',
+      value: 5000,
+      currency: 'INR',
+      stage: 'WON',
+      status: 'WON',
+      phone: '9848099887',
+      territoryId: FLAGSHIP_TERRITORY_ID,
+      tag: 'RealEstate',
+      notes: 'Monthly recurring real estate partner',
+      createdAt: '2026-02-10T11:00:00.000Z',
+      updatedAt: '2026-10-25T12:00:00.000Z',
+    },
+    {
+      id: 'deal_3',
+      title: 'Balaji Health Clinic',
+      description: 'Emergency healthcare directory listing verification & doctor schedule banner',
+      value: 1000,
+      currency: 'INR',
+      stage: 'QUALIFIED',
+      status: 'OPEN',
+      phone: '9440155443',
+      territoryId: FLAGSHIP_TERRITORY_ID,
+      tag: 'Health',
+      notes: 'Follow up after Sunday clinic hours',
+      createdAt: '2026-03-01T09:00:00.000Z',
+      updatedAt: '2026-10-25T12:00:00.000Z',
+    },
+    {
+      id: 'deal_4',
+      title: 'Choutuppal MeeSeva & Xerox',
+      description: 'Citizen services portal listing upgrade and student stationery discount campaign',
+      value: 500,
+      currency: 'INR',
+      stage: 'NEW_LEAD',
+      status: 'OPEN',
+      phone: '9988776655',
+      territoryId: FLAGSHIP_TERRITORY_ID,
+      tag: 'Internet',
+      notes: 'Sent introductory brochure via WhatsApp',
+      createdAt: '2026-04-05T14:00:00.000Z',
+      updatedAt: '2026-10-25T12:00:00.000Z',
+    },
+  ]
+}
+
 function getFallbackStore(): AdminDataStore {
   return {
     territories: [FLAGSHIP_CHOUTUPPAL_TERRITORY, ...getInitialSampleTerritories()],
@@ -401,7 +962,9 @@ function getFallbackStore(): AdminDataStore {
     auditLogs: [],
     listings: [],
     contacts: [],
+    deals: getInitialSampleDeals(),
     flows: [],
+    automations: [],
     approvals: [],
     stories: [],
     offers: [],
@@ -412,6 +975,13 @@ function getFallbackStore(): AdminDataStore {
     users: [],
     messages: [],
     magicTokens: [],
+    plans: getDefaultListingPlans(),
+    subscriptions: [],
+    featuredPromotions: [],
+    orders: [],
+    payments: [],
+    webhookEvents: [],
+    governmentContacts: getDefaultGovernmentContacts(),
     settings: {
       whatsappToken: '',
       whatsappPhoneNumberId: '',

@@ -1,8 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Search, MapPin, Phone, MessageCircle, CheckCircle2, Star, ArrowLeft, Filter } from 'lucide-react'
-import { loadStore } from '@/lib/store'
+import { loadStore, FLAGSHIP_TERRITORY_ID, isListingPublished } from '@/lib/store'
 import { STANDARD_CATEGORIES, STANDARD_VILLAGES, getListingWhatsAppUrl } from '@/lib/constants'
+import { resolveListingEntitlements, isListingFeatured, isListingPremium } from '@/lib/entitlement-resolver'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,6 +12,8 @@ interface ListingsPageProps {
     q?: string
     cat?: string
     village?: string
+    territoryId?: string
+    territory?: string
   }>
 }
 
@@ -19,11 +22,14 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
   const q = (params.q || '').toLowerCase().trim()
   const cat = params.cat || ''
   const village = params.village || ''
+  const territoryId = params.territoryId || params.territory || ''
 
   const store = loadStore()
-  let listings = (store.listings || []).filter(
-    (l) => l.status === 'published' || l.status === 'approved' || l.status === 'APPROVED'
-  )
+  let listings = (store.listings || []).filter((l) => isListingPublished(l))
+
+  if (territoryId && territoryId !== 'all') {
+    listings = listings.filter((l) => (l.territoryId || FLAGSHIP_TERRITORY_ID) === territoryId)
+  }
 
   if (q) {
     listings = listings.filter(
@@ -43,10 +49,16 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
     listings = listings.filter((l) => l.villageId === village)
   }
 
-  // Sort featured & premium first
+  // Authoritative sort: featured first, then premium, then views
   listings.sort((a, b) => {
-    if (a.isFeatured !== b.isFeatured) return (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0)
-    if (a.isPremium !== b.isPremium) return (b.isPremium ? 1 : 0) - (a.isPremium ? 1 : 0)
+    const featA = isListingFeatured(a, store) ? 1 : 0
+    const featB = isListingFeatured(b, store) ? 1 : 0
+    if (featB !== featA) return featB - featA
+
+    const premA = isListingPremium(a, store) ? 1 : 0
+    const premB = isListingPremium(b, store) ? 1 : 0
+    if (premB !== premA) return premB - premA
+
     return b.views - a.views
   })
 
@@ -119,33 +131,43 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {listings.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-2xl overflow-hidden shadow-xs border border-slate-200 hover:shadow-md transition flex flex-col justify-between"
-              >
-                <div>
-                  {/* PHOTO ROW */}
-                  <div className="relative h-48 w-full bg-slate-100">
-                    <Image
-                      src={item.coverImage}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute top-2 left-2 flex items-center gap-1 bg-white/95 px-2 py-0.5 rounded-md text-[11px] font-bold text-slate-900 shadow-xs">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-blue-600" />
-                      <span>Verified</span>
-                    </div>
-                    {item.isPremium ? (
-                      <div className="absolute top-2 right-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase shadow-xs">
-                        Premium
+            {listings.map((item) => {
+              const ent = resolveListingEntitlements(item.id, store)
+              return (
+                <div
+                  key={item.id}
+                  className="bg-white rounded-2xl overflow-hidden shadow-xs border border-slate-200 hover:shadow-md transition flex flex-col justify-between"
+                >
+                  <div>
+                    {/* PHOTO ROW */}
+                    <div className="relative h-48 w-full bg-slate-100">
+                      <Image
+                        src={item.coverImage}
+                        alt={item.title}
+                        fill
+                        className="object-cover"
+                      />
+                      <div className="absolute top-2 left-2 flex items-center gap-1 bg-white/95 px-2 py-0.5 rounded-md text-[11px] font-bold text-slate-900 shadow-xs">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-blue-600" />
+                        <span>Verified</span>
                       </div>
-                    ) : null}
-                    <div className="absolute bottom-2 left-2 bg-slate-950/80 backdrop-blur-xs text-white text-[10px] font-medium px-2 py-0.5 rounded">
-                      {item.categoryName || 'Business'}
+                      <div className="absolute top-2 right-2 flex items-center gap-1">
+                        {ent.isFeatured && (
+                          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase shadow-xs flex items-center gap-1">
+                            <Star className="h-3 w-3 fill-white" />
+                            Featured
+                          </div>
+                        )}
+                        {ent.isPremium && (
+                          <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase shadow-xs">
+                            Premium
+                          </div>
+                        )}
+                      </div>
+                      <div className="absolute bottom-2 left-2 bg-slate-950/80 backdrop-blur-xs text-white text-[10px] font-medium px-2 py-0.5 rounded">
+                        {item.categoryName || 'Business'}
+                      </div>
                     </div>
-                  </div>
 
                   {/* INFO */}
                   <div className="p-4">
@@ -183,7 +205,8 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                   </a>
                 </div>
               </div>
-            ))}
+            )
+          })}
           </div>
         )}
       </div>

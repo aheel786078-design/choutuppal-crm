@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { loadStore, saveStore, syncListingToCrm, generateMagicToken, FLAGSHIP_TERRITORY_ID, logAuditEvent } from '@/lib/store'
-import { ApprovalItem, Listing, Territory, Franchise, TerritoryDomain } from '@/lib/types'
+import type { ApprovalItem, Listing, Territory, Franchise, TerritoryDomain } from '@/lib/types'
 import { requireAuth, requireTerritoryAccess, requireSuperAdmin } from '@/lib/auth-server'
 
 export const dynamic = 'force-dynamic'
@@ -111,7 +111,11 @@ export async function POST(req: Request) {
           updatedAt: new Date().toISOString(),
         }
 
-        syncListingToCrm(newListing)
+        syncListingToCrm(newListing, {
+          inStore: store,
+          callerTerritoryId: itemTerritoryId,
+          callerRole: auth.user.role,
+        })
 
         // Log WhatsApp confirmation
         store.messages.unshift({
@@ -120,6 +124,7 @@ export async function POST(req: Request) {
           contactName: item.submitterName,
           direction: 'outbound',
           messageText: `🎉 అభినందనలు ${item.submitterName} గారు! మీ '${d.title}' లిస్టింగ్ అడ్మిన్ ఆమోదం పొంది వెబ్‌సైట్ మరియు వాట్సాప్ బాట్‌లో లైవ్ చేయబడింది!\n\n🌐 లైవ్ ప్రొఫైల్: https://choutuppal.in/business/${cleanSlug}`,
+          territoryId: itemTerritoryId,
           status: 'sent',
           createdAt: new Date().toISOString(),
         })
@@ -133,6 +138,51 @@ export async function POST(req: Request) {
           details: `Approved listing "${d.title}" in territory ${itemTerritoryId}`,
           metadata: { listingId: newListing.id, title: d.title },
         })
+      } else if (item.type === 'LISTING_EDIT') {
+        const listingId = item.data?.listingId || item.data?.id
+        const existingListing = (store.listings || []).find((l) => l.id === listingId)
+        if (existingListing) {
+          const updates = { ...item.data }
+          delete updates.id
+          delete updates.listingId
+          if (auth.user.role !== 'SUPER_ADMIN') {
+            delete updates.territoryId
+          }
+
+          const updatedListing: Listing = {
+            ...existingListing,
+            ...updates,
+            status: updates.status || 'published',
+            updatedAt: new Date().toISOString(),
+          }
+
+          syncListingToCrm(updatedListing, {
+            inStore: store,
+            callerTerritoryId: itemTerritoryId,
+            callerRole: auth.user.role,
+          })
+
+          store.messages.unshift({
+            id: `msg_${Date.now()}`,
+            phone: item.submitterPhone,
+            contactName: item.submitterName,
+            direction: 'outbound',
+            messageText: `🎉 అభినందనలు ${item.submitterName} గారు! మీ '${existingListing.title}' లిస్టింగ్ మార్పులు అడ్మిన్ ఆమోదం పొందాయి మరియు లైవ్ చేయబడ్డాయి!\n\n🌐 లైవ్ ప్రొఫైల్: https://choutuppal.in/business/${updatedListing.slug || updatedListing.id}`,
+            territoryId: itemTerritoryId,
+            status: 'sent',
+            createdAt: new Date().toISOString(),
+          })
+
+          logAuditEvent({
+            actorId: auth.user.userId || 'admin',
+            actorName: auth.user.phone || 'Admin',
+            actorRole: auth.user.role,
+            territoryId: itemTerritoryId,
+            action: 'LISTING_EDIT_APPROVED',
+            details: `Approved listing edit for "${existingListing.title}" in territory ${itemTerritoryId}`,
+            metadata: { listingId: existingListing.id, title: existingListing.title },
+          })
+        }
       } else if (item.type === 'STORY') {
         store.stories.unshift({
           id: `st_${Date.now()}`,
@@ -153,6 +203,7 @@ export async function POST(req: Request) {
           contactName: item.submitterName,
           direction: 'outbound',
           messageText: `✅ మీ స్టోరీ ప్రమోషన్ ఆమోదించబడింది మరియు 24 గంటల పాటు యాప్‌లో లైవ్ చేయబడింది!`,
+          territoryId: itemTerritoryId,
           status: 'sent',
           createdAt: new Date().toISOString(),
         })
@@ -231,6 +282,7 @@ export async function POST(req: Request) {
           contactName: item.submitterName,
           direction: 'outbound',
           messageText: `🚀 అభినందనలు! మీ '${proposedTown}' ఫ్రాంచైజీ దరఖాస్తు ఆమోదించబడింది మరియు యాక్టివేట్ చేయబడింది.\n\nమీ ఫ్రాంచైజీ అడ్మిన్ డ్యాష్‌బోర్డ్ తెరవడానికి క్రింది సురక్షిత లాగిన్ లింక్ ఉపయోగించండి (15 నిమిషాల వ్యవధి):\n🔑 https://choutuppal.in/login?magic=${magicToken}&territory=${slug}`,
+          territoryId: newTerritoryId,
           status: 'sent',
           createdAt: new Date().toISOString(),
         })
@@ -244,6 +296,37 @@ export async function POST(req: Request) {
           details: `Approved franchise application for ${proposedTown} from ${item.submitterName}`,
           metadata: { applicantPhone: item.submitterPhone, territoryId: newTerritoryId },
         })
+      } else if (item.type === 'CITIZEN_REPORT' || (item.type as any) === 'SHORT_SUBMISSION') {
+        const shortId = item.data?.shortId
+        if (shortId && store.shorts) {
+          const targetShort = store.shorts.find((s) => s.id === shortId)
+          if (targetShort) {
+            targetShort.isActive = true
+          }
+        }
+
+        if (item.submitterPhone && item.submitterPhone !== '9999999999') {
+          store.messages.unshift({
+            id: `msg_${Date.now()}`,
+            phone: item.submitterPhone,
+            contactName: item.submitterName,
+            direction: 'outbound',
+            messageText: `🎉 అభినందనలు! మీ '${item.title}' రీల్ ఆమోదించబడింది మరియు వెబ్‌సైట్‌లో లైవ్ చేయబడింది!\n\n🌐 చూడండి: https://choutuppal.in/shorts`,
+            territoryId: itemTerritoryId,
+            status: 'sent',
+            createdAt: new Date().toISOString(),
+          })
+        }
+
+        logAuditEvent({
+          actorId: auth.user.userId || 'admin',
+          actorName: auth.user.phone || 'Admin',
+          actorRole: auth.user.role,
+          territoryId: itemTerritoryId,
+          action: 'SHORT_APPROVED',
+          details: `Approved reel "${item.title}" in territory ${itemTerritoryId}`,
+          metadata: { shortId, title: item.title },
+        })
       }
     } else if (action === 'request_changes') {
       item.status = 'changes_requested'
@@ -253,17 +336,25 @@ export async function POST(req: Request) {
         contactName: item.submitterName,
         direction: 'outbound',
         messageText: `⚠️ గమనిక: మీ '${item.title}' సబ్మిషన్‌లో కొన్ని మార్పులు అవసరమయ్యాయి.\nకారణం: ${adminNotes || 'దయచేసి సరైన ఫోటో మరియు స్పష్టమైన అడ్రస్ అందించండి'}\n\nదయచేసి వాట్సాప్‌లో వివరాలను మళ్లీ పంపండి.`,
+        territoryId: itemTerritoryId,
         status: 'sent',
         createdAt: new Date().toISOString(),
       })
     } else if (action === 'reject') {
       item.status = 'rejected'
+      if (item.data?.shortId && store.shorts) {
+        const targetShort = store.shorts.find((s) => s.id === item.data.shortId)
+        if (targetShort) {
+          targetShort.isActive = false
+        }
+      }
       store.messages.unshift({
         id: `msg_${Date.now()}`,
         phone: item.submitterPhone,
         contactName: item.submitterName,
         direction: 'outbound',
         messageText: `❌ మీ '${item.title}' సబ్మిషన్ నిబంధనల ప్రకారం ఆమోదించబడలేదు.\nకారణం: ${adminNotes || 'సరైన ధృవీకరణ వివరాలు లేవు'}. మరిన్ని వివరాల కోసం మా సపోర్ట్‌ను సంప్రదించండి.`,
+        territoryId: itemTerritoryId,
         status: 'sent',
         createdAt: new Date().toISOString(),
       })

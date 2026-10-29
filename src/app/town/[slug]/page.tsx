@@ -20,7 +20,7 @@ import {
   Globe,
   AlertTriangle,
 } from 'lucide-react'
-import { loadStore, FLAGSHIP_TERRITORY_ID } from '@/lib/store'
+import { loadStore, FLAGSHIP_TERRITORY_ID, isListingPublished } from '@/lib/store'
 import { STANDARD_CATEGORIES } from '@/lib/constants'
 
 interface TownPageProps {
@@ -97,9 +97,9 @@ export default async function TownTerritoryPage({ params }: TownPageProps) {
     )
   }
 
-  // Filter listings for this territory
+  // Filter listings for this territory (only published/approved)
   const territoryListings = (store.listings || []).filter(
-    (l) => (l.territoryId || FLAGSHIP_TERRITORY_ID) === territory.id && l.status === 'APPROVED'
+    (l) => (l.territoryId || FLAGSHIP_TERRITORY_ID) === territory.id && isListingPublished(l)
   )
 
   const territoryStories = (store.stories || []).filter(
@@ -209,7 +209,7 @@ export default async function TownTerritoryPage({ params }: TownPageProps) {
                 <Store className="w-4 h-4" />
               </div>
               <span className="text-xs font-semibold text-slate-200 group-hover:text-white">{cat.name}</span>
-              <span className="text-[10px] text-slate-400">{cat.nameTe}</span>
+              <span className="text-[10px] text-slate-400">{cat.telugu}</span>
             </a>
           ))}
         </div>
@@ -252,26 +252,28 @@ export default async function TownTerritoryPage({ params }: TownPageProps) {
                 className="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl overflow-hidden shadow flex flex-col justify-between group transition-all"
               >
                 <div>
-                  <div className="relative h-40 w-full bg-slate-950 overflow-hidden">
-                    <img
-                      src={listing.coverImage}
-                      alt={listing.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/70 backdrop-blur text-[10px] font-bold text-white">
-                      {listing.categoryName}
+                  <Link href={`/business/${listing.slug || listing.id}`} className="block">
+                    <div className="relative h-40 w-full bg-slate-950 overflow-hidden">
+                      <img
+                        src={listing.coverImage}
+                        alt={listing.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/70 backdrop-blur text-[10px] font-bold text-white">
+                        {listing.categoryName}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="p-3.5 space-y-1.5">
-                    <h3 className="font-bold text-xs text-white line-clamp-1 group-hover:text-blue-400 transition-colors">
-                      {listing.title}
-                    </h3>
-                    <p className="text-[11px] text-slate-400 flex items-center gap-1 truncate">
-                      <MapPin className="w-3 h-3 text-slate-500 shrink-0" />
-                      <span>{listing.address}</span>
-                    </p>
-                  </div>
+                    <div className="p-3.5 space-y-1.5">
+                      <h3 className="font-bold text-xs text-white line-clamp-1 group-hover:text-blue-400 transition-colors">
+                        {listing.title}
+                      </h3>
+                      <p className="text-[11px] text-slate-400 flex items-center gap-1 truncate">
+                        <MapPin className="w-3 h-3 text-slate-500 shrink-0" />
+                        <span>{listing.address}</span>
+                      </p>
+                    </div>
+                  </Link>
                 </div>
 
                 <div className="p-3 pt-0 flex items-center gap-2">

@@ -9,7 +9,7 @@ export function BottomNav() {
   const pathname = usePathname()
 
   // Hide on admin, business detail, and franchise routes or subdomain
-  if (pathname.startsWith('/admin') || pathname.startsWith('/crm') || pathname.startsWith('/business') || pathname.startsWith('/franchise') || isFranchiseSubdomain) return null
+  if (pathname.startsWith('/admin') || pathname.startsWith('/crm') || pathname.startsWith('/business') || pathname.startsWith('/franchise')) return null
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'

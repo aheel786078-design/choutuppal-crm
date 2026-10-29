@@ -1,6 +1,7 @@
-import { loadStore } from './store'
+import { loadStore, FLAGSHIP_TERRITORY_ID, isListingPublished } from './store'
 import { STANDARD_CATEGORIES, STANDARD_VILLAGES, PRESET_PHOTO_COVERS } from './constants'
-import { Listing, UserStory, BannerItem, NewsItem, ShortItem, TickerItem } from './types'
+import type { Listing, UserStory, BannerItem, NewsItem, ShortItem, TickerItem } from './types'
+import { isListingFeatured, isListingPremium } from './entitlement-resolver'
 
 export async function getActiveStories(): Promise<UserStory[]> {
   const store = loadStore()
@@ -26,14 +27,22 @@ export async function getVillages() {
 export async function getFeaturedListings(): Promise<Listing[]> {
   const store = loadStore()
   const valid = (store.listings || []).filter(
-    (l) => l.status === 'published' || l.status === 'approved' || l.status === 'APPROVED'
+    (l) =>
+      isListingPublished(l) &&
+      (l.territoryId || FLAGSHIP_TERRITORY_ID) === FLAGSHIP_TERRITORY_ID
   )
 
-  // Sort featured & premium first
+  // Sort featured & premium first using authoritative live entitlement resolver
   return valid.sort((a, b) => {
-    if (a.isFeatured !== b.isFeatured) return (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0)
-    if (a.isPremium !== b.isPremium) return (b.isPremium ? 1 : 0) - (a.isPremium ? 1 : 0)
-    return b.views - a.views
+    const featA = isListingFeatured(a, store) ? 1 : 0
+    const featB = isListingFeatured(b, store) ? 1 : 0
+    if (featB !== featA) return featB - featA
+
+    const premA = isListingPremium(a, store) ? 1 : 0
+    const premB = isListingPremium(b, store) ? 1 : 0
+    if (premB !== premA) return premB - premA
+
+    return (b.views || 0) - (a.views || 0)
   })
 }
 
@@ -41,9 +50,11 @@ export async function getRealEstateListings(): Promise<Listing[]> {
   const store = loadStore()
   return (store.listings || []).filter(
     (l) =>
-      l.type === 'REAL_ESTATE' ||
-      l.categoryId === 'cat-realestate' ||
-      l.categoryName?.toLowerCase().includes('real estate')
+      isListingPublished(l) &&
+      (l.territoryId || FLAGSHIP_TERRITORY_ID) === FLAGSHIP_TERRITORY_ID &&
+      (l.type === 'REAL_ESTATE' ||
+        l.categoryId === 'cat-realestate' ||
+        l.categoryName?.toLowerCase().includes('real estate'))
   )
 }
 
@@ -51,10 +62,12 @@ export async function getServiceListings(): Promise<Listing[]> {
   const store = loadStore()
   return (store.listings || []).filter(
     (l) =>
-      l.type === 'SERVICE' ||
-      l.categoryId === 'cat-services' ||
-      l.categoryId === 'cat-transport' ||
-      l.categoryId === 'cat-electrical'
+      isListingPublished(l) &&
+      (l.territoryId || FLAGSHIP_TERRITORY_ID) === FLAGSHIP_TERRITORY_ID &&
+      (l.type === 'SERVICE' ||
+        l.categoryId === 'cat-services' ||
+        l.categoryId === 'cat-transport' ||
+        l.categoryId === 'cat-electrical')
   )
 }
 

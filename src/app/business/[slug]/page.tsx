@@ -13,8 +13,9 @@ import {
   ShieldCheck,
   Building,
 } from 'lucide-react'
-import { loadStore } from '@/lib/store'
+import { loadStore, isListingPublished } from '@/lib/store'
 import { getListingWhatsAppUrl, WHATSAPP_BOT_NUMBER } from '@/lib/constants'
+import { resolveListingEntitlements } from '@/lib/entitlement-resolver'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,13 +30,14 @@ export default async function BusinessDetailPage({ params }: BusinessPageProps) 
   const store = loadStore()
 
   const listing = (store.listings || []).find(
-    (l) => l.slug === slug || l.id === slug || l.id === `lst_${slug}`
+    (l) => (l.slug === slug || l.id === slug || l.id === `lst_${slug}`) && isListingPublished(l)
   )
 
   if (!listing) {
     notFound()
   }
 
+  const ent = resolveListingEntitlements(listing.id, store)
   const whatsappUrl = getListingWhatsAppUrl(listing.title, listing.id)
 
   return (
@@ -71,7 +73,13 @@ export default async function BusinessDetailPage({ params }: BusinessPageProps) 
                 <CheckCircle2 className="h-4 w-4 text-blue-600" />
                 Verified Business
               </span>
-              {listing.isPremium ? (
+              {ent.isFeatured ? (
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-xs px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1">
+                  <Star className="h-3.5 w-3.5 fill-white" />
+                  Featured
+                </span>
+              ) : null}
+              {ent.isPremium ? (
                 <span className="bg-gradient-to-r from-amber-500 to-amber-600 text-white font-black text-xs px-2.5 py-1 rounded-lg shadow-sm">
                   Premium
                 </span>

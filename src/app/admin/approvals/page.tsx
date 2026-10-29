@@ -38,11 +38,16 @@ export default function ApprovalQueuePage() {
   const [actionNotes, setActionNotes] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [toastMsg, setToastMsg] = useState<string | null>(null)
+  const [selectedTerritoryId, setSelectedTerritoryId] = useState<string>('all')
 
-  const fetchApprovals = async () => {
+  const fetchApprovals = async (territoryId = selectedTerritoryId) => {
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/approvals')
+      const url =
+        territoryId && territoryId !== 'all'
+          ? `/api/admin/approvals?territoryId=${encodeURIComponent(territoryId)}`
+          : '/api/admin/approvals'
+      const res = await fetch(url)
       const data = await res.json()
       if (data.success) {
         setApprovals(data.approvals || [])
@@ -124,7 +129,12 @@ export default function ApprovalQueuePage() {
       <AdminHeader
         title="Admin Moderation & Approval Queue"
         subtitle="Review, approve, or request changes on user WhatsApp submissions before publishing"
-        onRefresh={fetchApprovals}
+        selectedTerritoryId={selectedTerritoryId}
+        onTerritoryChange={(tid) => {
+          setSelectedTerritoryId(tid)
+          fetchApprovals(tid)
+        }}
+        onRefresh={() => fetchApprovals(selectedTerritoryId)}
       />
 
       <div className="p-6 space-y-6 max-w-7xl mx-auto w-full">
@@ -229,6 +239,7 @@ export default function ApprovalQueuePage() {
               <option value="STORY">Stories</option>
               <option value="OFFER">Offers</option>
               <option value="FRANCHISE_APP">Franchise Applications</option>
+              <option value="CITIZEN_REPORT">Reels &amp; Community Reports</option>
             </select>
           </div>
         </div>
@@ -275,8 +286,8 @@ export default function ApprovalQueuePage() {
                         )}
                       </div>
 
-                      <p className="text-xs text-slate-300">
-                        {item.data?.description || item.data?.caption || item.data?.proposedArea}
+                      <p className="text-xs text-slate-300 break-all">
+                        {item.data?.description || item.data?.caption || item.data?.proposedArea || item.data?.url}
                       </p>
 
                       <div className="flex items-center gap-4 text-[11px] text-slate-400 pt-1">

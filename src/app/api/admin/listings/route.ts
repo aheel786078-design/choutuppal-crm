@@ -1,49 +1,37 @@
 import { NextResponse } from 'next/server'
-import { loadStore, saveStore, syncListingToCrm, FLAGSHIP_TERRITORY_ID } from '@/lib/store'
-import { Listing } from '@/lib/types'
+import { loadStore, saveStore, syncListingToCrm, FLAGSHIP_TERRITORY_ID, isListingPublished, logAuditEvent } from '@/lib/store'
+import type { Listing } from '@/lib/types'
 import { STANDARD_CATEGORIES, STANDARD_VILLAGES, PRESET_PHOTO_COVERS } from '@/lib/constants'
 import { requireAuth, requireTerritoryAccess, getAuthenticatedUser } from '@/lib/auth-server'
+import { getListingsDAO, upsertListingDAO, deleteListingDAO, upsertContactDAO } from '@/lib/supabase-dao'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
   try {
-    const store = loadStore()
     const { searchParams } = new URL(req.url)
     const territoryId = searchParams.get('territoryId')
 
     const user = await getAuthenticatedUser(req)
-    let listings = store.listings || []
 
-    // If unauthenticated, only return published/approved listings (prevent draft/rejected leakage)
-    if (!user) {
-      listings = listings.filter(
-        (l) => l.status === 'APPROVED' || l.status === 'published' || l.status === 'approved'
-      )
-      if (territoryId && territoryId !== 'all') {
-        listings = listings.filter((l) => (l.territoryId || FLAGSHIP_TERRITORY_ID) === territoryId)
-      }
-      return NextResponse.json({
-        success: true,
-        isPublic: true,
-        listings,
-        total: listings.length,
-        categories: STANDARD_CATEGORIES,
-        villages: STANDARD_VILLAGES,
-      })
-    }
+    const targetTerritory = !user
+      ? (territoryId && territoryId !== 'all' ? territoryId : FLAGSHIP_TERRITORY_ID)
+      : user.role === 'SUPER_ADMIN'
+        ? (territoryId || 'all')
+        : user.territoryId
 
-    // Authenticated caller: Enforce territory scoping for Franchise Admins
-    if (user.role !== 'SUPER_ADMIN') {
-      listings = listings.filter((l) => (l.territoryId || FLAGSHIP_TERRITORY_ID) === user.territoryId)
-    } else if (territoryId && territoryId !== 'all') {
-      listings = listings.filter((l) => (l.territoryId || FLAGSHIP_TERRITORY_ID) === territoryId)
-    }
+    const daoResult = await getListingsDAO({
+      territoryId: targetTerritory,
+      publishedOnly: !user,
+      pageSize: 1000,
+    })
 
     return NextResponse.json({
       success: true,
-      listings,
-      total: listings.length,
+      ...(user ? {} : { isPublic: true }),
+      listings: daoResult.data,
+      total: daoResult.count,
+      isRemote: daoResult.isRemote,
       categories: STANDARD_CATEGORIES,
       villages: STANDARD_VILLAGES,
     })
@@ -139,18 +127,65 @@ export async function POST(req: Request) {
       updatedAt: new Date().toISOString(),
     }
 
-    syncListingToCrm(newListing)
+    const synced = syncListingToCrm(newListing, {
+      inStore: store,
+      callerTerritoryId: territoryId,
+      callerRole: auth.user.role,
+    })
+
+    logAuditEvent({
+      actorId: auth.user.userId,
+      actorName: auth.user.phone,
+      actorRole: auth.user.role,
+      territoryId,
+      action: 'listing.created',
+      entityType: 'listing',
+      entityId: newListing.id,
+      outcome: 'SUCCESS',
+      details: `Created listing "${newListing.title}" (${newListing.id}) in territory ${territoryId}`,
+      metadata: { listingId: newListing.id, title: newListing.title, category: newListing.categoryName },
+    })
+
+    upsertListingDAO(synced.listing).catch((err) => console.warn('[Supabase Sync Warning]', err.message))
+    if (synced.contact) {
+      upsertContactDAO(synced.contact).catch((err) => console.warn('[Supabase Sync Warning]', err.message))
+    }
 
     return NextResponse.json({
       success: true,
       message: 'Listing created successfully and synced to Website & CRM WhatsApp Flow!',
-      listing: newListing,
+      listing: synced.listing,
     })
   } catch (err: any) {
     console.error('[API Listings POST] Exception:', err)
     return NextResponse.json({ success: false, error: err.message }, { status: 500 })
   }
 }
+
+const ALLOWED_LISTING_UPDATE_FIELDS = [
+  'title',
+  'description',
+  'phone',
+  'secondaryPhone',
+  'whatsapp',
+  'email',
+  'website',
+  'address',
+  'location',
+  'price',
+  'categoryId',
+  'categoryName',
+  'villageId',
+  'villageName',
+  'coverImage',
+  'logo',
+  'gallery',
+  'status',
+  'isFeatured',
+  'isPremium',
+  'type',
+  'slug',
+] as const
 
 export async function PUT(req: Request) {
   try {
@@ -178,23 +213,53 @@ export async function PUT(req: Request) {
     const access = await requireTerritoryAccess(req, existingTerritoryId)
     if (access.errorResponse) return access.errorResponse
 
-    // Prevent non-super-admins from changing the listing's territoryId
-    if (auth.user.role !== 'SUPER_ADMIN') {
-      delete updates.territoryId
+    // Mass-assignment protection: Only apply whitelisted mutable fields
+    const safeUpdates: Partial<Listing> = {}
+    for (const key of ALLOWED_LISTING_UPDATE_FIELDS) {
+      if (key in updates) {
+        ;(safeUpdates as any)[key] = updates[key]
+      }
+    }
+
+    // Only Super Admin can change territoryId
+    if (auth.user.role === 'SUPER_ADMIN' && updates.territoryId) {
+      safeUpdates.territoryId = updates.territoryId
     }
 
     const updated: Listing = {
       ...existing,
-      ...updates,
+      ...safeUpdates,
       updatedAt: new Date().toISOString(),
     }
 
-    syncListingToCrm(updated)
+    const synced = syncListingToCrm(updated, {
+      inStore: store,
+      callerTerritoryId: existingTerritoryId,
+      callerRole: auth.user.role,
+    })
+
+    logAuditEvent({
+      actorId: auth.user.userId,
+      actorName: auth.user.phone,
+      actorRole: auth.user.role,
+      territoryId: existingTerritoryId,
+      action: 'listing.updated',
+      entityType: 'listing',
+      entityId: id,
+      outcome: 'SUCCESS',
+      details: `Updated listing "${updated.title}" (${id})`,
+      metadata: { listingId: id, updatedFields: Object.keys(safeUpdates) },
+    })
+
+    upsertListingDAO(synced.listing).catch((err) => console.warn('[Supabase Sync Warning]', err.message))
+    if (synced.contact) {
+      upsertContactDAO(synced.contact).catch((err) => console.warn('[Supabase Sync Warning]', err.message))
+    }
 
     return NextResponse.json({
       success: true,
       message: 'Listing updated and CRM Flow refreshed!',
-      listing: updated,
+      listing: synced.listing,
     })
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 })
@@ -227,6 +292,21 @@ export async function DELETE(req: Request) {
 
     store.listings = store.listings.filter((l) => l.id !== id)
     saveStore(store)
+
+    logAuditEvent({
+      actorId: auth.user.userId,
+      actorName: auth.user.phone,
+      actorRole: auth.user.role,
+      territoryId: existingTerritoryId,
+      action: 'listing.deleted',
+      entityType: 'listing',
+      entityId: id,
+      outcome: 'SUCCESS',
+      details: `Deleted listing "${existing.title}" (${id}) from territory ${existingTerritoryId}`,
+      metadata: { listingId: id, title: existing.title },
+    })
+
+    deleteListingDAO(id, existingTerritoryId).catch((err) => console.warn('[Supabase Sync Warning]', err.message))
 
     return NextResponse.json({ success: true, message: 'Listing deleted successfully' })
   } catch (err: any) {

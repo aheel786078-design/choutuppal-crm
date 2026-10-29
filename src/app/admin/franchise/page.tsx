@@ -735,7 +735,7 @@ export default function FranchiseNetworkPage() {
                     </span>
                   </div>
                   <span className="text-[10px] text-slate-500 font-mono shrink-0">
-                    {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {new Date(log.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
               ))

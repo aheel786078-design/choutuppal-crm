@@ -11,6 +11,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+} from '@/components/ui/select'
 import type { Village, Category } from '@/lib/types'
 
 interface DiscoverSearchProps {

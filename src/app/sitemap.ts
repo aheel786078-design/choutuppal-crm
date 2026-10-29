@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { loadStore } from '@/lib/store'
+import { loadStore, isListingPublished } from '@/lib/store'
 
 const SITE_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://choutuppal.in').replace(/\/$/, '')
 
@@ -23,7 +23,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const store = loadStore()
-    const listings = (store.listings || []).slice(0, 500).map((l) => ({
+    const listings = (store.listings || [])
+      .filter((l) => isListingPublished(l))
+      .slice(0, 500)
+      .map((l) => ({
       url: `${SITE_URL}/business/${l.slug || l.id}`,
       lastModified: new Date(l.updatedAt || Date.now()),
       changeFrequency: 'weekly' as const,

@@ -86,6 +86,11 @@ export function SiteFooter({ tenant = DEFAULT_TENANT }: SiteFooterProps) {
                   Local Reels &amp; Shorts
                 </Link>
               </li>
+              <li>
+                <Link href="/government-contacts" className="text-slate-600 transition hover:text-blue-600 font-medium text-red-600">
+                  Govt &amp; Emergency (అత్యవసరం)
+                </Link>
+              </li>
             </ul>
           </div>
 

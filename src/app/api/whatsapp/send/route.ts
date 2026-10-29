@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { loadStore } from '@/lib/store'
 import { sendListingWhatsAppCard } from '@/lib/whatsapp-cloud-api'
-import { requireAuth } from '@/lib/auth-server'
+import { requireAuth, requireTerritoryAccess } from '@/lib/auth-server'
 
 export async function POST(req: Request) {
   try {
@@ -27,10 +27,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'No listing available to dispatch' }, { status: 404 })
     }
 
-    await sendListingWhatsAppCard(cleanPhone, listing)
+    const listingTerritoryId = listing.territoryId || 'territory_choutuppal'
+    const access = await requireTerritoryAccess(req, listingTerritoryId)
+    if (access.errorResponse) return access.errorResponse
+
+    const result = await sendListingWhatsAppCard(cleanPhone, listing)
+    if (!result.ok) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: result.error || 'Failed to dispatch WhatsApp message to provider',
+          providerDelivered: false,
+        },
+        { status: 502 }
+      )
+    }
+
     return NextResponse.json({
       success: true,
-      message: `Listing card with photo successfully sent to ${cleanPhone}`,
+      message: result.providerDelivered
+        ? `Listing card with photo successfully sent to ${cleanPhone}`
+        : `Listing card saved locally for ${cleanPhone} (WhatsApp provider not configured)`,
+      providerDelivered: result.providerDelivered,
       listingTitle: listing.title,
     })
   } catch (err: any) {

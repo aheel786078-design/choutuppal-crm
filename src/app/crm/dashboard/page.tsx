@@ -15,14 +15,41 @@ import {
   ExternalLink,
   ArrowRight,
   TrendingUp,
+  Briefcase,
+  Radio,
 } from 'lucide-react'
 import { FlowImportModal } from '@/components/crm/flow-import-modal'
 
 export default function CRMDashboardPage() {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
-  const [flowsCount, setFlowsCount] = useState(39)
-  const [autosCount, setAutosCount] = useState(179)
-  const [contactsCount, setContactsCount] = useState(211)
+  const [flowsCount, setFlowsCount] = useState<number>(1)
+  const [autosCount, setAutosCount] = useState<number>(179)
+  const [draftAutosCount, setDraftAutosCount] = useState<number>(179)
+  const [contactsCount, setContactsCount] = useState<number>(211)
+  const [dealsCount, setDealsCount] = useState<number>(4)
+  const [dealValue, setDealValue] = useState<number>(0)
+  const [wonDeals, setWonDeals] = useState<number>(0)
+  const [broadcastsCount, setBroadcastsCount] = useState<number>(0)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/admin/dashboard')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.stats) {
+          if (typeof data.stats.totalFlows === 'number') setFlowsCount(data.stats.totalFlows)
+          if (typeof data.stats.totalAutomations === 'number') setAutosCount(data.stats.totalAutomations)
+          if (typeof data.stats.draftAutomations === 'number') setDraftAutosCount(data.stats.draftAutomations)
+          if (typeof data.stats.totalContacts === 'number') setContactsCount(data.stats.totalContacts)
+          if (typeof data.stats.totalDeals === 'number') setDealsCount(data.stats.totalDeals)
+          if (typeof data.stats.totalDealValue === 'number') setDealValue(data.stats.totalDealValue)
+          if (typeof data.stats.wonDeals === 'number') setWonDeals(data.stats.wonDeals)
+          if (typeof data.stats.totalBroadcasts === 'number') setBroadcastsCount(data.stats.totalBroadcasts)
+        }
+      })
+      .catch((err) => console.warn('Failed to fetch CRM dashboard metrics:', err))
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto w-full">
@@ -63,7 +90,7 @@ export default function CRMDashboardPage() {
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl space-y-2">
           <div className="flex items-center justify-between text-slate-400 text-xs">
             <span>Interactive Flows</span>
@@ -82,8 +109,8 @@ export default function CRMDashboardPage() {
             <Zap className="w-4 h-4 text-amber-400" />
           </div>
           <p className="text-2xl font-bold text-white">{autosCount}</p>
-          <p className="text-[11px] text-slate-400">
-            Inbound triggers, Wards 1-20, &amp; services
+          <p className="text-[11px] text-amber-400/90 font-medium">
+            {draftAutosCount} Draft Rules • Staged Inactive
           </p>
         </div>
 
@@ -96,6 +123,19 @@ export default function CRMDashboardPage() {
           <p className="text-[11px] text-emerald-400 flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3" />
             <span>Synced from Directory Listings</span>
+          </p>
+        </div>
+
+        <div className="bg-slate-900/80 border border-slate-800 p-4 rounded-xl space-y-2">
+          <div className="flex items-center justify-between text-slate-400 text-xs">
+            <span>Deals &amp; Pipeline</span>
+            <Briefcase className="w-4 h-4 text-indigo-400" />
+          </div>
+          <p className="text-2xl font-bold text-white">
+            ₹{dealValue.toLocaleString('en-IN')}
+          </p>
+          <p className="text-[11px] text-indigo-400 font-medium">
+            {dealsCount} Deals ({wonDeals} Won)
           </p>
         </div>
 
@@ -217,6 +257,99 @@ export default function CRMDashboardPage() {
               <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full font-bold">
                 Photo Attached
               </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Deals & Pipeline Quick Access */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
+                <Briefcase className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-sm">Deals &amp; Pipelines</h3>
+                <p className="text-[11px] text-slate-400">
+                  Track buyer/seller leads, commercial packages, and revenue stages
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/crm/pipelines"
+              className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1"
+            >
+              <span>View Board</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="space-y-2 text-xs">
+            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div>
+                <span className="font-semibold text-white">Total Pipeline Value</span>
+                <p className="text-[11px] text-slate-400">Across 6 Kanban stages</p>
+              </div>
+              <span className="text-xs font-bold text-indigo-400">
+                ₹{dealValue.toLocaleString('en-IN')}
+              </span>
+            </div>
+            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div>
+                <span className="font-semibold text-white">Won Deals Conversion</span>
+                <p className="text-[11px] text-slate-400">Successfully closed commercial transactions</p>
+              </div>
+              <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full font-bold">
+                {wonDeals} Closed Won
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Broadcasts & Inbox Quick Access */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
+                <Radio className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-sm">Broadcasts &amp; Shared Inbox</h3>
+                <p className="text-[11px] text-slate-400">
+                  Targeted segment broadcasts and multi-agent WhatsApp desk
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/admin/broadcasts"
+              className="text-xs text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1"
+            >
+              <span>Broadcasts</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="space-y-2 text-xs">
+            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div>
+                <span className="font-semibold text-white">Staged Campaigns</span>
+                <p className="text-[11px] text-slate-400">Audience segmentation &amp; staging</p>
+              </div>
+              <span className="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded-full font-bold">
+                {broadcastsCount} Staged (Sandbox)
+              </span>
+            </div>
+            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div>
+                <span className="font-semibold text-white">Deep-Linked Shared Inbox</span>
+                <p className="text-[11px] text-slate-400">Phone-based chat assignment &amp; staff routing</p>
+              </div>
+              <Link
+                href="/admin/inbox"
+                className="text-[10px] bg-blue-500/10 text-blue-400 hover:text-blue-300 px-2 py-0.5 rounded-full font-bold transition-colors"
+              >
+                Open Inbox →
+              </Link>
             </div>
           </div>
         </div>
