@@ -13,6 +13,7 @@ interface ListingsPageProps {
   searchParams: Promise<{
     q?: string
     cat?: string
+    category?: string
     village?: string
     territoryId?: string
     territory?: string
@@ -22,8 +23,9 @@ interface ListingsPageProps {
 export default async function ListingsPage({ searchParams }: ListingsPageProps) {
   const params = await searchParams
   const q = (params.q || '').toLowerCase().trim()
-  const cat = params.cat || ''
-  const village = params.village || ''
+  const rawCat = (params.cat || params.category || '').toLowerCase().trim()
+  const cleanCat = rawCat.replace(/^cat-/, '')
+  const village = (params.village || '').toLowerCase().trim()
   const territoryId = params.territoryId || params.territory || ''
 
   const store = loadStore()
@@ -45,12 +47,25 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
     })
   }
 
-  if (cat && cat !== 'all') {
-    listings = listings.filter((l) => l.categoryId === cat)
+  if (cleanCat && cleanCat !== 'all') {
+    listings = listings.filter((l) => {
+      const lid = (l.categoryId || '').toLowerCase().replace(/^cat-/, '')
+      const lname = (l.categoryName || '').toLowerCase()
+      return (
+        lid === cleanCat ||
+        lid.includes(cleanCat) ||
+        cleanCat.includes(lid) ||
+        lname.includes(cleanCat)
+      )
+    })
   }
 
   if (village && village !== 'all') {
-    listings = listings.filter((l) => l.villageId === village)
+    listings = listings.filter((l) => {
+      const vid = (l.villageId || '').toLowerCase()
+      const vname = (l.villageName || '').toLowerCase()
+      return vid === village || vname.includes(village)
+    })
   }
 
   // Authoritative sort: featured first, then premium, then views
@@ -99,7 +114,11 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
             <select
               name="cat"
-              defaultValue={cat || 'all'}
+              defaultValue={
+                STANDARD_CATEGORIES.find(
+                  (c) => c.id === rawCat || c.id.replace(/^cat-/, '') === cleanCat
+                )?.id || 'all'
+              }
               className="bg-white text-slate-800 rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-hidden"
             >
               <option value="all">All Categories (అన్ని విభాగాలు)</option>

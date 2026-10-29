@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Plus, Star, Heart, Send } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, sanitizeImageUrl } from '@/lib/utils'
 import { toast } from 'sonner'
 import type { UserStory as Story } from '@/lib/types'
 
@@ -177,7 +177,7 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
                 <span className="relative grid h-16 w-16 place-items-center overflow-hidden rounded-full border-2 border-white bg-gradient-to-br from-blue-500 to-amber-400 text-lg font-bold text-white">
                   {s.owner.image ? (
                     <Image width={800} height={800} loading="lazy" decoding="async" sizes="(max-width: 768px) 100vw, 33vw"
-                      src={s.owner.image}
+                      src={sanitizeImageUrl(s.owner.image)}
                       alt={name}
                       className="h-full w-full object-cover"
                     />
@@ -256,7 +256,7 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
                 />
               ) : (
                 <Image width={800} height={800} loading="lazy" decoding="async"
-                  src={storyItems[viewerIndex].mediaUrl}
+                  src={sanitizeImageUrl(storyItems[viewerIndex].mediaUrl)}
                   alt={storyItems[viewerIndex].caption || 'Story'}
                   className="max-h-full max-w-full object-contain pointer-events-auto"
                 />

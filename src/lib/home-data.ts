@@ -94,13 +94,8 @@ export async function getVillages() {
   return STANDARD_VILLAGES
 }
 
-export function sanitizeImageUrl(url: string | null | undefined): string {
-  if (!url) return 'https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=800&auto=format&fit=crop&q=80'
-  if (url.includes('photo-1541888946425-d0fbb186f5f8')) {
-    return 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&auto=format&fit=crop&q=80'
-  }
-  return url
-}
+import { sanitizeImageUrl } from './utils'
+export { sanitizeImageUrl }
 
 export async function getFeaturedListings(): Promise<Listing[]> {
   const store = loadStore()

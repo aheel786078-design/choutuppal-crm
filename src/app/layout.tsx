@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#1d4ed8',
+  themeColor: '#059669',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -57,6 +57,7 @@ export default function RootLayout({
   return (
     <html lang="te" suppressHydrationWarning>
       <head>
+        <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
       </head>
