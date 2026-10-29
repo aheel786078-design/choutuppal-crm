@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, Calendar, Share2, Eye } from 'lucide-react'
 import { loadStore } from '@/lib/store'
+import { sanitizeImageUrl } from '@/lib/home-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,7 +45,7 @@ export default async function NewsDetailPage({ params }: NewsPageProps) {
             </span>
             <span className="flex items-center gap-1">
               <Calendar className="h-3.5 w-3.5" />
-              {new Date(article.createdAt).toLocaleDateString()}
+              {new Date(article.createdAt || Date.now()).toLocaleDateString()}
             </span>
           </div>
 
@@ -59,7 +60,12 @@ export default async function NewsDetailPage({ params }: NewsPageProps) {
           ) : null}
 
           <div className="relative h-64 sm:h-96 w-full rounded-2xl overflow-hidden my-6 bg-slate-100">
-            <Image src={article.coverImage} alt={article.title} fill className="object-cover" />
+            <Image
+              src={sanitizeImageUrl(article.coverImage)}
+              alt={article.title}
+              fill
+              className="object-cover"
+            />
           </div>
 
           <div className="prose prose-slate max-w-none text-sm sm:text-base leading-relaxed text-slate-700 whitespace-pre-line">

@@ -5,6 +5,8 @@ import { loadStore, FLAGSHIP_TERRITORY_ID, isListingPublished } from '@/lib/stor
 import { STANDARD_CATEGORIES, STANDARD_VILLAGES, getListingWhatsAppUrl } from '@/lib/constants'
 import { resolveListingEntitlements, isListingFeatured, isListingPremium } from '@/lib/entitlement-resolver'
 
+import { sanitizeImageUrl } from '@/lib/home-data'
+
 export const dynamic = 'force-dynamic'
 
 interface ListingsPageProps {
@@ -32,13 +34,15 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
   }
 
   if (q) {
-    listings = listings.filter(
-      (l) =>
-        l.title.toLowerCase().includes(q) ||
-        l.description.toLowerCase().includes(q) ||
-        l.address.toLowerCase().includes(q) ||
-        (l.categoryName && l.categoryName.toLowerCase().includes(q))
-    )
+    listings = listings.filter((l) => {
+      const titleMatch = l.title ? l.title.toLowerCase().includes(q) : false
+      const descMatch = l.description ? l.description.toLowerCase().includes(q) : false
+      const addrMatch = l.address ? l.address.toLowerCase().includes(q) : false
+      const catMatch = l.categoryName ? l.categoryName.toLowerCase().includes(q) : false
+      const locMatch = l.location ? l.location.toLowerCase().includes(q) : false
+      const villageMatch = l.villageName ? l.villageName.toLowerCase().includes(q) : false
+      return titleMatch || descMatch || addrMatch || catMatch || locMatch || villageMatch
+    })
   }
 
   if (cat && cat !== 'all') {
@@ -140,12 +144,15 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                 >
                   <div>
                     {/* PHOTO ROW */}
-                    <div className="relative h-48 w-full bg-slate-100">
+                    <Link
+                      href={`/business/${item.slug || item.id}`}
+                      className="block relative h-48 w-full bg-slate-100 group overflow-hidden"
+                    >
                       <Image
-                        src={item.coverImage}
+                        src={sanitizeImageUrl(item.coverImage)}
                         alt={item.title}
                         fill
-                        className="object-cover"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute top-2 left-2 flex items-center gap-1 bg-white/95 px-2 py-0.5 rounded-md text-[11px] font-bold text-slate-900 shadow-xs">
                         <CheckCircle2 className="h-3.5 w-3.5 text-blue-600" />
@@ -167,23 +174,25 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                       <div className="absolute bottom-2 left-2 bg-slate-950/80 backdrop-blur-xs text-white text-[10px] font-medium px-2 py-0.5 rounded">
                         {item.categoryName || 'Business'}
                       </div>
-                    </div>
+                    </Link>
 
-                  {/* INFO */}
-                  <div className="p-4">
-                    <h3 className="font-extrabold text-slate-900 text-base leading-snug line-clamp-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">
-                      {item.description}
-                    </p>
+                    {/* INFO */}
+                    <div className="p-4">
+                      <Link href={`/business/${item.slug || item.id}`}>
+                        <h3 className="font-extrabold text-slate-900 text-base leading-snug line-clamp-1 hover:text-blue-600 transition">
+                          {item.title}
+                        </h3>
+                      </Link>
+                      <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                        {item.description || 'Verified local business in Choutuppal, Telangana.'}
+                      </p>
 
-                    <div className="mt-3 flex items-start gap-1.5 text-xs text-slate-600">
-                      <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
-                      <span className="line-clamp-1">{item.address}</span>
+                      <div className="mt-3 flex items-start gap-1.5 text-xs text-slate-600">
+                        <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0 mt-0.5" />
+                        <span className="line-clamp-1">{item.address || 'Choutuppal Mandal, Telangana'}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
                 {/* ACTION BUTTONS */}
                 <div className="p-4 pt-0 grid grid-cols-2 gap-2">

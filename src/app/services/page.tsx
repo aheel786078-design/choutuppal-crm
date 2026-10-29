@@ -21,6 +21,7 @@ import {
   getElectricianWhatsAppUrl,
   getServiceWhatsAppUrl,
 } from '@/lib/constants'
+import { sanitizeImageUrl } from '@/lib/home-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -238,23 +239,32 @@ export default async function ServicesPage() {
                 className="bg-white rounded-2xl overflow-hidden shadow-xs border border-slate-200 hover:shadow-md transition flex flex-col justify-between"
               >
                 <div>
-                  <div className="relative h-44 w-full bg-slate-100">
+                  <Link
+                    href={`/business/${item.slug || item.id}`}
+                    className="block relative h-44 w-full bg-slate-100 group overflow-hidden"
+                  >
                     <Image
-                      src={item.coverImage}
+                      src={sanitizeImageUrl(item.coverImage)}
                       alt={item.title}
                       fill
-                      className="object-cover"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="absolute top-2 left-2 bg-white/95 px-2 py-0.5 rounded text-[11px] font-bold text-slate-900">
+                    <div className="absolute top-2 left-2 bg-white/95 px-2 py-0.5 rounded text-[11px] font-bold text-slate-900 shadow-xs">
                       {item.categoryName || 'Service'}
                     </div>
-                  </div>
+                  </Link>
                   <div className="p-4">
-                    <h3 className="font-extrabold text-slate-900 text-base line-clamp-1">{item.title}</h3>
-                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{item.description}</p>
+                    <Link href={`/business/${item.slug || item.id}`}>
+                      <h3 className="font-extrabold text-slate-900 text-base line-clamp-1 hover:text-blue-600 transition">
+                        {item.title}
+                      </h3>
+                    </Link>
+                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                      {item.description || 'Professional on-demand local services in Choutuppal.'}
+                    </p>
                     <div className="mt-3 flex items-center gap-1.5 text-xs text-slate-600">
                       <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">{item.address}</span>
+                      <span className="truncate">{item.address || 'Choutuppal, Telangana'}</span>
                     </div>
                   </div>
                 </div>

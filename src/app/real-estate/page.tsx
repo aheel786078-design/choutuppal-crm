@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { loadStore } from '@/lib/store'
 import { getRealEstateWhatsAppUrl } from '@/lib/constants'
+import { sanitizeImageUrl } from '@/lib/home-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,12 +66,15 @@ export default async function RealEstatePage() {
                 className="bg-white rounded-2xl overflow-hidden shadow-xs border border-slate-200 hover:shadow-md transition flex flex-col justify-between"
               >
                 <div>
-                  <div className="relative h-52 w-full bg-slate-100">
+                  <Link
+                    href={`/business/${item.slug || item.id}`}
+                    className="block relative h-52 w-full bg-slate-100 group overflow-hidden"
+                  >
                     <Image
-                      src={item.coverImage}
+                      src={sanitizeImageUrl(item.coverImage)}
                       alt={item.title}
                       fill
-                      className="object-cover"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-2 right-2 bg-emerald-600 text-white font-black text-xs px-3 py-1 rounded-lg shadow-sm">
                       {item.price || 'Price on Request'}
@@ -79,17 +83,21 @@ export default async function RealEstatePage() {
                       <CheckCircle2 className="h-3.5 w-3.5 text-blue-600" />
                       <span>Verified Layout</span>
                     </div>
-                  </div>
+                  </Link>
 
                   <div className="p-4">
-                    <h3 className="font-extrabold text-slate-900 text-base line-clamp-1">{item.title}</h3>
+                    <Link href={`/business/${item.slug || item.id}`}>
+                      <h3 className="font-extrabold text-slate-900 text-base line-clamp-1 hover:text-amber-600 transition">
+                        {item.title}
+                      </h3>
+                    </Link>
                     <p className="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">
-                      {item.description}
+                      {item.description || 'Verified DTCP/HMDA open plots and properties in Choutuppal.'}
                     </p>
 
                     <div className="mt-3 flex items-center gap-1.5 text-xs text-slate-600">
                       <MapPin className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                      <span className="truncate">{item.address}</span>
+                      <span className="truncate">{item.address || 'Choutuppal Mandal, Yadadri Bhuvanagiri'}</span>
                     </div>
                   </div>
                 </div>

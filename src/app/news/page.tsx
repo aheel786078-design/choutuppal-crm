@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Newspaper, Calendar, Eye, ArrowLeft, ArrowRight, Share2 } from 'lucide-react'
 import { loadStore } from '@/lib/store'
+import { sanitizeImageUrl } from '@/lib/home-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,17 +48,20 @@ export default async function NewsPage() {
                 className="bg-white rounded-2xl overflow-hidden shadow-xs border border-slate-200 hover:shadow-md transition flex flex-col justify-between"
               >
                 <div>
-                  <div className="relative h-48 w-full bg-slate-100">
+                  <Link
+                    href={`/news/${item.slug || item.id}`}
+                    className="block relative h-48 w-full bg-slate-100 group overflow-hidden"
+                  >
                     <Image
-                      src={item.coverImage}
+                      src={sanitizeImageUrl(item.coverImage)}
                       alt={item.title}
                       fill
-                      className="object-cover"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-2 left-2 bg-blue-600 text-white text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-xs">
                       {item.category}
                     </div>
-                  </div>
+                  </Link>
 
                   <div className="p-5">
                     <div className="flex items-center gap-2 text-xs text-slate-400 mb-2">
@@ -70,9 +74,11 @@ export default async function NewsPage() {
                       </span>
                     </div>
 
-                    <h2 className="font-extrabold text-slate-900 text-base leading-snug line-clamp-2">
-                      {item.title}
-                    </h2>
+                    <Link href={`/news/${item.slug || item.id}`}>
+                      <h2 className="font-extrabold text-slate-900 text-base leading-snug line-clamp-2 hover:text-blue-600 transition">
+                        {item.title}
+                      </h2>
+                    </Link>
                     {item.teluguTitle ? (
                       <h3 className="font-telugu text-xs text-slate-600 font-semibold mt-1 line-clamp-1">
                         {item.teluguTitle}
@@ -86,7 +92,7 @@ export default async function NewsPage() {
 
                 <div className="p-5 pt-0 flex items-center justify-between border-t border-slate-100 mt-2">
                   <a
-                    href={`https://wa.me/?text=${encodeURIComponent(`Check out this news: "${item.title}" on https://choutuppal.in/news`)}`}
+                    href={`https://wa.me/?text=${encodeURIComponent(`Check out this news: "${item.title}" on https://choutuppal.in/news/${item.slug || item.id}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-slate-500 hover:text-emerald-600 flex items-center gap-1 font-semibold"
@@ -95,9 +101,12 @@ export default async function NewsPage() {
                     Share on WhatsApp
                   </a>
 
-                  <span className="text-xs font-black text-blue-600 flex items-center gap-0.5">
-                    Verified News
-                  </span>
+                  <Link
+                    href={`/news/${item.slug || item.id}`}
+                    className="text-xs font-black text-blue-600 hover:text-blue-700 flex items-center gap-0.5"
+                  >
+                    Read Story →
+                  </Link>
                 </div>
               </article>
             ))}

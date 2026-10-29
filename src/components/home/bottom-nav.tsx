@@ -61,15 +61,15 @@ export function BottomNav() {
         <span className={cn('text-[10px] font-bold transition-colors', isActive('/listings') ? 'text-blue-600' : 'text-slate-600')}>Explore</span>
       </Link>
 
-      {/* Center FAB — Add */}
+      {/* Center FAB — Add Business */}
       <div className="flex items-center justify-center">
         <Link
           id="bottom-nav-add"
-          href="/dashboard?tab=add-listing"
-          aria-label="Add new business listing"
-          className="-mt-7 flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-yellow-500 text-white shadow-lg transition active:scale-95"
+          href="/register"
+          aria-label="Register new business listing"
+          className="-mt-7 flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-700 text-white shadow-lg shadow-emerald-600/30 ring-2 ring-white transition active:scale-95"
         >
-          <Plus className="h-7 w-7" />
+          <Plus className="h-7 w-7 stroke-[2.5]" />
         </Link>
       </div>
 
@@ -80,8 +80,8 @@ export function BottomNav() {
         aria-label="Community forum"
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <Users className={cn('h-5 w-5 transition-colors', isActive('/community') ? 'text-blue-600 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold transition-colors', isActive('/community') ? 'text-blue-600' : 'text-slate-600')}>Community</span>
+        <Users className={cn('h-5 w-5 transition-colors', isActive('/community') ? 'text-emerald-700 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold transition-colors', isActive('/community') ? 'text-emerald-700' : 'text-slate-600')}>Community</span>
       </Link>
 
       {/* News & Blog */}
@@ -92,19 +92,19 @@ export function BottomNav() {
         aria-label="News and blog articles"
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <Newspaper className={cn('h-5 w-5 transition-colors', isActive('/news') ? 'text-blue-600 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold whitespace-nowrap transition-colors', isActive('/news') ? 'text-blue-600' : 'text-slate-600')}>News</span>
+        <Newspaper className={cn('h-5 w-5 transition-colors', isActive('/news') ? 'text-emerald-700 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold whitespace-nowrap transition-colors', isActive('/news') ? 'text-emerald-700' : 'text-slate-600')}>News</span>
       </Link>
 
-      {/* You */}
+      {/* You / Account */}
       <Link
         id="bottom-nav-you"
-        href="/dashboard"
-        aria-label="User account and dashboard"
+        href="/login"
+        aria-label="Admin and user login"
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <User className={cn('h-5 w-5 transition-colors', isActive('/dashboard') ? 'text-blue-600 stroke-[2.5]' : 'text-gray-500')} />
-        <span className={cn('text-[9px] font-semibold transition-colors', isActive('/dashboard') ? 'text-blue-600' : 'text-gray-500')}>You</span>
+        <User className={cn('h-5 w-5 transition-colors', isActive('/login') || isActive('/dashboard') ? 'text-emerald-700 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold transition-colors', isActive('/login') || isActive('/dashboard') ? 'text-emerald-700' : 'text-slate-600')}>Login</span>
       </Link>
     </nav>
   )

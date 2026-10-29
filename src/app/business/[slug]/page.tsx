@@ -16,6 +16,7 @@ import {
 import { loadStore, isListingPublished } from '@/lib/store'
 import { getListingWhatsAppUrl, WHATSAPP_BOT_NUMBER } from '@/lib/constants'
 import { resolveListingEntitlements } from '@/lib/entitlement-resolver'
+import { sanitizeImageUrl } from '@/lib/home-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -60,7 +61,7 @@ export default async function BusinessDetailPage({ params }: BusinessPageProps) 
           {/* COVER PHOTO & BADGES */}
           <div className="relative h-64 sm:h-80 w-full bg-slate-900">
             <Image
-              src={listing.coverImage}
+              src={sanitizeImageUrl(listing.coverImage)}
               alt={listing.title}
               fill
               priority
@@ -151,7 +152,7 @@ export default async function BusinessDetailPage({ params }: BusinessPageProps) 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {listing.gallery.map((img, i) => (
                       <div key={i} className="relative h-28 rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
-                        <Image src={img} alt={`${listing.title} ${i + 1}`} fill className="object-cover" />
+                        <Image src={sanitizeImageUrl(img)} alt={`${listing.title} ${i + 1}`} fill className="object-cover" />
                       </div>
                     ))}
                   </div>
