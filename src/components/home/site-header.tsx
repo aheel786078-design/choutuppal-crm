@@ -102,41 +102,26 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-xs border-b border-slate-100">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-4 lg:px-6">
         {/* Left: Logo */}
-        <Link href="/" className="flex shrink-0 items-center gap-2">
-          {tenant.logoUrl ? (
-            <Image
-              src={tenant.logoUrl}
-              alt={tenant.name}
-              width={160}
-              height={36}
-              priority
-              className="h-9 w-auto object-contain"
-            />
-          ) : isDefault ? (
-            <div className="flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white font-black text-lg shadow-sm">
-                C
+        <Link href="/" className="flex shrink-0 items-center gap-2.5 group">
+          <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 via-teal-600 to-blue-700 text-white font-black text-lg shadow-md shadow-emerald-500/20 ring-2 ring-emerald-500/30 group-hover:scale-105 transition-transform duration-200">
+            <span className="tracking-tighter">చౌ</span>
+            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-400 text-slate-950 font-black text-[9px] shadow-xs">
+              ★
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-1.5 leading-none">
+              <span className="font-black text-slate-900 text-base sm:text-lg tracking-tight group-hover:text-emerald-700 transition">
+                Mana Choutuppal<span className="text-emerald-600">.in</span>
               </span>
-              <div>
-                <span className="font-black text-slate-900 text-base tracking-tight block leading-none">
-                  Choutuppal<span className="text-amber-500">.in</span>
-                </span>
-                <span className="text-[10px] text-slate-500 font-semibold tracking-wide">
-                  మన చౌటుప్పల్ సూపర్‌యాప్
-                </span>
-              </div>
+              <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                ✓ Verified
+              </span>
             </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <div
-                className="grid h-10 w-10 place-items-center rounded-xl text-white font-extrabold text-base shadow-sm"
-                style={{ backgroundColor: tenant.primaryColor }}
-              >
-                {tenant.name.substring(0, 1).toUpperCase()}
-              </div>
-              <span className="font-extrabold text-slate-900 text-sm">{tenant.name}</span>
-            </div>
-          )}
+            <span className="text-[10px] text-slate-500 font-semibold tracking-wide font-telugu mt-0.5">
+              మన చౌటుప్పల్ సూపర్‌యాప్ • యాదాద్రి జిల్లా
+            </span>
+          </div>
         </Link>
 
         {/* Center: Desktop nav links */}

@@ -7,218 +7,253 @@ import {
   MessageCircle,
   Star,
   CheckCircle2,
-  Clock,
   Sparkles,
   ArrowRight,
   Car,
   Wrench,
   Zap,
-  Home as HomeIcon,
-  Play,
-  Share2,
-  Users,
-  Compass,
+  Building2,
 } from 'lucide-react'
 import { getHomePageData } from '@/lib/home-data'
 import {
   WHATSAPP_BOT_NUMBER,
-  WHATSAPP_MEDIA_NUMBER,
   getListingWhatsAppUrl,
   getTaxiBookingWhatsAppUrl,
   getAutoBookingWhatsAppUrl,
   getPlumberWhatsAppUrl,
   getElectricianWhatsAppUrl,
   getRealEstateWhatsAppUrl,
-  getStoryOfferWhatsAppUrl,
 } from '@/lib/constants'
+
+// Modular Home Page Components matching choutuppal.in
+import { Ticker } from '@/components/home/ticker'
+import { StoriesRail } from '@/components/home/stories-rail'
+import { BannerCarousel } from '@/components/home/banner-carousel'
+import { CategoriesGrid } from '@/components/home/categories-grid'
+import { FeaturedRail } from '@/components/home/featured-rail'
+import { RealEstateRail } from '@/components/home/real-estate-rail'
+import { NewsGrid } from '@/components/home/news-grid'
+import { BlogGrid } from '@/components/home/blog-grid'
+import { PricingPlans } from '@/components/home/pricing-plans'
+import { Testimonials } from '@/components/home/testimonials'
+import { ShortsRail } from '@/components/home/shorts-rail'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const data = await getHomePageData()
 
+  // Format stories for StoriesRail
+  const formattedStories = (data.stories || []).map((s: any) => ({
+    id: s.id,
+    mediaUrl: s.mediaUrl,
+    mediaType: s.mediaType || 'IMAGE',
+    caption: s.caption,
+    views: s.views || 0,
+    expiresAt: s.expiresAt ? new Date(s.expiresAt) : null,
+    createdAt: s.createdAt ? new Date(s.createdAt) : new Date(),
+    owner: {
+      username: s.businessName || 'Business',
+      name: s.businessName || 'Local Merchant',
+      image: s.mediaUrl,
+    },
+  }))
+
+  // Format banners for BannerCarousel
+  const formattedBanners = (data.banners || []).map((b) => ({
+    id: b.id,
+    title: b.title,
+    imageUrl: b.imageUrl,
+    link: b.linkUrl || '/listings',
+  }))
+
+  // Format featured listings for FeaturedRail
+  const formattedFeatured = (data.featured || []).map((l, i) => ({
+    id: l.id,
+    title: l.title,
+    slug: l.slug || l.id,
+    coverImage: l.coverImage,
+    logo: l.logo || null,
+    avgRating: 4.8,
+    views: l.views || 100 + i * 5,
+    isFeatured: true,
+    category: {
+      name: l.categoryName || 'Business',
+      slug: l.categoryId || 'business',
+    },
+    village: {
+      name: l.address || 'Choutuppal',
+      slug: 'choutuppal',
+    },
+  }))
+
+  // Format real estate listings for RealEstateRail
+  const formattedRealEstate = (data.realEstate || []).map((p) => ({
+    id: p.id,
+    title: p.title,
+    slug: p.slug || p.id,
+    coverImage: p.coverImage,
+    price: typeof p.price === 'number' ? p.price : 2500000,
+    type: 'PLOT',
+    listingType: 'SALE',
+    bedrooms: null,
+    areaSqft: 1800,
+    village: {
+      name: p.address || 'Choutuppal Highway',
+      slug: 'choutuppal',
+    },
+  }))
+
+  // Format news items for NewsGrid
+  const formattedNews = (data.latestNews || []).map((n) => ({
+    id: n.id,
+    title: n.title,
+    slug: n.slug || n.id,
+    summary: n.summary,
+    image: n.coverImage,
+    createdAt: n.createdAt,
+  }))
+
+  // Format shorts for ShortsRail
+  const formattedShorts = (data.shorts || []).map((s: any) => ({
+    id: s.id,
+    videoUrl: s.videoUrl,
+    platform: s.platform || 'YOUTUBE',
+    thumbnail: s.thumbnailUrl,
+    title: s.title,
+    description: s.description,
+    views: s.views,
+    likes: s.likes,
+    youtubeId: s.youtubeId || null,
+    createdAt: s.createdAt,
+    owner: {
+      name: 'Choutuppal Reels',
+      username: 'choutuppal',
+    },
+  }))
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-50/50">
       {/* 1. TICKER BAR */}
-      {data.tickers && data.tickers.length > 0 ? (
-        <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white text-xs py-2 px-3 shadow-inner">
-          <div className="mx-auto max-w-7xl flex items-center justify-between gap-3 overflow-hidden">
-            <span className="shrink-0 font-extrabold uppercase tracking-wider bg-amber-400 text-slate-900 px-2 py-0.5 rounded text-[10px]">
-              📢 LIVE
-            </span>
-            <div className="truncate flex-1 font-medium">
-              {data.tickers.map((t) => t.text).join(' • ')}
-            </div>
-            <a
-              href={`https://wa.me/${WHATSAPP_BOT_NUMBER}?text=Hi%20Choutuppal`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 text-amber-300 hover:text-white font-bold flex items-center gap-1 text-[11px]"
-            >
-              <MessageCircle className="h-3 w-3" />
-              Chat Bot
-            </a>
-          </div>
-        </div>
-      ) : null}
+      <Ticker
+        initialAnnouncements={
+          data.tickers && data.tickers.length > 0
+            ? data.tickers.map((t) => t.text)
+            : undefined
+        }
+      />
 
-      {/* 2. HERO SEARCH SECTION */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-blue-900 via-blue-800 to-indigo-900 text-white pt-8 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]" />
-        
+      {/* 2. HERO SEARCH SECTION (MANA CHOUTUPPAL BRANDING) */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-emerald-950 via-slate-900 to-indigo-950 text-white pt-8 pb-14 px-4 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:20px_20px]" />
+
         <div className="relative mx-auto max-w-4xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur-md border border-white/20 text-amber-300 mb-3">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Mana Choutuppal 200+ Verified Businesses &amp; Services</span>
+          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3.5 py-1.5 text-xs font-semibold backdrop-blur-md border border-emerald-500/30 text-emerald-300 mb-3 shadow-sm">
+            <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-ping" />
+            <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+            <span>మన చౌటుప్పల్ 200+ వెరిఫైడ్ వ్యాపారాలు &amp; రియల్ ఎస్టేట్</span>
           </div>
 
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-            చౌటుప్పల్ లోకల్ బిజినెస్ &amp; రియల్ ఎస్టేట్
+            Mana Choutuppal<span className="text-emerald-400">.in</span>
           </h1>
-          <p className="mt-2 text-sm sm:text-base text-slate-200 max-w-2xl mx-auto">
-            Find shops, plumbers, electricians, 24/7 taxi &amp; auto booking, open plots, and WhatsApp direct deals.
+          <p className="mt-2 text-sm sm:text-base text-slate-200 max-w-2xl mx-auto font-medium">
+            చౌటుప్పల్ లోకల్ షాపులు, 24/7 టాక్సీ &amp; ఆటో, ఎమర్జెన్సీ ప్లంబర్, ఓపెన్ ప్లాట్లు &amp; వాట్సాప్ డైరెక్ట్ డీల్స్.
           </p>
 
           {/* Search Bar Form */}
-          <form action="/listings" method="GET" className="mt-6 flex flex-col sm:flex-row gap-2 max-w-2xl mx-auto bg-white p-2 rounded-2xl shadow-xl">
+          <form
+            action="/listings"
+            method="GET"
+            className="mt-6 flex flex-col sm:flex-row gap-2 max-w-2xl mx-auto bg-white p-2 rounded-2xl shadow-2xl ring-1 ring-slate-900/10"
+          >
             <div className="flex-1 flex items-center gap-2 px-3">
               <Search className="h-5 w-5 text-slate-400 shrink-0" />
               <input
                 type="text"
                 name="q"
-                placeholder="Search business, doctor, plumber, plot..."
+                placeholder="Search business, doctor, plumber, plot, car..."
                 className="w-full text-slate-800 placeholder-slate-400 text-sm focus:outline-hidden"
               />
             </div>
             <button
               type="submit"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md hover:from-blue-700 hover:to-indigo-700 transition"
+              className="bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-700 text-white font-bold px-7 py-2.5 rounded-xl text-sm shadow-md hover:from-emerald-700 hover:to-blue-800 transition"
             >
-              Search
+              వెతకండి (Search)
             </button>
           </form>
 
           {/* Quick Filter Badges */}
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs">
-            <span className="text-slate-300">Popular:</span>
-            <Link href="/services" className="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-lg backdrop-blur-xs transition">
+            <span className="text-slate-300 font-medium">పాపులర్:</span>
+            <Link
+              href="/services"
+              className="bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg backdrop-blur-xs transition border border-white/10"
+            >
               🚖 Taxi
             </Link>
-            <Link href="/services" className="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-lg backdrop-blur-xs transition">
+            <Link
+              href="/services"
+              className="bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg backdrop-blur-xs transition border border-white/10"
+            >
               🛺 Auto
             </Link>
-            <Link href="/services" className="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-lg backdrop-blur-xs transition">
+            <Link
+              href="/services"
+              className="bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg backdrop-blur-xs transition border border-white/10"
+            >
               🔧 Plumber
             </Link>
-            <Link href="/real-estate" className="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-lg backdrop-blur-xs transition">
+            <Link
+              href="/services"
+              className="bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg backdrop-blur-xs transition border border-white/10"
+            >
+              ⚡ Electrician
+            </Link>
+            <Link
+              href="/real-estate"
+              className="bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg backdrop-blur-xs transition border border-white/10 text-amber-300 font-bold"
+            >
               🏡 Open Plots
             </Link>
-            <Link href="/listings?cat=cat-health" className="bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-lg backdrop-blur-xs transition">
+            <Link
+              href="/listings?cat=cat-health"
+              className="bg-white/10 hover:bg-white/20 px-3 py-1 rounded-lg backdrop-blur-xs transition border border-white/10"
+            >
               🏥 Hospitals
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 3. STORIES & OFFERS RAIL */}
-      {data.stories && data.stories.length > 0 ? (
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-6 relative z-10">
-          <div className="bg-white rounded-2xl p-4 shadow-md border border-slate-100">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <span className="flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
-                <h3 className="font-extrabold text-slate-900 text-sm">
-                  Active Local Stories &amp; Daily Deals (లైవ్ ఆఫర్లు)
-                </h3>
-              </div>
-              <span className="text-xs text-slate-400">Auto-expires in 24h</span>
-            </div>
+      {/* 3. STORIES & DAILY DEALS (24H LOCAL SHOP OFFERS) */}
+      <section className="mx-auto max-w-7xl w-full px-3 sm:px-4 lg:px-6 -mt-6 relative z-10">
+        <StoriesRail
+          stories={formattedStories}
+          viewer={{ isLoggedIn: false, isPremium: false }}
+        />
+      </section>
 
-            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-              {data.stories.map((story) => (
-                <div
-                  key={story.id}
-                  className="shrink-0 w-36 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 shadow-xs group"
-                >
-                  <div className="relative h-44 w-full">
-                    <Image
-                      src={story.mediaUrl}
-                      alt={story.businessName}
-                      fill
-                      className="object-cover group-hover:scale-105 transition duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                    <div className="absolute bottom-2 left-2 right-2 text-white">
-                      <p className="text-xs font-black truncate">{story.businessName}</p>
-                      <p className="text-[10px] text-slate-200 line-clamp-1">{story.caption}</p>
-                    </div>
-                  </div>
-                  <a
-                    href={getStoryOfferWhatsAppUrl(story.caption, story.businessName)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold py-1.5 transition"
-                  >
-                    <MessageCircle className="h-3 w-3" />
-                    Claim on WA
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : null}
+      {/* 4. HERO PROMOTIONAL BANNER CAROUSEL */}
+      <section className="mx-auto max-w-7xl w-full px-3 sm:px-4 lg:px-6 mt-6">
+        <BannerCarousel banners={formattedBanners} />
+      </section>
 
-      {/* 4. PROMOTIONAL BANNERS */}
-      {data.banners && data.banners.length > 0 ? (
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {data.banners.slice(0, 2).map((banner) => (
-              <div
-                key={banner.id}
-                className="relative h-44 rounded-2xl overflow-hidden shadow-md border border-slate-200 group"
-              >
-                <Image
-                  src={banner.imageUrl}
-                  alt={banner.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex flex-col justify-end p-4 text-white">
-                  <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-slate-950 px-2 py-0.5 rounded w-max mb-1">
-                    Featured Sponsor
-                  </span>
-                  <h4 className="text-base font-black leading-snug">{banner.title}</h4>
-                  <div className="mt-2 flex items-center gap-2">
-                    <Link
-                      href={banner.linkUrl || '/listings'}
-                      className="inline-flex items-center gap-1 text-xs font-bold bg-white text-slate-900 px-3 py-1 rounded-lg hover:bg-slate-100 transition"
-                    >
-                      View Details
-                      <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {/* 5. 4 CORE SERVICES (TAXI, AUTO, PLUMBER, ELECTRICIAN) */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
+      {/* 5. 24/7 CORE EMERGENCY SERVICES */}
+      <section className="mx-auto max-w-7xl w-full px-3 sm:px-4 lg:px-6 mt-8">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-lg sm:text-xl font-black text-slate-900">
-              🚨 24/7 Essential Emergency Services
+              🚨 24/7 Emergency Services (అత్యవసర సేవలు)
             </h2>
             <p className="text-xs text-slate-500">
-              Instant 1-click booking on WhatsApp with live driver &amp; technician confirmation
+              Instant 1-click booking on WhatsApp with live confirmation
             </p>
           </div>
           <Link
             href="/services"
-            className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+            className="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1"
           >
             All Services
             <ArrowRight className="h-3.5 w-3.5" />
@@ -227,7 +262,7 @@ export default async function HomePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* TAXI CARD */}
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+          <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between">
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 border border-amber-200 font-bold">
@@ -256,10 +291,10 @@ export default async function HomePage() {
           </div>
 
           {/* AUTO CARD */}
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+          <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-50 text-orange-600 border border-orange-200 font-bold">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-50 text-orange-600 border border-orange-200 font-bold text-xl">
                   🛺
                 </span>
                 <span className="text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
@@ -270,7 +305,7 @@ export default async function HomePage() {
                 Choutuppal Auto Stand
               </h3>
               <p className="text-xs text-slate-500 mt-1">
-                Local Choutuppal town rides, Panthangi, Malkapur &amp; Peddakondur village drops.
+                Local Choutuppal town rides, Panthangi, Malkapur &amp; Peddakondur drops.
               </p>
             </div>
             <a
@@ -285,7 +320,7 @@ export default async function HomePage() {
           </div>
 
           {/* PLUMBER CARD */}
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+          <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between">
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-200 font-bold">
@@ -314,7 +349,7 @@ export default async function HomePage() {
           </div>
 
           {/* ELECTRICIAN CARD */}
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
+          <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200 hover:shadow-md transition flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between">
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-yellow-50 text-yellow-600 border border-yellow-200 font-bold">
@@ -328,7 +363,7 @@ export default async function HomePage() {
                 Electricians &amp; AC
               </h3>
               <p className="text-xs text-slate-500 mt-1">
-                House wiring, short circuit, inverter setup, AC servicing &amp; fan rewinding.
+                House wiring, short circuit, inverter setup, AC servicing &amp; fan repair.
               </p>
             </div>
             <a
@@ -344,331 +379,53 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 6. CATEGORIES GRID (16 CATEGORIES) */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-lg sm:text-xl font-black text-slate-900">
-              📂 Browse by Category (విభాగాలు)
-            </h2>
-            <p className="text-xs text-slate-500">
-              16 essential commercial categories across Choutuppal Mandal
-            </p>
-          </div>
-          <Link
-            href="/listings"
-            className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
-          >
-            View 200+ Businesses
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-          {data.categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/listings?cat=${cat.id}`}
-              className="bg-white rounded-xl p-3 border border-slate-200 shadow-xs hover:border-blue-300 hover:shadow-md transition text-center group flex flex-col items-center justify-center min-h-[90px]"
-            >
-              <span className="text-xs font-black text-slate-800 group-hover:text-blue-600 transition block truncate w-full">
-                {cat.name}
-              </span>
-              <span className="text-[10px] text-slate-400 font-telugu block mt-0.5 truncate w-full">
-                {cat.telugu}
-              </span>
-            </Link>
-          ))}
-        </div>
+      {/* 6. BROWSE 16 CATEGORIES GRID */}
+      <section className="mx-auto max-w-7xl w-full px-3 sm:px-4 lg:px-6 mt-10">
+        <CategoriesGrid />
       </section>
 
-      {/* 7. VERIFIED BUSINESS DIRECTORY LISTINGS (WITH PHOTO ROWS) */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-10">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="flex h-2.5 w-2.5 rounded-full bg-blue-600" />
-              <h2 className="text-lg sm:text-xl font-black text-slate-900">
-                🌟 Verified Local Businesses (ధృవీకరించబడిన దుకాణాలు)
-              </h2>
-            </div>
-            <p className="text-xs text-slate-500">
-              Detailed listings with photos, direct phone numbers, and CRM automated chat
-            </p>
-          </div>
-          <Link
-            href="/listings"
-            className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
-          >
-            See All ({data.totalListings})
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
+      {/* 7. TOP VERIFIED FEATURED BUSINESS LISTINGS */}
+      <div className="mt-8">
+        <FeaturedRail listings={formattedFeatured} />
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {data.featured.slice(0, 9).map((listing) => (
-            <div
-              key={listing.id}
-              className="bg-white rounded-2xl overflow-hidden shadow-xs border border-slate-200 hover:shadow-md transition flex flex-col justify-between"
-            >
-              <div>
-                {/* PHOTO ROW / COVER */}
-                <div className="relative h-44 w-full bg-slate-100">
-                  <Image
-                    src={listing.coverImage}
-                    alt={listing.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute top-2 left-2 flex items-center gap-1 bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded-md text-[11px] font-bold text-slate-800 shadow-xs">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-blue-600" />
-                    <span>Verified</span>
-                  </div>
-                  {listing.isPremium ? (
-                    <div className="absolute top-2 right-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase shadow-xs">
-                      Premium
-                    </div>
-                  ) : null}
-                  <div className="absolute bottom-2 left-2 bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-semibold px-2 py-0.5 rounded">
-                    {listing.categoryName || 'Business'}
-                  </div>
-                </div>
+      {/* 8. FEATURED REAL ESTATE & OPEN PLOTS */}
+      <div className="mt-12">
+        <RealEstateRail properties={formattedRealEstate} />
+      </div>
 
-                {/* DETAILS */}
-                <div className="p-4">
-                  <h3 className="font-extrabold text-slate-900 text-base leading-snug line-clamp-1">
-                    {listing.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 mt-1 line-clamp-2">
-                    {listing.description}
-                  </p>
-
-                  <div className="mt-3 flex items-center gap-1.5 text-xs text-slate-600">
-                    <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                    <span className="truncate">{listing.address}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* ACTION BUTTONS (PHONE & WHATSAPP) */}
-              <div className="p-4 pt-0 grid grid-cols-2 gap-2">
-                <a
-                  href={`tel:${listing.phone}`}
-                  className="flex items-center justify-center gap-1 border border-slate-200 hover:bg-slate-50 text-slate-700 py-2 rounded-xl text-xs font-bold transition"
-                >
-                  <Phone className="h-3.5 w-3.5 text-blue-600" />
-                  Call Now
-                </a>
-                <a
-                  href={getListingWhatsAppUrl(listing.title, listing.id)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition shadow-xs"
-                >
-                  <MessageCircle className="h-3.5 w-3.5" />
-                  WhatsApp
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 8. REAL ESTATE & PLOTS SECTION */}
-      {data.realEstate && data.realEstate.length > 0 ? (
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <HomeIcon className="h-5 w-5 text-amber-600" />
-                <h2 className="text-lg sm:text-xl font-black text-slate-900">
-                  🏡 Choutuppal Real Estate &amp; Open Plots (ప్లాట్లు &amp; భూములు)
-                </h2>
-              </div>
-              <p className="text-xs text-slate-500">
-                Highway facing DTCP/HMDA approved ventures, agricultural land &amp; houses
-              </p>
-            </div>
-            <Link
-              href="/real-estate"
-              className="text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1"
-            >
-              All Plots
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {data.realEstate.slice(0, 3).map((plot) => (
-              <div
-                key={plot.id}
-                className="bg-white rounded-2xl overflow-hidden shadow-xs border border-slate-200 hover:shadow-md transition"
-              >
-                <div className="relative h-44 w-full">
-                  <Image
-                    src={plot.coverImage}
-                    alt={plot.title}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute top-2 right-2 bg-emerald-700 text-white font-extrabold text-xs px-2.5 py-1 rounded-lg shadow-sm">
-                    {plot.price || 'Contact for Price'}
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-extrabold text-slate-900 text-base line-clamp-1">{plot.title}</h3>
-                  <p className="text-xs text-slate-500 mt-1 line-clamp-2">{plot.description}</p>
-                  <div className="mt-3 flex items-center gap-1 text-xs text-slate-600">
-                    <MapPin className="h-3.5 w-3.5 text-amber-500" />
-                    <span>{plot.address}</span>
-                  </div>
-
-                  <a
-                    href={getRealEstateWhatsAppUrl(plot.title)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-4 flex items-center justify-center gap-1.5 w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-xs font-bold transition shadow-xs"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    Inquire on WhatsApp
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {/* 9. LOCAL REELS & SHORTS (INSTAGRAM & YOUTUBE PLAYER) */}
+      {/* 9. CHOUTUPPAL LOCAL REELS & VIDEO SHORTS */}
       {data.shorts && data.shorts.length > 0 ? (
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-lg sm:text-xl font-black text-slate-900">
-                🎬 Choutuppal Reels &amp; Local Video Shorts
-              </h2>
-              <p className="text-xs text-slate-500">
-                Trending local videos, events, shop tours &amp; village moments
-              </p>
-            </div>
-            <Link
-              href="/shorts"
-              className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
-            >
-              Watch All
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {data.shorts.slice(0, 4).map((short) => (
-              <div
-                key={short.id}
-                className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-xs group"
-              >
-                <div className="relative h-64 w-full bg-slate-900">
-                  <Image
-                    src={short.thumbnailUrl}
-                    alt={short.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/30 backdrop-blur-md text-white shadow-lg group-hover:scale-110 transition">
-                      <Play className="h-5 w-5 fill-white ml-0.5" />
-                    </span>
-                  </div>
-                  <div className="absolute top-2 left-2 bg-red-600 text-white font-bold text-[10px] px-2 py-0.5 rounded">
-                    REEL
-                  </div>
-                  <div className="absolute bottom-2 left-2 right-2 text-white">
-                    <p className="text-xs font-extrabold line-clamp-2">{short.title}</p>
-                    <span className="text-[10px] text-slate-300 mt-0.5 block">
-                      {short.views.toLocaleString()} views
-                    </span>
-                  </div>
-                </div>
-                <div className="p-2.5">
-                  <Link
-                    href={`/shorts?id=${short.id}`}
-                    className="block text-center bg-slate-100 hover:bg-blue-50 text-slate-800 hover:text-blue-600 font-bold text-xs py-1.5 rounded-lg transition"
-                  >
-                    Watch Player
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <div className="mt-12">
+          <ShortsRail shorts={formattedShorts} />
+        </div>
       ) : null}
 
-      {/* 10. LOCAL NEWS & BLOGS */}
+      {/* 10. LOCAL NEWS & MANDAL UPDATES */}
       {data.latestNews && data.latestNews.length > 0 ? (
-        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-lg sm:text-xl font-black text-slate-900">
-                📰 Choutuppal News &amp; Mandal Updates (వార్తలు)
-              </h2>
-              <p className="text-xs text-slate-500">
-                Development works, road expansion, municipality circulars &amp; local notifications
-              </p>
-            </div>
-            <Link
-              href="/news"
-              className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1"
-            >
-              All News
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {data.latestNews.slice(0, 2).map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-2xl overflow-hidden shadow-xs border border-slate-200 flex flex-col sm:flex-row"
-              >
-                <div className="relative h-44 sm:h-auto sm:w-48 shrink-0 bg-slate-100">
-                  <Image
-                    src={item.coverImage}
-                    alt={item.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-4 flex flex-col justify-between flex-1">
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
-                      {item.category}
-                    </span>
-                    <h3 className="font-extrabold text-slate-900 text-sm sm:text-base mt-2 line-clamp-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{item.summary}</p>
-                  </div>
-                  <div className="mt-4 flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                    <span className="text-slate-400">
-                      {new Date(item.createdAt).toLocaleDateString()}
-                    </span>
-                    <Link
-                      href={`/news/${item.slug}`}
-                      className="text-blue-600 font-bold hover:underline"
-                    >
-                      Read Story →
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <div className="mt-12">
+          <NewsGrid articles={formattedNews} />
+        </div>
       ) : null}
 
-      {/* 11. WARD COMMUNITY GROUPS (1 TO 20) */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 mb-12">
-        <div className="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+      {/* 11. CHOUTUPPAL BLOGS & GUIDES */}
+      <div className="mt-12">
+        <BlogGrid blogs={data.blogs} />
+      </div>
+
+      {/* 12. PRICE MENU / ADVERTISING & PROMO PLANS */}
+      <div className="mt-12">
+        <PricingPlans />
+      </div>
+
+      {/* 13. REAL USER & BUSINESS TESTIMONIALS */}
+      <div className="mt-12">
+        <Testimonials />
+      </div>
+
+      {/* 14. WARD COMMUNITY WHATSAPP GROUPS (1 TO 20) */}
+      <section className="mx-auto max-w-7xl w-full px-3 sm:px-4 lg:px-6 mt-14 mb-14">
+        <div className="bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-2xl">
             <span className="bg-emerald-500/30 text-emerald-300 font-extrabold text-xs uppercase tracking-wider px-3 py-1 rounded-full border border-emerald-400/30">
               Choutuppal Municipality Ward Community

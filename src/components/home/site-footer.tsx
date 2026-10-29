@@ -36,15 +36,18 @@ export function SiteFooter({ tenant = DEFAULT_TENANT }: SiteFooterProps) {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
           {/* Section 1 — BRAND & ABOUT */}
           <div className="col-span-2 md:col-span-1 space-y-3">
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-700 to-indigo-800 text-white font-black text-sm shadow-xs">
-                C
-              </span>
+            <div className="flex items-center gap-2.5">
+              <div className="relative flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 via-teal-600 to-blue-700 text-white font-black text-sm shadow-md shadow-emerald-500/20 ring-1 ring-emerald-500/30">
+                <span className="tracking-tighter">చౌ</span>
+                <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-amber-400 text-slate-950 font-black text-[7px] shadow-xs">
+                  ★
+                </span>
+              </div>
               <div>
                 <span className="font-black text-slate-900 text-sm tracking-tight block leading-none">
-                  Choutuppal<span className="text-amber-500">.in</span>
+                  Mana Choutuppal<span className="text-emerald-600">.in</span>
                 </span>
-                <span className="text-[9px] text-slate-500 font-semibold">
+                <span className="text-[10px] text-slate-500 font-semibold font-telugu mt-0.5 block">
                   మన చౌటుప్పల్ సూపర్‌యాప్
                 </span>
               </div>
