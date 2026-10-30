@@ -101,7 +101,7 @@ export function AdminHeader({
               <span className="font-semibold text-slate-200 truncate max-w-[120px] sm:max-w-[180px]">
                 {currentUser.name}
               </span>
-              <span className="text-[10px] px-1 py-0.2 rounded font-mono bg-blue-950/60 text-blue-400 border border-blue-800/50 hidden sm:inline">
+              <span className="text-[10px] px-1 py-0.2 rounded font-mono bg-emerald-950/60 text-emerald-400 border border-emerald-800/50 hidden sm:inline">
                 {currentUser.role}
               </span>
               <button
@@ -116,7 +116,7 @@ export function AdminHeader({
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-950/60 border border-blue-800/50 text-blue-400 hover:text-blue-300 text-xs font-semibold transition"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-950/60 border border-emerald-800/50 text-emerald-400 hover:text-emerald-300 text-xs font-semibold transition"
             >
               <User className="w-3.5 h-3.5" />
               <span>Sign In</span>
@@ -227,7 +227,7 @@ export function AdminHeader({
           {onAddClick && (
             <button
               onClick={onAddClick}
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg text-xs font-semibold shadow-md shadow-blue-500/20 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-lg text-xs font-semibold shadow-md shadow-emerald-500/20 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-emerald-400"
             >
               <Plus className="w-4 h-4" />
               <span>{addLabel}</span>

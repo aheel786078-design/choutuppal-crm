@@ -16,7 +16,7 @@ import {
   ShieldCheck,
   Loader2,
   Building2,
-  UserCheck,
+  Store,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -34,7 +34,7 @@ export default function LoginPage() {
     if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
     const magicToken = params.get('magic')
-    const redirectParam = params.get('redirect') || '/admin/dashboard'
+    const redirectParam = params.get('redirect') || '/dashboard'
 
     if (magicToken) {
       setLoading(true)
@@ -43,7 +43,8 @@ export default function LoginPage() {
         .then((data) => {
           if (data.success) {
             toast.success('Successfully authenticated via WhatsApp Magic Link!')
-            router.push(data.redirect || '/admin/dashboard')
+            const dest = data.role === 'SUPER_ADMIN' || data.role === 'FRANCHISE_ADMIN' ? '/admin/dashboard' : '/dashboard'
+            router.push(data.redirect || dest)
           } else {
             toast.error(data.error || 'Magic link is invalid or has expired.')
           }
@@ -76,7 +77,8 @@ export default function LoginPage() {
       }
 
       toast.success(data.message || 'Login successful! Redirecting to dashboard...')
-      router.push(data.redirect || '/admin/dashboard')
+      const dest = data.role === 'SUPER_ADMIN' || data.role === 'FRANCHISE_ADMIN' ? '/admin/dashboard' : '/dashboard'
+      router.push(data.redirect || dest)
     } catch (err: any) {
       toast.error(err.message || 'Login failed. Please check credentials.')
     } finally {
@@ -114,7 +116,8 @@ export default function LoginPage() {
         const verifyData = await verifyRes.json()
         if (verifyData.success) {
           toast.success(`Authenticated as ${verifyData.role}!`)
-          router.push(verifyData.redirect || '/admin/dashboard')
+          const dest = verifyData.role === 'SUPER_ADMIN' || verifyData.role === 'FRANCHISE_ADMIN' ? '/admin/dashboard' : '/dashboard'
+          router.push(verifyData.redirect || dest)
           return
         }
       }
@@ -125,7 +128,7 @@ export default function LoginPage() {
     }
   }
 
-  // Quick Preset Helper for One-Click Admin Selection
+  // Quick Preset Helper for One-Click Login Selection
   function fillPreset(pEmail: string, pPass: string) {
     setEmail(pEmail)
     setPassword(pPass)
@@ -133,41 +136,41 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-emerald-600 selection:text-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white mb-6"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 hover:text-emerald-300 mb-6 transition"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Back to Choutuppal.in
         </Link>
 
-        <div className="flex items-center justify-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-black text-xl shadow-lg">
-            C
+        <div className="flex items-center justify-center gap-2.5">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-black text-xl shadow-lg shadow-emerald-500/25">
+            CP
           </span>
           <span className="text-2xl font-black text-white tracking-tight">
-            Choutuppal<span className="text-amber-400">.in</span>
+            Choutuppal<span className="text-emerald-400">.in</span>
           </span>
         </div>
-        <h2 className="mt-3 text-center text-lg font-extrabold text-white">
+        <h2 className="mt-3 text-center text-lg font-black text-white">
           Sign In to Portal (లాగిన్ చేయండి)
         </h2>
         <p className="mt-1 text-center text-xs text-slate-400">
-          Super Admin, Franchise Admins, WhatsApp CRM &amp; Merchant Dashboard
+          User Dashboard, Merchant Store, WhatsApp CRM &amp; Admin Console
         </p>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-slate-800/90 backdrop-blur-xl py-8 px-6 sm:px-8 shadow-2xl rounded-3xl border border-slate-700/80">
+        <div className="bg-slate-900/90 backdrop-blur-xl py-8 px-6 sm:px-8 shadow-2xl rounded-3xl border border-slate-800">
           {/* TAB SELECTOR */}
-          <div className="grid grid-cols-2 gap-1 bg-slate-900/80 p-1 rounded-2xl mb-6 border border-slate-700">
+          <div className="grid grid-cols-2 gap-1 bg-slate-950 p-1.5 rounded-2xl mb-6 border border-slate-800">
             <button
               type="button"
               onClick={() => setTab('email')}
-              className={`py-2 text-xs font-bold rounded-xl transition ${
+              className={`py-2 text-xs font-bold rounded-xl transition cursor-pointer ${
                 tab === 'email'
-                  ? 'bg-blue-600 text-white shadow-xs'
+                  ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/30'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -176,9 +179,9 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setTab('whatsapp')}
-              className={`py-2 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 ${
+              className={`py-2 text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer ${
                 tab === 'whatsapp'
-                  ? 'bg-emerald-600 text-white shadow-xs'
+                  ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/30'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -202,7 +205,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="admin@choutuppal.in"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
                   />
                 </div>
               </div>
@@ -219,7 +222,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
                   />
                 </div>
               </div>
@@ -227,7 +230,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg disabled:opacity-50 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-emerald-600/20 disabled:opacity-50 cursor-pointer"
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
                 Sign In
@@ -248,7 +251,7 @@ export default function LoginPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="9441348175"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-emerald-500"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
                   />
                 </div>
                 <p className="text-[11px] text-slate-400 mt-1">
@@ -259,7 +262,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg disabled:opacity-50 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-emerald-600/20 disabled:opacity-50 cursor-pointer"
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageCircle className="h-4 w-4" />}
                 1-Click WhatsApp Instant Sign In
@@ -275,18 +278,18 @@ export default function LoginPage() {
             </form>
           )}
 
-          {/* QUICK PRESETS FOR INSTANT ADMIN ACCESS */}
-          <div className="mt-6 pt-5 border-t border-slate-700/80">
+          {/* QUICK PRESETS FOR INSTANT ONE-CLICK ACCESS */}
+          <div className="mt-6 pt-5 border-t border-slate-800">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block text-center mb-2.5">
-              Instant Admin &amp; Franchise Logins
+              1-Click Demo Logins
             </span>
             <div className="grid grid-cols-2 gap-2 text-[11px]">
               <button
                 type="button"
                 onClick={() => fillPreset('admin@choutuppal.in', 'Choutuppal@2026')}
-                className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-900/90 border border-slate-700 hover:border-blue-500 text-slate-300 hover:text-white transition text-left cursor-pointer"
+                className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500 text-slate-300 hover:text-white transition text-left cursor-pointer"
               >
-                <ShieldCheck className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <div className="truncate">
                   <div className="font-bold text-white text-[10px]">Super Admin</div>
                   <div className="text-[9px] text-slate-400">admin@choutuppal.in</div>
@@ -295,41 +298,41 @@ export default function LoginPage() {
 
               <button
                 type="button"
-                onClick={() => fillPreset('nalgonda.admin@choutuppal.in', 'Nalgonda@2026')}
-                className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-900/90 border border-slate-700 hover:border-emerald-500 text-slate-300 hover:text-white transition text-left cursor-pointer"
+                onClick={() => fillPreset('merchant@choutuppal.in', 'Choutuppal@2026')}
+                className="flex items-center gap-1.5 p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-emerald-500 text-slate-300 hover:text-white transition text-left cursor-pointer"
               >
-                <Building2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <Store className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <div className="truncate">
-                  <div className="font-bold text-white text-[10px]">Nalgonda Admin</div>
-                  <div className="text-[9px] text-slate-400">nalgonda.admin</div>
+                  <div className="font-bold text-white text-[10px]">Merchant Store</div>
+                  <div className="text-[9px] text-slate-400">merchant@choutuppal</div>
                 </div>
               </button>
             </div>
           </div>
 
-          {/* QUICK DIRECT ACCESS PORTALS */}
-          <div className="mt-4 pt-4 border-t border-slate-700/80">
-            <div className="grid grid-cols-2 gap-3">
+          {/* DIRECT DASHBOARD & CRM SHORTCUTS */}
+          <div className="mt-4 pt-4 border-t border-slate-800">
+            <div className="grid grid-cols-2 gap-2.5">
               <Link
-                href="/admin"
-                className="flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-700/80 border border-slate-700 text-slate-200 py-2 rounded-xl text-xs font-bold transition"
+                href="/dashboard"
+                className="flex items-center justify-center gap-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-200 py-2 rounded-xl text-xs font-bold transition"
               >
-                <LayoutDashboard className="h-3.5 w-3.5 text-blue-400" />
-                Admin Panel
+                <LayoutDashboard className="h-3.5 w-3.5 text-emerald-400" />
+                User Dashboard
               </Link>
               <Link
-                href="/crm"
-                className="flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-700/80 border border-slate-700 text-slate-200 py-2 rounded-xl text-xs font-bold transition"
+                href="/admin/dashboard"
+                className="flex items-center justify-center gap-1.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-200 py-2 rounded-xl text-xs font-bold transition"
               >
-                <MessageSquare className="h-3.5 w-3.5 text-emerald-400" />
-                WhatsApp CRM
+                <Building2 className="h-3.5 w-3.5 text-emerald-400" />
+                Admin CRM Console
               </Link>
             </div>
           </div>
 
           <div className="mt-6 text-center text-xs text-slate-400">
             Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-amber-400 font-bold hover:underline">
+            <Link href="/register" className="text-emerald-400 font-bold hover:underline">
               Register Merchant Free (ఖాతా తెరవండి)
             </Link>
           </div>

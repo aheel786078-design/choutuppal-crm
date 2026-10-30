@@ -155,7 +155,7 @@ export function AdminSidebar() {
                         ? 'justify-center p-2.5'
                         : 'justify-between px-3 py-2',
                       isActive
-                        ? 'bg-blue-600 text-white font-semibold shadow-sm shadow-blue-500/20'
+                        ? 'bg-emerald-600 text-white font-semibold shadow-sm shadow-emerald-500/20'
                         : 'text-slate-300 hover:bg-slate-900 hover:text-white'
                     )}
                   >
