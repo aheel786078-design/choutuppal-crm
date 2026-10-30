@@ -268,4 +268,36 @@ body {
   font-family: "Noto Sans Telugu", "Noto Sans", var(--font-geist-sans), sans-serif;
 }
 
+/* --- UI/UX Pro Max Accessibility & Touch Polish --------------------------- */
+
+/* 1. Fast, responsive touch targets on mobile (eliminates 300ms tap delay) */
+button, a, [role="button"], input[type="button"], input[type="submit"] {
+  touch-action: manipulation;
+}
+
+/* 2. Accessible focus visibility across keyboard navigation */
+:focus-visible {
+  outline: 2px solid oklch(0.556 0 0);
+  outline-offset: 2px;
+}
+
+/* 3. Mobile safe-area padding for mobile notches and bottom navbars */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* 4. Respect user prefers-reduced-motion preferences (WCAG 2.2 AA) */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
 
