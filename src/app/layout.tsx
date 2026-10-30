@@ -14,38 +14,52 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://choutuppal.in'
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Choutuppal.in — Mana Choutuppal Local Search & WhatsApp Super App',
-    template: '%s | Choutuppal.in',
+    default: 'Choutuppal App v2.0 — Business, Real Estate & Community',
+    template: '%s | Choutuppal App',
   },
   description:
-    'Discover 200+ verified businesses, real estate plots, 24/7 taxi & auto services, emergency plumbers, electricians, local news and community updates in Choutuppal, Telangana.',
+    'Discover businesses, services, real estate, news and community in Choutuppal, Yadadri Bhuvanagiri, Telangana. Promote your business, list properties, and connect locally.',
   keywords: [
     'Choutuppal',
-    'Choutuppal Business',
-    'Choutuppal Real Estate',
-    'Choutuppal Taxi Service',
-    'Choutuppal Auto Stand',
-    'Choutuppal Plumber',
-    'Yadadri Bhuvanagiri',
-    'Telangana Local App',
+    'Yadadri',
+    'Telangana business',
+    'real estate Choutuppal',
+    'local services',
+    'community',
   ],
   authors: [{ name: 'Choutuppal App Team' }],
   icons: {
-    icon: 'https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=100&auto=format&fit=crop&q=80',
-    apple: 'https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=100&auto=format&fit=crop&q=80',
+    icon: 'https://i.ibb.co/NgtRxPLw/Untitled-design.jpg',
+    apple: 'https://i.ibb.co/NgtRxPLw/Untitled-design.jpg',
   },
   openGraph: {
-    title: 'Choutuppal.in — Local Search, Services & WhatsApp CRM',
-    description: 'Businesses, real estate, taxi, auto, plumber, news & community in Choutuppal.',
+    title: 'Choutuppal App v2.0 — Business, Real Estate & Community',
+    description:
+      'Businesses, services, real estate, news & community for Choutuppal, Yadadri, Telangana.',
     url: SITE_URL,
-    siteName: 'Choutuppal.in',
+    siteName: 'Choutuppal App',
+    images: [
+      {
+        url: 'https://i.ibb.co/NgtRxPLw/Untitled-design.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Choutuppal App v2.0',
+      },
+    ],
     type: 'website',
     locale: 'te_IN',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Choutuppal App v2.0',
+    description:
+      'Businesses, services, real estate, news & community for Choutuppal, Yadadri, Telangana.',
+    images: ['https://i.ibb.co/NgtRxPLw/Untitled-design.jpg'],
   },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#059669',
+  themeColor: '#1d4ed8',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
