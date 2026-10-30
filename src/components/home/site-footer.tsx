@@ -53,7 +53,7 @@ export function SiteFooter({ tenant = DEFAULT_TENANT }: SiteFooterProps) {
               </div>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Mana Choutuppal local directory, verified businesses, real estate deals, fast services &amp; 24/7 WhatsApp AI CRM.
+              Mana Choutuppal is the flagship hyperlocal franchise powered by DigiCubes (digicubes.in) White-Label Platform. Verified businesses, real estate deals &amp; 24/7 WhatsApp AI CRM.
             </p>
             <div className="pt-2">
               <SocialLinks />
@@ -192,8 +192,10 @@ export function SiteFooter({ tenant = DEFAULT_TENANT }: SiteFooterProps) {
           <p>
             Official SuperApp &amp; Business Hub for{' '}
             <strong className="text-slate-700">Choutuppal Town &amp; Surrounding Mandals</strong>
+            {' • '}
+            <span className="text-blue-600 font-medium">Powered by DigiCubes (digicubes.in) White-Label Engine</span>
           </p>
-          <p>© {new Date().getFullYear()} Choutuppal.in. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Choutuppal.in. A DigiCubes Franchise. All rights reserved.</p>
         </div>
       </div>
     </footer>

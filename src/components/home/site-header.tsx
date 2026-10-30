@@ -119,7 +119,7 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
               </span>
             </div>
             <span className="text-[10px] text-slate-500 font-semibold tracking-wide font-telugu mt-0.5">
-              మన చౌటుప్పల్ సూపర్‌యాప్ • యాదాద్రి జిల్లా
+              మన చౌటుప్పల్ సూపర్‌యాప్ • DigiCubes Flagship Franchise
             </span>
           </div>
         </Link>
