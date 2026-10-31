@@ -22,6 +22,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   AlertTriangle,
+  Flame,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -135,29 +136,33 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
         </Link>
 
         {/* Center: Desktop nav links */}
-        <nav className="hidden items-center gap-5 lg:gap-6 md:flex">
-          <Link href="/" className={cn("text-xs lg:text-sm font-semibold transition hover:text-blue-600", pathname === '/' ? 'text-blue-600 font-bold' : 'text-slate-600')}>
+        <nav className="hidden items-center gap-4 lg:gap-5 md:flex">
+          <Link href="/" className={cn("text-xs lg:text-sm font-semibold transition hover:text-emerald-600", pathname === '/' ? 'text-emerald-600 font-bold' : 'text-slate-600')}>
             Home
           </Link>
-          <Link href="/listings" className={cn("text-xs lg:text-sm font-semibold transition hover:text-blue-600", pathname.startsWith('/listings') ? 'text-blue-600 font-bold' : 'text-slate-600')}>
+          <Link href="/stories" className={cn("text-xs lg:text-sm font-semibold transition hover:text-emerald-600 flex items-center gap-1", pathname.startsWith('/stories') ? 'text-emerald-600 font-bold' : 'text-slate-600')}>
+            <Flame className="h-3.5 w-3.5 text-emerald-600" />
+            Stories
+          </Link>
+          <Link href="/listings" className={cn("text-xs lg:text-sm font-semibold transition hover:text-emerald-600", pathname.startsWith('/listings') ? 'text-emerald-600 font-bold' : 'text-slate-600')}>
             Listings
           </Link>
-          <Link href="/services" className={cn("text-xs lg:text-sm font-semibold transition hover:text-blue-600", pathname.startsWith('/services') ? 'text-blue-600 font-bold' : 'text-slate-600')}>
+          <Link href="/services" className={cn("text-xs lg:text-sm font-semibold transition hover:text-emerald-600", pathname.startsWith('/services') ? 'text-emerald-600 font-bold' : 'text-slate-600')}>
             Services
           </Link>
-          <Link href="/real-estate" className={cn("text-xs lg:text-sm font-semibold transition hover:text-blue-600", pathname.startsWith('/real-estate') ? 'text-blue-600 font-bold' : 'text-slate-600')}>
+          <Link href="/real-estate" className={cn("text-xs lg:text-sm font-semibold transition hover:text-emerald-600", pathname.startsWith('/real-estate') ? 'text-emerald-600 font-bold' : 'text-slate-600')}>
             Real Estate
           </Link>
-          <Link href="/shorts" className={cn("text-xs lg:text-sm font-semibold transition hover:text-blue-600", pathname.startsWith('/shorts') ? 'text-blue-600 font-bold' : 'text-slate-600')}>
+          <Link href="/shorts" className={cn("text-xs lg:text-sm font-semibold transition hover:text-emerald-600", pathname.startsWith('/shorts') ? 'text-emerald-600 font-bold' : 'text-slate-600')}>
             Reels
           </Link>
-          <Link href="/news" className={cn("text-xs lg:text-sm font-semibold transition hover:text-blue-600", pathname.startsWith('/news') ? 'text-blue-600 font-bold' : 'text-slate-600')}>
+          <Link href="/news" className={cn("text-xs lg:text-sm font-semibold transition hover:text-emerald-600", pathname.startsWith('/news') ? 'text-emerald-600 font-bold' : 'text-slate-600')}>
             News &amp; Blog
           </Link>
-          <Link href="/community" className={cn("text-xs lg:text-sm font-semibold transition hover:text-blue-600", pathname.startsWith('/community') ? 'text-blue-600 font-bold' : 'text-slate-600')}>
+          <Link href="/community" className={cn("text-xs lg:text-sm font-semibold transition hover:text-emerald-600", pathname.startsWith('/community') ? 'text-emerald-600 font-bold' : 'text-slate-600')}>
             Community
           </Link>
-          <Link href="/government-contacts" className={cn("text-xs lg:text-sm font-semibold transition hover:text-blue-600", pathname.startsWith('/government-contacts') ? 'text-blue-600 font-bold' : 'text-slate-600')}>
+          <Link href="/government-contacts" className={cn("text-xs lg:text-sm font-semibold transition hover:text-emerald-600", pathname.startsWith('/government-contacts') ? 'text-emerald-600 font-bold' : 'text-slate-600')}>
             Govt &amp; Emergency
           </Link>
         </nav>
@@ -235,6 +240,7 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
       >
         <nav className="grid grid-cols-2 gap-2">
           <MobileLink href="/" icon={Home} label="హోమ్" onClick={() => setMobileOpen(false)} />
+          <MobileLink href="/stories" icon={Flame} label="స్టోరీస్ & ఆఫర్స్" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/listings" icon={Building2} label="లిస్టింగ్స్" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/services" icon={Wrench} label="సేవలు (Taxi/Auto)" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/real-estate" icon={Home} label="రియల్ ఎస్టేట్" onClick={() => setMobileOpen(false)} />

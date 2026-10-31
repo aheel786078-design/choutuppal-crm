@@ -35,8 +35,8 @@ export function BottomNav() {
         aria-label="Home page"
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <Home className={cn('h-5 w-5 transition-colors', isActive('/') ? 'text-blue-600 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold transition-colors', isActive('/') ? 'text-blue-600' : 'text-slate-600')}>Home</span>
+        <Home className={cn('h-5 w-5 transition-colors', isActive('/') ? 'text-emerald-600 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold transition-colors', isActive('/') ? 'text-emerald-600' : 'text-slate-600')}>Home</span>
       </Link>
 
       {/* Shorts */}
@@ -46,8 +46,8 @@ export function BottomNav() {
         aria-label="Local shorts and reels"
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <Clapperboard className={cn('h-5 w-5 transition-colors', isActive('/shorts') ? 'text-blue-600 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold transition-colors', isActive('/shorts') ? 'text-blue-600' : 'text-slate-600')}>Shorts</span>
+        <Clapperboard className={cn('h-5 w-5 transition-colors', isActive('/shorts') ? 'text-emerald-600 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold transition-colors', isActive('/shorts') ? 'text-emerald-600' : 'text-slate-600')}>Shorts</span>
       </Link>
 
       {/* Explore */}
@@ -57,8 +57,8 @@ export function BottomNav() {
         aria-label="Explore all businesses"
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <Compass className={cn('h-5 w-5 transition-colors', isActive('/listings') ? 'text-blue-600 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold transition-colors', isActive('/listings') ? 'text-blue-600' : 'text-slate-600')}>Explore</span>
+        <Compass className={cn('h-5 w-5 transition-colors', isActive('/listings') ? 'text-emerald-600 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold transition-colors', isActive('/listings') ? 'text-emerald-600' : 'text-slate-600')}>Explore</span>
       </Link>
 
       {/* Center FAB — Add Business */}
