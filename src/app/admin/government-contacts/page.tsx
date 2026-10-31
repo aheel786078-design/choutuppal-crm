@@ -376,7 +376,7 @@ export default function GovernmentContactsAdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
       <AdminHeader title="Government & Emergency Directory" subtitle="Choutuppal Mandal official contacts & verification workflow" />
 
       <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
@@ -407,65 +407,65 @@ export default function GovernmentContactsAdminPage() {
 
         {/* METRICS CARDS */}
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-          <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3.5">
-            <div className="flex items-center justify-between text-slate-400 text-xs font-semibold">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 shadow-xs">
+            <div className="flex items-center justify-between text-slate-500 text-xs font-semibold">
               <span>Total Contacts</span>
-              <Landmark className="h-4 w-4 text-blue-400" />
+              <Landmark className="h-4 w-4 text-emerald-600" />
             </div>
-            <p className="mt-2 text-2xl font-black text-white">{stats.total}</p>
+            <p className="mt-2 text-2xl font-black text-slate-900">{stats.total}</p>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3.5">
-            <div className="flex items-center justify-between text-emerald-400 text-xs font-semibold">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 shadow-xs">
+            <div className="flex items-center justify-between text-emerald-600 text-xs font-semibold">
               <span>Published Live</span>
               <CheckCircle2 className="h-4 w-4" />
             </div>
-            <p className="mt-2 text-2xl font-black text-emerald-300">{stats.published}</p>
+            <p className="mt-2 text-2xl font-black text-emerald-700">{stats.published}</p>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3.5">
-            <div className="flex items-center justify-between text-blue-400 text-xs font-semibold">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 shadow-xs">
+            <div className="flex items-center justify-between text-blue-600 text-xs font-semibold">
               <span>Verified</span>
               <ShieldCheck className="h-4 w-4" />
             </div>
-            <p className="mt-2 text-2xl font-black text-blue-300">{stats.verified}</p>
+            <p className="mt-2 text-2xl font-black text-blue-700">{stats.verified}</p>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3.5">
-            <div className="flex items-center justify-between text-amber-400 text-xs font-semibold">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 shadow-xs">
+            <div className="flex items-center justify-between text-amber-600 text-xs font-semibold">
               <span>Pending Review</span>
               <Clock className="h-4 w-4" />
             </div>
-            <p className="mt-2 text-2xl font-black text-amber-300">{stats.pending}</p>
+            <p className="mt-2 text-2xl font-black text-amber-700">{stats.pending}</p>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3.5">
-            <div className="flex items-center justify-between text-red-400 text-xs font-semibold">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 shadow-xs">
+            <div className="flex items-center justify-between text-red-600 text-xs font-semibold">
               <span>Overdue Check</span>
               <AlertTriangle className="h-4 w-4" />
             </div>
-            <p className="mt-2 text-2xl font-black text-red-300">{stats.overdue}</p>
+            <p className="mt-2 text-2xl font-black text-red-700">{stats.overdue}</p>
           </div>
 
-          <div className="bg-slate-800/80 border border-slate-700/80 rounded-xl p-3.5">
-            <div className="flex items-center justify-between text-rose-400 text-xs font-semibold">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-3.5 shadow-xs">
+            <div className="flex items-center justify-between text-rose-600 text-xs font-semibold">
               <span>Emergency 24x7</span>
               <Flame className="h-4 w-4" />
             </div>
-            <p className="mt-2 text-2xl font-black text-rose-300">{stats.emergency}</p>
+            <p className="mt-2 text-2xl font-black text-rose-700">{stats.emergency}</p>
           </div>
         </div>
 
         {/* CONTROLS & FILTER BAR */}
-        <div className="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs">
           {/* Status Tabs */}
-          <div className="flex flex-wrap gap-1 bg-slate-900/60 p-1 rounded-xl border border-slate-700/60 text-xs">
+          <div className="flex flex-wrap gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/60 text-xs">
             {['all', 'published', 'verified', 'pending_verification', 'draft', 'archived'].map((st) => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
-                className={`px-3 py-1.5 rounded-lg font-semibold capitalize transition ${
-                  statusFilter === st ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-400 hover:text-slate-200'
+                className={`px-3 py-1.5 rounded-lg font-semibold capitalize transition cursor-pointer ${
+                  statusFilter === st ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {st.replace('_', ' ')}
@@ -480,16 +480,16 @@ export default function GovernmentContactsAdminPage() {
                 resetForm()
                 setShowAddModal(true)
               }}
-              className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition shadow-xs"
+              className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl transition shadow-xs cursor-pointer"
             >
               <Plus className="h-4 w-4" /> Add Contact
             </button>
             <button
               onClick={handleExportCsv}
-              className="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs px-3 py-2 rounded-xl transition"
+              className="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs px-3 py-2 rounded-xl transition shadow-2xs cursor-pointer"
               title="Export all contacts to CSV"
             >
-              <Download className="h-4 w-4 text-slate-400" /> Export CSV
+              <Download className="h-4 w-4 text-slate-500" /> Export CSV
             </button>
             <button
               onClick={() => {
@@ -497,15 +497,15 @@ export default function GovernmentContactsAdminPage() {
                 setImportResult(null)
                 setShowImportModal(true)
               }}
-              className="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs px-3 py-2 rounded-xl transition"
+              className="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs px-3 py-2 rounded-xl transition shadow-2xs cursor-pointer"
               title="Import contacts from CSV"
             >
-              <Upload className="h-4 w-4 text-slate-400" /> Import CSV
+              <Upload className="h-4 w-4 text-slate-500" /> Import CSV
             </button>
             <button
               onClick={fetchData}
               disabled={loading}
-              className="p-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl transition"
+              className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl transition shadow-2xs cursor-pointer"
               title="Refresh data"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
@@ -515,7 +515,7 @@ export default function GovernmentContactsAdminPage() {
 
         {/* SEARCH & DROPDOWN FILTERS */}
         <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-          <div className="flex items-center gap-2 bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2 text-slate-200">
+          <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 shadow-2xs">
             <Search className="h-4 w-4 text-slate-400 shrink-0" />
             <input
               type="text"
@@ -529,7 +529,7 @@ export default function GovernmentContactsAdminPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="bg-slate-800/90 border border-slate-700 text-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-hidden font-medium"
+            className="bg-white border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-hidden font-medium shadow-2xs"
           >
             <option value="all">All Categories</option>
             {GOVT_CONTACT_CATEGORIES.map((c) => (
@@ -542,7 +542,7 @@ export default function GovernmentContactsAdminPage() {
           <select
             value={villageFilter}
             onChange={(e) => setVillageFilter(e.target.value)}
-            className="bg-slate-800/90 border border-slate-700 text-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-hidden font-medium"
+            className="bg-white border border-slate-200 text-slate-800 rounded-xl px-3 py-2 text-xs focus:outline-hidden font-medium shadow-2xs"
           >
             <option value="all">All Villages (Mandal-Wide)</option>
             {CHOUTUPPAL_MANDAL_VILLAGES.map((v) => (
@@ -554,10 +554,10 @@ export default function GovernmentContactsAdminPage() {
         </form>
 
         {/* DATA TABLE */}
-        <div className="bg-slate-800/80 border border-slate-700/80 rounded-2xl overflow-hidden shadow-xl">
+        <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300 border-collapse">
-              <thead className="bg-slate-900/80 text-slate-400 uppercase text-[10px] font-bold tracking-wider border-b border-slate-700">
+            <table className="w-full text-left text-xs text-slate-700 border-collapse">
+              <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
                 <tr>
                   <th className="px-4 py-3">Official / Office</th>
                   <th className="px-3 py-3">Category</th>
@@ -568,7 +568,7 @@ export default function GovernmentContactsAdminPage() {
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/60">
+              <tbody className="divide-y divide-slate-100/60">
                 {loading ? (
                   <tr>
                     <td colSpan={7} className="px-4 py-12 text-center text-slate-400">
@@ -724,8 +724,8 @@ export default function GovernmentContactsAdminPage() {
         {/* MODAL: ADD / EDIT CONTACT */}
         {(showAddModal || showEditModal) && (
           <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-            <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 my-8">
-              <div className="flex items-center justify-between border-b border-slate-700 pb-3">
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-2xl w-full p-6 shadow-2xl space-y-4 my-8">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
                   <Landmark className="h-5 w-5 text-blue-400" />
                   {showAddModal ? 'Add Government Contact' : 'Edit Government Contact'}
@@ -773,7 +773,7 @@ export default function GovernmentContactsAdminPage() {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="e.g. Police Control Room / Tahsildar"
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                      className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                     />
                   </div>
 
@@ -785,7 +785,7 @@ export default function GovernmentContactsAdminPage() {
                       value={formData.designation}
                       onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
                       placeholder="e.g. Mandal Revenue Officer / CI of Police"
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                      className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                     />
                   </div>
                 </div>
@@ -796,7 +796,7 @@ export default function GovernmentContactsAdminPage() {
                     <select
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                      className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                     >
                       {GOVT_CONTACT_CATEGORIES.map((cat) => (
                         <option key={cat.id} value={cat.id}>
@@ -813,7 +813,7 @@ export default function GovernmentContactsAdminPage() {
                       value={formData.subcategory}
                       onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
                       placeholder="e.g. Traffic, Fire Safety, Land Records"
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                      className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                     />
                   </div>
                 </div>
@@ -826,7 +826,7 @@ export default function GovernmentContactsAdminPage() {
                       value={formData.phoneNumber}
                       onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                       placeholder="e.g. 112 / 100 / 9441348175"
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden font-mono"
+                      className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden font-mono"
                     />
                   </div>
 
@@ -837,7 +837,7 @@ export default function GovernmentContactsAdminPage() {
                       value={formData.alternatePhoneNumber}
                       onChange={(e) => setFormData({ ...formData, alternatePhoneNumber: e.target.value })}
                       placeholder="e.g. 08694-xxxxxx"
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden font-mono"
+                      className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden font-mono"
                     />
                   </div>
                 </div>
@@ -848,7 +848,7 @@ export default function GovernmentContactsAdminPage() {
                     <select
                       value={formData.village}
                       onChange={(e) => setFormData({ ...formData, village: e.target.value })}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                      className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                     >
                       {CHOUTUPPAL_MANDAL_VILLAGES.map((v) => (
                         <option key={v} value={v}>
@@ -863,7 +863,7 @@ export default function GovernmentContactsAdminPage() {
                     <select
                       value={formData.availability}
                       onChange={(e) => setFormData({ ...formData, availability: e.target.value })}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                      className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                     >
                       <option value="24x7">24x7 (Round the clock)</option>
                       <option value="office_hours">Office Hours (10 AM - 5 PM)</option>
@@ -879,7 +879,7 @@ export default function GovernmentContactsAdminPage() {
                     value={formData.officeAddress}
                     onChange={(e) => setFormData({ ...formData, officeAddress: e.target.value })}
                     placeholder="e.g. Near Bus Stand, Choutuppal, Yadadri Bhuvanagiri"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                    className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                   />
                 </div>
 
@@ -889,7 +889,7 @@ export default function GovernmentContactsAdminPage() {
                     <select
                       value={formData.sourceType}
                       onChange={(e) => setFormData({ ...formData, sourceType: e.target.value })}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                      className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                     >
                       <option value="official_website">Official Website (.gov.in / .nic.in)</option>
                       <option value="official_document">Official Gazette / Dept Order</option>
@@ -905,20 +905,20 @@ export default function GovernmentContactsAdminPage() {
                       value={formData.sourceUrl}
                       onChange={(e) => setFormData({ ...formData, sourceUrl: e.target.value })}
                       placeholder="e.g. https://112.gov.in"
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                      className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                     />
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-6 py-2 border-t border-slate-700">
+                <div className="flex flex-wrap items-center gap-6 py-2 border-t border-slate-200">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={formData.isEmergency}
                       onChange={(e) => setFormData({ ...formData, isEmergency: e.target.checked })}
-                      className="rounded border-slate-600 bg-slate-900 text-red-500 focus:ring-0"
+                      className="rounded border-slate-600 bg-white text-red-500 focus:ring-0"
                     />
-                    <span className="text-white font-semibold">Emergency 24x7 Helpline</span>
+                    <span className="text-slate-900 font-semibold">Emergency 24x7 Helpline</span>
                   </label>
 
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -926,13 +926,13 @@ export default function GovernmentContactsAdminPage() {
                       type="checkbox"
                       checked={formData.isPublicContact}
                       onChange={(e) => setFormData({ ...formData, isPublicContact: e.target.checked })}
-                      className="rounded border-slate-600 bg-slate-900 text-blue-500 focus:ring-0"
+                      className="rounded border-slate-600 bg-white text-blue-500 focus:ring-0"
                     />
-                    <span className="text-white font-semibold">Authorized for Public Release</span>
+                    <span className="text-slate-900 font-semibold">Authorized for Public Release</span>
                   </label>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
                   <button
                     type="button"
                     onClick={() => {
@@ -946,7 +946,7 @@ export default function GovernmentContactsAdminPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold flex items-center gap-1.5"
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center gap-1.5"
                   >
                     {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
                     {showAddModal ? 'Save as Draft / Pending' : 'Update Contact'}
@@ -960,8 +960,8 @@ export default function GovernmentContactsAdminPage() {
         {/* MODAL: VERIFY SOURCE */}
         {showVerifyModal && activeContact && (
           <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-700 pb-3">
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
                   <ShieldCheck className="h-5 w-5 text-emerald-400" />
                   Verify Contact Official Source
@@ -981,7 +981,7 @@ export default function GovernmentContactsAdminPage() {
                   <select
                     value={verifySourceType}
                     onChange={(e) => setVerifySourceType(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                    className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                   >
                     <option value="official_website">Official Website (.gov.in)</option>
                     <option value="official_document">Official Gazette / Dept Order</option>
@@ -996,7 +996,7 @@ export default function GovernmentContactsAdminPage() {
                     value={verifySourceUrl}
                     onChange={(e) => setVerifySourceUrl(e.target.value)}
                     placeholder="https://fire.telangana.gov.in"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                    className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                   />
                 </div>
 
@@ -1007,7 +1007,7 @@ export default function GovernmentContactsAdminPage() {
                     value={verifySourceRef}
                     onChange={(e) => setVerifySourceRef(e.target.value)}
                     placeholder="e.g. Telangana State Fire Control Directory 2026"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                    className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                   />
                 </div>
 
@@ -1016,7 +1016,7 @@ export default function GovernmentContactsAdminPage() {
                   <select
                     value={verifyReviewDays}
                     onChange={(e) => setVerifyReviewDays(Number(e.target.value))}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-hidden"
+                    className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 px-3 py-2 text-white focus:outline-hidden"
                   >
                     <option value={90}>90 Days (Quarterly)</option>
                     <option value={180}>180 Days (Semi-Annual — Recommended)</option>
@@ -1024,7 +1024,7 @@ export default function GovernmentContactsAdminPage() {
                   </select>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
                   <button
                     type="button"
                     onClick={() => setShowVerifyModal(false)}
@@ -1049,8 +1049,8 @@ export default function GovernmentContactsAdminPage() {
         {/* MODAL: PREVIEW CARD */}
         {showPreviewModal && activeContact && (
           <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-700 pb-3">
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
                   <Eye className="h-5 w-5 text-blue-400" /> Public Card Preview
                 </h3>
@@ -1121,8 +1121,8 @@ export default function GovernmentContactsAdminPage() {
         {/* IMPORT CSV MODAL */}
         {showImportModal && (
           <div className="fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4">
-            <div className="bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-2xl w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between border-b border-slate-200/60 pb-3">
                 <div className="flex items-center gap-2">
                   <Upload className="h-5 w-5 text-blue-400" />
                   <h3 className="font-bold text-base text-white">Import Government Contacts via CSV</h3>
@@ -1137,7 +1137,7 @@ export default function GovernmentContactsAdminPage() {
                   <p className="text-slate-300 mb-2">
                     Paste raw CSV data or choose a CSV file. Supported columns:
                   </p>
-                  <code className="block bg-slate-950 p-2.5 rounded-lg text-[11px] text-slate-300 font-mono overflow-x-auto">
+                  <code className="block bg-slate-50 p-2.5 rounded-lg text-[11px] text-slate-300 font-mono overflow-x-auto">
                     name,designation,category,phone_number,village,office_address,office_hours,availability,is_emergency
                   </code>
                 </div>
@@ -1168,11 +1168,11 @@ export default function GovernmentContactsAdminPage() {
                     value={csvInput}
                     onChange={(e) => setCsvInput(e.target.value)}
                     placeholder="name,designation,category,phone_number,village&#10;Sub Inspector,Police SI,police,9848012345,Choutuppal Town"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-slate-200 font-mono text-xs focus:ring-1 focus:ring-blue-500 focus:outline-hidden"
+                    className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-3 text-slate-800 font-mono text-xs focus:ring-1 focus:ring-blue-500 focus:outline-hidden"
                   />
                 </div>
 
-                <div className="flex items-center gap-2 bg-slate-900/60 p-3 rounded-xl border border-slate-700/60">
+                <div className="flex items-center gap-2 bg-slate-100 p-3 rounded-xl border border-slate-200/60">
                   <input
                     type="checkbox"
                     id="dryRunCheck"
@@ -1226,7 +1226,7 @@ export default function GovernmentContactsAdminPage() {
                   </div>
                 )}
 
-                <div className="flex justify-end gap-2 pt-2 border-t border-slate-700">
+                <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
                   <button
                     type="button"
                     onClick={() => setShowImportModal(false)}

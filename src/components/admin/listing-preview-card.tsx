@@ -52,9 +52,9 @@ export function ListingDualPreview({
   const activeImage = coverImage && coverImage.trim().length > 0 ? coverImage : fallbackImage
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-4">
+    <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 space-y-4">
       {/* Top Header & Tab Toggle */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
         <div className="flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-emerald-400" />
           <h3 className="text-xs font-semibold text-white uppercase tracking-wider">
@@ -63,7 +63,7 @@ export function ListingDualPreview({
         </div>
 
         {/* Preview Tabs */}
-        <div className="flex items-center bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+        <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
           <button
             type="button"
             onClick={() => setTab('whatsapp')}
@@ -93,7 +93,7 @@ export function ListingDualPreview({
 
       {/* Preset Photo Quick Picker */}
       {onSelectPreset && (
-        <div className="space-y-1.5 bg-slate-950/70 p-2.5 rounded-lg border border-slate-800">
+        <div className="space-y-1.5 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-slate-800">
           <div className="flex items-center justify-between text-[11px] text-slate-400">
             <span className="flex items-center gap-1 font-medium">
               <ImageIcon className="w-3 h-3 text-blue-400" />
@@ -109,12 +109,12 @@ export function ListingDualPreview({
                 className={`group relative h-12 rounded overflow-hidden border transition-all text-left ${
                   activeImage === p.url
                     ? 'border-emerald-500 ring-2 ring-emerald-500/30'
-                    : 'border-slate-800 hover:border-slate-700'
+                    : 'border-slate-200 hover:border-slate-700'
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={p.url} alt={p.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                <span className="absolute inset-x-0 bottom-0 bg-slate-950/80 text-[9px] text-white px-1 truncate py-0.5">
+                <span className="absolute inset-x-0 bottom-0 bg-slate-50/80 text-[9px] text-white px-1 truncate py-0.5">
                   {p.label.split('/')[0]}
                 </span>
               </button>
@@ -148,7 +148,7 @@ export function ListingDualPreview({
                 VERIFIED
               </div>
               {price && (
-                <div className="absolute bottom-2 left-2 bg-slate-950/80 backdrop-blur-sm text-emerald-400 font-semibold text-[11px] px-2 py-0.5 rounded">
+                <div className="absolute bottom-2 left-2 bg-slate-50/80 backdrop-blur-sm text-emerald-400 font-semibold text-[11px] px-2 py-0.5 rounded">
                   {price}
                 </div>
               )}
@@ -201,14 +201,14 @@ export function ListingDualPreview({
         </div>
       ) : (
         /* Tab 2: Website Card Mockup */
-        <div className="bg-slate-950 rounded-xl p-3 border border-slate-800">
-          <div className="flex items-center justify-between text-[11px] text-blue-400 pb-2 mb-2 border-b border-slate-800">
+        <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 text-slate-800">
+          <div className="flex items-center justify-between text-[11px] text-blue-400 pb-2 mb-2 border-b border-slate-200">
             <span>Website Portal Card (User View)</span>
             <span className="text-[10px] text-slate-500">choutuppal.in</span>
           </div>
 
-          <div className="max-w-[320px] mx-auto bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow-lg">
-            <div className="relative h-44 w-full bg-slate-800">
+          <div className="max-w-[320px] mx-auto bg-white rounded-xl border border-slate-200 overflow-hidden shadow-lg">
+            <div className="relative h-44 w-full bg-slate-100">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={activeImage} alt={title} className="w-full h-full object-cover" />
               {isFeatured && (
@@ -217,30 +217,30 @@ export function ListingDualPreview({
                 </span>
               )}
               {isPremium && (
-                <span className="absolute top-2 right-2 bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
+                <span className="absolute top-2 right-2 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
                   PREMIUM
                 </span>
               )}
             </div>
 
             <div className="p-3 space-y-2">
-              <span className="text-[10px] font-semibold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+              <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                 {categoryName}
               </span>
-              <h4 className="font-bold text-sm text-white line-clamp-1">{title || 'Listing Title'}</h4>
-              <p className="text-xs text-slate-400 line-clamp-2">{description || 'Description...'}</p>
+              <h4 className="font-bold text-sm text-slate-900 line-clamp-1">{title || 'Listing Title'}</h4>
+              <p className="text-xs text-slate-500 line-clamp-2">{description || 'Description...'}</p>
 
               <div className="pt-2 flex items-center justify-between text-xs">
-                <span className="text-emerald-400 font-semibold">{price || 'Best Price'}</span>
-                <span className="text-slate-400 text-[11px]">{address || 'Choutuppal'}</span>
+                <span className="text-emerald-700 font-bold">{price || 'Best Price'}</span>
+                <span className="text-slate-500 text-[11px]">{address || 'Choutuppal'}</span>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
-                <button className="py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-medium flex items-center justify-center gap-1">
-                  <Phone className="w-3 h-3 text-blue-400" />
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200">
+                <button className="py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg text-xs font-semibold flex items-center justify-center gap-1">
+                  <Phone className="w-3 h-3 text-emerald-600" />
                   <span>Call</span>
                 </button>
-                <button className="py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-xs font-semibold flex items-center justify-center gap-1">
+                <button className="py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1 shadow-2xs">
                   <MessageCircle className="w-3 h-3" />
                   <span>WhatsApp</span>
                 </button>

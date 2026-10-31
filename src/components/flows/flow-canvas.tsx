@@ -154,34 +154,34 @@ export function FlowCanvas() {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      className="relative flex-1 w-full h-full min-h-[580px] bg-slate-950 overflow-hidden select-none cursor-grab active:cursor-grabbing border border-slate-800 rounded-2xl"
+      className="relative flex-1 w-full h-full min-h-[580px] bg-slate-50 overflow-hidden select-none cursor-grab active:cursor-grabbing border border-slate-200 rounded-2xl"
     >
       {/* Background Dot Pattern */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
+      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40">
         <defs>
           <pattern id="grid-pattern" width="24" height="24" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="1" fill="#64748b" />
+            <circle cx="2" cy="2" r="1" fill="#cbd5e1" />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#grid-pattern)" />
       </svg>
 
       {/* FLOATING CONTROLS TOOLBAR */}
-      <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md p-1.5 rounded-xl border border-slate-800 shadow-xl">
+      <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 bg-white/95 backdrop-blur-md p-1.5 rounded-xl border border-slate-200 shadow-sm">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               size="sm"
-              className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-8 px-3 rounded-lg shadow-sm shadow-emerald-600/30 gap-1.5 cursor-pointer"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs h-8 px-3 rounded-lg shadow-xs shadow-emerald-600/30 gap-1.5 cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               <span>Add Step</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-56 bg-slate-900 border-slate-800 text-slate-100">
+          <DropdownMenuContent align="start" className="w-56 bg-white border border-slate-200 text-slate-900 shadow-xl">
             {groupNodeTypesByCategory(Object.keys(NODE_META) as NodeType[]).map((group) => (
               <DropdownMenuGroup key={group.id}>
-                <DropdownMenuLabel className="text-[10px] uppercase font-bold text-slate-400">
+                <DropdownMenuLabel className="text-[10px] uppercase font-bold text-slate-500">
                   {group.label}
                 </DropdownMenuLabel>
                 {group.types.map((type) => {
@@ -194,31 +194,31 @@ export function FlowCanvas() {
                         const newKey = addNode(type)
                         setSelectedNodeKey(newKey)
                       }}
-                      className="cursor-pointer hover:bg-slate-800 focus:bg-slate-800 gap-2 text-xs"
+                      className="cursor-pointer hover:bg-slate-100 focus:bg-slate-100 gap-2 text-xs text-slate-800"
                     >
-                      <span className={cn('p-1 rounded-md bg-slate-800 shrink-0', meta.color)}>
+                      <span className={cn('p-1 rounded-md bg-slate-100 shrink-0', meta.color)}>
                         <Icon className="h-3.5 w-3.5" />
                       </span>
                       <div>
-                        <div className="font-semibold text-white">{meta.label}</div>
-                        <div className="text-[10px] text-slate-400 truncate max-w-[140px]">{meta.blurb}</div>
+                        <div className="font-semibold text-slate-900">{meta.label}</div>
+                        <div className="text-[10px] text-slate-500 truncate max-w-[140px]">{meta.blurb}</div>
                       </div>
                     </DropdownMenuItem>
                   )
                 })}
-                <DropdownMenuSeparator className="bg-slate-800" />
+                <DropdownMenuSeparator className="bg-slate-100" />
               </DropdownMenuGroup>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="h-4 w-px bg-slate-800 mx-1" />
+        <div className="h-4 w-px bg-slate-200 mx-1" />
 
         <Button
           size="sm"
           variant="ghost"
           onClick={() => handleZoom(0.15)}
-          className="h-8 w-8 p-0 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg cursor-pointer"
+          className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg cursor-pointer"
           title="Zoom In"
         >
           <ZoomIn className="h-4 w-4" />
@@ -227,7 +227,7 @@ export function FlowCanvas() {
           size="sm"
           variant="ghost"
           onClick={() => handleZoom(-0.15)}
-          className="h-8 w-8 p-0 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg cursor-pointer"
+          className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg cursor-pointer"
           title="Zoom Out"
         >
           <ZoomOut className="h-4 w-4" />
@@ -236,13 +236,13 @@ export function FlowCanvas() {
           size="sm"
           variant="ghost"
           onClick={handleResetView}
-          className="h-8 w-8 p-0 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg cursor-pointer"
+          className="h-8 w-8 p-0 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg cursor-pointer"
           title="Reset View"
         >
           <Maximize2 className="h-4 w-4" />
         </Button>
 
-        <span className="text-[10px] font-mono text-slate-400 px-2">
+        <span className="text-[10px] font-mono text-slate-500 px-2 font-semibold">
           {Math.round(zoom * 100)}%
         </span>
       </div>
@@ -310,11 +310,11 @@ export function FlowCanvas() {
                 <text
                   x={(x1 + x2) / 2}
                   y={(y1 + y2) / 2 - 6}
-                  fill={isHighlighted ? '#34d399' : '#94a3b8'}
+                  fill={isHighlighted ? '#059669' : '#64748b'}
                   fontSize="10"
                   fontWeight="bold"
                   textAnchor="middle"
-                  className="bg-slate-900 px-1 py-0.5"
+                  className="select-none"
                 >
                   {edge.label}
                 </text>
@@ -353,39 +353,39 @@ export function FlowCanvas() {
                 width: `${NODE_WIDTH}px`,
               }}
               className={cn(
-                'flow-node-card absolute rounded-2xl bg-slate-900 border p-3.5 shadow-xl transition-shadow cursor-pointer',
+                'flow-node-card absolute rounded-2xl bg-white border p-3.5 shadow-md hover:shadow-lg transition-all cursor-pointer',
                 isSelected
-                  ? 'border-emerald-500 ring-2 ring-emerald-500/30 shadow-emerald-500/20'
-                  : 'border-slate-800 hover:border-slate-700',
+                  ? 'border-emerald-500 ring-2 ring-emerald-500/30 shadow-emerald-500/10'
+                  : 'border-slate-200 hover:border-slate-300',
                 isFlashed && 'animate-pulse ring-4 ring-amber-400',
               )}
             >
               {/* Top Row: Icon + Type Label + Entry Pill */}
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className={cn('p-1.5 rounded-lg bg-slate-800 shrink-0', meta.color)}>
+                  <span className={cn('p-1.5 rounded-lg bg-slate-100 shrink-0', meta.color)}>
                     <Icon className="h-4 w-4" />
                   </span>
                   <div className="truncate">
-                    <div className="font-bold text-xs text-white truncate">{meta.label}</div>
-                    <code className="text-[10px] text-slate-400 font-mono">{node.node_key}</code>
+                    <div className="font-bold text-xs text-slate-900 truncate">{meta.label}</div>
+                    <code className="text-[10px] text-slate-500 font-mono">{node.node_key}</code>
                   </div>
                 </div>
 
                 {isEntry ? (
-                  <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-black uppercase px-2 py-0.5 rounded-md shrink-0">
+                  <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] font-black uppercase px-2 py-0.5 rounded-md shrink-0">
                     Entry
                   </span>
                 ) : null}
               </div>
 
               {/* Summary description preview */}
-              <div className="bg-slate-950/80 rounded-xl p-2 border border-slate-800/80 text-[11px] text-slate-300 line-clamp-2 leading-relaxed min-h-[38px]">
-                {summary || <span className="text-slate-500 italic">Configure step settings...</span>}
+              <div className="bg-slate-50 rounded-xl p-2 border border-slate-200/80 text-[11px] text-slate-700 line-clamp-2 leading-relaxed min-h-[38px]">
+                {summary || <span className="text-slate-400 italic">Configure step settings...</span>}
               </div>
 
               {/* Bottom ports / branch summary */}
-              <div className="mt-2.5 pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] text-slate-400">
+              <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
                 <span className="truncate">
                   {node.node_type === 'send_buttons' && (node.config.buttons as any[])?.length
                     ? `${(node.config.buttons as any[]).length} Quick Buttons`
@@ -397,7 +397,7 @@ export function FlowCanvas() {
                           ? 'Terminal step'
                           : 'Advances on send'}
                 </span>
-                <span className="text-emerald-400 font-bold hover:underline">Edit ⚙️</span>
+                <span className="text-emerald-600 font-bold hover:underline">Edit ⚙️</span>
               </div>
             </div>
           )
@@ -409,21 +409,21 @@ export function FlowCanvas() {
         open={Boolean(selectedNodeKey)}
         onOpenChange={(open) => !open && setSelectedNodeKey(null)}
       >
-        <SheetContent side="right" className="w-full sm:max-w-md bg-slate-900 border-slate-800 text-slate-100 p-6 overflow-y-auto">
+        <SheetContent side="right" className="w-full sm:max-w-md bg-white border-l border-slate-200 text-slate-900 p-6 overflow-y-auto shadow-2xl">
           {selectedNode && (
             <div className="space-y-6">
               <SheetHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <span className={cn('p-2 rounded-xl bg-slate-800', NODE_META[selectedNode.node_type]?.color)}>
+                    <span className={cn('p-2 rounded-xl bg-slate-100', NODE_META[selectedNode.node_type]?.color)}>
                       {React.createElement(NODE_META[selectedNode.node_type]?.icon || Workflow, { className: 'h-5 w-5' })}
                     </span>
                     <div>
-                      <SheetTitle className="text-base font-black text-white">
+                      <SheetTitle className="text-base font-black text-slate-900">
                         {NODE_META[selectedNode.node_type]?.label || 'Node Config'}
                       </SheetTitle>
-                      <SheetDescription className="text-xs text-slate-400">
-                        Key: <code className="text-emerald-400 font-mono">{selectedNode.node_key}</code>
+                      <SheetDescription className="text-xs text-slate-500">
+                        Key: <code className="text-emerald-600 font-mono font-semibold">{selectedNode.node_key}</code>
                       </SheetDescription>
                     </div>
                   </div>
@@ -434,7 +434,7 @@ export function FlowCanvas() {
                         size="sm"
                         variant="outline"
                         onClick={() => setEntryNodeId(selectedNode.node_key)}
-                        className="text-[10px] h-7 bg-slate-800 border-slate-700 text-slate-300 hover:text-white"
+                        className="text-[10px] h-7 bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200 cursor-pointer"
                       >
                         Set Entry
                       </Button>
@@ -446,7 +446,7 @@ export function FlowCanvas() {
                         removeNode(selectedNode.node_key)
                         setSelectedNodeKey(null)
                       }}
-                      className="h-7 w-7 p-0 bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30"
+                      className="h-7 w-7 p-0 bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 cursor-pointer"
                       title="Delete node"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -456,7 +456,7 @@ export function FlowCanvas() {
               </SheetHeader>
 
               {/* Per-Node Config Form */}
-              <div className="pt-2 border-t border-slate-800">
+              <div className="pt-2 border-t border-slate-200">
                 <NodeConfigForm
                   node={selectedNode}
                   allNodes={nodes}
@@ -465,12 +465,12 @@ export function FlowCanvas() {
                 />
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
-                <span className="text-xs text-slate-400">Edits are synced to canvas live</span>
+              <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                <span className="text-xs text-slate-500">Edits are synced to canvas live</span>
                 <Button
                   size="sm"
                   onClick={() => setSelectedNodeKey(null)}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs cursor-pointer shadow-xs"
                 >
                   Done
                 </Button>

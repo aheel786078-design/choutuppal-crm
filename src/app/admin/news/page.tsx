@@ -188,31 +188,31 @@ export default function NewsAdminPage() {
 
       <div className="p-6 space-y-6 max-w-7xl mx-auto w-full">
         {actionMsg && (
-          <div className="bg-emerald-950/60 border border-emerald-800 text-emerald-300 px-4 py-2.5 rounded-xl text-xs flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2.5 rounded-xl text-xs flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             <span>{actionMsg}</span>
           </div>
         )}
 
         {error && (
-          <div className="bg-red-950/60 border border-red-800 text-red-300 px-4 py-2.5 rounded-xl text-xs flex items-center justify-between">
+          <div className="bg-rose-50 border border-rose-200 text-rose-800 px-4 py-2.5 rounded-xl text-xs flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-400" />
+              <AlertCircle className="w-4 h-4 text-rose-600" />
               <span>{error}</span>
             </div>
-            <button onClick={fetchNews} className="underline hover:text-white text-[11px]">Retry</button>
+            <button onClick={fetchNews} className="underline hover:text-rose-900 text-[11px] font-semibold">Retry</button>
           </div>
         )}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow">
-          <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-            <h3 className="font-semibold text-sm text-white">Articles ({newsList.length})</h3>
+        <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 overflow-hidden shadow">
+          <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 className="font-semibold text-sm text-slate-900">Articles ({newsList.length})</h3>
             <span className="text-[11px] text-slate-500">Synced to web portal and news digest</span>
           </div>
 
           {loading ? (
             <div className="flex flex-col items-center justify-center p-14 text-slate-500 space-y-2">
-              <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+              <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
               <span className="text-xs">Loading articles...</span>
             </div>
           ) : newsList.length === 0 ? (
@@ -220,29 +220,29 @@ export default function NewsAdminPage() {
               No news articles found. Click "Add News Article" to publish one.
             </div>
           ) : (
-            <div className="divide-y divide-slate-800">
+            <div className="divide-y divide-slate-100">
               {newsList.map((item) => (
                 <div key={item.id} className="p-4 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-16 h-14 rounded-lg bg-slate-800 overflow-hidden shrink-0">
+                    <div className="w-16 h-14 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={item.coverImage} alt={item.title} className="w-full h-full object-cover" />
                     </div>
                     <div className="min-w-0 space-y-0.5">
                       <div className="flex items-center gap-2">
-                        <h4 className="font-semibold text-xs text-white truncate">{item.title}</h4>
+                        <h4 className="font-semibold text-xs text-slate-900 truncate">{item.title}</h4>
                         <span
                           className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${
                             item.isPublished !== false
-                              ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
-                              : 'bg-slate-800 text-slate-400 border border-slate-700'
+                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                              : 'bg-slate-100 text-slate-700 border border-slate-200'
                           }`}
                         >
                           {item.isPublished !== false ? 'Published' : 'Draft'}
                         </span>
                       </div>
                       {item.teluguTitle && (
-                        <p className="text-[11px] text-blue-400 truncate">{item.teluguTitle}</p>
+                        <p className="text-[11px] text-emerald-700 truncate">{item.teluguTitle}</p>
                       )}
                       <p className="text-[10px] text-slate-500">
                         {item.category} • 👁️ {item.views || 0} Views
@@ -253,21 +253,21 @@ export default function NewsAdminPage() {
                   <div className="flex items-center gap-2 shrink-0">
                     <button
                       onClick={() => handleToggle(item.id)}
-                      className="px-2 py-1 text-[11px] rounded bg-slate-800 text-slate-300 hover:text-white"
+                      className="px-2 py-1 text-[11px] rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 transition-colors"
                       title="Toggle publish status"
                     >
                       {item.isPublished !== false ? 'Unpublish' : 'Publish'}
                     </button>
                     <button
                       onClick={() => handleOpenEdit(item)}
-                      className="p-1.5 text-blue-400 hover:text-blue-300 rounded bg-blue-950/30"
+                      className="p-1.5 text-blue-600 hover:text-blue-700 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-colors"
                       title="Edit article"
                     >
                       <Edit className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="p-1.5 text-red-400 hover:text-red-300 rounded bg-red-950/30"
+                      className="p-1.5 text-rose-600 hover:text-rose-700 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors"
                       title="Delete article"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -282,70 +282,70 @@ export default function NewsAdminPage() {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-white">{editingId ? 'Edit News Article' : 'Add News Article'}</h3>
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-sm font-bold text-slate-900">{editingId ? 'Edit News Article' : 'Add News Article'}</h3>
               <button onClick={() => setIsModalOpen(false)}>
-                <X className="w-4 h-4 text-slate-400" />
+                <X className="w-4 h-4 text-slate-400 hover:text-slate-900" />
               </button>
             </div>
 
             <form onSubmit={handleSave} className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">English Title *</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">English Title *</label>
                 <input
                   type="text"
                   required
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Telugu Headline</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Telugu Headline</label>
                 <input
                   type="text"
                   value={formData.teluguTitle}
                   onChange={(e) => setFormData({ ...formData, teluguTitle: e.target.value })}
                   placeholder="వార్త శీర్షిక..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Cover Image URL</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Cover Image URL</label>
                 <input
                   type="url"
                   value={formData.coverImage}
                   onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Short Summary</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Short Summary</label>
                 <textarea
                   rows={2}
                   value={formData.summary}
                   onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
                 <button
                   type="button"
                   disabled={saving}
                   onClick={() => setIsModalOpen(false)}
-                  className="px-3 py-1.5 bg-slate-800 text-white rounded text-xs"
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-xs font-bold flex items-center gap-1.5"
+                  className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold flex items-center gap-1.5"
                 >
                   {saving && <Loader2 className="w-3 h-3 animate-spin" />}
                   <span>{editingId ? (saving ? 'Updating...' : 'Update Article') : (saving ? 'Publishing...' : 'Publish Article')}</span>

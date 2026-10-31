@@ -133,7 +133,7 @@ export default function AuditLogsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pb-12">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col pb-12">
       <AdminHeader
         title="Audit Logs & Governance"
         subtitle="Cryptographically verified server session audit trail, security events & administrative accountability"
@@ -146,7 +146,7 @@ export default function AuditLogsPage() {
       <AdminPageContainer className="mt-6 flex-1 flex flex-col gap-6">
         {/* Top Summary Banner */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+          <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Audit Records</p>
               <h3 className="text-2xl font-bold text-white mt-1">{totalCount.toLocaleString()}</h3>
@@ -156,7 +156,7 @@ export default function AuditLogsPage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+          <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Successful Actions</p>
               <h3 className="text-2xl font-bold text-emerald-400 mt-1">
@@ -168,7 +168,7 @@ export default function AuditLogsPage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+          <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Security Denials</p>
               <h3 className="text-2xl font-bold text-rose-400 mt-1">
@@ -180,7 +180,7 @@ export default function AuditLogsPage() {
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+          <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Integrity Standard</p>
               <h3 className="text-sm font-semibold text-cyan-400 mt-1">HMAC-SHA256 Session</h3>
@@ -193,7 +193,7 @@ export default function AuditLogsPage() {
         </div>
 
         {/* Filter Controls Bar */}
-        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-4">
+        <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 space-y-4">
           <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
             {/* Search input */}
             <div className="relative flex-1">
@@ -206,7 +206,7 @@ export default function AuditLogsPage() {
                   setSearch(e.target.value)
                   setPage(1)
                 }}
-                className="w-full pl-9 pr-4 py-2 bg-slate-950/70 border border-slate-800 rounded-lg text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
               />
             </div>
 
@@ -214,25 +214,25 @@ export default function AuditLogsPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleExportCsv}
-                className="inline-flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-sm font-medium transition-colors border border-slate-700 shadow-sm"
+                className="inline-flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors border border-slate-200 shadow-2xs"
                 title="Download CSV export with spreadsheet formula injection protection"
               >
-                <Download className="w-4 h-4 text-emerald-400" />
+                <Download className="w-4 h-4 text-emerald-600" />
                 <span>Export CSV</span>
               </button>
               <button
                 onClick={() => fetchLogs()}
                 disabled={loading}
-                className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition-colors border border-slate-700 disabled:opacity-50"
+                className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition-colors border border-slate-200 disabled:opacity-50"
                 title="Refresh audit log stream"
               >
-                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-blue-400' : ''}`} />
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-emerald-600' : ''}`} />
               </button>
             </div>
           </div>
 
           {/* Filter Dropdowns */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-2 border-t border-slate-800/60 text-xs">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-2 border-t border-slate-200/60 text-xs">
             {/* Outcome Filter */}
             <div>
               <label className="block text-slate-400 mb-1 font-medium">Outcome</label>
@@ -242,7 +242,7 @@ export default function AuditLogsPage() {
                   setOutcomeFilter(e.target.value as any)
                   setPage(1)
                 }}
-                className="w-full bg-slate-950 border border-slate-800 rounded-md px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1.5 text-slate-800 focus:outline-none focus:border-blue-500"
               >
                 <option value="ALL">All Outcomes</option>
                 <option value="SUCCESS">Success Only</option>
@@ -259,7 +259,7 @@ export default function AuditLogsPage() {
                   setActionFilter(e.target.value)
                   setPage(1)
                 }}
-                className="w-full bg-slate-950 border border-slate-800 rounded-md px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1.5 text-slate-800 focus:outline-none focus:border-blue-500"
               >
                 <option value="ALL">All Actions</option>
                 <option value="auth.login">auth.login</option>
@@ -290,7 +290,7 @@ export default function AuditLogsPage() {
                   setTerritoryFilter(e.target.value)
                   setPage(1)
                 }}
-                className="w-full bg-slate-950 border border-slate-800 rounded-md px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1.5 text-slate-800 focus:outline-none focus:border-blue-500"
               >
                 <option value="ALL">All Territories</option>
                 {territories.map((t) => (
@@ -311,7 +311,7 @@ export default function AuditLogsPage() {
                   setStartDate(e.target.value)
                   setPage(1)
                 }}
-                className="w-full bg-slate-950 border border-slate-800 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-md px-2 py-1 text-slate-800 focus:outline-none focus:border-blue-500"
               />
             </div>
 
@@ -325,14 +325,14 @@ export default function AuditLogsPage() {
                   setEndDate(e.target.value)
                   setPage(1)
                 }}
-                className="w-full bg-slate-950 border border-slate-800 rounded-md px-2 py-1 text-slate-200 focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-md px-2 py-1 text-slate-800 focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
         </div>
 
         {/* Audit Log Table */}
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 overflow-hidden shadow-xl flex-1 flex flex-col justify-between">
+        <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-xl flex-1 flex flex-col justify-between">
           <div className="overflow-x-auto">
             {loading ? (
               <div className="p-6">
@@ -349,7 +349,7 @@ export default function AuditLogsPage() {
             ) : (
               <table className="w-full text-left text-sm border-collapse">
                 <thead>
-                  <tr className="bg-slate-900/90 border-b border-slate-800 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                     <th className="py-3 px-4">Timestamp</th>
                     <th className="py-3 px-4">Actor</th>
                     <th className="py-3 px-4">Action</th>
@@ -359,13 +359,13 @@ export default function AuditLogsPage() {
                     <th className="py-3 px-4 text-right">Inspect</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 font-sans">
+                <tbody className="divide-y divide-slate-100/60 font-sans">
                   {logs.map((log) => {
                     const isFailure = log.outcome === 'FAILURE'
                     return (
                       <tr
                         key={log.id}
-                        className="hover:bg-slate-800/40 transition-colors group cursor-pointer"
+                        className="hover:bg-slate-50/70 transition-colors group cursor-pointer"
                         onClick={() => setSelectedLog(log)}
                       >
                         {/* Timestamp */}
@@ -379,7 +379,7 @@ export default function AuditLogsPage() {
                         {/* Actor */}
                         <td className="py-3 px-4 whitespace-nowrap text-xs">
                           <div className="flex flex-col gap-0.5">
-                            <div className="font-medium text-slate-200 flex items-center gap-1">
+                            <div className="font-medium text-slate-800 flex items-center gap-1">
                               <User className="w-3 h-3 text-slate-400" />
                               <span>{log.actorName || log.actorId}</span>
                             </div>
@@ -396,7 +396,7 @@ export default function AuditLogsPage() {
 
                         {/* Action */}
                         <td className="py-3 px-4 whitespace-nowrap text-xs">
-                          <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-800 border border-slate-700/60 text-slate-300">
+                          <span className="font-mono text-xs px-2 py-0.5 rounded bg-white border border-slate-200/80/60 text-slate-300">
                             {log.action}
                           </span>
                         </td>
@@ -436,7 +436,7 @@ export default function AuditLogsPage() {
                               e.stopPropagation()
                               setSelectedLog(log)
                             }}
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700"
+                            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-white transition-colors border border-slate-200"
                             title="Inspect complete audit metadata"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -452,11 +452,11 @@ export default function AuditLogsPage() {
 
           {/* Pagination Footer */}
           {!loading && logs.length > 0 && (
-            <div className="p-4 border-t border-slate-800/80 bg-slate-900/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+            <div className="p-4 border-t border-slate-200/80 bg-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
               <div className="flex items-center gap-2">
                 <span>
                   Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} of{' '}
-                  <span className="font-semibold text-slate-200">{totalCount.toLocaleString()}</span> entries
+                  <span className="font-semibold text-slate-800">{totalCount.toLocaleString()}</span> entries
                 </span>
                 <span className="text-slate-600">|</span>
                 <label className="flex items-center gap-1.5">
@@ -467,7 +467,7 @@ export default function AuditLogsPage() {
                       setPageSize(parseInt(e.target.value, 10))
                       setPage(1)
                     }}
-                    className="bg-slate-950 border border-slate-800 rounded px-1.5 py-0.5 text-slate-200 focus:outline-none"
+                    className="bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-slate-800 focus:outline-none"
                   >
                     <option value={15}>15</option>
                     <option value={25}>25</option>
@@ -481,7 +481,7 @@ export default function AuditLogsPage() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page <= 1}
-                  className="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-slate-800 transition-colors flex items-center gap-1"
+                  className="px-2.5 py-1 rounded bg-white border border-slate-200/80 text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-slate-100 transition-colors flex items-center gap-1"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
                   <span>Prev</span>
@@ -492,7 +492,7 @@ export default function AuditLogsPage() {
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
-                  className="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-slate-800 transition-colors flex items-center gap-1"
+                  className="px-2.5 py-1 rounded bg-white border border-slate-200/80 text-slate-300 hover:bg-slate-700 disabled:opacity-40 disabled:hover:bg-slate-100 transition-colors flex items-center gap-1"
                 >
                   <span>Next</span>
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -506,8 +506,8 @@ export default function AuditLogsPage() {
       {/* Metadata Detail Inspection Modal */}
       {selectedLog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
-            <div className="flex items-start justify-between pb-3 border-b border-slate-800">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+            <div className="flex items-start justify-between pb-3 border-b border-slate-200">
               <div className="flex items-center gap-2">
                 <div className={`p-2 rounded-lg ${selectedLog.outcome === 'FAILURE' ? 'bg-rose-500/10 text-rose-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
                   {selectedLog.outcome === 'FAILURE' ? <ShieldAlert className="w-5 h-5" /> : <ShieldCheck className="w-5 h-5" />}
@@ -519,17 +519,17 @@ export default function AuditLogsPage() {
               </div>
               <button
                 onClick={() => setSelectedLog(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-100 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="overflow-y-auto space-y-4 flex-1 pr-1 text-xs">
-              <div className="grid grid-cols-2 gap-3 bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80">
+              <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200/80">
                 <div>
                   <span className="text-slate-400 block mb-0.5 font-medium">Timestamp</span>
-                  <span className="text-slate-200 font-mono">
+                  <span className="text-slate-800 font-mono">
                     {formatTimestamp(selectedLog.createdAt || selectedLog.timestamp)}
                   </span>
                 </div>
@@ -545,7 +545,7 @@ export default function AuditLogsPage() {
                 </div>
                 <div>
                   <span className="text-slate-400 block mb-0.5 font-medium">Actor Identity</span>
-                  <span className="text-slate-200">
+                  <span className="text-slate-800">
                     {selectedLog.actorName} ({selectedLog.actorId})
                   </span>
                 </div>
@@ -557,17 +557,17 @@ export default function AuditLogsPage() {
                 </div>
                 <div>
                   <span className="text-slate-400 block mb-0.5 font-medium">Action</span>
-                  <span className="font-mono text-slate-200">{selectedLog.action}</span>
+                  <span className="font-mono text-slate-800">{selectedLog.action}</span>
                 </div>
                 <div>
                   <span className="text-slate-400 block mb-0.5 font-medium">Territory Scope</span>
-                  <span className="text-slate-200">{selectedLog.territoryId || 'Global / Flagship'}</span>
+                  <span className="text-slate-800">{selectedLog.territoryId || 'Global / Flagship'}</span>
                 </div>
               </div>
 
               <div>
                 <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Event Description</h4>
-                <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-slate-200 leading-relaxed break-words">
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 leading-relaxed break-words">
                   {selectedLog.details}
                 </div>
               </div>
@@ -575,17 +575,17 @@ export default function AuditLogsPage() {
               {selectedLog.metadata && Object.keys(selectedLog.metadata).length > 0 && (
                 <div>
                   <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Structured Metadata & Correlation</h4>
-                  <pre className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-emerald-400 font-mono text-[11px] overflow-x-auto max-h-48">
+                  <pre className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-emerald-400 font-mono text-[11px] overflow-x-auto max-h-48">
                     {JSON.stringify(selectedLog.metadata, null, 2)}
                   </pre>
                 </div>
               )}
             </div>
 
-            <div className="pt-3 border-t border-slate-800 flex justify-end">
+            <div className="pt-3 border-t border-slate-200 flex justify-end">
               <button
                 onClick={() => setSelectedLog(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-medium transition-colors"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold transition-colors"
               >
                 Close Inspector
               </button>

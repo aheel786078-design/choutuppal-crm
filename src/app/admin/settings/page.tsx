@@ -80,7 +80,7 @@ export default function SettingsAdminPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen">
+    <div className="flex-1 flex flex-col min-h-screen bg-slate-50 text-slate-900">
       <AdminHeader
         title="WhatsApp Cloud API & System Settings"
         subtitle="Manage Meta Cloud API credentials, webhook endpoints and synchronization rules"
@@ -89,27 +89,27 @@ export default function SettingsAdminPage() {
 
       <div className="p-6 space-y-6 max-w-4xl mx-auto w-full">
         {saved && (
-          <div className="p-3.5 bg-emerald-950/80 border border-emerald-800 rounded-xl text-emerald-300 text-xs font-semibold flex items-center gap-2 shadow">
-            <Check className="w-4 h-4 text-emerald-400" />
+          <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800 text-xs font-semibold flex items-center gap-2 shadow-xs">
+            <Check className="w-4 h-4 text-emerald-600" />
             <span>WhatsApp API credentials and CRM sync rules updated successfully!</span>
           </div>
         )}
 
         {errorMsg && (
-          <div className="p-3.5 bg-red-950/80 border border-red-800 rounded-xl text-red-300 text-xs font-semibold flex items-center gap-2 shadow">
-            <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+          <div className="p-3.5 bg-red-50 border border-red-200 rounded-2xl text-red-800 text-xs font-semibold flex items-center gap-2 shadow-xs">
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
             <span>{errorMsg}</span>
           </div>
         )}
 
-        <form onSubmit={handleSave} className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-5 shadow">
-          <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-            <Key className="w-4 h-4 text-emerald-400" />
-            <h3 className="font-bold text-sm text-white">Meta WhatsApp Cloud API Configuration</h3>
+        <form onSubmit={handleSave} className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-5 shadow-xs">
+          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+            <Key className="w-4 h-4 text-emerald-600" />
+            <h3 className="font-bold text-sm text-slate-900">Meta WhatsApp Cloud API Configuration</h3>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               WhatsApp Permanent Access Token (System User Token)
             </label>
             <input
@@ -117,7 +117,7 @@ export default function SettingsAdminPage() {
               value={token}
               onChange={(e) => setToken(e.target.value)}
               placeholder="Leave unchanged or enter new token"
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
             />
             <span className="text-[10px] text-slate-500 mt-0.5 block">
               From Meta Business Developer Portal &gt; WhatsApp &gt; API Setup
@@ -126,7 +126,7 @@ export default function SettingsAdminPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Phone Number ID
               </label>
               <input
@@ -134,12 +134,12 @@ export default function SettingsAdminPage() {
                 value={phoneId}
                 onChange={(e) => setPhoneId(e.target.value)}
                 placeholder="e.g. 109848012345678"
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Webhook Verify Token
               </label>
               <input
@@ -147,54 +147,54 @@ export default function SettingsAdminPage() {
                 value={verifyToken}
                 onChange={(e) => setVerifyToken(e.target.value)}
                 placeholder="choutuppal_verify_token"
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
               />
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-800 space-y-3">
-            <h4 className="font-semibold text-xs text-white">CRM & Directory Sync Rules</h4>
-            <div className="flex items-center justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
+          <div className="pt-3 border-t border-slate-100 space-y-3">
+            <h4 className="font-bold text-xs text-slate-900">CRM & Directory Sync Rules</h4>
+            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
               <div>
-                <span className="text-xs font-medium text-white block">Automatic Merchant Sync</span>
-                <span className="text-[11px] text-slate-400">Sync listing owners to CRM Contacts as WON merchant leads</span>
+                <span className="text-xs font-semibold text-slate-900 block">Automatic Merchant Sync</span>
+                <span className="text-[11px] text-slate-500">Sync listing owners to CRM Contacts as WON merchant leads</span>
               </div>
               <input
                 type="checkbox"
                 checked={syncListings}
                 onChange={(e) => setSyncListings(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0 cursor-pointer"
+                className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
               />
             </div>
-            <div className="flex items-center justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
+            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
               <div>
-                <span className="text-xs font-medium text-white block">Auto-Send Photo Cards in Chat</span>
-                <span className="text-[11px] text-slate-400">Send rich photo cards automatically when matching directory inquiries</span>
+                <span className="text-xs font-semibold text-slate-900 block">Auto-Send Photo Cards in Chat</span>
+                <span className="text-[11px] text-slate-500">Send rich photo cards automatically when matching directory inquiries</span>
               </div>
               <input
                 type="checkbox"
                 checked={autoSendPhoto}
                 onChange={(e) => setAutoSendPhoto(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0 cursor-pointer"
+                className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
               />
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-800">
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <div className="pt-3 border-t border-slate-100">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               Live Webhook Callback URL (Paste in Meta Developer Console)
             </label>
-            <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-xs font-mono text-emerald-400 flex items-center justify-between">
+            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-mono text-emerald-700 flex items-center justify-between">
               <span>{webhookUrl}</span>
-              <span className="text-[10px] text-slate-500 font-sans">Verified Route</span>
+              <span className="text-[10px] text-slate-500 font-sans font-semibold">Verified Route</span>
             </div>
           </div>
 
-          <div className="flex justify-end pt-2 border-t border-slate-800">
+          <div className="flex justify-end pt-2 border-t border-slate-100">
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow transition-colors disabled:opacity-50"
+              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm shadow-emerald-600/20 transition-all cursor-pointer disabled:opacity-50"
             >
               {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
               <span>{saving ? 'Saving...' : 'Save Configuration'}</span>

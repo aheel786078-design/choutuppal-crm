@@ -158,7 +158,7 @@ export default function ApprovalQueuePage() {
               <CheckSquare className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 Centralized Submission &amp; Review Workflow
                 {pendingCount > 0 && (
                   <span className="text-[10px] bg-amber-500 text-black px-2 py-0.5 rounded-full font-bold">
@@ -166,7 +166,7 @@ export default function ApprovalQueuePage() {
                   </span>
                 )}
               </h3>
-              <p className="text-xs text-slate-300 mt-0.5">
+              <p className="text-xs text-slate-600 mt-0.5">
                 Submissions from WhatsApp (New Listings, Stories, Offers, Franchise Applications) remain unpublished until reviewed here.
               </p>
             </div>
@@ -174,15 +174,15 @@ export default function ApprovalQueuePage() {
         </div>
 
         {/* Tab & Type Filters Toolbar */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-sm">
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-3 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-xs">
           {/* Status Tabs */}
-          <div className="flex items-center bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+          <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
             <button
               onClick={() => setActiveTab('pending')}
               className={`px-3 py-1.5 rounded font-medium transition-colors flex items-center gap-1.5 ${
                 activeTab === 'pending'
                   ? 'bg-amber-500 text-black font-bold'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Clock className="w-3.5 h-3.5" />
@@ -194,7 +194,7 @@ export default function ApprovalQueuePage() {
               className={`px-3 py-1.5 rounded font-medium transition-colors flex items-center gap-1.5 ${
                 activeTab === 'approved'
                   ? 'bg-emerald-600 text-white font-bold'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -206,7 +206,7 @@ export default function ApprovalQueuePage() {
               className={`px-3 py-1.5 rounded font-medium transition-colors flex items-center gap-1.5 ${
                 activeTab === 'changes_requested'
                   ? 'bg-blue-600 text-white font-bold'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <AlertCircle className="w-3.5 h-3.5" />
@@ -218,7 +218,7 @@ export default function ApprovalQueuePage() {
               className={`px-3 py-1.5 rounded font-medium transition-colors flex items-center gap-1.5 ${
                 activeTab === 'rejected'
                   ? 'bg-red-600 text-white font-bold'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <XCircle className="w-3.5 h-3.5" />
@@ -232,7 +232,7 @@ export default function ApprovalQueuePage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none"
+              className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
             >
               <option value="ALL">All Submission Types</option>
               <option value="NEW_LISTING">New Listings</option>
@@ -245,7 +245,7 @@ export default function ApprovalQueuePage() {
         </div>
 
         {/* Approval Queue Items List */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow">
+        <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
           {loading ? (
             <div className="p-16 text-center text-slate-500 text-xs">
               <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-blue-500" />
@@ -256,9 +256,9 @@ export default function ApprovalQueuePage() {
               No items in this queue status.
             </div>
           ) : (
-            <div className="divide-y divide-slate-800">
+            <div className="divide-y divide-slate-100">
               {filteredApprovals.map((item) => (
-                <div key={item.id} className="p-5 hover:bg-slate-950/40 transition-colors flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
+                <div key={item.id} className="p-5 hover:bg-slate-50/70 transition-colors flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
                   <div className="flex items-start gap-4 flex-1 min-w-0">
                     {/* Media Thumbnail */}
                     {item.mediaUrl ? (
@@ -278,7 +278,7 @@ export default function ApprovalQueuePage() {
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
                           {item.type}
                         </span>
-                        <h4 className="font-bold text-sm text-white truncate">{item.title}</h4>
+                        <h4 className="font-bold text-sm text-slate-900 truncate">{item.title}</h4>
                         {item.status === 'pending' && (
                           <span className="text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-semibold">
                             Pending Review
@@ -286,12 +286,12 @@ export default function ApprovalQueuePage() {
                         )}
                       </div>
 
-                      <p className="text-xs text-slate-300 break-all">
+                      <p className="text-xs text-slate-600 break-all">
                         {item.data?.description || item.data?.caption || item.data?.proposedArea || item.data?.url}
                       </p>
 
                       <div className="flex items-center gap-4 text-[11px] text-slate-400 pt-1">
-                        <span className="flex items-center gap-1 text-slate-300">
+                        <span className="flex items-center gap-1 text-slate-700 font-medium">
                           👤 {item.submitterName}
                         </span>
                         <span className="flex items-center gap-1 font-mono text-emerald-400">
@@ -305,7 +305,7 @@ export default function ApprovalQueuePage() {
                       </div>
 
                       {item.adminNotes && (
-                        <div className="p-2 bg-slate-950 rounded border border-slate-800 text-[11px] text-amber-400">
+                        <div className="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900">
                           <strong>Admin Feedback:</strong> {item.adminNotes}
                         </div>
                       )}
@@ -335,7 +335,7 @@ export default function ApprovalQueuePage() {
                             title: item.title,
                           })
                         }
-                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium border border-slate-700"
+                        className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold border border-slate-200 transition-colors"
                       >
                         Request Changes
                       </button>
@@ -367,9 +367,9 @@ export default function ApprovalQueuePage() {
       {/* FEEDBACK & REJECTION MODAL */}
       {actionModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="font-bold text-sm text-white">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl text-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h3 className="font-bold text-sm text-slate-900">
                 {actionModal.action === 'request_changes'
                   ? 'Request Changes from Submitter'
                   : 'Reject Submission'}
@@ -379,7 +379,7 @@ export default function ApprovalQueuePage() {
               </button>
             </div>
 
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600">
               Provide feedback for <strong>{actionModal.title}</strong>. This message will be sent directly to the submitter on WhatsApp:
             </p>
 
@@ -388,14 +388,14 @@ export default function ApprovalQueuePage() {
               value={actionNotes}
               onChange={(e) => setActionNotes(e.target.value)}
               placeholder="e.g. Please provide a clear shop front photo and complete street address..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
             />
 
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setActionModal(null)}
-                className="px-3 py-1.5 bg-slate-800 text-white text-xs rounded-lg"
+                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-xl font-medium"
               >
                 Cancel
               </button>

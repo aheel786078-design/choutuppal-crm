@@ -10,108 +10,100 @@ import {
   Home,
   Wrench,
   User as UserIcon,
-  LogOut,
   Plus,
   Eye,
   MessageCircle,
-  Phone,
-  CheckCircle2,
   Share2,
   QrCode,
-  Sparkles,
-  ArrowRight,
-  TrendingUp,
-  ShieldCheck,
-  ExternalLink,
-  ChevronRight,
+  CheckCircle2,
   Clock,
   MapPin,
+  Phone,
   Building,
-  Bell,
-  Settings,
+  TrendingUp,
+  LogOut,
+  ChevronRight,
+  ExternalLink,
+  ShieldCheck,
+  Sparkles,
 } from 'lucide-react'
-import { toast } from 'sonner'
 import { sanitizeImageUrl } from '@/lib/utils'
-import { getListingWhatsAppUrl } from '@/lib/constants'
+import { toast } from 'sonner'
 import type { Listing } from '@/lib/types'
-import type { AuthSessionUser } from '@/lib/auth-server'
 
-interface UserDashboardViewProps {
-  user: AuthSessionUser
-  listings: Listing[]
+interface UserDashboardProps {
+  user: {
+    userId?: string
+    phone?: string
+    name?: string
+    role?: string
+    territoryId?: string
+  }
+  listings?: Listing[]
+  allListings?: Listing[]
 }
 
 type TabType = 'overview' | 'listings' | 'realestate' | 'services' | 'profile'
 
-export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
+export function UserDashboardView({ user, listings = [], allListings = [] }: UserDashboardProps) {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<TabType>('overview')
   const [loggingOut, setLoggingOut] = useState(false)
 
-  const isAdmin =
-    user.role === 'SUPER_ADMIN' ||
-    user.role === 'FRANCHISE_ADMIN' ||
-    user.role === 'PLATFORM_OPERATOR' ||
-    user.role === 'FRANCHISE_STAFF'
+  // Real estate & services filter
+  const userRealEstate = listings.filter((l) => l.categoryId === 'real-estate' || l.categoryName === 'Real Estate')
+  const userServices = listings.filter((l) => l.categoryId !== 'real-estate')
 
-  const userRealEstate = listings.filter(
-    (l) =>
-      l.type === 'REAL_ESTATE' ||
-      l.categoryId === 'cat-realestate' ||
-      l.categoryName?.toLowerCase().includes('real estate')
-  )
+  const totalViews = listings.reduce((acc, curr) => acc + (curr.views || 45), 0)
+  const totalLeads = listings.reduce((acc, curr) => acc + (curr.whatsappClicks || 12), 0)
 
-  const userServices = listings.filter(
-    (l) =>
-      l.type === 'SERVICE' ||
-      l.categoryId === 'cat-services' ||
-      l.categoryId === 'cat-transport' ||
-      l.categoryId === 'cat-electrical'
-  )
+  const isAdmin = user.role === 'SUPER_ADMIN' || user.role === 'PLATFORM_OPERATOR' || user.role === 'FRANCHISE_ADMIN'
 
-  const totalViews = listings.reduce((sum, l) => sum + (l.views || 48), 0)
-  const totalLeads = listings.reduce((sum, l) => sum + Math.floor((l.views || 48) * 0.18), 0)
-
-  async function handleLogout() {
+  const handleLogout = async () => {
     setLoggingOut(true)
     try {
       await fetch('/api/auth/logout', { method: 'POST' })
       toast.success('Logged out successfully.')
       router.push('/login')
     } catch {
-      toast.error('Error logging out.')
+      router.push('/login')
     } finally {
       setLoggingOut(false)
     }
   }
 
+  const getListingWhatsAppUrl = (title: string, id: string) => {
+    const text = encodeURIComponent(`Hi, I am interested in your listing "${title}" on Choutuppal App (ID: ${id}). Please share more details.`)
+    return `https://wa.me/919441348175?text=${text}`
+  }
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-20">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-20 selection:bg-emerald-600 selection:text-white">
       {/* 1. TOP HEADER & GREETING */}
-      <div className="bg-slate-900 border-b border-slate-800">
+      <div className="bg-white border-b border-slate-200/80 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 text-white font-black text-xl shadow-lg shadow-emerald-500/20">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-black text-xl shadow-md shadow-emerald-600/20">
                 CP
               </span>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl sm:text-2xl font-black text-white">
+                  <h1 className="text-xl sm:text-2xl font-black text-slate-900">
                     Merchant Dashboard
                   </h1>
-                  <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full flex items-center gap-1">
-                    <CheckCircle2 className="h-3 w-3" />
+                  <span className="bg-emerald-50 text-emerald-700 border border-emerald-300 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3 text-emerald-600" />
                     Verified
                   </span>
                   {isAdmin && (
-                    <span className="bg-amber-500/20 text-amber-400 border border-amber-400/30 text-[10px] font-black uppercase px-2 py-0.5 rounded-full">
+                    <span className="bg-amber-50 text-amber-800 border border-amber-300 text-[10px] font-black uppercase px-2 py-0.5 rounded-full">
                       Admin Staff
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Logged in as <span className="text-slate-200 font-semibold">{user.phone}</span> • Mana Choutuppal Super App
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Logged in as <span className="text-slate-800 font-semibold">{user.phone}</span> • Mana Choutuppal Super App
                 </p>
               </div>
             </div>
@@ -120,9 +112,9 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
               {isAdmin && (
                 <Link
                   href="/admin/dashboard"
-                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition"
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 text-xs font-bold px-4 py-2.5 rounded-xl transition"
                 >
-                  <Building className="h-3.5 w-3.5 text-emerald-400" />
+                  <Building className="h-3.5 w-3.5 text-emerald-600" />
                   <span>Admin CRM Console</span>
                 </Link>
               )}
@@ -137,7 +129,7 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                 type="button"
                 onClick={handleLogout}
                 disabled={loggingOut}
-                className="p-2.5 bg-slate-800 hover:bg-red-500/20 border border-slate-700 hover:border-red-500/30 text-slate-400 hover:text-red-400 rounded-xl transition cursor-pointer"
+                className="p-2.5 bg-slate-100 hover:bg-red-50 border border-slate-200 hover:border-red-200 text-slate-600 hover:text-red-600 rounded-xl transition cursor-pointer"
                 title="Log Out"
               >
                 <LogOut className="h-4 w-4" />
@@ -163,8 +155,8 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                   onClick={() => setActiveTab(tab.id as TabType)}
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer shrink-0 ${
                     isActive
-                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-                      : 'bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-slate-200'
+                      ? 'bg-emerald-600 text-white shadow-sm shadow-emerald-600/20'
+                      : 'bg-slate-100 hover:bg-slate-200/80 text-slate-600 hover:text-slate-900 border border-slate-200/60'
                   }`}
                 >
                   <Icon className="h-3.5 w-3.5" />
@@ -180,65 +172,65 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
         {/* KPI STAT CARDS */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5">
-            <div className="flex items-center justify-between text-slate-400 mb-2">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
+            <div className="flex items-center justify-between text-slate-500 mb-2">
               <span className="text-xs font-semibold">Total Profile Views</span>
-              <Eye className="h-4 w-4 text-emerald-400" />
+              <Eye className="h-4 w-4 text-emerald-600" />
             </div>
-            <div className="text-2xl font-black text-white">{totalViews.toLocaleString()}</div>
-            <p className="text-[11px] text-emerald-400 mt-1 flex items-center gap-1">
+            <div className="text-2xl font-black text-slate-900">{totalViews.toLocaleString()}</div>
+            <p className="text-[11px] text-emerald-700 mt-1 flex items-center gap-1 font-semibold">
               <TrendingUp className="h-3 w-3" /> +24% this week
             </p>
           </div>
 
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5">
-            <div className="flex items-center justify-between text-slate-400 mb-2">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
+            <div className="flex items-center justify-between text-slate-500 mb-2">
               <span className="text-xs font-semibold">WhatsApp Leads</span>
-              <MessageCircle className="h-4 w-4 text-emerald-400" />
+              <MessageCircle className="h-4 w-4 text-emerald-600" />
             </div>
-            <div className="text-2xl font-black text-white">{totalLeads}</div>
-            <p className="text-[11px] text-slate-400 mt-1">Direct click-to-chat inquiries</p>
+            <div className="text-2xl font-black text-slate-900">{totalLeads}</div>
+            <p className="text-[11px] text-slate-500 mt-1">Direct click-to-chat inquiries</p>
           </div>
 
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5">
-            <div className="flex items-center justify-between text-slate-400 mb-2">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
+            <div className="flex items-center justify-between text-slate-500 mb-2">
               <span className="text-xs font-semibold">Active Listings</span>
-              <Store className="h-4 w-4 text-emerald-400" />
+              <Store className="h-4 w-4 text-emerald-600" />
             </div>
-            <div className="text-2xl font-black text-white">{listings.length}</div>
-            <p className="text-[11px] text-emerald-400 mt-1">Live on Choutuppal.in</p>
+            <div className="text-2xl font-black text-slate-900">{listings.length}</div>
+            <p className="text-[11px] text-emerald-700 mt-1 font-semibold">Live on Choutuppal.in</p>
           </div>
 
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5">
-            <div className="flex items-center justify-between text-slate-400 mb-2">
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
+            <div className="flex items-center justify-between text-slate-500 mb-2">
               <span className="text-xs font-semibold">Trust &amp; Verification</span>
-              <ShieldCheck className="h-4 w-4 text-emerald-400" />
+              <ShieldCheck className="h-4 w-4 text-emerald-600" />
             </div>
-            <div className="text-2xl font-black text-emerald-400">100%</div>
-            <p className="text-[11px] text-slate-400 mt-1">Full franchise verified badge</p>
+            <div className="text-2xl font-black text-emerald-600">100%</div>
+            <p className="text-[11px] text-slate-500 mt-1">Full franchise verified badge</p>
           </div>
         </div>
 
         {/* TAB 1: OVERVIEW */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
-            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8">
-              <h2 className="text-lg font-black text-white flex items-center gap-2 mb-2">
-                <Sparkles className="h-5 w-5 text-emerald-400" />
+            <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-xs">
+              <h2 className="text-lg font-black text-slate-900 flex items-center gap-2 mb-2">
+                <Sparkles className="h-5 w-5 text-emerald-600" />
                 Quick Actions &amp; Growth Tools
               </h2>
-              <p className="text-xs text-slate-400 mb-6">
+              <p className="text-xs text-slate-500 mb-6">
                 Promote your Choutuppal listing on WhatsApp, generate QR stickers for your shop front, or update business details.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between">
+                <div className="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-4 flex flex-col justify-between">
                   <div>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 font-bold mb-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 font-bold mb-3">
                       <QrCode className="h-5 w-5" />
                     </span>
-                    <h3 className="text-sm font-bold text-white">Shop Counter QR Code</h3>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h3 className="text-sm font-bold text-slate-900">Shop Counter QR Code</h3>
+                    <p className="text-xs text-slate-600 mt-1">
                       Print and place on your cash counter so visiting customers can save your contact instantly.
                     </p>
                   </div>
@@ -251,20 +243,20 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                         toast.info('Create a listing first to generate your counter QR.')
                       }
                     }}
-                    className="mt-4 text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 cursor-pointer"
+                    className="mt-4 text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 cursor-pointer"
                   >
                     <span>View &amp; Print QR</span>
                     <ChevronRight className="h-3.5 w-3.5" />
                   </button>
                 </div>
 
-                <div className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between">
+                <div className="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-4 flex flex-col justify-between">
                   <div>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/20 text-blue-400 font-bold mb-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-700 font-bold mb-3">
                       <Share2 className="h-5 w-5" />
                     </span>
-                    <h3 className="text-sm font-bold text-white">Share on WhatsApp Groups</h3>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h3 className="text-sm font-bold text-slate-900">Share on WhatsApp Groups</h3>
+                    <p className="text-xs text-slate-600 mt-1">
                       Share your digital business card with customer reviews, photos and directions directly to WhatsApp status.
                     </p>
                   </div>
@@ -275,20 +267,20 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                       const shareUrl = `https://wa.me/?text=${encodeURIComponent(`Check out our verified business listing on Mana Choutuppal App: ${url}/business/${listings[0]?.slug || ''}`)}`
                       window.open(shareUrl, '_blank')
                     }}
-                    className="mt-4 text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 cursor-pointer"
+                    className="mt-4 text-xs font-bold text-blue-700 hover:text-blue-800 flex items-center gap-1 cursor-pointer"
                   >
                     <span>Share on WhatsApp</span>
                     <ChevronRight className="h-3.5 w-3.5" />
                   </button>
                 </div>
 
-                <div className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between">
+                <div className="bg-slate-50/80 border border-slate-200/80 rounded-2xl p-4 flex flex-col justify-between">
                   <div>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400 font-bold mb-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700 font-bold mb-3">
                       <TrendingUp className="h-5 w-5" />
                     </span>
-                    <h3 className="text-sm font-bold text-white">Upgrade to Featured</h3>
-                    <p className="text-xs text-slate-400 mt-1">
+                    <h3 className="text-sm font-bold text-slate-900">Upgrade to Featured</h3>
+                    <p className="text-xs text-slate-600 mt-1">
                       Appear at the top of category searches and get verified video stories pinned to Choutuppal homepage.
                     </p>
                   </div>
@@ -296,7 +288,7 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                     href="https://wa.me/919441348175?text=Hi%20Choutuppal%2C%20I%20want%20to%20upgrade%20my%20listing%20to%20Featured"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-4 text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
+                    className="mt-4 text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1 cursor-pointer"
                   >
                     <span>Request Upgrade</span>
                     <ChevronRight className="h-3.5 w-3.5" />
@@ -306,22 +298,22 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
             </div>
 
             {/* RECENT BUSINESS LISTINGS SNAPSHOT */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8">
+            <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-xs">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-black text-white">Your Listed Businesses</h3>
+                <h3 className="text-base font-black text-slate-900">Your Listed Businesses</h3>
                 <button
                   type="button"
                   onClick={() => setActiveTab('listings')}
-                  className="text-xs font-bold text-emerald-400 hover:underline cursor-pointer"
+                  className="text-xs font-bold text-emerald-700 hover:underline cursor-pointer"
                 >
                   View All ({listings.length})
                 </button>
               </div>
 
               {listings.length === 0 ? (
-                <div className="text-center py-8 bg-slate-950/60 rounded-2xl border border-dashed border-slate-800">
-                  <Store className="h-8 w-8 text-slate-500 mx-auto mb-2" />
-                  <p className="text-xs text-slate-400">No listings posted yet.</p>
+                <div className="text-center py-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                  <Store className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+                  <p className="text-xs text-slate-500">No listings posted yet.</p>
                   <Link
                     href="/register"
                     className="inline-flex items-center gap-1.5 mt-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition"
@@ -334,10 +326,10 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                   {listings.slice(0, 3).map((item) => (
                     <div
                       key={item.id}
-                      className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                      className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="relative h-14 w-14 rounded-xl overflow-hidden bg-slate-900 shrink-0">
+                        <div className="relative h-14 w-14 rounded-xl overflow-hidden bg-slate-200 shrink-0">
                           <Image
                             src={sanitizeImageUrl(item.coverImage)}
                             alt={item.title}
@@ -346,9 +338,9 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                           />
                         </div>
                         <div>
-                          <h4 className="text-sm font-bold text-white line-clamp-1">{item.title}</h4>
-                          <p className="text-xs text-slate-400 mt-0.5">{item.categoryName || 'Directory'} • {item.villageName || 'Choutuppal'}</p>
-                          <div className="flex items-center gap-2 mt-1 text-[11px] text-emerald-400 font-semibold">
+                          <h4 className="text-sm font-bold text-slate-900 line-clamp-1">{item.title}</h4>
+                          <p className="text-xs text-slate-500 mt-0.5">{item.categoryName || 'Directory'} • {item.villageName || 'Choutuppal'}</p>
+                          <div className="flex items-center gap-2 mt-1 text-[11px] text-emerald-700 font-semibold">
                             <span>{item.views || 48} Views</span>
                             <span>•</span>
                             <span>{item.phone}</span>
@@ -359,7 +351,7 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                       <div className="flex items-center gap-2 w-full sm:w-auto">
                         <Link
                           href={`/business/${item.slug || item.id}`}
-                          className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition"
+                          className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition"
                         >
                           <Eye className="h-3.5 w-3.5" />
                           <span>View Public Page</span>
@@ -384,11 +376,11 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
 
         {/* TAB 2: MY LISTINGS */}
         {activeTab === 'listings' && (
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+          <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-black text-white">My Business Listings</h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <h2 className="text-lg font-black text-slate-900">My Business Listings</h2>
+                <p className="text-xs text-slate-500 mt-0.5">
                   Manage your active directory pages, photos, and contact information.
                 </p>
               </div>
@@ -404,10 +396,10 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
               {listings.map((item) => (
                 <div
                   key={item.id}
-                  className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                  className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="relative h-16 w-16 rounded-2xl overflow-hidden bg-slate-900 shrink-0">
+                    <div className="relative h-16 w-16 rounded-2xl overflow-hidden bg-slate-200 shrink-0">
                       <Image
                         src={sanitizeImageUrl(item.coverImage)}
                         alt={item.title}
@@ -417,22 +409,22 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-base font-bold text-white">{item.title}</h3>
-                        <span className="bg-emerald-500/20 text-emerald-400 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">
+                        <h3 className="text-base font-bold text-slate-900">{item.title}</h3>
+                        <span className="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">
                           Active
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400 mt-1 max-w-xl line-clamp-2">
+                      <p className="text-xs text-slate-600 mt-1 max-w-xl line-clamp-2">
                         {item.description || 'Verified local listing in Choutuppal.'}
                       </p>
-                      <div className="flex items-center gap-3 mt-2 text-xs text-slate-400">
+                      <div className="flex items-center gap-3 mt-2 text-xs text-slate-500">
                         <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3 text-emerald-400" />
+                          <MapPin className="h-3 w-3 text-emerald-600" />
                           {item.address || 'Choutuppal Mandal'}
                         </span>
                         <span>•</span>
                         <span className="flex items-center gap-1">
-                          <Phone className="h-3 w-3 text-emerald-400" />
+                          <Phone className="h-3 w-3 text-emerald-600" />
                           {item.phone}
                         </span>
                       </div>
@@ -442,7 +434,7 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                   <div className="flex items-center gap-2 w-full md:w-auto">
                     <Link
                       href={`/business/${item.slug || item.id}`}
-                      className="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition"
+                      className="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl transition"
                     >
                       <Eye className="h-3.5 w-3.5" />
                       <span>View</span>
@@ -465,11 +457,11 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
 
         {/* TAB 3: REAL ESTATE */}
         {activeTab === 'realestate' && (
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+          <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-lg font-black text-white">My Real Estate Listings</h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <h2 className="text-lg font-black text-slate-900">My Real Estate Listings</h2>
+                <p className="text-xs text-slate-500 mt-0.5">
                   Open plots, farmlands, commercial shops, and residential houses listed for sale.
                 </p>
               </div>
@@ -482,10 +474,10 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
             </div>
 
             {userRealEstate.length === 0 ? (
-              <div className="text-center py-12 bg-slate-950/60 rounded-2xl border border-dashed border-slate-800">
-                <Home className="h-10 w-10 text-slate-500 mx-auto mb-3" />
-                <h3 className="text-sm font-bold text-white">No Real Estate Ads Listed</h3>
-                <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+              <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <Home className="h-10 w-10 text-slate-400 mx-auto mb-3" />
+                <h3 className="text-sm font-bold text-slate-800">No Real Estate Ads Listed</h3>
+                <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
                   Advertise open plots, farmland, or commercial spaces to thousands of buyers in Choutuppal and Hyderabad.
                 </p>
                 <Link
@@ -500,10 +492,10 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                 {userRealEstate.map((prop) => (
                   <div
                     key={prop.id}
-                    className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 flex flex-col justify-between"
+                    className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-4 flex flex-col justify-between"
                   >
                     <div>
-                      <div className="relative h-40 w-full rounded-xl overflow-hidden bg-slate-900 mb-3">
+                      <div className="relative h-40 w-full rounded-xl overflow-hidden bg-slate-200 mb-3">
                         <Image
                           src={sanitizeImageUrl(prop.coverImage)}
                           alt={prop.title}
@@ -514,15 +506,15 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                           {prop.price || 'Price on Request'}
                         </div>
                       </div>
-                      <h4 className="text-sm font-bold text-white">{prop.title}</h4>
-                      <p className="text-xs text-slate-400 mt-1 line-clamp-2">{prop.description}</p>
+                      <h4 className="text-sm font-bold text-slate-900">{prop.title}</h4>
+                      <p className="text-xs text-slate-600 mt-1 line-clamp-2">{prop.description}</p>
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between">
-                      <span className="text-xs text-slate-400">{prop.address || 'Choutuppal'}</span>
+                    <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
+                      <span className="text-xs text-slate-500">{prop.address || 'Choutuppal'}</span>
                       <Link
                         href={`/business/${prop.slug || prop.id}`}
-                        className="text-xs font-bold text-emerald-400 hover:underline flex items-center gap-1"
+                        className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
                       >
                         <span>View Ad</span>
                         <ChevronRight className="h-3.5 w-3.5" />
@@ -537,28 +529,28 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
 
         {/* TAB 4: SERVICES */}
         {activeTab === 'services' && (
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+          <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
             <div>
-              <h2 className="text-lg font-black text-white">Technician Services &amp; Bookings</h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <h2 className="text-lg font-black text-slate-900">Technician Services &amp; Bookings</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
                 On-demand taxi, plumbing, electrical, and appliance repair service listings.
               </p>
             </div>
 
-            <div className="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-6">
+            <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-6">
               <div className="flex items-start gap-4">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400 shrink-0">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 shrink-0">
                   <Wrench className="h-6 w-6" />
                 </span>
                 <div>
-                  <h3 className="text-base font-bold text-white">24/7 WhatsApp Service Dispatch</h3>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                  <h3 className="text-base font-bold text-slate-900">24/7 WhatsApp Service Dispatch</h3>
+                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
                     Whenever a customer requests taxi, plumbing, or electrician services in Choutuppal, our automated bot sends instant customer phone numbers and location directly to your registered WhatsApp.
                   </p>
                   <div className="mt-4 flex items-center gap-3">
                     <Link
                       href="/services"
-                      className="inline-flex items-center gap-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold px-4 py-2 rounded-xl transition"
+                      className="inline-flex items-center gap-2 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold px-4 py-2 rounded-xl transition"
                     >
                       <Eye className="h-3.5 w-3.5" /> View Services Hub
                     </Link>
@@ -566,7 +558,7 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
                       href="https://wa.me/919494348175?text=Hi%20Choutuppal%2C%20I%20am%20available%20for%20service%20bookings"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition"
+                      className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-sm"
                     >
                       <MessageCircle className="h-3.5 w-3.5" /> Test Dispatch Ping
                     </a>
@@ -579,58 +571,58 @@ export function UserDashboardView({ user, listings }: UserDashboardViewProps) {
 
         {/* TAB 5: PROFILE */}
         {activeTab === 'profile' && (
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 max-w-2xl">
+          <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 space-y-6 max-w-2xl shadow-xs">
             <div>
-              <h2 className="text-lg font-black text-white">Merchant Account &amp; WhatsApp Settings</h2>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <h2 className="text-lg font-black text-slate-900">Merchant Account &amp; WhatsApp Settings</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
                 Account verification and notification details.
               </p>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1">
+                <label className="block text-xs font-bold text-slate-600 mb-1">
                   Registered WhatsApp Phone Number
                 </label>
                 <input
                   type="text"
                   readOnly
                   value={user.phone}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1">
+                <label className="block text-xs font-bold text-slate-600 mb-1">
                   Account Role &amp; Access Tier
                 </label>
                 <input
                   type="text"
                   readOnly
                   value={user.role}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-emerald-400 font-bold"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-emerald-700 font-bold"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1">
+                <label className="block text-xs font-bold text-slate-600 mb-1">
                   Assigned Territory
                 </label>
                 <input
                   type="text"
                   readOnly
                   value="Choutuppal Mandal (Flagship Territory)"
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900"
                 />
               </div>
 
-              <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
-                <span className="text-xs text-slate-400">Need to update phone or ownership?</span>
+              <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                <span className="text-xs text-slate-500">Need to update phone or ownership?</span>
                 <a
                   href="https://wa.me/919441348175?text=Hi%20Choutuppal%2C%20I%20want%20to%20update%20my%20merchant%20profile"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-bold text-emerald-400 hover:underline"
+                  className="text-xs font-bold text-emerald-700 hover:underline"
                 >
                   Contact Super Admin
                 </a>

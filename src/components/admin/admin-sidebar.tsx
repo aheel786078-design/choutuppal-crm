@@ -126,7 +126,19 @@ export function AdminSidebar() {
       .catch(() => {})
   }, [])
 
-  const renderNavLinks = (isMobile: boolean = false) => {
+  // Keyboard shortcut listener for toggling collapse (Ctrl+\)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === '\\') {
+        e.preventDefault()
+        toggleSidebarCollapse()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [toggleSidebarCollapse])
+
+  const renderNavLinks = (isMobile = false) => {
     return (
       <div className="space-y-5">
         {NAV_SECTIONS.map((section) => (
@@ -137,7 +149,7 @@ export function AdminSidebar() {
                 <span>{section.title}</span>
               </div>
             ) : (
-              <div className="w-full my-2 border-t border-slate-800" title={section.title} />
+              <div className="w-full my-2 border-t border-slate-200" title={section.title} />
             )}
 
             {/* Links */}
@@ -154,20 +166,20 @@ export function AdminSidebar() {
                     onClick={() => isMobile && closeMobileNav()}
                     title={isSidebarCollapsed && !isMobile ? item.label : undefined}
                     className={cn(
-                      'flex items-center gap-2.5 rounded-xl text-xs font-medium transition-all group relative',
+                      'flex items-center gap-2.5 rounded-xl text-xs font-medium transition-all group relative cursor-pointer',
                       isSidebarCollapsed && !isMobile
                         ? 'justify-center p-2.5'
                         : 'justify-between px-3 py-2',
                       isActive
-                        ? 'bg-emerald-600 text-white font-semibold shadow-sm shadow-emerald-500/20'
-                        : 'text-slate-300 hover:bg-slate-900 hover:text-white'
+                        ? 'bg-emerald-600 text-white font-bold shadow-sm shadow-emerald-600/20'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                     )}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <Icon
                         className={cn(
                           'w-4 h-4 shrink-0 transition-transform group-hover:scale-110',
-                          isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'
+                          isActive ? 'text-white' : 'text-slate-500 group-hover:text-emerald-700'
                         )}
                       />
                       {(!isSidebarCollapsed || isMobile) && (
@@ -179,16 +191,16 @@ export function AdminSidebar() {
                     {(!isSidebarCollapsed || isMobile) && (
                       <>
                         {isApproval && pendingCount > 0 ? (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-amber-500 text-black shrink-0">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-amber-500 text-white shrink-0">
                             {pendingCount}
                           </span>
                         ) : item.badge ? (
                           <span
                             className={cn(
-                              'text-[10px] px-1.5 py-0.5 rounded font-semibold shrink-0',
+                              'text-[10px] px-1.5 py-0.5 rounded font-bold shrink-0',
                               isActive
                                 ? 'bg-white/20 text-white'
-                                : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                             )}
                           >
                             {item.badge}
@@ -199,7 +211,7 @@ export function AdminSidebar() {
 
                     {/* Collapsed dot indicator for badge */}
                     {isSidebarCollapsed && !isMobile && isApproval && pendingCount > 0 && (
-                      <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-slate-950" />
+                      <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white" />
                     )}
                   </Link>
                 )
@@ -218,7 +230,7 @@ export function AdminSidebar() {
       {/* ------------------------------------------------------------- */}
       {isMobileNavOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm md:hidden animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 bg-black/30 backdrop-blur-xs md:hidden"
           onClick={closeMobileNav}
           aria-hidden="true"
         />
@@ -226,27 +238,24 @@ export function AdminSidebar() {
 
       <div
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-72 bg-slate-950 text-slate-200 border-r border-slate-800 flex flex-col shadow-2xl md:hidden transition-transform duration-300 ease-in-out',
+          'fixed inset-y-0 left-0 z-50 w-72 bg-white text-slate-800 border-r border-slate-200 shadow-xl transition-transform duration-300 ease-in-out md:hidden flex flex-col',
           isMobileNavOpen ? 'translate-x-0' : '-translate-x-full'
         )}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Mobile Navigation Menu"
       >
         {/* Mobile Header */}
-        <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-white font-bold shadow-md shadow-emerald-500/20 text-xs">
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+          <div className="flex items-center gap-2.5">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white font-black text-sm shadow-md shadow-emerald-500/20">
               CP
             </div>
             <div className="min-w-0">
-              <h2 className="font-semibold text-xs text-white truncate">Choutuppal Admin</h2>
-              <p className="text-[10px] text-emerald-400">Franchise &amp; CRM Platform</p>
+              <h2 className="font-bold text-xs text-slate-900 truncate">Choutuppal Admin</h2>
+              <p className="text-[10px] text-emerald-700 font-medium">Franchise &amp; CRM Platform</p>
             </div>
           </div>
           <button
             onClick={closeMobileNav}
-            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer"
             aria-label="Close navigation"
           >
             <X className="w-5 h-5" />
@@ -260,13 +269,13 @@ export function AdminSidebar() {
               closeMobileNav()
               setCommandPaletteOpen(true)
             }}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-xs hover:border-slate-700 transition-colors"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-xs hover:border-slate-300 transition-colors cursor-pointer"
           >
             <div className="flex items-center gap-2">
               <Search className="w-3.5 h-3.5 text-slate-400" />
               <span>Search Admin...</span>
             </div>
-            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">Ctrl+K</kbd>
+            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white border border-slate-300 shadow-xs">Ctrl+K</kbd>
           </button>
         </div>
 
@@ -276,12 +285,12 @@ export function AdminSidebar() {
         </div>
 
         {/* Mobile Footer */}
-        <div className="p-3 border-t border-slate-800 bg-slate-900/60 flex items-center justify-between text-xs text-slate-400">
+        <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-600">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] font-medium text-slate-300">CRM Engine Active</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[11px] font-semibold text-slate-700">CRM Engine Active</span>
           </div>
-          <span className="text-[10px] font-mono text-slate-500">v2.1</span>
+          <span className="text-[10px] font-mono text-slate-400">v2.1</span>
         </div>
       </div>
 
@@ -290,23 +299,23 @@ export function AdminSidebar() {
       {/* ------------------------------------------------------------- */}
       <aside
         className={cn(
-          'hidden md:flex flex-col shrink-0 min-h-screen bg-slate-950 text-slate-200 border-r border-slate-800 transition-[width] duration-200 ease-in-out sticky top-0 h-screen select-none',
+          'hidden md:flex flex-col shrink-0 min-h-screen bg-white text-slate-800 border-r border-slate-200 transition-[width] duration-200 ease-in-out sticky top-0 h-screen select-none shadow-xs',
           isSidebarCollapsed ? 'w-[68px]' : 'w-64'
         )}
       >
         {/* Desktop Brand Header */}
-        <div className="p-3.5 border-b border-slate-800/80 bg-slate-900/40 flex items-center justify-between gap-2 h-16">
+        <div className="p-3.5 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between gap-2 h-16">
           <div className="flex items-center gap-2.5 min-w-0 overflow-hidden">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-white font-bold shadow-md shadow-emerald-500/20 shrink-0 text-sm">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white font-black shadow-md shadow-emerald-500/20 shrink-0 text-sm">
               CP
             </div>
             {!isSidebarCollapsed && (
               <div className="flex-1 min-w-0">
-                <h1 className="font-semibold text-xs text-white tracking-wide truncate">
+                <h1 className="font-bold text-xs text-slate-900 tracking-wide truncate">
                   Choutuppal Admin
                 </h1>
-                <p className="text-[10px] text-emerald-400 flex items-center gap-1 truncate">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <p className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1 truncate">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                   Franchise &amp; CRM Platform
                 </p>
               </div>
@@ -318,7 +327,7 @@ export function AdminSidebar() {
             onClick={toggleSidebarCollapse}
             aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             aria-expanded={!isSidebarCollapsed}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-colors shrink-0"
+            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0 cursor-pointer"
             title={isSidebarCollapsed ? 'Expand sidebar (Ctrl+\\)' : 'Collapse sidebar'}
           >
             {isSidebarCollapsed ? (
@@ -334,14 +343,14 @@ export function AdminSidebar() {
           <div className="px-3 pt-3">
             <button
               onClick={() => setCommandPaletteOpen(true)}
-              className="w-full flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-400 text-xs hover:border-slate-700 hover:text-slate-200 transition-colors shadow-sm"
+              className="w-full flex items-center justify-between px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-xs hover:border-slate-300 hover:text-slate-900 transition-colors shadow-xs cursor-pointer"
               title="Search modules (Ctrl+K)"
             >
               <div className="flex items-center gap-2">
                 <Search className="w-3.5 h-3.5 text-slate-400" />
-                <span className="text-[11px]">Command Palette</span>
+                <span className="text-[11px] font-medium">Command Palette</span>
               </div>
-              <kbd className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+              <kbd className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white text-slate-600 border border-slate-300 shadow-xs">
                 Ctrl+K
               </kbd>
             </button>
@@ -354,10 +363,10 @@ export function AdminSidebar() {
         </div>
 
         {/* Desktop Footer */}
-        <div className="p-2.5 border-t border-slate-800 bg-slate-900/40">
+        <div className="p-2.5 border-t border-slate-200 bg-slate-50/80">
           <div
             className={cn(
-              'rounded-xl bg-slate-950 p-2 border border-slate-800 flex items-center transition-all',
+              'rounded-xl bg-white p-2 border border-slate-200 flex items-center transition-all shadow-xs',
               isSidebarCollapsed ? 'justify-center' : 'justify-between'
             )}
           >
@@ -367,13 +376,13 @@ export function AdminSidebar() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
               {!isSidebarCollapsed && (
-                <span className="text-[11px] text-slate-300 font-medium truncate">
+                <span className="text-[11px] text-slate-700 font-semibold truncate">
                   CRM Bot Ready
                 </span>
               )}
             </div>
             {!isSidebarCollapsed && (
-              <span className="text-[10px] text-slate-500 font-mono">v2.1</span>
+              <span className="text-[10px] text-slate-400 font-mono">v2.1</span>
             )}
           </div>
         </div>

@@ -175,7 +175,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
             decoding="async"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
             quality={75}
-            className="object-cover bg-slate-900"
+            className="object-cover bg-slate-100"
           />
         ) : null}
         

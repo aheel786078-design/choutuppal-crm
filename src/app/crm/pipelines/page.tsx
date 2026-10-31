@@ -287,7 +287,7 @@ export default function PipelinesPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen bg-slate-950 text-slate-100">
+    <div className="flex-1 flex flex-col min-h-screen bg-slate-50 text-slate-900">
       <AdminHeader
         title="Sales Pipeline & Merchant Deals (Kanban)"
         subtitle="Track onboarding stages of local businesses and real estate promoters"
@@ -317,7 +317,7 @@ export default function PipelinesPage() {
 
         {/* Top Metric Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+          <div className="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-xs text-slate-900">
             <span className="text-xs text-slate-400 font-medium">Total Pipeline Value</span>
             <div className="text-xl font-bold text-white mt-1">
               ₹{Number(metrics.totalValue || 0).toLocaleString('en-IN')}
@@ -325,7 +325,7 @@ export default function PipelinesPage() {
             <span className="text-[11px] text-slate-500">{metrics.totalDeals || 0} active deals</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+          <div className="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-xs text-slate-900">
             <span className="text-xs text-slate-400 font-medium">Open Deals in Funnel</span>
             <div className="text-xl font-bold text-amber-400 mt-1">
               ₹{Number(metrics.openValue || 0).toLocaleString('en-IN')}
@@ -333,7 +333,7 @@ export default function PipelinesPage() {
             <span className="text-[11px] text-slate-500">In negotiation / proposal</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+          <div className="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-xs text-slate-900">
             <span className="text-xs text-slate-400 font-medium">Won / Closed Revenue</span>
             <div className="text-xl font-bold text-emerald-400 mt-1">
               ₹{Number(metrics.wonValue || 0).toLocaleString('en-IN')}
@@ -341,7 +341,7 @@ export default function PipelinesPage() {
             <span className="text-[11px] text-emerald-500/80 font-medium">Paid advertisers</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+          <div className="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-xs text-slate-900">
             <span className="text-xs text-slate-400 font-medium">Search Deals</span>
             <div className="relative mt-1">
               <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-500" />
@@ -350,7 +350,7 @@ export default function PipelinesPage() {
                 placeholder="Search merchant, tag, phone..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
               />
             </div>
           </div>
@@ -374,17 +374,17 @@ export default function PipelinesPage() {
               return (
                 <div
                   key={st.key}
-                  className="bg-slate-900/90 border border-slate-800 rounded-xl p-3 space-y-3 min-h-[460px] flex flex-col"
+                  className="bg-slate-100/70 border border-slate-200 rounded-2xl p-3 space-y-3 min-h-[460px] flex flex-col"
                 >
                   {/* Column Header */}
                   <div className={`border-l-2 ${st.color} pl-2 py-0.5 flex items-center justify-between`}>
                     <div>
-                      <h4 className="font-semibold text-xs text-white tracking-wide">{st.title}</h4>
-                      <div className="text-[10px] text-slate-400 font-medium">
+                      <h4 className="font-semibold text-xs text-slate-900 tracking-wide">{st.title}</h4>
+                      <div className="text-[10px] text-slate-500 font-medium">
                         ₹{stageVal.toLocaleString('en-IN')}
                       </div>
                     </div>
-                    <span className="text-[10px] bg-slate-800 text-slate-300 font-bold px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] bg-slate-100 text-slate-700 font-bold px-1.5 py-0.5 rounded border border-slate-200">
                       {stageDeals.length}
                     </span>
                   </div>
@@ -392,7 +392,7 @@ export default function PipelinesPage() {
                   {/* Deals List */}
                   <div className="space-y-2.5 flex-1">
                     {stageDeals.length === 0 ? (
-                      <div className="border border-dashed border-slate-800/80 rounded-lg p-6 text-center text-[11px] text-slate-600">
+                      <div className="border border-dashed border-slate-200/80 rounded-lg p-6 text-center text-[11px] text-slate-500">
                         No deals in stage
                       </div>
                     ) : (
@@ -402,49 +402,49 @@ export default function PipelinesPage() {
                         return (
                           <div
                             key={deal.id}
-                            className="bg-slate-950 p-3 rounded-lg border border-slate-800 hover:border-slate-700 shadow-sm space-y-2 transition-colors group"
+                            className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 hover:shadow-sm space-y-2 transition-all group text-slate-900"
                           >
                             <div className="flex items-start justify-between gap-1">
-                              <h5 className="font-semibold text-xs text-white leading-tight">
+                              <h5 className="font-bold text-xs text-slate-900 leading-tight">
                                 {deal.title}
                               </h5>
-                              <span className="text-[11px] text-emerald-400 font-bold flex-shrink-0">
+                              <span className="text-[11px] text-emerald-700 font-bold flex-shrink-0">
                                 ₹{Number(deal.value || 0).toLocaleString('en-IN')}
                               </span>
                             </div>
 
                             {deal.phone && (
-                              <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-mono">
-                                <Phone className="w-3 h-3 text-slate-500" />
+                              <div className="flex items-center gap-1.5 text-[11px] text-slate-600 font-mono">
+                                <Phone className="w-3 h-3 text-slate-400" />
                                 <span>{deal.phone}</span>
                               </div>
                             )}
 
                             {deal.contactName && (
-                              <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                                <Briefcase className="w-2.5 h-2.5 text-slate-500" />
+                              <div className="text-[10px] text-slate-500 flex items-center gap-1">
+                                <Briefcase className="w-2.5 h-2.5 text-slate-400" />
                                 <span className="truncate">{deal.contactName}</span>
                               </div>
                             )}
 
                             {deal.notes && (
-                              <p className="text-[10px] text-slate-400 line-clamp-2 bg-slate-900/50 p-1.5 rounded border border-slate-800/50">
+                              <p className="text-[10px] text-slate-600 line-clamp-2 bg-slate-50 p-1.5 rounded border border-slate-200">
                                 {deal.notes}
                               </p>
                             )}
 
                             {deal.nextFollowUpDate && (
-                              <div className="flex items-center gap-1 text-[10px] text-amber-400/90 font-medium">
+                              <div className="flex items-center gap-1 text-[10px] text-amber-700 font-medium">
                                 <Clock className="w-2.5 h-2.5" />
                                 <span>Follow up: {deal.nextFollowUpDate}</span>
                               </div>
                             )}
 
                             {/* Tags and Action Buttons */}
-                            <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-[10px]">
+                            <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 text-[10px]">
                               {deal.tag ? (
-                                <span className="bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded text-[10px] flex items-center gap-1">
-                                  <Tag className="w-2.5 h-2.5 text-slate-400" />
+                                <span className="bg-slate-100 text-slate-700 border border-slate-200 px-1.5 py-0.5 rounded text-[10px] flex items-center gap-1 font-medium">
+                                  <Tag className="w-2.5 h-2.5 text-slate-500" />
                                   <span>{deal.tag}</span>
                                 </span>
                               ) : (
@@ -456,7 +456,7 @@ export default function PipelinesPage() {
                                   <Link
                                     href={`/admin/inbox?phone=${encodeURIComponent(deal.phone)}`}
                                     title="Open WhatsApp Chat"
-                                    className="text-emerald-400 hover:text-emerald-300 p-1 hover:bg-slate-800 rounded transition"
+                                    className="text-emerald-600 hover:text-emerald-700 p-1 hover:bg-slate-100 rounded transition"
                                   >
                                     <MessageSquare className="w-3 h-3" />
                                   </Link>
@@ -464,14 +464,14 @@ export default function PipelinesPage() {
                                 <button
                                   onClick={() => openEditModal(deal)}
                                   title="Edit Deal"
-                                  className="text-slate-400 hover:text-white p-1 hover:bg-slate-800 rounded"
+                                  className="text-slate-500 hover:text-slate-900 p-1 hover:bg-slate-100 rounded cursor-pointer"
                                 >
                                   <Edit2 className="w-3 h-3" />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteDeal(deal.id, deal.title)}
                                   title="Delete Deal"
-                                  className="text-slate-400 hover:text-rose-400 p-1 hover:bg-slate-800 rounded"
+                                  className="text-slate-500 hover:text-rose-600 p-1 hover:bg-slate-100 rounded cursor-pointer"
                                 >
                                   <Trash2 className="w-3 h-3" />
                                 </button>
@@ -483,7 +483,7 @@ export default function PipelinesPage() {
                               <select
                                 value={deal.stage}
                                 onChange={(e) => moveStage(deal.id, e.target.value as DealStage)}
-                                className="bg-slate-900 border border-slate-800 text-[10px] text-slate-300 rounded px-1.5 py-0.5 focus:outline-none focus:border-blue-500"
+                                className="bg-slate-50 border border-slate-200 text-[10px] text-slate-700 rounded px-1.5 py-0.5 focus:outline-none focus:border-blue-500"
                               >
                                 {STAGES.map((s) => (
                                   <option key={s.key} value={s.key}>
@@ -517,15 +517,15 @@ export default function PipelinesPage() {
       {/* Create / Edit Deal Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-blue-400" />
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-2xl relative text-slate-900">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-emerald-600" />
                 <span>{editingDeal ? 'Edit Sales Deal' : 'Create New Sales Deal'}</span>
               </h3>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -542,7 +542,7 @@ export default function PipelinesPage() {
                   placeholder="e.g. Sri Sai Ram Automobiles - Annual Banner"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
@@ -559,7 +559,7 @@ export default function PipelinesPage() {
                     placeholder="1500"
                     value={formData.value}
                     onChange={(e) => setFormData({ ...formData, value: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -570,7 +570,7 @@ export default function PipelinesPage() {
                   <select
                     value={formData.stage}
                     onChange={(e) => setFormData({ ...formData, stage: e.target.value as DealStage })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                   >
                     {STAGES.map((s) => (
                       <option key={s.key} value={s.key}>
@@ -591,7 +591,7 @@ export default function PipelinesPage() {
                     placeholder="9848012345"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -604,7 +604,7 @@ export default function PipelinesPage() {
                     placeholder="e.g. Automobile, RealEstate, Retail"
                     value={formData.tag}
                     onChange={(e) => setFormData({ ...formData, tag: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
@@ -619,7 +619,7 @@ export default function PipelinesPage() {
                     placeholder="e.g. Ramesh Kumar"
                     value={formData.contactName}
                     onChange={(e) => setFormData({ ...formData, contactName: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -631,7 +631,7 @@ export default function PipelinesPage() {
                     type="date"
                     value={formData.nextFollowUpDate}
                     onChange={(e) => setFormData({ ...formData, nextFollowUpDate: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
@@ -645,22 +645,22 @@ export default function PipelinesPage() {
                   placeholder="Details discussed with merchant, pricing quotes, special requests..."
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700"
+                  className="px-4 py-2 rounded-xl text-xs font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 disabled:opacity-50 flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 flex items-center gap-1.5 shadow-xs"
                 >
                   {saving && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
                   <span>{editingDeal ? 'Update Deal' : 'Save Deal'}</span>

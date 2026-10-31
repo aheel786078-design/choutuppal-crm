@@ -25,22 +25,22 @@ export default async function NewsDetailPage({ params }: NewsPageProps) {
 
   return (
     <div className="min-h-screen bg-slate-50/60 pb-16">
-      <div className="bg-slate-900 border-b border-slate-800 py-3 px-4 sm:px-6 lg:px-8">
+      <div className="bg-white border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8 shadow-2xs">
         <div className="mx-auto max-w-4xl flex items-center justify-between text-xs">
           <Link
             href="/news"
-            className="inline-flex items-center gap-1.5 text-slate-300 hover:text-white font-semibold transition"
+            className="inline-flex items-center gap-1.5 text-slate-600 hover:text-emerald-600 font-semibold transition"
           >
             <ArrowLeft className="h-4 w-4" /> All News
           </Link>
-          <span className="text-slate-400">{article.category}</span>
+          <span className="text-slate-500 font-medium">{article.category}</span>
         </div>
       </div>
 
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 mt-6">
         <article className="bg-white rounded-3xl overflow-hidden shadow-xs border border-slate-200 p-6 sm:p-10">
           <div className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-            <span className="bg-blue-600 text-white font-bold px-2.5 py-0.5 rounded text-[11px]">
+            <span className="bg-emerald-600 text-white font-bold px-2.5 py-0.5 rounded text-[11px]">
               {article.category}
             </span>
             <span className="flex items-center gap-1">

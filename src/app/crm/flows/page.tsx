@@ -665,14 +665,14 @@ export default function CRMFlowsPage() {
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto w-full">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white border border-slate-200/80 p-5 rounded-2xl shadow-xs text-slate-900">
         <div>
           <div className="flex items-center gap-2">
             <div className="p-2 bg-blue-500/10 text-blue-400 rounded-xl border border-blue-500/20">
               <Workflow className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white tracking-wide">
+              <h1 className="text-xl font-bold text-slate-900 tracking-wide">
                 Interactive WhatsApp Flows ({totalFlows})
               </h1>
               <p className="text-xs text-slate-400">
@@ -699,7 +699,7 @@ export default function CRMFlowsPage() {
           </button>
           <button
             onClick={() => setIsImportModalOpen(true)}
-            className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-blue-600/20 transition-all"
+            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-blue-600/20 transition-all"
           >
             <Upload className="w-4 h-4" />
             <span>Import CSV</span>
@@ -707,7 +707,7 @@ export default function CRMFlowsPage() {
           <a
             href="/csv/sample_flows.csv"
             download="sample_flows.csv"
-            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-medium border border-slate-700 flex items-center gap-1.5 transition-colors"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-white rounded-xl text-xs font-medium border border-slate-700 flex items-center gap-1.5 transition-colors"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export CSV</span>
@@ -717,28 +717,28 @@ export default function CRMFlowsPage() {
 
       {/* Metrics Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex items-center justify-between">
+        <div className="bg-white border border-slate-200/80 p-4 rounded-xl flex items-center justify-between shadow-xs text-slate-900">
           <div>
             <div className="text-[11px] text-slate-400 uppercase font-semibold">Total Flows</div>
             <div className="text-xl font-bold text-white mt-1">{totalFlows}</div>
           </div>
           <Workflow className="w-7 h-7 text-blue-400 opacity-60" />
         </div>
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex items-center justify-between">
+        <div className="bg-white border border-slate-200/80 p-4 rounded-xl flex items-center justify-between shadow-xs text-slate-900">
           <div>
             <div className="text-[11px] text-emerald-400 uppercase font-semibold">Published (Live)</div>
             <div className="text-xl font-bold text-emerald-400 mt-1">{publishedCount}</div>
           </div>
           <CheckCircle2 className="w-7 h-7 text-emerald-400 opacity-60" />
         </div>
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex items-center justify-between">
+        <div className="bg-white border border-slate-200/80 p-4 rounded-xl flex items-center justify-between shadow-xs text-slate-900">
           <div>
             <div className="text-[11px] text-amber-400 uppercase font-semibold">Draft (Safe)</div>
             <div className="text-xl font-bold text-amber-400 mt-1">{draftCount}</div>
           </div>
           <Clock className="w-7 h-7 text-amber-400 opacity-60" />
         </div>
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex items-center justify-between">
+        <div className="bg-white border border-slate-200/80 p-4 rounded-xl flex items-center justify-between shadow-xs text-slate-900">
           <div>
             <div className="text-[11px] text-slate-400 uppercase font-semibold">Paused</div>
             <div className="text-xl font-bold text-slate-300 mt-1">{pausedCount}</div>
@@ -756,11 +756,11 @@ export default function CRMFlowsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search flows by name, Telugu keywords, or descriptions..."
-            className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+            className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 shadow-xs"
           />
         </div>
 
-        <div className="flex items-center gap-1 bg-slate-900 border border-slate-800 p-1 rounded-xl shrink-0">
+        <div className="flex items-center gap-1 bg-white border border-slate-200 p-1 rounded-xl shrink-0 shadow-xs">
           {(['ALL', 'published', 'draft', 'paused'] as const).map((st) => (
             <button
               key={st}
@@ -779,11 +779,11 @@ export default function CRMFlowsPage() {
 
       {/* Flows Grid */}
       {loading ? (
-        <div className="p-16 text-center text-slate-500 text-xs bg-slate-900 border border-slate-800 rounded-2xl">
+        <div className="p-16 text-center text-slate-500 text-xs bg-white border border-slate-200/80 rounded-2xl shadow-xs">
           Loading active WhatsApp flows...
         </div>
       ) : filteredFlows.length === 0 ? (
-        <div className="p-16 text-center text-slate-500 text-xs bg-slate-900 border border-slate-800 rounded-2xl">
+        <div className="p-16 text-center text-slate-500 text-xs bg-white border border-slate-200/80 rounded-2xl shadow-xs">
           No flows found matching your filter. Click &quot;New Flow&quot; or &quot;Import CSV&quot; to load flows.
         </div>
       ) : (
@@ -795,7 +795,7 @@ export default function CRMFlowsPage() {
             return (
               <div
                 key={flow.id || idx}
-                className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between hover:border-slate-700 transition-all shadow-sm space-y-3"
+                className="bg-white border border-slate-200/80 rounded-2xl p-4 flex flex-col justify-between hover:border-slate-300 hover:shadow-sm transition-all shadow-xs space-y-3 text-slate-900"
               >
                 <div className="space-y-2.5">
                   {/* Card Header */}
@@ -804,7 +804,7 @@ export default function CRMFlowsPage() {
                       <span className="w-6 h-6 rounded-lg bg-blue-500/10 text-blue-400 font-mono text-xs flex items-center justify-center font-bold shrink-0">
                         #{idx + 1}
                       </span>
-                      <h3 className="font-bold text-white text-xs truncate" title={flow.name}>
+                      <h3 className="font-bold text-slate-900 text-xs truncate" title={flow.name}>
                         {flow.name}
                       </h3>
                     </div>
@@ -823,7 +823,7 @@ export default function CRMFlowsPage() {
                   </div>
 
                   {/* Message Preview */}
-                  <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 text-[11px] text-slate-300 font-mono line-clamp-3">
+                  <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-[11px] text-slate-700 font-mono line-clamp-3">
                     {flow.initial_message || flow.description || 'Welcome to Choutuppal App!'}
                   </div>
 
@@ -891,7 +891,7 @@ export default function CRMFlowsPage() {
                 </div>
 
                 {/* Card Footer Actions */}
-                <div className="pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                <div className="pt-2.5 border-t border-slate-200/80 flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleOpenSimulator(flow)}
@@ -902,14 +902,14 @@ export default function CRMFlowsPage() {
                     </button>
                     <button
                       onClick={() => handleOpenEdit(flow)}
-                      className="p-1.5 text-slate-400 hover:text-blue-400 hover:bg-slate-800 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-500 hover:text-emerald-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                       title="Edit Flow"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDeleteFlow(flow.id, flow.name)}
-                      className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                       title="Delete Flow"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -919,7 +919,7 @@ export default function CRMFlowsPage() {
                   <div className="flex items-center gap-1.5">
                     <Link
                       href={`/crm/flows/${flow.id}`}
-                      className="px-2 py-1 rounded bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600 hover:text-white border border-emerald-500/30 text-[10px] font-semibold flex items-center gap-1 transition-colors"
+                      className="px-2 py-1 rounded bg-emerald-50 text-emerald-800 hover:bg-emerald-600 hover:text-white border border-emerald-200 text-[10px] font-semibold flex items-center gap-1 transition-colors"
                       title="Open Interactive Visual Canvas"
                     >
                       <GitFork className="w-3 h-3" />
@@ -939,25 +939,25 @@ export default function CRMFlowsPage() {
       {/* Visual Flow Editor Modal */}
       {isEditorOpen && editingFlow && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden text-slate-900">
             {/* Modal Header */}
-            <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-blue-500/10 text-blue-400 rounded-lg border border-blue-500/20">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-200">
                   <Edit3 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm">
+                  <h3 className="font-bold text-slate-900 text-sm">
                     {flows.some((f) => f.id === editingFlow.id) ? 'Edit Flow' : 'Create New Flow'}
                   </h3>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-slate-500">
                     Configure triggers, interactive buttons, dynamic directory listings &amp; response text.
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsEditorOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -968,17 +968,17 @@ export default function CRMFlowsPage() {
               {/* Row 1: Name and Status */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-2 space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Flow Name</label>
+                  <label className="text-[11px] font-semibold text-slate-700">Flow Name</label>
                   <input
                     type="text"
                     value={editingFlow.name || ''}
                     onChange={(e) => setEditingFlow({ ...editingFlow, name: e.target.value })}
                     placeholder="e.g. Welcome Step 2 or ఆస్పత్రులు సమాచారం"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Status</label>
+                  <label className="text-[11px] font-semibold text-slate-700">Status</label>
                   <select
                     value={editingFlow.status || 'draft'}
                     onChange={(e) =>
@@ -988,7 +988,7 @@ export default function CRMFlowsPage() {
                         isActive: e.target.value === 'published',
                       })
                     }
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
                   >
                     <option value="draft">Draft (Safe)</option>
                     <option value="published">Published (Live)</option>
@@ -999,7 +999,7 @@ export default function CRMFlowsPage() {
 
               {/* Trigger Keywords */}
               <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-300">
+                <label className="text-[11px] font-semibold text-slate-700">
                   Trigger Keywords (Comma separated)
                 </label>
                 <input
@@ -1007,14 +1007,14 @@ export default function CRMFlowsPage() {
                   value={editorKeywords}
                   onChange={(e) => setEditorKeywords(e.target.value)}
                   placeholder="e.g. hi, hello, నమస్కారం, సేవలు, menu"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               {/* Message Body with Variable Chips */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-semibold text-slate-300">
+                  <label className="text-[11px] font-semibold text-slate-700">
                     Message Body (Telugu / English)
                   </label>
                   <span className="text-[10px] text-slate-400">Insert dynamic variables:</span>
@@ -1034,7 +1034,7 @@ export default function CRMFlowsPage() {
                       key={tok}
                       type="button"
                       onClick={() => handleInsertVariable(tok)}
-                      className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-blue-300 rounded text-[10px] font-mono border border-slate-700 transition-colors"
+                      className="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-[10px] font-mono border border-slate-200 transition-colors cursor-pointer shadow-2xs"
                     >
                       + {tok}
                     </button>
@@ -1048,12 +1048,12 @@ export default function CRMFlowsPage() {
                     setEditingFlow({ ...editingFlow, initial_message: e.target.value })
                   }
                   placeholder="నమస్కారం! చౌటుప్పల్ యాప్ కి స్వాగతం..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-blue-500 font-sans text-xs leading-relaxed"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-emerald-500 font-sans text-xs leading-relaxed"
                 />
               </div>
 
               {/* Directory Listing Binding */}
-              <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                 <div className="flex items-center gap-2">
                   <Building2 className="w-4 h-4 text-amber-400" />
                   <span className="font-semibold text-white">Attach Single Directory Listing (Optional)</span>
@@ -1064,7 +1064,7 @@ export default function CRMFlowsPage() {
                 <select
                   value={selectedListingId}
                   onChange={(e) => setSelectedListingId(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-blue-500"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
                 >
                   <option value="">-- No single listing attached --</option>
                   {listings.map((l) => (
@@ -1076,7 +1076,7 @@ export default function CRMFlowsPage() {
               </div>
 
               {/* Business Listing Order & Pagination Section */}
-              <div className="p-4 bg-slate-950 rounded-xl border border-emerald-500/30 space-y-3">
+              <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-200 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="p-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/20">
@@ -1097,11 +1097,11 @@ export default function CRMFlowsPage() {
                 {/* Mode Selector & Category Scoping */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                   <div className="space-y-1">
-                    <label className="text-[11px] font-semibold text-slate-300">Sorting Mode</label>
+                    <label className="text-[11px] font-semibold text-slate-700">Sorting Mode</label>
                     <select
                       value={listingSortMode}
                       onChange={(e) => setListingSortMode(e.target.value as ListingSortMode)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
                     >
                       <option value="manual">Manual Order (Default)</option>
                       <option value="category_priority">Category Priority</option>
@@ -1112,11 +1112,11 @@ export default function CRMFlowsPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] font-semibold text-slate-300">Category Filter (Optional)</label>
+                    <label className="text-[11px] font-semibold text-slate-700">Category Filter (Optional)</label>
                     <select
                       value={listingCategory}
                       onChange={(e) => setListingCategory(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
                     >
                       <option value="">-- All Categories (Full Directory) --</option>
                       <option value="automobile">Automobiles &amp; Multi-Brand</option>
@@ -1131,7 +1131,7 @@ export default function CRMFlowsPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[11px] font-semibold text-slate-300">
+                    <label className="text-[11px] font-semibold text-slate-700">
                       Batch Page Size <span className="text-slate-500 font-normal">(Max 10)</span>
                     </label>
                     <input
@@ -1140,12 +1140,12 @@ export default function CRMFlowsPage() {
                       max={10}
                       value={listingPageSize}
                       onChange={(e) => setListingPageSize(Math.min(Math.max(parseInt(e.target.value) || 8, 1), 10))}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-white text-xs font-mono focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs font-mono focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-[10px] text-slate-400 bg-slate-900/60 p-2 rounded-lg border border-slate-800/80">
+                <div className="flex items-center gap-2 text-[10px] text-slate-600 bg-slate-100 p-2 rounded-lg border border-slate-200">
                   <span className="font-semibold text-amber-400">WhatsApp Limit:</span>
                   <span>Interactive lists allow max 10 rows per message. Sequences exceeding page size auto-generate &quot;Next ➡️&quot; and &quot;Previous ⬅️&quot; navigation.</span>
                 </div>
@@ -1167,7 +1167,7 @@ export default function CRMFlowsPage() {
                       <select
                         value={selectedListingToAddToOrder}
                         onChange={(e) => setSelectedListingToAddToOrder(e.target.value)}
-                        className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-emerald-500"
+                        className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
                       >
                         <option value="">-- Choose business to add to sequence --</option>
                         {listings
@@ -1201,7 +1201,7 @@ export default function CRMFlowsPage() {
                           return (
                             <div
                               key={lId}
-                              className="flex items-center justify-between gap-2 p-2 bg-slate-900 rounded-lg border border-slate-800 text-xs"
+                              className="flex items-center justify-between gap-2 p-2 bg-white rounded-lg border border-slate-200 text-xs text-slate-900"
                             >
                               <div className="flex items-center gap-2 flex-1 min-w-0">
                                 <span className="w-6 h-6 flex items-center justify-center bg-emerald-500/20 text-emerald-300 font-bold font-mono rounded text-[11px] shrink-0">
@@ -1229,7 +1229,7 @@ export default function CRMFlowsPage() {
                                     next[idx] = temp
                                     setListingSortOrder(next)
                                   }}
-                                  className="p-1 hover:bg-slate-800 text-slate-400 hover:text-white rounded disabled:opacity-30"
+                                  className="p-1 hover:bg-slate-100 text-slate-500 hover:text-slate-900 rounded disabled:opacity-30 cursor-pointer"
                                   title="Move Up"
                                 >
                                   <ChevronUp className="w-4 h-4" />
@@ -1245,7 +1245,7 @@ export default function CRMFlowsPage() {
                                     next[idx] = temp
                                     setListingSortOrder(next)
                                   }}
-                                  className="p-1 hover:bg-slate-800 text-slate-400 hover:text-white rounded disabled:opacity-30"
+                                  className="p-1 hover:bg-slate-100 text-slate-500 hover:text-slate-900 rounded disabled:opacity-30 cursor-pointer"
                                   title="Move Down"
                                 >
                                   <ChevronDown className="w-4 h-4" />
@@ -1264,7 +1264,7 @@ export default function CRMFlowsPage() {
                         })}
                       </div>
                     ) : (
-                      <div className="text-[11px] text-slate-500 italic p-2 bg-slate-900/40 rounded-lg text-center">
+                      <div className="text-[11px] text-slate-500 italic p-2 bg-slate-100 rounded-lg text-center">
                         No manual order configured. When no specific IDs are set, all eligible directory listings will be presented alphabetically.
                       </div>
                     )}
@@ -1287,7 +1287,7 @@ export default function CRMFlowsPage() {
                       <select
                         value={selectedCatToAddToPriority}
                         onChange={(e) => setSelectedCatToAddToPriority(e.target.value)}
-                        className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-emerald-500"
+                        className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
                       >
                         <option value="">-- Select category to prioritize --</option>
                         {[
@@ -1327,7 +1327,7 @@ export default function CRMFlowsPage() {
                         {categoryPriority.map((cat, ci) => (
                           <div
                             key={cat}
-                            className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
+                            className="flex items-center gap-1.5 px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-900"
                           >
                             <span className="text-emerald-400 font-bold font-mono">#{ci + 1}</span>
                             <span className="font-medium">{cat}</span>
@@ -1374,7 +1374,7 @@ export default function CRMFlowsPage() {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-[11px] text-slate-500 italic p-2 bg-slate-900/40 rounded-lg text-center">
+                      <div className="text-[11px] text-slate-500 italic p-2 bg-slate-100 rounded-lg text-center">
                         No categories prioritized yet. All categories will be presented using standard town order.
                       </div>
                     )}
@@ -1385,7 +1385,7 @@ export default function CRMFlowsPage() {
               {/* Interactive Reply Buttons (Up to 3) */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-semibold text-slate-300">
+                  <label className="text-[11px] font-semibold text-slate-700">
                     Quick-Reply Buttons (Max 3 on WhatsApp)
                   </label>
                   {editorButtons.length < 3 && (
@@ -1406,7 +1406,7 @@ export default function CRMFlowsPage() {
 
                 <div className="space-y-2">
                   {editorButtons.map((btn, bi) => (
-                    <div key={bi} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 bg-slate-950/80 rounded-xl border border-slate-800/80">
+                    <div key={bi} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-200">
                       <span className="text-[11px] font-mono text-slate-500 w-12">
                         Btn #{bi + 1}:
                       </span>
@@ -1420,7 +1420,7 @@ export default function CRMFlowsPage() {
                           setEditorButtons(updated)
                         }}
                         placeholder="Button Title (e.g. సేవలు)"
-                        className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-white text-xs focus:outline-none focus:border-blue-500"
+                        className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
                       />
                       <input
                         type="text"
@@ -1431,7 +1431,7 @@ export default function CRMFlowsPage() {
                           setEditorButtons(updated)
                         }}
                         placeholder="Next Node ID or goto_flow (Optional)"
-                        className="w-full sm:w-48 bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-300 font-mono text-[11px] focus:outline-none focus:border-blue-500"
+                        className="w-full sm:w-48 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 font-mono text-[11px] focus:outline-none focus:border-emerald-500"
                       />
                       <button
                         type="button"
@@ -1450,7 +1450,7 @@ export default function CRMFlowsPage() {
               {/* Image / Video Media URL & Media Type */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className="md:col-span-2 space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">
+                  <label className="text-[11px] font-semibold text-slate-700">
                     Hero Media URL (Image or Video)
                   </label>
                   <input
@@ -1458,11 +1458,11 @@ export default function CRMFlowsPage() {
                     value={editingFlow.imageUrl || ''}
                     onChange={(e) => setEditingFlow({ ...editingFlow, imageUrl: e.target.value })}
                     placeholder="https://images.unsplash.com/... or https://example.com/tour.mp4"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Media Type</label>
+                  <label className="text-[11px] font-semibold text-slate-700">Media Type</label>
                   <select
                     value={editingFlow.mediaType || 'image'}
                     onChange={(e) =>
@@ -1471,7 +1471,7 @@ export default function CRMFlowsPage() {
                         mediaType: e.target.value as 'image' | 'video' | 'document',
                       })
                     }
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-blue-500"
                   >
                     <option value="image">Image (JPG/PNG/WebP)</option>
                     <option value="video">Video (MP4/H.264)</option>
@@ -1482,7 +1482,7 @@ export default function CRMFlowsPage() {
 
               {/* Connected Graph Nodes Inspector */}
               {editingFlow.nodes && editingFlow.nodes.length > 0 && (
-                <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5 font-semibold text-slate-300 text-[11px]">
                       <Layers className="w-3.5 h-3.5 text-blue-400" />
@@ -1494,7 +1494,7 @@ export default function CRMFlowsPage() {
                     {editingFlow.nodes.map((node) => (
                       <div
                         key={node.id}
-                        className="p-2 bg-slate-900 border border-slate-800/80 rounded-lg text-[10px] space-y-0.5"
+                        className="p-2 bg-white border border-slate-200 rounded-lg text-[10px] space-y-0.5 text-slate-900"
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-white font-mono">{node.id}</span>
@@ -1527,11 +1527,11 @@ export default function CRMFlowsPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t border-slate-800 flex items-center justify-end gap-2 bg-slate-950">
+            <div className="p-4 border-t border-slate-200 flex items-center justify-end gap-2 bg-slate-50/80">
               <button
                 type="button"
                 onClick={() => setIsEditorOpen(false)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium text-xs transition-colors"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-xs transition-colors"
               >
                 Cancel
               </button>
@@ -1539,7 +1539,7 @@ export default function CRMFlowsPage() {
                 type="button"
                 onClick={handleSaveFlow}
                 disabled={isSaving}
-                className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
+                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>{isSaving ? 'Saving...' : 'Save Flow'}</span>
@@ -1552,9 +1552,9 @@ export default function CRMFlowsPage() {
       {/* Interactive WhatsApp Simulator Drawer */}
       {isSimulatorOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm h-[660px] flex flex-col shadow-2xl overflow-hidden border-2 border-emerald-500/20">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-sm h-[660px] flex flex-col shadow-2xl overflow-hidden border-2 border-emerald-500/30 text-slate-900">
             {/* Phone Top Notch */}
-            <div className="bg-slate-950 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+            <div className="bg-slate-100 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
                 <div>
@@ -1571,8 +1571,8 @@ export default function CRMFlowsPage() {
                   title="Toggle Dry-Run Diagnostics"
                   className={`px-2 py-0.5 rounded text-[10px] font-semibold border transition-colors ${
                     showDiagnostics
-                      ? 'bg-blue-900/60 text-blue-300 border-blue-500/40'
-                      : 'bg-slate-800 text-slate-400 border-slate-700'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                      : 'bg-slate-100 text-slate-700 border-slate-200'
                   }`}
                 >
                   Diag
@@ -1580,7 +1580,7 @@ export default function CRMFlowsPage() {
                 <button
                   type="button"
                   onClick={() => setIsSimulatorOpen(false)}
-                  className="p-1 text-slate-400 hover:text-white"
+                  className="p-1 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1588,7 +1588,7 @@ export default function CRMFlowsPage() {
             </div>
 
             {/* Chat Messages Area */}
-            <div className="flex-1 p-3 space-y-3 overflow-y-auto bg-slate-950/60 text-xs">
+            <div className="flex-1 p-3 space-y-3 overflow-y-auto bg-slate-50 text-xs">
               {simChat.map((msg, i) => (
                 <div
                   key={i}
@@ -1597,10 +1597,10 @@ export default function CRMFlowsPage() {
                   }`}
                 >
                   <div
-                    className={`max-w-[88%] rounded-2xl p-3 shadow-sm ${
+                    className={`max-w-[88%] rounded-2xl p-3 shadow-2xs ${
                       msg.sender === 'user'
-                        ? 'bg-blue-600 text-white rounded-br-none'
-                        : 'bg-slate-800 text-slate-100 border border-slate-700/80 rounded-bl-none space-y-2'
+                        ? 'bg-emerald-600 text-white rounded-br-none'
+                        : 'bg-white text-slate-900 border border-slate-200/90 rounded-bl-none space-y-2'
                     }`}
                   >
                     {/* Media Handling (Video vs Image) */}
@@ -1626,7 +1626,7 @@ export default function CRMFlowsPage() {
 
                     {/* Attached Listing Card */}
                     {msg.diagnostics?.attachedListing && (
-                      <div className="p-2 bg-slate-900/90 border border-emerald-500/30 rounded-xl space-y-1 text-[11px]">
+                      <div className="p-2 bg-emerald-50/80 border border-emerald-200 rounded-xl space-y-1 text-[11px] text-emerald-950">
                         <div className="font-semibold text-emerald-400 flex items-center gap-1">
                           <Building2 className="w-3 h-3" />
                           <span>{msg.diagnostics.attachedListing.title}</span>
@@ -1653,7 +1653,7 @@ export default function CRMFlowsPage() {
                             key={b.id}
                             type="button"
                             onClick={() => handleSimSend(b.title, b.payload || b.id)}
-                            className="w-full py-1.5 px-3 bg-slate-900/80 hover:bg-slate-900 text-blue-400 rounded-lg text-[11px] font-bold border border-blue-500/30 flex items-center justify-center gap-1 transition-colors"
+                            className="w-full py-1.5 px-3 bg-white hover:bg-slate-50 text-emerald-700 rounded-lg text-[11px] font-bold border border-emerald-300 flex items-center justify-center gap-1 transition-colors shadow-xs"
                           >
                             <span>🔘</span>
                             <span>{b.title}</span>
@@ -1676,7 +1676,7 @@ export default function CRMFlowsPage() {
                                   key={row.id}
                                   type="button"
                                   onClick={() => handleSimSend(row.title, row.id)}
-                                  className="w-full text-left py-1.5 px-2 bg-slate-900/90 hover:bg-slate-900 border border-slate-700/80 rounded-lg text-[11px] text-slate-200 hover:text-white transition-colors"
+                                  className="w-full text-left py-1.5 px-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-[11px] text-slate-800 hover:text-emerald-700 transition-colors shadow-xs"
                                 >
                                   <div className="font-semibold text-blue-400">{row.title}</div>
                                   {row.description && (
@@ -1698,7 +1698,7 @@ export default function CRMFlowsPage() {
                             {msg.diagnostics.matched ? '✓ MATCHED' : '✗ NO MATCH'}
                           </span>
                           {msg.diagnostics.matchedTrigger && (
-                            <span className="bg-slate-900 px-1 py-0.5 rounded text-amber-300">
+                            <span className="bg-amber-50 px-1 py-0.5 rounded text-amber-800 font-bold border border-amber-200">
                               Trig: {msg.diagnostics.matchedTrigger}
                             </span>
                           )}
@@ -1732,16 +1732,16 @@ export default function CRMFlowsPage() {
 
               {/* Typing / Loading Indicator */}
               {simLoading && (
-                <div className="flex items-start gap-1 p-2 bg-slate-800/60 rounded-2xl w-20 justify-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.2s]" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.4s]" />
+                <div className="flex items-start gap-1 p-2 bg-slate-200/80 rounded-2xl w-20 justify-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce [animation-delay:0.2s]" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-slate-500 animate-bounce [animation-delay:0.4s]" />
                 </div>
               )}
             </div>
 
             {/* Phone Input Box */}
-            <div className="p-2.5 bg-slate-950 border-t border-slate-800 flex items-center gap-2">
+            <div className="p-2.5 bg-white border-t border-slate-200 flex items-center gap-2">
               <input
                 type="text"
                 value={simInput}
@@ -1749,13 +1749,13 @@ export default function CRMFlowsPage() {
                 onChange={(e) => setSimInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && !simLoading && handleSimSend()}
                 placeholder="Type 'hi', 'menu', or Telugu..."
-                className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
               />
               <button
                 type="button"
                 onClick={() => handleSimSend()}
                 disabled={simLoading || !simInput.trim()}
-                className="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-md transition-all disabled:opacity-50"
+                className="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-md transition-all disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
               </button>

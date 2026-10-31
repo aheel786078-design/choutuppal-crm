@@ -261,7 +261,7 @@ export default function StaffManagementPage() {
   const suspendedCount = staffList.filter((s) => s.status === 'SUSPENDED').length
 
   return (
-    <div className="flex-1 bg-slate-950 min-h-screen text-slate-100 flex flex-col">
+    <div className="flex-1 bg-slate-50 min-h-screen text-slate-900 flex flex-col">
       <AdminHeader
         title="Franchise Staff & Roles"
         subtitle="Manage territory operators, reviewers, and role-based access control."
@@ -312,7 +312,7 @@ export default function StaffManagementPage() {
 
         {/* Executive Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm flex items-center justify-between">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 shadow-sm flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-400 font-medium">Total Staff Accounts</p>
               <h3 className="text-2xl font-bold text-white mt-1">{totalCount}</h3>
@@ -322,7 +322,7 @@ export default function StaffManagementPage() {
             </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm flex items-center justify-between">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 shadow-sm flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-400 font-medium">Active Staff</p>
               <h3 className="text-2xl font-bold text-emerald-400 mt-1">{activeCount}</h3>
@@ -332,7 +332,7 @@ export default function StaffManagementPage() {
             </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm flex items-center justify-between">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 shadow-sm flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-400 font-medium">Suspended Accounts</p>
               <h3 className="text-2xl font-bold text-rose-400 mt-1">{suspendedCount}</h3>
@@ -342,7 +342,7 @@ export default function StaffManagementPage() {
             </div>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm flex items-center justify-between">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 shadow-sm flex items-center justify-between">
             <div>
               <p className="text-xs text-slate-400 font-medium">Franchise Territories</p>
               <h3 className="text-2xl font-bold text-purple-400 mt-1">{franchises.length || 1}</h3>
@@ -354,7 +354,7 @@ export default function StaffManagementPage() {
         </div>
 
         {/* Filter & Search Bar */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row gap-3 items-center justify-between">
+        <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 flex flex-col md:flex-row gap-3 items-center justify-between">
           <div className="relative w-full md:w-80">
             <Search className="w-4 h-4 absolute left-3 top-3 text-slate-500" />
             <input
@@ -365,7 +365,7 @@ export default function StaffManagementPage() {
                 setPage(1)
               }}
               placeholder="Search by name, phone, or email..."
-              className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500"
+              className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-500 focus:outline-none focus:border-blue-500"
             />
           </div>
 
@@ -377,7 +377,7 @@ export default function StaffManagementPage() {
                 setRoleFilter(e.target.value)
                 setPage(1)
               }}
-              className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-blue-500"
             >
               <option value="all">All Roles</option>
               <option value="FRANCHISE_ADMIN">Franchise Admin</option>
@@ -392,7 +392,7 @@ export default function StaffManagementPage() {
                 setStatusFilter(e.target.value)
                 setPage(1)
               }}
-              className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-blue-500"
             >
               <option value="all">All Statuses</option>
               <option value="ACTIVE">Active</option>
@@ -408,7 +408,7 @@ export default function StaffManagementPage() {
                   setFranchiseFilter(e.target.value)
                   setPage(1)
                 }}
-                className="px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-300 focus:outline-none focus:border-blue-500"
               >
                 <option value="all">All Franchises</option>
                 {franchises.map((f) => (
@@ -422,7 +422,7 @@ export default function StaffManagementPage() {
             <button
               onClick={fetchStaff}
               disabled={loading}
-              className="p-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300 hover:text-white transition-colors"
+              className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-slate-300 hover:text-white transition-colors"
               title="Refresh"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-blue-400' : ''}`} />
@@ -431,7 +431,7 @@ export default function StaffManagementPage() {
         </div>
 
         {/* Staff Table */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow">
+        <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 overflow-hidden shadow">
           {loading ? (
             <div className="p-16 text-center text-slate-500 text-xs flex flex-col items-center gap-2">
               <RefreshCw className="w-6 h-6 animate-spin text-blue-500" />
@@ -439,18 +439,18 @@ export default function StaffManagementPage() {
             </div>
           ) : staffList.length === 0 ? (
             <div className="p-16 text-center text-slate-500 text-xs space-y-3">
-              <div className="w-12 h-12 rounded-full bg-slate-800/80 mx-auto flex items-center justify-center text-slate-400">
+              <div className="w-12 h-12 rounded-full bg-slate-100 mx-auto flex items-center justify-center text-slate-500 border border-slate-200">
                 <Users className="w-6 h-6" />
               </div>
-              <p className="text-sm font-medium text-slate-400">No staff members found.</p>
+              <p className="text-sm font-semibold text-slate-800">No staff members found.</p>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
                 No staff members match the selected filters. Click &quot;Add Staff Member&quot; above to create a new operator account.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300">
-                <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+              <table className="w-full text-left text-xs text-slate-700">
+                <thead className="bg-slate-50 text-slate-700 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
                   <tr>
                     <th scope="col" className="py-3 px-4 font-bold">
                       Staff Member
@@ -472,26 +472,26 @@ export default function StaffManagementPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/80">
+                <tbody className="divide-y divide-slate-100/80">
                   {staffList.map((staff) => {
                     const roleInfo = ROLE_LABELS[staff.role] || {
                       label: staff.role,
-                      color: 'bg-slate-800 text-slate-300 border-slate-700',
+                      color: 'bg-slate-100 text-slate-700 border-slate-200',
                     }
                     const franchise = franchises.find((f) => f.id === staff.franchiseId)
                     const territory = territories.find((t) => t.id === staff.territoryId)
 
                     return (
-                      <tr key={staff.id} className="hover:bg-slate-950/40 transition-colors">
+                      <tr key={staff.id} className="hover:bg-slate-50 transition-colors">
                         {/* Name & Contact */}
                         <td className="py-3.5 px-4 align-top space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-white text-xs">{staff.name}</span>
+                            <span className="font-bold text-slate-900 text-xs">{staff.name}</span>
                             <span className="text-[10px] text-slate-500 font-mono">
                               ({staff.userId || staff.id})
                             </span>
                           </div>
-                          <div className="flex items-center gap-3 text-[11px] text-slate-400">
+                          <div className="flex items-center gap-3 text-[11px] text-slate-500">
                             <span className="flex items-center gap-1">
                               <Phone className="w-3 h-3 text-slate-500" />
                               {staff.phone}
@@ -507,10 +507,10 @@ export default function StaffManagementPage() {
 
                         {/* Franchise & Territory */}
                         <td className="py-3.5 px-4 align-top space-y-1">
-                          <p className="font-medium text-slate-200">
+                          <p className="font-medium text-slate-800">
                             {franchise ? franchise.name : staff.franchiseId || 'Default'}
                           </p>
-                          <p className="text-[10px] text-slate-400 flex items-center gap-1">
+                          <p className="text-[10px] text-slate-500 flex items-center gap-1">
                             <Building2 className="w-3 h-3 text-slate-500" />
                             {territory ? territory.name : staff.territoryId}
                           </p>
@@ -527,7 +527,7 @@ export default function StaffManagementPage() {
                             {(staff.permissions || []).slice(0, 3).map((p) => (
                               <span
                                 key={p}
-                                className="px-1.5 py-0.2 rounded bg-slate-800 text-[9px] text-slate-400"
+                                className="px-1.5 py-0.2 rounded bg-slate-100 text-[9px] text-slate-600 border border-slate-200"
                               >
                                 {p.replace('.', ': ')}
                               </span>
@@ -569,7 +569,7 @@ export default function StaffManagementPage() {
                         <td className="py-3.5 px-4 align-top text-right space-x-1">
                           <button
                             onClick={() => setEditingStaff(staff)}
-                            className="p-1.5 rounded hover:bg-slate-800 text-blue-400 hover:text-blue-300 transition-colors"
+                            className="p-1.5 rounded hover:bg-slate-100 text-blue-400 hover:text-blue-300 transition-colors"
                             title="Edit Staff Account"
                           >
                             <Edit className="w-4 h-4" />
@@ -578,7 +578,7 @@ export default function StaffManagementPage() {
                           {staff.status === 'ACTIVE' ? (
                             <button
                               onClick={() => setConfirmAction({ type: 'suspend', staff })}
-                              className="p-1.5 rounded hover:bg-slate-800 text-amber-400 hover:text-amber-300 transition-colors"
+                              className="p-1.5 rounded hover:bg-slate-100 text-amber-400 hover:text-amber-300 transition-colors"
                               title="Suspend Account"
                             >
                               <ShieldAlert className="w-4 h-4" />
@@ -586,7 +586,7 @@ export default function StaffManagementPage() {
                           ) : (
                             <button
                               onClick={() => setConfirmAction({ type: 'activate', staff })}
-                              className="p-1.5 rounded hover:bg-slate-800 text-emerald-400 hover:text-emerald-300 transition-colors"
+                              className="p-1.5 rounded hover:bg-slate-100 text-emerald-400 hover:text-emerald-300 transition-colors"
                               title="Activate Account"
                             >
                               <ShieldCheck className="w-4 h-4" />
@@ -595,7 +595,7 @@ export default function StaffManagementPage() {
 
                           <button
                             onClick={() => setConfirmAction({ type: 'delete', staff })}
-                            className="p-1.5 rounded hover:bg-slate-800 text-rose-400 hover:text-rose-300 transition-colors"
+                            className="p-1.5 rounded hover:bg-slate-100 text-rose-400 hover:text-rose-300 transition-colors"
                             title="Remove Staff Account"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -611,7 +611,7 @@ export default function StaffManagementPage() {
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="p-4 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between text-xs text-slate-400">
+            <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-400">
               <span>
                 Showing page {page} of {totalPages} ({totalCount} total staff)
               </span>
@@ -619,14 +619,14 @@ export default function StaffManagementPage() {
                 <button
                   disabled={page <= 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="px-2.5 py-1.5 rounded bg-slate-900 border border-slate-800 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1"
+                  className="px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 shadow-2xs text-xs"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" /> Previous
                 </button>
                 <button
                   disabled={page >= totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  className="px-2.5 py-1.5 rounded bg-slate-900 border border-slate-800 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1"
+                  className="px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 shadow-2xs text-xs"
                 >
                   Next <ChevronRight className="w-3.5 h-3.5" />
                 </button>
@@ -641,15 +641,15 @@ export default function StaffManagementPage() {
       {/* ============================================================ */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl animate-in zoom-in-95">
-            <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-lg w-full overflow-hidden shadow-2xl animate-in zoom-in-95">
+            <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
-                <UserPlus className="w-5 h-5 text-blue-400" />
-                <h3 className="font-bold text-sm text-white">Add Franchise Staff Member</h3>
+                <UserPlus className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-sm text-slate-900">Add Franchise Staff Member</h3>
               </div>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="text-slate-500 hover:text-white"
+                className="text-slate-400 hover:text-slate-900 p-1 rounded-lg hover:bg-slate-100 transition"
               >
                 ✕
               </button>
@@ -657,49 +657,49 @@ export default function StaffManagementPage() {
 
             <form onSubmit={handleCreateStaff} className="p-5 space-y-4">
               <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-300">Staff Full Name *</label>
+                <label className="text-[11px] font-semibold text-slate-700">Staff Full Name *</label>
                 <input
                   type="text"
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g. Ramesh Reddy"
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">10-Digit Indian Phone *</label>
+                  <label className="text-[11px] font-semibold text-slate-700">10-Digit Indian Phone *</label>
                   <input
                     type="tel"
                     required
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="9848012345"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Email Address (Optional)</label>
+                  <label className="text-[11px] font-semibold text-slate-700">Email Address (Optional)</label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="staff@choutuppal.in"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Role *</label>
+                  <label className="text-[11px] font-semibold text-slate-700">Role *</label>
                   <select
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-emerald-500 cursor-pointer"
                   >
                     <option value="FRANCHISE_STAFF">Franchise Staff (Standard)</option>
                     <option value="FRANCHISE_REVIEWER">Franchise Reviewer</option>
@@ -708,11 +708,11 @@ export default function StaffManagementPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Franchise Unit *</label>
+                  <label className="text-[11px] font-semibold text-slate-700">Franchise Unit *</label>
                   <select
                     value={formData.franchiseId}
                     onChange={(e) => setFormData({ ...formData, franchiseId: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-emerald-500 cursor-pointer"
                   >
                     {franchises.map((f) => (
                       <option key={f.id} value={f.id}>
@@ -725,20 +725,20 @@ export default function StaffManagementPage() {
 
               {/* Permissions Checklist */}
               <div className="space-y-1.5">
-                <label className="text-[11px] font-semibold text-slate-300">Role Permissions</label>
-                <div className="grid grid-cols-2 gap-2 p-3 bg-slate-950 rounded-lg border border-slate-800 max-h-36 overflow-y-auto">
+                <label className="text-[11px] font-semibold text-slate-700">Role Permissions</label>
+                <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200 max-h-36 overflow-y-auto">
                   {ALL_PERMISSIONS.map((perm) => {
                     const isChecked = formData.permissions.includes(perm.key)
                     return (
                       <label
                         key={perm.key}
-                        className="flex items-center gap-2 text-[11px] text-slate-300 cursor-pointer hover:text-white"
+                        className="flex items-center gap-2 text-[11px] text-slate-700 cursor-pointer hover:text-slate-900"
                       >
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => togglePermission(perm.key, false)}
-                          className="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0"
+                          className="rounded border-slate-300 text-emerald-600 focus:ring-0"
                         />
                         <span>{perm.label}</span>
                       </label>
@@ -747,22 +747,22 @@ export default function StaffManagementPage() {
                 </div>
               </div>
 
-              <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg text-[11px] text-amber-200/90 leading-tight">
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-[11px] text-amber-900 leading-tight">
                 Staff member will authenticate using this phone number. No outbound emails will be sent.
               </div>
 
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-800">
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-3.5 py-1.5 rounded-lg border border-slate-700 text-xs text-slate-400 hover:text-white"
+                  className="px-3.5 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-700 hover:bg-slate-100 font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shadow disabled:opacity-50"
+                  className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-xs font-semibold text-white shadow-xs disabled:opacity-50"
                 >
                   {isSubmitting ? 'Creating...' : 'Create Account'}
                 </button>
@@ -777,15 +777,15 @@ export default function StaffManagementPage() {
       {/* ============================================================ */}
       {editingStaff && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl animate-in zoom-in-95">
-            <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-lg w-full overflow-hidden shadow-2xl animate-in zoom-in-95">
+            <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
-                <Edit className="w-5 h-5 text-blue-400" />
-                <h3 className="font-bold text-sm text-white">Edit Staff: {editingStaff.name}</h3>
+                <Edit className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-bold text-sm text-slate-900">Edit Staff: {editingStaff.name}</h3>
               </div>
               <button
                 onClick={() => setEditingStaff(null)}
-                className="text-slate-500 hover:text-white"
+                className="text-slate-400 hover:text-slate-900 p-1 rounded-lg hover:bg-slate-100 transition"
               >
                 ✕
               </button>
@@ -793,46 +793,46 @@ export default function StaffManagementPage() {
 
             <form onSubmit={handleSaveEdit} className="p-5 space-y-4">
               <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-300">Staff Full Name</label>
+                <label className="text-[11px] font-semibold text-slate-700">Staff Full Name</label>
                 <input
                   type="text"
                   required
                   value={editingStaff.name}
                   onChange={(e) => setEditingStaff({ ...editingStaff, name: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Phone</label>
+                  <label className="text-[11px] font-semibold text-slate-700">Phone</label>
                   <input
                     type="tel"
                     required
                     value={editingStaff.phone}
                     onChange={(e) => setEditingStaff({ ...editingStaff, phone: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Email</label>
+                  <label className="text-[11px] font-semibold text-slate-700">Email</label>
                   <input
                     type="email"
                     value={editingStaff.email || ''}
                     onChange={(e) => setEditingStaff({ ...editingStaff, email: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Role</label>
+                  <label className="text-[11px] font-semibold text-slate-700">Role</label>
                   <select
                     value={editingStaff.role}
                     onChange={(e) => setEditingStaff({ ...editingStaff, role: e.target.value as any })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-emerald-500 cursor-pointer"
                   >
                     <option value="FRANCHISE_STAFF">Franchise Staff</option>
                     <option value="FRANCHISE_REVIEWER">Franchise Reviewer</option>
@@ -841,11 +841,11 @@ export default function StaffManagementPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-300">Status</label>
+                  <label className="text-[11px] font-semibold text-slate-700">Status</label>
                   <select
                     value={editingStaff.status}
                     onChange={(e) => setEditingStaff({ ...editingStaff, status: e.target.value as any })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-emerald-500 cursor-pointer"
                   >
                     <option value="ACTIVE">Active</option>
                     <option value="INVITED">Invited</option>
@@ -856,20 +856,20 @@ export default function StaffManagementPage() {
 
               {/* Permissions */}
               <div className="space-y-1.5">
-                <label className="text-[11px] font-semibold text-slate-300">Role Permissions</label>
-                <div className="grid grid-cols-2 gap-2 p-3 bg-slate-950 rounded-lg border border-slate-800 max-h-36 overflow-y-auto">
+                <label className="text-[11px] font-semibold text-slate-700">Role Permissions</label>
+                <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200 max-h-36 overflow-y-auto">
                   {ALL_PERMISSIONS.map((perm) => {
                     const isChecked = (editingStaff.permissions || []).includes(perm.key)
                     return (
                       <label
                         key={perm.key}
-                        className="flex items-center gap-2 text-[11px] text-slate-300 cursor-pointer hover:text-white"
+                        className="flex items-center gap-2 text-[11px] text-slate-700 cursor-pointer hover:text-slate-900"
                       >
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => togglePermission(perm.key, true)}
-                          className="rounded border-slate-700 bg-slate-900 text-blue-600 focus:ring-0"
+                          className="rounded border-slate-300 text-emerald-600 focus:ring-0"
                         />
                         <span>{perm.label}</span>
                       </label>
@@ -878,18 +878,18 @@ export default function StaffManagementPage() {
                 </div>
               </div>
 
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-800">
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setEditingStaff(null)}
-                  className="px-3.5 py-1.5 rounded-lg border border-slate-700 text-xs text-slate-400 hover:text-white"
+                  className="px-3.5 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-700 hover:bg-slate-100 font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shadow disabled:opacity-50"
+                  className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-xs font-semibold text-white shadow-xs disabled:opacity-50"
                 >
                   {isSubmitting ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -904,36 +904,36 @@ export default function StaffManagementPage() {
       {/* ============================================================ */}
       {confirmAction && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl animate-in zoom-in-95">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-sm w-full p-5 space-y-4 shadow-2xl animate-in zoom-in-95">
             <div className="flex items-center gap-3">
               {confirmAction.type === 'delete' ? (
-                <div className="w-10 h-10 rounded-full bg-rose-500/10 text-rose-400 flex items-center justify-center border border-rose-500/20">
+                <div className="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-200">
                   <Trash2 className="w-5 h-5" />
                 </div>
               ) : confirmAction.type === 'suspend' ? (
-                <div className="w-10 h-10 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
+                <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200">
                   <ShieldAlert className="w-5 h-5" />
                 </div>
               ) : (
-                <div className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
               )}
               <div>
-                <h4 className="font-bold text-white text-sm">
+                <h4 className="font-bold text-slate-900 text-sm">
                   {confirmAction.type === 'delete'
                     ? 'Remove Staff Member?'
                     : confirmAction.type === 'suspend'
                     ? 'Suspend Staff Account?'
                     : 'Activate Staff Account?'}
                 </h4>
-                <p className="text-[11px] text-slate-400 mt-0.5">
+                <p className="text-[11px] text-slate-500 mt-0.5">
                   {confirmAction.staff.name} ({confirmAction.staff.phone})
                 </p>
               </div>
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed">
               {confirmAction.type === 'delete'
                 ? 'Are you sure you want to remove this staff account? The user will immediately lose all access to the franchise administration console.'
                 : confirmAction.type === 'suspend'
@@ -941,11 +941,11 @@ export default function StaffManagementPage() {
                 : 'Activating this account will restore administrative access.'}
             </p>
 
-            <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-800">
+            <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-200">
               <button
                 type="button"
                 onClick={() => setConfirmAction(null)}
-                className="px-3 py-1.5 rounded-lg border border-slate-700 text-xs text-slate-400 hover:text-white"
+                className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-700 hover:bg-slate-100 font-medium"
               >
                 Cancel
               </button>
@@ -953,12 +953,12 @@ export default function StaffManagementPage() {
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleExecuteConfirmAction}
-                className={`px-4 py-1.5 rounded-lg text-xs font-semibold text-white shadow disabled:opacity-50 ${
+                className={`px-4 py-1.5 rounded-lg text-xs font-semibold text-white shadow-xs disabled:opacity-50 ${
                   confirmAction.type === 'delete'
-                    ? 'bg-rose-600 hover:bg-rose-500'
+                    ? 'bg-rose-600 hover:bg-rose-700'
                     : confirmAction.type === 'suspend'
-                    ? 'bg-amber-600 hover:bg-amber-500'
-                    : 'bg-emerald-600 hover:bg-emerald-500'
+                    ? 'bg-amber-600 hover:bg-amber-700'
+                    : 'bg-emerald-600 hover:bg-emerald-700'
                 }`}
               >
                 {isSubmitting

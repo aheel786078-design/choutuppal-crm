@@ -411,7 +411,7 @@ export default function ListingsPage() {
         )}
 
         {/* Filters, Search & View Toggle Toolbar */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-sm">
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 shadow-xs">
           {/* Search Box */}
           <div className="relative flex-1">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -423,7 +423,7 @@ export default function ListingsPage() {
                 setCurrentPage(1)
               }}
               placeholder="Search 200+ listings by shop name, phone, or address..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
             />
           </div>
 
@@ -435,7 +435,7 @@ export default function ListingsPage() {
                 setCategoryFilter(e.target.value)
                 setCurrentPage(1)
               }}
-              className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+              className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
             >
               <option value="ALL">All Categories ({categories.length})</option>
               {categories.map((c) => (
@@ -452,7 +452,7 @@ export default function ListingsPage() {
                 setStatusFilter(e.target.value)
                 setCurrentPage(1)
               }}
-              className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+              className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
             >
               <option value="ALL">All Status</option>
               <option value="APPROVED">Approved</option>
@@ -460,12 +460,12 @@ export default function ListingsPage() {
             </select>
 
             {/* View Mode Toggle: Table View (with photo row/column) vs Grid View */}
-            <div className="flex items-center bg-slate-950 p-1 rounded-lg border border-slate-800">
+            <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
               <button
                 type="button"
                 onClick={() => setViewMode('table')}
                 className={`p-1.5 rounded transition-colors ${
-                  viewMode === 'table' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                  viewMode === 'table' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
                 title="Table View (Dedicated Photo Row)"
               >
@@ -475,7 +475,7 @@ export default function ListingsPage() {
                 type="button"
                 onClick={() => setViewMode('grid')}
                 className={`p-1.5 rounded transition-colors ${
-                  viewMode === 'grid' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
+                  viewMode === 'grid' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
                 title="Card Grid View"
               >
@@ -486,7 +486,7 @@ export default function ListingsPage() {
         </div>
 
         {/* Directory Summary Banner */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-xl px-4 py-3 flex items-center justify-between text-xs text-slate-300">
+        <div className="bg-white border border-slate-200/80 rounded-xl px-4 py-3 flex items-center justify-between text-xs text-slate-700 shadow-xs">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
               <ImageIcon className="w-4 h-4" />
@@ -577,22 +577,22 @@ export default function ListingsPage() {
 
         {/* LISTINGS CONTAINER */}
         {loading ? (
-          <div className="p-16 text-center text-slate-500 text-xs bg-slate-900 border border-slate-800 rounded-xl">
+          <div className="p-16 text-center text-slate-500 text-xs bg-white border border-slate-200/80 rounded-2xl shadow-xs">
             <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-blue-500" />
             Loading listings database...
           </div>
         ) : paginatedListings.length === 0 ? (
-          <div className="p-16 text-center text-slate-500 text-xs bg-slate-900 border border-slate-800 rounded-xl">
+          <div className="p-16 text-center text-slate-500 text-xs bg-white border border-slate-200/80 rounded-2xl shadow-xs">
             No listings found matching your search.
           </div>
         ) : viewMode === 'table' ? (
           /* ============================================================ */
           /* TABLE VIEW WITH DEDICATED PHOTO ROW / COLUMN                 */
           /* ============================================================ */
-          <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow">
+          <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300">
-                <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+              <table className="w-full text-left text-xs text-slate-700">
+                <thead className="bg-slate-50 text-slate-700 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
                     <th scope="col" className="py-3 px-3 w-10 text-center font-bold">
                       <input
@@ -600,7 +600,7 @@ export default function ListingsPage() {
                         aria-label="Select all listings on this page"
                         checked={paginatedListings.length > 0 && paginatedListings.every((l) => selectedIds.includes(l.id))}
                         onChange={toggleSelectAllOnPage}
-                        className="rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-0 cursor-pointer"
+                        className="rounded border-slate-300 bg-white text-emerald-600 focus:ring-0 cursor-pointer"
                       />
                     </th>
                     <th scope="col" className="py-3 px-4 w-32 font-bold text-emerald-400">
@@ -623,9 +623,9 @@ export default function ListingsPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/80">
+                <tbody className="divide-y divide-slate-100">
                   {paginatedListings.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-950/40 transition-colors">
+                    <tr key={item.id} className="hover:bg-slate-50/70 transition-colors">
                       {/* SELECTION CHECKBOX */}
                       <td className="py-3 px-3 text-center align-top">
                         <input
@@ -633,7 +633,7 @@ export default function ListingsPage() {
                           aria-label={`Select ${item.title}`}
                           checked={selectedIds.includes(item.id)}
                           onChange={() => toggleSelect(item.id)}
-                          className="rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-0 cursor-pointer mt-2"
+                          className="rounded border-slate-300 bg-white text-emerald-600 focus:ring-0 cursor-pointer mt-2"
                         />
                       </td>
 
@@ -655,7 +655,7 @@ export default function ListingsPage() {
                           >
                             <Maximize2 className="w-4 h-4" />
                           </button>
-                          <span className="absolute bottom-1 right-1 bg-slate-950/90 text-[9px] text-white px-1 rounded font-bold">
+                          <span className="absolute bottom-1 right-1 bg-black/70 backdrop-blur-sm text-[9px] text-white px-1.5 py-0.5 rounded-md font-bold">
                             📸 {item.gallery?.length || 1}
                           </span>
                         </div>
@@ -673,14 +673,14 @@ export default function ListingsPage() {
                       {/* Business Details */}
                       <td className="py-3 px-4 align-top space-y-1">
                         <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-white text-xs leading-snug">{item.title}</h4>
+                          <h4 className="font-bold text-slate-900 text-xs leading-snug">{item.title}</h4>
                           {item.isFeatured && (
                             <span className="text-[9px] bg-amber-500/10 text-amber-400 font-bold px-1.5 py-0.2 rounded border border-amber-500/20">
                               Featured
                             </span>
                           )}
                         </div>
-                        <p className="text-[11px] text-slate-400 line-clamp-2">{item.description}</p>
+                        <p className="text-[11px] text-slate-600 line-clamp-2">{item.description}</p>
                         <div className="flex items-center gap-3 text-[10px] text-slate-500 pt-0.5">
                           <span>👁️ {item.views} Views</span>
                           <span>💬 {item.whatsappClicks} WA Clicks</span>
@@ -690,7 +690,7 @@ export default function ListingsPage() {
 
                       {/* Category & Location */}
                       <td className="py-3 px-4 align-top space-y-1">
-                        <span className="inline-block text-[10px] font-semibold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                        <span className="inline-block text-[10px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                           {item.categoryName}
                         </span>
                         <p className="text-[11px] text-slate-400 flex items-start gap-1">
@@ -766,7 +766,7 @@ export default function ListingsPage() {
             {paginatedListings.map((item) => (
               <div
                 key={item.id}
-                className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow hover:border-slate-700 transition-colors flex flex-col"
+                className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs hover:border-slate-300 hover:shadow-sm transition-all flex flex-col"
               >
                 {/* Photo Header */}
                 <div className="relative h-44 w-full bg-slate-800">
@@ -777,19 +777,19 @@ export default function ListingsPage() {
                     className="w-full h-full object-cover cursor-pointer"
                     onClick={() => setZoomedPhoto({ url: item.coverImage, title: item.title })}
                   />
-                  <div className="absolute top-2 left-2 bg-slate-950/80 backdrop-blur-sm text-blue-400 text-[10px] font-semibold px-2 py-0.5 rounded">
+                  <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-sm text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-emerald-200/60 shadow-xs">
                     {item.categoryName}
                   </div>
-                  <div className="absolute top-2 right-2 z-10 bg-slate-950/80 backdrop-blur-sm p-1 rounded-md border border-slate-700">
+                  <div className="absolute top-2 right-2 z-10 bg-white/95 backdrop-blur-sm p-1 rounded-lg border border-slate-200 shadow-xs">
                     <input
                       type="checkbox"
                       aria-label={`Select ${item.title}`}
                       checked={selectedIds.includes(item.id)}
                       onChange={() => toggleSelect(item.id)}
-                      className="rounded border-slate-600 bg-slate-900 text-blue-600 focus:ring-0 cursor-pointer w-3.5 h-3.5 block"
+                      className="rounded border-slate-300 bg-white text-emerald-600 focus:ring-0 cursor-pointer w-3.5 h-3.5 block"
                     />
                   </div>
-                  <div className="absolute bottom-2 right-2 bg-slate-950/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+                  <div className="absolute bottom-2 right-2 bg-white/95 backdrop-blur-sm text-emerald-800 border border-emerald-200/60 text-[10px] font-bold px-1.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs">
                     <ImageIcon className="w-3 h-3 text-emerald-400" />
                     <span>Photo Attached</span>
                   </div>
@@ -798,7 +798,7 @@ export default function ListingsPage() {
                 {/* Body Details */}
                 <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                   <div>
-                    <h4 className="font-bold text-xs text-white line-clamp-1">{item.title}</h4>
+                    <h4 className="font-bold text-xs text-slate-900 line-clamp-1">{item.title}</h4>
                     <p className="text-[11px] text-slate-400 line-clamp-2 mt-1">{item.description}</p>
                     <div className="flex items-center gap-1 text-[11px] text-slate-400 mt-2">
                       <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
@@ -806,8 +806,8 @@ export default function ListingsPage() {
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
-                    <span className="font-mono text-slate-300">{item.phone}</span>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <span className="font-mono text-slate-800 font-semibold">{item.phone}</span>
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => handleTriggerTestWhatsApp(item)}
@@ -818,7 +818,7 @@ export default function ListingsPage() {
                       </button>
                       <button
                         onClick={() => handleOpenEdit(item)}
-                        className="p-1 text-slate-400 hover:text-white bg-slate-800 rounded"
+                        className="p-1 text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
                       >
                         <Edit className="w-3.5 h-3.5" />
                       </button>
@@ -843,7 +843,7 @@ export default function ListingsPage() {
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1 bg-slate-900 border border-slate-800 disabled:opacity-40 text-white rounded"
+              className="px-3 py-1 bg-white border border-slate-200 disabled:opacity-40 text-slate-700 hover:bg-slate-50 rounded-lg shadow-xs"
             >
               Previous Page
             </button>
@@ -851,7 +851,7 @@ export default function ListingsPage() {
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage >= totalPages}
-              className="px-3 py-1 bg-slate-900 border border-slate-800 disabled:opacity-40 text-white rounded"
+              className="px-3 py-1 bg-white border border-slate-200 disabled:opacity-40 text-slate-700 hover:bg-slate-50 rounded-lg shadow-xs"
             >
               Next Page
             </button>
@@ -865,9 +865,9 @@ export default function ListingsPage() {
           className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 cursor-pointer"
           onClick={() => setZoomedPhoto(null)}
         >
-          <div className="relative max-w-2xl w-full bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden p-4 space-y-3" onClick={(e) => e.stopPropagation()}>
+          <div className="relative max-w-2xl w-full bg-white border border-slate-200 rounded-3xl overflow-hidden p-5 space-y-3 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <h4 className="font-bold text-sm text-white truncate">{zoomedPhoto.title}</h4>
+              <h4 className="font-bold text-sm text-slate-900 truncate">{zoomedPhoto.title}</h4>
               <button
                 type="button"
                 onClick={() => setZoomedPhoto(null)}
@@ -876,7 +876,7 @@ export default function ListingsPage() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="relative h-80 sm:h-96 w-full rounded-xl overflow-hidden bg-slate-900">
+            <div className="relative h-80 sm:h-96 w-full rounded-2xl overflow-hidden bg-slate-100">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={zoomedPhoto.url}
@@ -903,10 +903,10 @@ export default function ListingsPage() {
       {/* CREATE / EDIT MODAL WITH DEDICATED PHOTO ROW */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 space-y-6 text-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
               <div>
-                <h3 className="text-base font-bold text-white">
+                <h3 className="text-base font-bold text-slate-900">
                   {editingId ? 'Edit Listing & Photo' : 'Create New Listing with Photos'}
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
@@ -926,7 +926,7 @@ export default function ListingsPage() {
               <div className="lg:col-span-7 space-y-4">
                 {/* Title */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Listing / Business Title *
                   </label>
                   <input
@@ -935,20 +935,20 @@ export default function ListingsPage() {
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="e.g. Sri Sai Ram Automobiles & Multi-Brand Garage"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 {/* Category & Village */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       Category *
                     </label>
                     <select
                       value={formData.categoryId}
                       onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                     >
                       {categories.map((c) => (
                         <option key={c.id} value={c.id}>
@@ -959,13 +959,13 @@ export default function ListingsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       Village / Location
                     </label>
                     <select
                       value={formData.villageId}
                       onChange={(e) => setFormData({ ...formData, villageId: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                     >
                       {villages.map((v) => (
                         <option key={v.id} value={v.id}>
@@ -977,7 +977,7 @@ export default function ListingsPage() {
                 </div>
 
                 {/* DEDICATED PHOTO ROW */}
-                <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                       <ImageIcon className="w-4 h-4" />
@@ -991,7 +991,7 @@ export default function ListingsPage() {
                     value={formData.coverImage}
                     onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
                     placeholder="https://images.unsplash.com/..."
-                    className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder:text-slate-500 font-mono"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 font-mono"
                   />
                   {/* Preset Photo Row */}
                   <div className="pt-1">
@@ -1019,7 +1019,7 @@ export default function ListingsPage() {
                 {/* Phone & WhatsApp */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       Calling Phone Number *
                     </label>
                     <input
@@ -1028,12 +1028,12 @@ export default function ListingsPage() {
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="98480XXXXX"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-blue-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       WhatsApp Number *
                     </label>
                     <input
@@ -1042,7 +1042,7 @@ export default function ListingsPage() {
                       value={formData.whatsapp}
                       onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
                       placeholder="98480XXXXX"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-blue-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
@@ -1050,7 +1050,7 @@ export default function ListingsPage() {
                 {/* Address & Price */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       Address / Landmark
                     </label>
                     <input
@@ -1058,12 +1058,12 @@ export default function ListingsPage() {
                       value={formData.address}
                       onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                       placeholder="Beside Bus Stand, Choutuppal"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
                       Price / Rates
                     </label>
                     <input
@@ -1071,14 +1071,14 @@ export default function ListingsPage() {
                       value={formData.price}
                       onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                       placeholder="e.g. ₹500 onwards / Available"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 {/* Description */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Business Description
                   </label>
                   <textarea
@@ -1086,7 +1086,7 @@ export default function ListingsPage() {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Provide services, offerings..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -1163,11 +1163,11 @@ export default function ListingsPage() {
       {/* TEST SEND WHATSAPP POPUP */}
       {testSendListing && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl text-slate-900">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <Smartphone className="w-5 h-5 text-emerald-400" />
-                <h3 className="font-bold text-sm text-white">Test Send Photo Card to WhatsApp</h3>
+                <h3 className="font-bold text-sm text-slate-900">Test Send Photo Card to WhatsApp</h3>
               </div>
               <button
                 onClick={() => setTestSendListing(null)}
@@ -1177,7 +1177,7 @@ export default function ListingsPage() {
               </button>
             </div>
 
-            <div className="flex items-center gap-3 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+            <div className="flex items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
               <div className="w-12 h-12 rounded-lg bg-slate-800 overflow-hidden shrink-0 border border-slate-700">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -1187,13 +1187,13 @@ export default function ListingsPage() {
                 />
               </div>
               <div className="min-w-0">
-                <h5 className="font-semibold text-xs text-white truncate">{testSendListing.title}</h5>
+                <h5 className="font-semibold text-xs text-slate-900 truncate">{testSendListing.title}</h5>
                 <p className="text-[10px] text-emerald-400">Photo Card will be delivered in chat</p>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Recipient WhatsApp Number
               </label>
               <input
@@ -1201,7 +1201,7 @@ export default function ListingsPage() {
                 value={testSendPhone}
                 onChange={(e) => setTestSendPhone(e.target.value)}
                 placeholder="9848012345"
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono"
               />
             </div>
 
@@ -1209,7 +1209,7 @@ export default function ListingsPage() {
               <button
                 type="button"
                 onClick={() => setTestSendListing(null)}
-                className="px-3 py-1.5 bg-slate-800 text-white text-xs rounded-lg"
+                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-xl font-medium"
               >
                 Cancel
               </button>
@@ -1230,8 +1230,8 @@ export default function ListingsPage() {
       {/* BULK OPERATIONS CONFIRMATION MODAL */}
       {bulkModalAction && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in zoom-in-95">
-            <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in zoom-in-95 text-slate-900">
+            <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center border ${
                   bulkModalAction === 'publish'
@@ -1254,7 +1254,7 @@ export default function ListingsPage() {
                 )}
               </div>
               <div>
-                <h3 className="font-bold text-sm text-white">
+                <h3 className="font-bold text-sm text-slate-900">
                   Confirm Bulk {bulkModalAction.replace('_', ' ').toUpperCase()}
                 </h3>
                 <p className="text-[11px] text-slate-400">
@@ -1280,7 +1280,7 @@ export default function ListingsPage() {
                 <select
                   value={bulkCategoryTarget}
                   onChange={(e) => setBulkCategoryTarget(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-purple-500"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 >
                   {categories.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -1302,7 +1302,7 @@ export default function ListingsPage() {
                     className={`py-2 px-3 rounded-lg text-xs font-semibold border ${
                       bulkFeaturedTarget
                         ? 'bg-blue-600 text-white border-blue-500'
-                        : 'bg-slate-950 text-slate-400 border-slate-800'
+                        : 'bg-slate-50 text-slate-600 border-slate-200'
                     }`}
                   >
                     ⭐ Mark as Featured
@@ -1313,7 +1313,7 @@ export default function ListingsPage() {
                     className={`py-2 px-3 rounded-lg text-xs font-semibold border ${
                       !bulkFeaturedTarget
                         ? 'bg-slate-800 text-white border-slate-700'
-                        : 'bg-slate-950 text-slate-400 border-slate-800'
+                        : 'bg-slate-50 text-slate-600 border-slate-200'
                     }`}
                   >
                     Standard (Unfeatured)
@@ -1322,11 +1322,11 @@ export default function ListingsPage() {
               </div>
             )}
 
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
               <button
                 type="button"
                 onClick={() => setBulkModalAction(null)}
-                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg font-medium"
+                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-xl font-medium"
               >
                 Cancel
               </button>

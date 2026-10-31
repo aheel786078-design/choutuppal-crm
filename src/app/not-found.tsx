@@ -44,9 +44,9 @@ export default function NotFound() {
         <div className="grid grid-cols-2 gap-2.5 pt-2">
           <Link
             href="/"
-            className="flex items-center justify-center gap-2 rounded-2xl bg-slate-900 py-3 px-4 text-xs font-bold text-white hover:bg-slate-800 transition shadow-sm"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-slate-100 border border-slate-200 py-3 px-4 text-xs font-bold text-slate-800 hover:bg-slate-200 transition shadow-xs"
           >
-            <Home className="h-4 w-4" />
+            <Home className="h-4 w-4 text-slate-600" />
             Home (హోమ్)
           </Link>
           <Link

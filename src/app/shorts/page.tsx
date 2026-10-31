@@ -182,21 +182,21 @@ export default function ShortsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white pb-20">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-20">
       <Script src="https://www.instagram.com/embed.js" strategy="afterInteractive" />
 
       {/* TOP BAR */}
-      <div className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-30 px-4 py-3">
+      <div className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 px-4 py-3 shadow-2xs">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/" className="text-slate-400 hover:text-white transition">
+            <Link href="/" className="text-slate-500 hover:text-slate-900 transition">
               <ArrowLeft className="h-5 w-5" />
             </Link>
             <div>
-              <h1 className="text-base sm:text-lg font-black tracking-tight">
+              <h1 className="text-base sm:text-lg font-black tracking-tight text-slate-900">
                 🎬 Choutuppal Reels &amp; Shorts (రీల్స్)
               </h1>
-              <p className="text-[11px] text-slate-400 hidden sm:block">
+              <p className="text-[11px] text-slate-500 hidden sm:block">
                 Watch Instagram Reels &amp; YouTube Shorts of Choutuppal events, shops, and culture
               </p>
             </div>
@@ -204,7 +204,7 @@ export default function ShortsPage() {
 
           <button
             onClick={() => setIsSubmitOpen(true)}
-            className="flex items-center gap-1.5 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-md transition"
+            className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs transition"
           >
             <Plus className="h-4 w-4" />
             <span>Submit Reel (లింక్ ఇవ్వండి)</span>
@@ -218,11 +218,11 @@ export default function ShortsPage() {
           {shorts.map((item) => (
             <div
               key={item.id}
-              className="bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-slate-700 transition shadow-lg flex flex-col justify-between group"
+              className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 hover:border-slate-300 transition shadow-xs hover:shadow-md flex flex-col justify-between group"
             >
               <div
                 onClick={() => setActiveShort(item)}
-                className="relative h-72 sm:h-80 w-full cursor-pointer bg-slate-800 overflow-hidden"
+                className="relative h-72 sm:h-80 w-full cursor-pointer bg-slate-100 overflow-hidden"
               >
                 <Image
                   src={item.thumbnailUrl}
@@ -264,10 +264,10 @@ export default function ShortsPage() {
               </div>
 
               {/* ACTION BAR */}
-              <div className="p-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-xs">
+              <div className="p-3 bg-white border-t border-slate-100 flex items-center justify-between text-xs">
                 <button
                   onClick={() => setActiveShort(item)}
-                  className="text-blue-400 hover:text-blue-300 font-bold"
+                  className="text-emerald-600 hover:text-emerald-700 font-bold"
                 >
                   Watch Now
                 </button>
@@ -275,7 +275,7 @@ export default function ShortsPage() {
                   href={`https://wa.me/?text=${encodeURIComponent(`Check out this Choutuppal Reel: "${item.title}" on https://choutuppal.in/shorts`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-slate-400 hover:text-emerald-400 flex items-center gap-1 transition"
+                  className="text-slate-500 hover:text-emerald-600 flex items-center gap-1 transition"
                 >
                   <Share2 className="h-3.5 w-3.5" />
                   <span>Share</span>
@@ -288,8 +288,8 @@ export default function ShortsPage() {
 
       {/* VIDEO PLAYER MODAL */}
       {activeShort ? (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="relative w-full max-w-md bg-slate-900 rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative w-full max-w-md bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-2xl">
             {/* CLOSE BUTTON */}
             <button
               onClick={() => setActiveShort(null)}
@@ -326,14 +326,14 @@ export default function ShortsPage() {
             </div>
 
             {/* INFO UNDER PLAYER */}
-            <div className="p-4 bg-slate-900">
-              <h2 className="font-black text-sm text-white">{activeShort.title}</h2>
+            <div className="p-4 bg-white border-t border-slate-100">
+              <h2 className="font-black text-sm text-slate-900">{activeShort.title}</h2>
               <div className="mt-3 flex items-center justify-between">
                 <a
                   href={`https://wa.me/?text=${encodeURIComponent(`Check out this Choutuppal Reel: "${activeShort.title}" on https://choutuppal.in/shorts`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition"
+                  className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition shadow-xs"
                 >
                   <MessageCircle className="h-4 w-4" />
                   Share on WhatsApp
@@ -342,7 +342,7 @@ export default function ShortsPage() {
                   href={activeShort.videoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-slate-400 hover:text-white flex items-center gap-1"
+                  className="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-1"
                 >
                   <span>Open Original</span>
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -355,43 +355,43 @@ export default function ShortsPage() {
 
       {/* SUBMIT REEL MODAL */}
       {isSubmitOpen ? (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="relative w-full max-w-md bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="relative w-full max-w-md bg-white rounded-3xl p-6 border border-slate-200 shadow-2xl">
             <button
               onClick={() => {
                 setIsSubmitOpen(false)
                 setSubmitError(null)
                 setSubmitSuccess(null)
               }}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-700"
             >
               <X className="h-5 w-5" />
             </button>
 
-            <h3 className="text-lg font-black text-white">
+            <h3 className="text-lg font-black text-slate-900">
               Submit Local Reel or Short (రీల్ లింక్ జోడించండి)
             </h3>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               Paste any Instagram Reel link or YouTube Shorts link. Submissions are queued for admin moderation before appearing publicly.
             </p>
 
             {submitError ? (
-              <div className="mt-3 flex items-start gap-2 bg-red-950/80 border border-red-800 text-red-200 text-xs p-3 rounded-xl">
-                <AlertCircle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+              <div className="mt-3 flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 text-xs p-3 rounded-xl">
+                <AlertCircle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
                 <span>{submitError}</span>
               </div>
             ) : null}
 
             {submitSuccess ? (
-              <div className="mt-3 flex items-start gap-2 bg-emerald-950/80 border border-emerald-800 text-emerald-200 text-xs p-3 rounded-xl">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="mt-3 flex items-start gap-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs p-3 rounded-xl">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                 <span>{submitSuccess}</span>
               </div>
             ) : null}
 
             <form onSubmit={handleAddReel} className="mt-4 space-y-3.5">
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">
+                <label className="block text-xs font-bold text-slate-700 mb-1">
                   Video URL (Instagram Reel or YouTube Shorts) *
                 </label>
                 <input
@@ -401,12 +401,12 @@ export default function ShortsPage() {
                   placeholder="https://www.instagram.com/reel/... or https://youtube.com/shorts/..."
                   value={submitUrl}
                   onChange={(e) => setSubmitUrl(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 disabled:opacity-50"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1">
+                <label className="block text-xs font-bold text-slate-700 mb-1">
                   Title / Description *
                 </label>
                 <input
@@ -416,13 +416,13 @@ export default function ShortsPage() {
                   placeholder="e.g. New Supermarket Opening at Choutuppal Bypass"
                   value={submitTitle}
                   onChange={(e) => setSubmitTitle(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 disabled:opacity-50"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
                     Tag / Village
                   </label>
                   <input
@@ -431,11 +431,11 @@ export default function ShortsPage() {
                     placeholder="e.g. Choutuppal, Food"
                     value={submitTag}
                     onChange={(e) => setSubmitTag(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 disabled:opacity-50"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
                     WhatsApp (Optional)
                   </label>
                   <input
@@ -444,7 +444,7 @@ export default function ShortsPage() {
                     placeholder="e.g. 9876543210"
                     value={submitPhone}
                     onChange={(e) => setSubmitPhone(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-blue-500 disabled:opacity-50"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -453,7 +453,7 @@ export default function ShortsPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black py-3 rounded-xl text-xs transition shadow-lg flex items-center justify-center gap-2"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black py-3 rounded-xl text-xs transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {submitting ? (
                     <>

@@ -239,13 +239,13 @@ export default function CRMAutomationsPage() {
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto w-full">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white border border-slate-200/80 p-5 rounded-2xl shadow-xs text-slate-900">
         <div className="flex items-center gap-2.5">
           <div className="p-2 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
             <Zap className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white tracking-wide">
+            <h1 className="text-xl font-bold text-slate-900 tracking-wide">
               Automations &amp; Keyword Rules ({automations.length})
             </h1>
             <p className="text-xs text-slate-400">
@@ -270,7 +270,7 @@ export default function CRMAutomationsPage() {
           <a
             href="/csv/sample_automations.csv"
             download="sample_automations.csv"
-            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-medium border border-slate-700 flex items-center gap-1.5 transition-colors"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 rounded-xl text-xs font-semibold border border-slate-200 flex items-center gap-1.5 transition-colors shadow-2xs"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export Template CSV</span>
@@ -296,33 +296,33 @@ export default function CRMAutomationsPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl">
+        <div className="bg-white border border-slate-200/80 p-3 rounded-2xl shadow-xs text-slate-900">
           <span className="text-[11px] text-slate-400 font-medium">Total Rules</span>
-          <div className="text-lg font-bold text-white mt-0.5">{summary.total || automations.length}</div>
+          <div className="text-lg font-bold text-slate-900 mt-0.5">{summary.total || automations.length}</div>
         </div>
-        <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl">
+        <div className="bg-white border border-slate-200/80 p-3 rounded-2xl shadow-xs text-slate-900">
           <span className="text-[11px] text-slate-400 font-medium">Draft Rules</span>
           <div className="text-lg font-bold text-amber-400 mt-0.5">{summary.draft}</div>
         </div>
-        <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl">
+        <div className="bg-white border border-slate-200/80 p-3 rounded-2xl shadow-xs text-slate-900">
           <span className="text-[11px] text-slate-400 font-medium">Active Rules</span>
           <div className="text-lg font-bold text-emerald-400 mt-0.5">{summary.active}</div>
         </div>
-        <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl">
+        <div className="bg-white border border-slate-200/80 p-3 rounded-2xl shadow-xs text-slate-900">
           <span className="text-[11px] text-slate-400 font-medium">Paused Rules</span>
           <div className="text-lg font-bold text-slate-400 mt-0.5">{summary.paused}</div>
         </div>
-        <div className="bg-slate-900 border border-slate-800 p-3 rounded-xl">
+        <div className="bg-white border border-slate-200/80 p-3 rounded-2xl shadow-xs text-slate-900">
           <span className="text-[11px] text-slate-400 font-medium">Disabled / Unsupported</span>
           <div className="text-lg font-bold text-rose-400 mt-0.5">{summary.disabled + summary.unsupported}</div>
         </div>
       </div>
 
       {/* Rule Evaluator & Dry-Run Simulator Panel */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs text-slate-900">
         <div
           onClick={() => setShowSimulator(!showSimulator)}
-          className="flex items-center justify-between p-4 bg-slate-950/60 hover:bg-slate-950/80 cursor-pointer border-b border-slate-800 transition-colors"
+          className="flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100/80 cursor-pointer border-b border-slate-200 transition-colors"
         >
           <div className="flex items-center gap-2.5">
             <div className="p-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/20">
@@ -330,7 +330,7 @@ export default function CRMAutomationsPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold text-white tracking-wide">
+                <h3 className="text-sm font-bold text-slate-900 tracking-wide">
                   Rule Evaluator &amp; Dry-Run Simulator
                 </h3>
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -343,7 +343,7 @@ export default function CRMAutomationsPage() {
               </p>
             </div>
           </div>
-          <button className="text-slate-400 hover:text-white p-1">
+          <button className="text-slate-400 hover:text-slate-900 p-1">
             {showSimulator ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
         </div>
@@ -352,7 +352,7 @@ export default function CRMAutomationsPage() {
           <div className="p-5 space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
               {/* Simulator Input Controls (5 cols) */}
-              <div className="lg:col-span-5 space-y-3.5 bg-slate-950/40 p-4 rounded-xl border border-slate-800/80">
+              <div className="lg:col-span-5 space-y-3.5 bg-slate-50/70 p-4 rounded-xl border border-slate-200">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">
                     Simulated Inbound Message Text *
@@ -362,7 +362,7 @@ export default function CRMAutomationsPage() {
                     value={simMessage}
                     onChange={(e) => setSimMessage(e.target.value)}
                     placeholder="e.g. doctor clinic, hi police, hospital, namaste..."
-                    className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 font-mono"
+                    className="w-full bg-white border border-slate-200 rounded-lg text-slate-800 p-2.5 text-xs text-slate-900 placeholder:text-slate-500 focus:outline-none focus:border-amber-500 font-mono"
                   />
                   {/* Quick Suggestion Pills */}
                   <div className="mt-2 flex items-center gap-1.5 flex-wrap">
@@ -375,7 +375,7 @@ export default function CRMAutomationsPage() {
                           setSimMessage(pill)
                           handleRunDryRun(pill)
                         }}
-                        className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-[10px] font-mono text-amber-300 rounded border border-slate-800 hover:border-amber-500/40 transition-colors"
+                        className="px-2 py-0.5 bg-amber-50 hover:bg-amber-100 text-[10px] font-mono text-amber-800 rounded border border-amber-200 hover:border-amber-500/40 transition-colors"
                       >
                         {pill}
                       </button>
@@ -393,7 +393,7 @@ export default function CRMAutomationsPage() {
                       value={simPhone}
                       onChange={(e) => setSimPhone(e.target.value)}
                       placeholder="919441348175"
-                      className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-amber-500"
+                      className="w-full bg-white border border-slate-200 rounded-lg text-slate-800 px-2.5 py-1.5 text-xs text-slate-900 font-mono focus:outline-none focus:border-amber-500"
                     />
                   </div>
                   <div>
@@ -405,18 +405,18 @@ export default function CRMAutomationsPage() {
                       value={simContactName}
                       onChange={(e) => setSimContactName(e.target.value)}
                       placeholder="Ravi Kumar"
-                      className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
+                      className="w-full bg-white border border-slate-200 rounded-lg text-slate-800 px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-amber-500"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-1 border-t border-slate-800/80">
+                <div className="flex items-center justify-between pt-1 border-t border-slate-200/80">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={simIncludeDrafts}
                       onChange={(e) => setSimIncludeDrafts(e.target.checked)}
-                      className="w-3.5 h-3.5 rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-0"
+                      className="w-3.5 h-3.5 rounded bg-white border-slate-700 text-amber-500 focus:ring-0"
                     />
                     <span className="text-[11px] text-slate-300 font-medium">
                       Simulate Draft Rules (What-If Preview)
@@ -448,7 +448,7 @@ export default function CRMAutomationsPage() {
               </div>
 
               {/* Simulator Output / Results (7 cols) */}
-              <div className="lg:col-span-7 bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 min-h-[220px] flex flex-col justify-between">
+              <div className="lg:col-span-7 bg-slate-50/70 p-4 rounded-xl border border-slate-200 min-h-[220px] flex flex-col justify-between">
                 {simError && (
                   <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-3 rounded-xl text-xs flex items-center gap-2 mb-3">
                     <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -471,7 +471,7 @@ export default function CRMAutomationsPage() {
                 {simResult && (
                   <div className="space-y-3.5 text-xs">
                     {/* Header Status Bar */}
-                    <div className="flex items-center justify-between pb-2.5 border-b border-slate-800">
+                    <div className="flex items-center justify-between pb-2.5 border-b border-slate-200">
                       <div className="flex items-center gap-2">
                         <span className="text-[11px] font-semibold text-slate-400">Match Result:</span>
                         {simResult.evaluation.matchedRuleIds.length > 0 ? (
@@ -479,7 +479,7 @@ export default function CRMAutomationsPage() {
                             {simResult.evaluation.matchedRuleIds.length} Rule(s) Matched
                           </span>
                         ) : (
-                          <span className="px-2 py-0.5 bg-slate-800 text-slate-400 font-semibold rounded text-[10px]">
+                          <span className="px-2 py-0.5 bg-slate-100 text-slate-600 font-semibold rounded text-[10px] border border-slate-200">
                             0 Rules Matched
                           </span>
                         )}
@@ -496,7 +496,7 @@ export default function CRMAutomationsPage() {
 
                     {/* Proposed Actions */}
                     {simResult.evaluation.proposedActions.length === 0 ? (
-                      <div className="p-4 bg-slate-900 rounded-xl text-center text-slate-500 text-xs">
+                      <div className="p-4 bg-slate-100 rounded-xl text-center text-slate-600 text-xs">
                         No proposed actions generated for this message.
                       </div>
                     ) : (
@@ -509,8 +509,8 @@ export default function CRMAutomationsPage() {
                             key={idx}
                             className={`p-3 rounded-xl border ${
                               act.isSuppressed
-                                ? 'bg-slate-900/60 border-slate-800 text-slate-400'
-                                : 'bg-slate-900 border-slate-700/80 text-white'
+                                ? 'bg-slate-100 border-slate-200 text-slate-600'
+                                : 'bg-emerald-50 border-emerald-300 text-emerald-900'
                             } space-y-2`}
                           >
                             <div className="flex items-center justify-between">
@@ -535,7 +535,7 @@ export default function CRMAutomationsPage() {
 
                             {/* Rendered Template Output */}
                             {act.renderedValue && (
-                              <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 font-mono text-[11px] text-amber-200/90 whitespace-pre-wrap leading-relaxed">
+                              <div className="bg-amber-50 p-2.5 rounded-xl border border-amber-200 font-mono text-[11px] text-amber-950 whitespace-pre-wrap leading-relaxed">
                                 {act.renderedValue}
                               </div>
                             )}
@@ -545,7 +545,7 @@ export default function CRMAutomationsPage() {
                     )}
 
                     {/* Safety Footnote */}
-                    <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-500">
+                    <div className="pt-2 border-t border-slate-200/80 flex items-center justify-between text-[10px] text-slate-500">
                       <span>{simResult.notice}</span>
                       <span className="font-mono text-emerald-400">Strictly Isolated</span>
                     </div>
@@ -558,7 +558,7 @@ export default function CRMAutomationsPage() {
       </div>
 
       {/* Toolbar & Filters */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-xs">
         <div className="relative flex-1">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -566,7 +566,7 @@ export default function CRMAutomationsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search rules by name, keywords, tag, or Telugu response..."
-            className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-amber-500"
           />
         </div>
 
@@ -576,7 +576,7 @@ export default function CRMAutomationsPage() {
               key={st}
               onClick={() => setStatusFilter(st)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors ${
-                statusFilter === st ? 'bg-amber-500 text-black' : 'bg-slate-950 text-slate-300 hover:text-white'
+                statusFilter === st ? 'bg-amber-500 text-slate-900 font-bold' : 'bg-slate-100 text-slate-700 hover:text-slate-900'
               }`}
             >
               {st}
@@ -587,22 +587,22 @@ export default function CRMAutomationsPage() {
 
       {/* Automations Table */}
       {loading ? (
-        <div className="p-16 text-center text-slate-500 text-xs bg-slate-900 border border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-2">
+        <div className="p-16 text-center text-slate-500 text-xs bg-white border border-slate-200/80 rounded-2xl flex flex-col items-center justify-center gap-2">
           <RefreshCw className="w-5 h-5 animate-spin text-amber-500" />
           <span>Loading persistent automation rules...</span>
         </div>
       ) : filteredRules.length === 0 ? (
-        <div className="p-16 text-center text-slate-500 text-xs bg-slate-900 border border-slate-800 rounded-2xl space-y-2">
+        <div className="p-16 text-center text-slate-500 text-xs bg-white border border-slate-200/80 rounded-2xl space-y-2">
           <p>No automation rules found matching your filter.</p>
           <p className="text-[11px] text-slate-600">
             Click &quot;Import CSV&quot; to safely preview and import the 179 rules dataset in draft status.
           </p>
         </div>
       ) : (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+        <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-xs text-slate-900">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-slate-300">
-              <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800">
+              <thead className="bg-slate-50 text-slate-700 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
                 <tr>
                   <th className="py-3 px-4 font-bold">Rule Name</th>
                   <th className="py-3 px-4 font-bold">Trigger</th>
@@ -612,21 +612,21 @@ export default function CRMAutomationsPage() {
                   <th className="py-3 px-4 text-right font-bold">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-slate-100/60">
                 {filteredRules.map((rule) => {
                   const isActionTag = rule.actionType === 'add_tag'
 
                   return (
-                    <tr key={rule.id} className="hover:bg-slate-950/40 transition-colors">
+                    <tr key={rule.id} className="hover:bg-slate-50/70 transition-colors">
                       <td className="py-3 px-4 align-top space-y-1">
-                        <div className="font-bold text-white text-xs">{rule.name}</div>
+                        <div className="font-bold text-slate-900 text-xs">{rule.name}</div>
                         {rule.description && (
                           <div className="text-[10px] text-slate-500 line-clamp-1">{rule.description}</div>
                         )}
                       </td>
 
                       <td className="py-3 px-4 align-top max-w-xs">
-                        <div className="font-mono text-[10px] bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800 text-amber-300 line-clamp-2">
+                        <div className="font-mono text-[10px] bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-amber-800 font-semibold line-clamp-2">
                           {rule.triggerValue || `<${rule.triggerType}>`}
                         </div>
                         <span className="text-[9px] text-slate-500 font-mono mt-0.5 block">{rule.triggerType}</span>
@@ -662,12 +662,12 @@ export default function CRMAutomationsPage() {
                         <span
                           className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                             rule.status === 'active'
-                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                               : rule.status === 'draft'
-                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                              ? 'bg-amber-50 text-amber-800 border-amber-200'
                               : rule.status === 'paused'
-                              ? 'bg-slate-800 text-slate-400 border-slate-700'
-                              : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                              ? 'bg-slate-100 text-slate-700 border-slate-200'
+                              : 'bg-rose-50 text-rose-800 border-rose-200'
                           }`}
                         >
                           {rule.status}
@@ -678,18 +678,18 @@ export default function CRMAutomationsPage() {
                         <button
                           onClick={() => handleToggleStatus(rule)}
                           title={rule.status === 'active' ? 'Pause Rule' : 'Activate Rule'}
-                          className="p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white"
+                          className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-900 cursor-pointer"
                         >
                           {rule.status === 'active' ? (
-                            <Pause className="w-3.5 h-3.5 text-amber-400" />
+                            <Pause className="w-3.5 h-3.5 text-amber-600" />
                           ) : (
-                            <Play className="w-3.5 h-3.5 text-emerald-400" />
+                            <Play className="w-3.5 h-3.5 text-emerald-600" />
                           )}
                         </button>
                         <button
                           onClick={() => handleDeleteRule(rule)}
                           title="Delete Rule"
-                          className="p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-rose-400"
+                          className="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-rose-600 cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -706,15 +706,15 @@ export default function CRMAutomationsPage() {
       {/* CSV Import & Preview Modal */}
       {isImportModalOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <FileText className="w-4 h-4 text-amber-400" />
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-slate-900">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-emerald-600" />
                 <span>Safe CSV Import &amp; Preview</span>
               </h3>
               <button
                 onClick={() => setIsImportModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -736,7 +736,7 @@ export default function CRMAutomationsPage() {
                 value={importCsvText}
                 onChange={(e) => setImportCsvText(e.target.value)}
                 placeholder="name,trigger_type,trigger_value,action_type,action_value,is_active,description,template_slug..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs text-white font-mono focus:outline-none focus:border-amber-500 placeholder:text-slate-600"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 font-mono focus:outline-none focus:border-amber-500 placeholder:text-slate-600"
               />
               <p className="text-[11px] text-slate-500 mt-1">
                 Expected columns: name, trigger_type, trigger_value, action_type, action_value, is_active, description, template_slug.
@@ -745,26 +745,26 @@ export default function CRMAutomationsPage() {
 
             {/* Dry-Run Preview Results */}
             {previewResult && (
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 text-xs">
-                <h4 className="font-bold text-white flex items-center gap-1.5">
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3 text-xs text-slate-800">
+                <h4 className="font-bold text-slate-900 flex items-center gap-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   <span>Dry-Run Preview Result (Zero Store Mutations)</span>
                 </h4>
 
                 <div className="grid grid-cols-4 gap-2 text-center">
-                  <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div className="bg-white p-2 rounded-lg border border-slate-200 text-slate-800">
                     <span className="text-[10px] text-slate-400">Total Rows</span>
-                    <div className="font-bold text-white text-sm">{previewResult.totalParsed}</div>
+                    <div className="font-bold text-slate-900 text-sm">{previewResult.totalParsed}</div>
                   </div>
-                  <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div className="bg-white p-2 rounded-lg border border-slate-200 text-slate-800">
                     <span className="text-[10px] text-emerald-400">New Rules</span>
                     <div className="font-bold text-emerald-400 text-sm">{previewResult.createdCount}</div>
                   </div>
-                  <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div className="bg-white p-2 rounded-lg border border-slate-200 text-slate-800">
                     <span className="text-[10px] text-slate-400">Duplicates (Skip)</span>
                     <div className="font-bold text-slate-400 text-sm">{previewResult.skippedCount}</div>
                   </div>
-                  <div className="bg-slate-900 p-2 rounded-lg border border-slate-800">
+                  <div className="bg-white p-2 rounded-lg border border-slate-200 text-slate-800">
                     <span className="text-[10px] text-rose-400">Unsupported</span>
                     <div className="font-bold text-rose-400 text-sm">{previewResult.unsupportedCount}</div>
                   </div>
@@ -787,11 +787,11 @@ export default function CRMAutomationsPage() {
             )}
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-between pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-between pt-3 border-t border-slate-200">
               <button
                 type="button"
                 onClick={() => setIsImportModalOpen(false)}
-                className="px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700"
+                className="px-4 py-2 rounded-xl text-xs font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition-colors"
               >
                 Cancel
               </button>
@@ -801,7 +801,7 @@ export default function CRMAutomationsPage() {
                   type="button"
                   disabled={importing || !importCsvText.trim()}
                   onClick={handlePreviewImport}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-slate-800 hover:bg-slate-700 disabled:opacity-50 border border-slate-700 flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 disabled:opacity-50 border border-slate-200 flex items-center gap-1.5 transition-colors"
                 >
                   {importing && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
                   <span>Preview Import</span>
@@ -811,7 +811,7 @@ export default function CRMAutomationsPage() {
                   type="button"
                   disabled={importing || !previewResult || previewResult.createdCount === 0}
                   onClick={handleConfirmImport}
-                  className="px-4 py-2 rounded-lg text-xs font-semibold text-black bg-amber-500 hover:bg-amber-400 disabled:opacity-50 flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 flex items-center gap-1.5 shadow-xs transition-colors"
                 >
                   {importing && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
                   <span>Confirm Import ({previewResult?.createdCount || 0} Drafts)</span>

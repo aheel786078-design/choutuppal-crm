@@ -13,23 +13,23 @@ export default async function NewsPage() {
   return (
     <div className="min-h-screen bg-slate-50/60 pb-16">
       {/* HEADER */}
-      <div className="bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 text-white py-10 px-4 sm:px-6 lg:px-8">
+      <div className="bg-gradient-to-r from-emerald-700 via-teal-800 to-emerald-900 text-white py-10 px-4 sm:px-6 lg:px-8 shadow-sm">
         <div className="mx-auto max-w-7xl">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-white mb-3"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-100 hover:text-white mb-3"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Back to Home
           </Link>
           <div className="flex items-center gap-2">
-            <span className="bg-amber-400 text-slate-950 text-[10px] font-black uppercase px-2 py-0.5 rounded">
+            <span className="bg-amber-400 text-slate-900 text-[10px] font-black uppercase px-2 py-0.5 rounded shadow-2xs">
               Local Bulletin
             </span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-black mt-2">
             చౌటుప్పల్ తాజా వార్తలు (News &amp; Updates)
           </h1>
-          <p className="mt-1 text-xs sm:text-sm text-slate-300 max-w-2xl">
+          <p className="mt-1 text-xs sm:text-sm text-emerald-100/90 max-w-2xl">
             Latest road expansions, municipal tenders, electricity schedules, and cultural events happening in and around Choutuppal Mandal.
           </p>
         </div>

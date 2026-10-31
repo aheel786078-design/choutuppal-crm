@@ -127,7 +127,7 @@ export function WhatsAppFlowSimulator({ listings }: WhatsAppSimulatorProps) {
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl max-w-sm mx-auto flex flex-col h-[650px]">
+    <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 overflow-hidden shadow-xl max-w-sm mx-auto flex flex-col h-[650px]">
       {/* Phone Mockup Header */}
       <div className="bg-[#1f2c34] p-3 text-white flex items-center justify-between border-b border-[#2a3942]">
         <div className="flex items-center gap-2.5">

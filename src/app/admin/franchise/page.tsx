@@ -307,7 +307,7 @@ export default function FranchiseNetworkPage() {
   })
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen bg-slate-950 text-slate-100">
+    <div className="flex-1 flex flex-col min-h-screen bg-slate-50 text-slate-900">
       <AdminHeader
         title="Town Franchise & Territory Network"
         subtitle="Manage multi-town SaaS expansion, territorial data isolation, domain bindings, and WhatsApp bots"
@@ -346,7 +346,7 @@ export default function FranchiseNetworkPage() {
               Valid for 15 minutes. Automatically authenticates <strong>{magicLinkData.name}</strong> ({magicLinkData.phone}) into their scoped territory admin portal:
             </p>
             <div className="flex items-center gap-2">
-              <div className="flex-1 p-2.5 bg-slate-950 rounded-lg border border-slate-800 text-emerald-400 font-mono text-[11px] select-all truncate">
+              <div className="flex-1 p-2.5 bg-slate-50 rounded-lg border border-slate-200 text-emerald-400 font-mono text-[11px] select-all truncate">
                 {magicLinkData.link}
               </div>
               <button
@@ -360,7 +360,7 @@ export default function FranchiseNetworkPage() {
                 href={`https://wa.me/91${magicLinkData.phone}?text=${encodeURIComponent(`నమస్కారం ${magicLinkData.name} గారు! మీ సూపర్ యాప్ అడ్మిన్ డ్యాష్‌బోర్డ్ తెరవడానికి క్రింది సురక్షిత లాగిన్ లింక్ ఉపయోగించండి:\n\n${magicLinkData.link}\n\n(15 నిమిషాల వ్యవధి మాత్రమే)`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold flex items-center gap-1.5 transition-colors text-xs"
+                className="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold flex items-center gap-1.5 transition-colors text-xs"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>WhatsApp Partner</span>
@@ -371,7 +371,7 @@ export default function FranchiseNetworkPage() {
 
         {/* Network Overview Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-400">
               <span className="text-[11px] font-medium uppercase tracking-wider">Total Franchises</span>
               <Globe2 className="w-4 h-4 text-blue-400" />
@@ -380,7 +380,7 @@ export default function FranchiseNetworkPage() {
             <span className="text-[10px] text-slate-400 mt-1">Across 1 State</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-400">
               <span className="text-[11px] font-medium uppercase tracking-wider">Active Towns</span>
               <Activity className="w-4 h-4 text-emerald-400" />
@@ -389,7 +389,7 @@ export default function FranchiseNetworkPage() {
             <span className="text-[10px] text-emerald-400/80 mt-1">Live Portals &amp; Bots</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-400">
               <span className="text-[11px] font-medium uppercase tracking-wider">Flagship Hub</span>
               <ShieldCheck className="w-4 h-4 text-amber-400" />
@@ -398,7 +398,7 @@ export default function FranchiseNetworkPage() {
             <span className="text-[10px] text-amber-400/80 mt-1">Company-Owned (211 List.)</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-400">
               <span className="text-[11px] font-medium uppercase tracking-wider">Pending Setup</span>
               <Clock className="w-4 h-4 text-amber-400" />
@@ -407,7 +407,7 @@ export default function FranchiseNetworkPage() {
             <span className="text-[10px] text-slate-400 mt-1">Awaiting Activation</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-400">
               <span className="text-[11px] font-medium uppercase tracking-wider">Suspended</span>
               <AlertTriangle className="w-4 h-4 text-rose-400" />
@@ -418,23 +418,23 @@ export default function FranchiseNetworkPage() {
         </div>
 
         {/* Protected Flagship Choutuppal Banner */}
-        <div className="bg-gradient-to-r from-blue-950/60 via-slate-900 to-slate-900 border border-blue-900/60 rounded-xl p-5 shadow-sm">
+        <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-white border border-emerald-200/80 rounded-2xl p-5 shadow-xs">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded text-[10px] font-bold tracking-wide">
+                <span className="px-2 py-0.5 bg-blue-50 text-blue-800 border border-blue-200 rounded text-[10px] font-bold tracking-wide">
                   COMPANY-OWNED FLAGSHIP
                 </span>
-                <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded text-[10px] font-bold flex items-center gap-1">
-                  <Lock className="w-3 h-3" />
+                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-200 rounded text-[10px] font-bold flex items-center gap-1">
+                  <Lock className="w-3 h-3 text-emerald-700" />
                   IMMUTABLE CORE
                 </span>
               </div>
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
+              <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
                 <span>Choutuppal.in (చౌటుప్పల్ టౌన్ &amp; రీజియన్)</span>
-                <span className="text-xs text-slate-400 font-normal">Primary Headquarter Territory</span>
+                <span className="text-xs text-slate-500 font-normal">Primary Headquarter Territory</span>
               </h3>
-              <p className="text-xs text-slate-300 max-w-3xl leading-relaxed">
+              <p className="text-xs text-slate-600 max-w-3xl leading-relaxed">
                 Choutuppal remains the protected company-owned territory. All 211 verified listings, contacts, and WhatsApp flows are permanently isolated and protected against reassignment or deletion by franchise operators.
               </p>
             </div>
@@ -443,15 +443,15 @@ export default function FranchiseNetworkPage() {
                 href="https://choutuppal.in"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
               >
-                <Globe2 className="w-3.5 h-3.5 text-blue-400" />
+                <Globe2 className="w-3.5 h-3.5 text-blue-600" />
                 <span>Visit Live</span>
                 <ExternalLink className="w-3 h-3 text-slate-400" />
               </a>
               <Link
                 href="/admin/listings"
-                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow"
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-xs"
               >
                 <Layers className="w-3.5 h-3.5" />
                 <span>Manage 211 Listings</span>
@@ -469,13 +469,13 @@ export default function FranchiseNetworkPage() {
               placeholder="Search town, territory, partner name, or phone..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+              className="w-full bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 pl-9 pr-4 py-2 text-xs text-slate-800 placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
             />
           </div>
 
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-400 hidden sm:inline">Status:</span>
-            <div className="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
+            <div className="flex items-center bg-white p-1 rounded-xl border border-slate-200 text-xs">
               {['all', 'active', 'approved_pending_setup', 'suspended'].map((st) => (
                 <button
                   key={st}
@@ -502,17 +502,17 @@ export default function FranchiseNetworkPage() {
           </div>
 
           {loading ? (
-            <div className="p-12 text-center text-slate-400 space-y-2 bg-slate-900/50 rounded-xl border border-slate-800">
+            <div className="p-12 text-center text-slate-400 space-y-2 bg-white rounded-xl border border-slate-200">
               <RefreshCw className="w-6 h-6 animate-spin mx-auto text-blue-400" />
               <p className="text-xs">Loading franchise network...</p>
             </div>
           ) : filteredFranchises.length === 0 ? (
-            <div className="p-12 text-center text-slate-400 space-y-3 bg-slate-900/50 rounded-xl border border-slate-800">
+            <div className="p-12 text-center text-slate-400 space-y-3 bg-white rounded-xl border border-slate-200">
               <Globe2 className="w-8 h-8 mx-auto text-slate-600" />
               <p className="text-xs">No franchises found matching your filter.</p>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold inline-flex items-center gap-1.5"
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold inline-flex items-center gap-1.5"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Create New Franchise</span>
@@ -527,12 +527,12 @@ export default function FranchiseNetworkPage() {
                 return (
                   <div
                     key={fr.id}
-                    className={`bg-slate-900 border rounded-xl p-5 space-y-4 shadow transition-all ${
+                    className={`bg-white border rounded-xl p-5 space-y-4 shadow transition-all ${
                       fr.status === 'active'
                         ? 'border-emerald-800/40 hover:border-emerald-700/60'
                         : fr.status === 'suspended'
                         ? 'border-rose-900/50 bg-rose-950/10'
-                        : 'border-slate-800 hover:border-slate-700'
+                        : 'border-slate-200 hover:border-slate-200'
                     }`}
                   >
                     {/* Header */}
@@ -572,7 +572,7 @@ export default function FranchiseNetworkPage() {
                           href={`https://${fr.assignedDomain}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[11px] text-slate-300 hover:text-white bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800 flex items-center gap-1 font-mono"
+                          className="text-[11px] text-slate-300 hover:text-white bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200 flex items-center gap-1 font-mono"
                         >
                           <span>{fr.assignedDomain}</span>
                           <ExternalLink className="w-2.5 h-2.5 text-slate-400" />
@@ -581,12 +581,12 @@ export default function FranchiseNetworkPage() {
                     </div>
 
                     {/* Operator & Coverage Details */}
-                    <div className="grid grid-cols-2 gap-3 p-3 bg-slate-950/70 rounded-lg border border-slate-800 text-xs">
+                    <div className="grid grid-cols-2 gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs">
                       <div className="space-y-1">
                         <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
                           Franchise Operator
                         </span>
-                        <div className="font-medium text-slate-200">{fr.applicantName}</div>
+                        <div className="font-medium text-slate-800">{fr.applicantName}</div>
                         <div className="flex items-center gap-1.5 text-slate-400 font-mono text-[11px]">
                           <Phone className="w-3 h-3 text-slate-500" />
                           <span>{fr.applicantPhone}</span>
@@ -622,7 +622,7 @@ export default function FranchiseNetworkPage() {
                         {territory.localities.map((loc, i) => (
                           <span
                             key={i}
-                            className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700 font-mono"
+                            className="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200 font-mono"
                           >
                             {loc}
                           </span>
@@ -631,35 +631,35 @@ export default function FranchiseNetworkPage() {
                     )}
 
                     {/* Actions Bar */}
-                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/80 flex-wrap">
+                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-200/80 flex-wrap">
                       <div className="flex items-center gap-2">
                         {/* Magic Login Link Button */}
                         <button
                           onClick={() => handleGenerateMagicLink(fr)}
-                          className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                          className="px-2.5 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
                           title="Generate WhatsApp single-use login link"
                         >
-                          <Key className="w-3.5 h-3.5 text-emerald-400" />
+                          <Key className="w-3.5 h-3.5 text-emerald-600" />
                           <span>Magic Login</span>
                         </button>
 
                         {/* Plan Customizer */}
                         <button
                           onClick={() => setShowPlanModal(fr)}
-                          className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                          className="px-2.5 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
                           title="Modify Plan & Limits"
                         >
-                          <Sliders className="w-3.5 h-3.5 text-blue-400" />
+                          <Sliders className="w-3.5 h-3.5 text-blue-600" />
                           <span>Plan Limits</span>
                         </button>
 
                         {/* View Town Public Route */}
                         <Link
                           href={`/town/${fr.territorySlug}`}
-                          className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                          className="px-2.5 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs"
                           title="Preview public town portal"
                         >
-                          <Eye className="w-3.5 h-3.5 text-purple-400" />
+                          <Eye className="w-3.5 h-3.5 text-purple-600" />
                           <span>Preview Town</span>
                         </Link>
                       </div>
@@ -705,31 +705,31 @@ export default function FranchiseNetworkPage() {
         </div>
 
         {/* Real-time Audit Trail Section */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow space-y-0">
-          <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+        <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 overflow-hidden shadow space-y-0">
+          <div className="p-4 border-b border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <History className="w-4 h-4 text-blue-400" />
-              <h4 className="font-bold text-xs text-white uppercase tracking-wider">
+              <h4 className="font-bold text-xs text-slate-900 uppercase tracking-wider">
                 Multi-Tenant Security &amp; Audit Trail
               </h4>
             </div>
             <span className="text-[11px] text-slate-500 font-mono">Immutable audit records</span>
           </div>
 
-          <div className="divide-y divide-slate-800/80 max-h-72 overflow-y-auto">
+          <div className="divide-y divide-slate-100/80 max-h-72 overflow-y-auto">
             {auditLogs.length === 0 ? (
               <div className="p-6 text-center text-xs text-slate-500">No audit events recorded yet.</div>
             ) : (
               auditLogs.map((log) => (
-                <div key={log.id} className="p-3.5 flex items-start justify-between gap-3 text-xs hover:bg-slate-850">
+                <div key={log.id} className="p-3.5 flex items-start justify-between gap-3 text-xs hover:bg-slate-50 transition-colors">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-white font-mono text-[11px]">{log.action}</span>
-                      <span className="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono">
+                      <span className="font-bold text-slate-900 font-mono text-[11px]">{log.action}</span>
+                      <span className="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-mono border border-slate-200">
                         {log.territoryId}
                       </span>
                     </div>
-                    <p className="text-slate-300 text-[11px]">{log.details}</p>
+                    <p className="text-slate-600 text-[11px]">{log.details}</p>
                     <span className="text-[10px] text-slate-500">
                       Actor: {log.actorName} ({log.actorRole})
                     </span>
@@ -747,28 +747,28 @@ export default function FranchiseNetworkPage() {
       {/* MODAL 1: Create New Town Franchise */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 overflow-y-auto backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 space-y-5 shadow-2xl my-8">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-2xl w-full p-6 space-y-5 shadow-2xl my-8">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div>
-                <h3 className="font-bold text-base text-white flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-blue-400" />
+                <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-emerald-600" />
                   <span>Onboard New Town Franchise</span>
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Creates an isolated town territory, binds domains, and configures WhatsApp bot quotas.
                 </p>
               </div>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-white transition-colors"
+                className="text-slate-400 hover:text-slate-900 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {errorMsg && (
-              <div className="p-3 bg-rose-950/80 border border-rose-800 rounded-xl text-xs text-rose-300 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
                 <span>{errorMsg}</span>
               </div>
             )}
@@ -777,26 +777,26 @@ export default function FranchiseNetworkPage() {
               {/* Territory Identity */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Town / City Name *</label>
+                  <label className="block text-slate-700 font-medium mb-1">Town / City Name *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Suryapet, Bhongir, Nalgonda"
                     value={newTown.townName}
                     onChange={(e) => handleTownNameChange(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Territory Slug (Unique)</label>
+                  <label className="block text-slate-700 font-medium mb-1">Territory Slug (Unique)</label>
                   <input
                     type="text"
                     readOnly
                     value={newTown.slug}
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-lg p-2.5 text-slate-400 font-mono"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-500 font-mono"
                   />
                   {newTown.slug === 'choutuppal' && (
-                    <span className="text-[10px] text-rose-400 block mt-1">Cannot use protected flagship slug!</span>
+                    <span className="text-[10px] text-rose-600 block mt-1">Cannot use protected flagship slug!</span>
                   )}
                 </div>
               </div>
@@ -804,23 +804,23 @@ export default function FranchiseNetworkPage() {
               {/* District & Coverage */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">District</label>
+                  <label className="block text-slate-700 font-medium mb-1">District</label>
                   <input
                     type="text"
                     placeholder="e.g. Suryapet, Yadadri Bhuvanagiri"
                     value={newTown.district}
                     onChange={(e) => setNewTown({ ...newTown, district: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Mandals / Localities (Comma separated)</label>
+                  <label className="block text-slate-700 font-medium mb-1">Mandals / Localities (Comma separated)</label>
                   <input
                     type="text"
                     placeholder="e.g. Main Road, Bus Stand, RTC Colony"
                     value={newTown.localities}
                     onChange={(e) => setNewTown({ ...newTown, localities: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
@@ -828,35 +828,35 @@ export default function FranchiseNetworkPage() {
               {/* Franchise Partner Details */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Partner Full Name *</label>
+                  <label className="block text-slate-700 font-medium mb-1">Partner Full Name *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Maheshwar Reddy"
                     value={newTown.applicantName}
                     onChange={(e) => setNewTown({ ...newTown, applicantName: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">WhatsApp Phone (10 digits) *</label>
+                  <label className="block text-slate-700 font-medium mb-1">WhatsApp Phone (10 digits) *</label>
                   <input
                     type="tel"
                     required
                     placeholder="e.g. 9848012345"
                     value={newTown.applicantPhone}
                     onChange={(e) => setNewTown({ ...newTown, applicantPhone: e.target.value.replace(/\D/g, '') })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white font-mono focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Partner Email</label>
+                  <label className="block text-slate-700 font-medium mb-1">Partner Email</label>
                   <input
                     type="email"
                     placeholder="partner@gmail.com"
                     value={newTown.email}
                     onChange={(e) => setNewTown({ ...newTown, email: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
@@ -864,24 +864,24 @@ export default function FranchiseNetworkPage() {
               {/* Domain & Plan Configuration */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Primary Domain / Subdomain</label>
+                  <label className="block text-slate-700 font-medium mb-1">Primary Domain / Subdomain</label>
                   <input
                     type="text"
                     placeholder="e.g. suryapet.in or suryapet.choutuppal.in"
                     value={newTown.domain}
                     onChange={(e) => setNewTown({ ...newTown, domain: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white font-mono focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                   />
                   <span className="text-[10px] text-slate-500 mt-1 block">
                     Default: {newTown.slug ? `${newTown.slug}.choutuppal.in` : 'town.choutuppal.in'}
                   </span>
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Plan Tier</label>
+                  <label className="block text-slate-700 font-medium mb-1">Plan Tier</label>
                   <select
                     value={newTown.planTier}
                     onChange={(e) => setNewTown({ ...newTown, planTier: e.target.value as PlanTier })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:border-emerald-500 cursor-pointer"
                   >
                     <option value="STARTER">STARTER (500 Listings, 4 Staff, 1000 Broadcasts)</option>
                     <option value="PRO">PRO (1000 Listings, 8 Staff, 2500 Broadcasts, Custom Domain)</option>
@@ -893,46 +893,46 @@ export default function FranchiseNetworkPage() {
               {/* Commercial Terms */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Setup Fee (₹)</label>
+                  <label className="block text-slate-700 font-medium mb-1">Setup Fee (₹)</label>
                   <input
                     type="number"
                     value={newTown.setupFee}
                     onChange={(e) => setNewTown({ ...newTown, setupFee: Number(e.target.value) })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white font-mono focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Monthly Royalty (₹)</label>
+                  <label className="block text-slate-700 font-medium mb-1">Monthly Royalty (₹)</label>
                   <input
                     type="number"
                     value={newTown.monthlyFee}
                     onChange={(e) => setNewTown({ ...newTown, monthlyFee: Number(e.target.value) })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white font-mono focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Rev Share %</label>
+                  <label className="block text-slate-700 font-medium mb-1">Rev Share %</label>
                   <input
                     type="number"
                     value={newTown.revSharePct}
                     onChange={(e) => setNewTown({ ...newTown, revSharePct: Number(e.target.value) })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white font-mono focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold flex items-center gap-1.5 transition-colors disabled:opacity-50 shadow-xs"
                 >
                   {submitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                   <span>Create &amp; Provision Franchise</span>
@@ -946,26 +946,26 @@ export default function FranchiseNetworkPage() {
       {/* MODAL 2: Plan & Feature Limits Editor */}
       {showPlanModal && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="font-bold text-sm text-white flex items-center gap-2">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-lg w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-blue-400" />
                 <span>Modify Plan &amp; Quotas: {showPlanModal.name}</span>
               </h3>
-              <button onClick={() => setShowPlanModal(null)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setShowPlanModal(null)} className="text-slate-400 hover:text-slate-900">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <form onSubmit={handleUpdatePlan} className="space-y-4 text-xs">
               <div>
-                <label className="block text-slate-300 font-medium mb-1">Plan Tier</label>
+                <label className="block text-slate-700 font-medium mb-1">Plan Tier</label>
                 <select
                   value={showPlanModal.planTier}
                   onChange={(e) =>
                     setShowPlanModal({ ...showPlanModal, planTier: e.target.value as PlanTier })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 focus:outline-none focus:border-emerald-500 cursor-pointer"
                 >
                   <option value="STARTER">STARTER</option>
                   <option value="PRO">PRO</option>
@@ -975,7 +975,7 @@ export default function FranchiseNetworkPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Max Listings Quota</label>
+                  <label className="block text-slate-700 font-medium mb-1">Max Listings Quota</label>
                   <input
                     type="number"
                     value={showPlanModal.featureLimits?.maxListings || 500}
@@ -992,11 +992,11 @@ export default function FranchiseNetworkPage() {
                         },
                       })
                     }
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white font-mono"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-medium mb-1">Max Staff Seats</label>
+                  <label className="block text-slate-700 font-medium mb-1">Max Staff Seats</label>
                   <input
                     type="number"
                     value={showPlanModal.featureLimits?.maxStaff || 4}
@@ -1013,23 +1013,23 @@ export default function FranchiseNetworkPage() {
                         },
                       })
                     }
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white font-mono"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => setShowPlanModal(null)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold"
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold shadow-xs"
                 >
                   Save Quotas
                 </button>
@@ -1042,14 +1042,14 @@ export default function FranchiseNetworkPage() {
       {/* MODAL 3: Suspend / Reactivate Confirmation */}
       {showSuspendModal && (
         <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center gap-3 text-rose-400">
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center gap-3 text-rose-600">
               <AlertTriangle className="w-5 h-5 shrink-0" />
-              <h3 className="font-bold text-sm text-white">
+              <h3 className="font-bold text-sm text-slate-900">
                 {showSuspendModal.action === 'suspend' ? 'Suspend Franchise Access' : 'Reactivate Franchise'}
               </h3>
             </div>
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600 leading-relaxed">
               {showSuspendModal.action === 'suspend'
                 ? `Are you sure you want to suspend "${showSuspendModal.franchise.name}"? Public traffic to their domain will display a temporary pause notice and their admin team will be locked out.`
                 : `Reactivating "${showSuspendModal.franchise.name}" will restore live website listings and WhatsApp bot workflows immediately.`}
@@ -1057,22 +1057,22 @@ export default function FranchiseNetworkPage() {
 
             {showSuspendModal.action === 'suspend' && (
               <div>
-                <label className="block text-slate-300 font-medium mb-1 text-xs">Reason for Suspension</label>
+                <label className="block text-slate-700 font-medium mb-1 text-xs">Reason for Suspension</label>
                 <input
                   type="text"
                   placeholder="e.g. Non-payment of monthly SaaS royalty"
                   value={suspendReason}
                   onChange={(e) => setSuspendReason(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
                 />
               </div>
             )}
 
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
               <button
                 type="button"
                 onClick={() => setShowSuspendModal(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-medium"
               >
                 Cancel
               </button>
@@ -1086,10 +1086,10 @@ export default function FranchiseNetworkPage() {
                   )
                 }
                 disabled={submitting}
-                className={`px-4 py-2 rounded-lg font-semibold text-xs text-white ${
+                className={`px-4 py-2 rounded-lg font-semibold text-xs text-white shadow-xs ${
                   showSuspendModal.action === 'suspend'
-                    ? 'bg-rose-600 hover:bg-rose-500'
-                    : 'bg-emerald-600 hover:bg-emerald-500'
+                    ? 'bg-rose-600 hover:bg-rose-700'
+                    : 'bg-emerald-600 hover:bg-emerald-700'
                 }`}
               >
                 {showSuspendModal.action === 'suspend' ? 'Confirm Suspension' : 'Confirm Reactivation'}

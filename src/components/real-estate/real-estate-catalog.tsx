@@ -375,7 +375,7 @@ export function RealEstateCatalog({ initialStoreListings }: RealEstateCatalogPro
                 >
                   <div>
                     {/* Cover Photo */}
-                    <div className="relative h-56 w-full bg-slate-900 overflow-hidden">
+                    <div className="relative h-56 w-full bg-slate-100 overflow-hidden">
                       <Image
                         src={prop.coverImage}
                         alt={prop.title}
@@ -464,9 +464,9 @@ export function RealEstateCatalog({ initialStoreListings }: RealEstateCatalogPro
                   <div className="p-5 pt-0 grid grid-cols-2 gap-2.5">
                     <a
                       href={`tel:${prop.phone}`}
-                      className="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-2xl text-xs transition cursor-pointer shadow-xs"
+                      className="flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 font-bold py-3 rounded-2xl text-xs transition cursor-pointer shadow-2xs"
                     >
-                      <PhoneCall className="h-3.5 w-3.5 text-emerald-400" />
+                      <PhoneCall className="h-3.5 w-3.5 text-emerald-600" />
                       <span>Call Owner</span>
                     </a>
                     <a

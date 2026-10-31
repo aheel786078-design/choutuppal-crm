@@ -238,7 +238,7 @@ export default function StoriesOffersPage() {
         )}
 
         {/* Toggle Bar */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActiveTab('stories')}
@@ -273,11 +273,11 @@ export default function StoriesOffersPage() {
         ) : activeTab === 'stories' ? (
           /* STORIES GRID */
           stories.length === 0 ? (
-            <div className="p-16 text-center bg-slate-900 border border-slate-800 rounded-2xl text-slate-500 text-xs space-y-2">
+            <div className="p-16 text-center bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 text-slate-500 text-xs space-y-2">
               <p>No active stories found.</p>
               <button
                 onClick={() => setIsStoryModalOpen(true)}
-                className="px-3 py-1.5 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-lg text-xs"
+                className="px-3 py-1.5 bg-pink-600 hover:bg-pink-500 text-slate-900 font-bold rounded-lg text-xs"
               >
                 Post Story
               </button>
@@ -285,14 +285,14 @@ export default function StoriesOffersPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
               {stories.map((st) => (
-                <div key={st.id} className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+                <div key={st.id} className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 overflow-hidden shadow">
                   <div className="relative h-64 bg-slate-800">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={st.mediaUrl} alt="Story" className="w-full h-full object-cover" />
                     <span className="absolute top-2 left-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
                       {st.status.toUpperCase()}
                     </span>
-                    <div className="absolute bottom-2 left-2 right-2 bg-slate-950/80 backdrop-blur-sm p-2 rounded-lg text-white text-xs">
+                    <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-sm shadow-xs border border-slate-200/60 p-2 rounded-lg text-white text-xs">
                       <p className="line-clamp-2">{st.caption}</p>
                     </div>
                   </div>
@@ -303,7 +303,7 @@ export default function StoriesOffersPage() {
                       <span className="text-[10px] text-emerald-400 font-mono">{st.ownerPhone}</span>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800">
+                    <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-100">
                       <span className="flex items-center gap-1">
                         <Clock className="w-3 h-3 text-slate-500" />
                         {st.expiresAt ? `Expires ${new Date(st.expiresAt).toLocaleDateString()}` : 'Live'}
@@ -324,11 +324,11 @@ export default function StoriesOffersPage() {
         ) : (
           /* OFFERS GRID */
           offers.length === 0 ? (
-            <div className="p-16 text-center bg-slate-900 border border-slate-800 rounded-2xl text-slate-500 text-xs space-y-2">
+            <div className="p-16 text-center bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 text-slate-500 text-xs space-y-2">
               <p>No active promotional offers found.</p>
               <button
                 onClick={() => setIsOfferModalOpen(true)}
-                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs"
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-bold rounded-lg text-xs"
               >
                 Create Offer
               </button>
@@ -336,7 +336,7 @@ export default function StoriesOffersPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {offers.map((off) => (
-                <div key={off.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex gap-4 shadow">
+                <div key={off.id} className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-4 flex gap-4 shadow">
                   {off.imageUrl && (
                     <div className="w-28 h-28 rounded-xl bg-slate-800 overflow-hidden shrink-0">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -349,12 +349,12 @@ export default function StoriesOffersPage() {
                         <span className="text-[10px] bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded">
                           {off.discount}
                         </span>
-                        <h4 className="font-bold text-xs text-white truncate">{off.title}</h4>
+                        <h4 className="font-bold text-xs text-slate-900 truncate">{off.title}</h4>
                       </div>
                       <p className="text-[11px] text-slate-400 line-clamp-2 mt-1">{off.terms}</p>
                     </div>
 
-                    <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-800">
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100">
                       <span className="truncate">{off.businessName}</span>
                       <button
                         onClick={() => handleDeleteOffer(off.id)}
@@ -375,9 +375,9 @@ export default function StoriesOffersPage() {
       {/* CREATE STORY MODAL */}
       {isStoryModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="font-bold text-sm text-white">Post Business Story</h3>
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-sm text-slate-900">Post Business Story</h3>
               <button onClick={() => setIsStoryModalOpen(false)}>
                 <X className="w-4 h-4 text-slate-400" />
               </button>
@@ -385,52 +385,52 @@ export default function StoriesOffersPage() {
 
             <form onSubmit={handleAddStory} className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Business Name</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Business Name</label>
                 <input
                   type="text"
                   required
                   value={storyForm.businessName}
                   onChange={(e) => setStoryForm({ ...storyForm, businessName: e.target.value })}
                   placeholder="e.g. Sri Sai Ram Automobiles"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Owner Contact Phone</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Owner Contact Phone</label>
                 <input
                   type="tel"
                   required
                   value={storyForm.ownerPhone}
                   onChange={(e) => setStoryForm({ ...storyForm, ownerPhone: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Story Media URL (Photo) *</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Story Media URL (Photo) *</label>
                 <input
                   type="url"
                   required
                   value={storyForm.mediaUrl}
                   onChange={(e) => setStoryForm({ ...storyForm, mediaUrl: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Story Caption / Announcement *</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Story Caption / Announcement *</label>
                 <textarea
                   rows={2}
                   required
                   value={storyForm.caption}
                   onChange={(e) => setStoryForm({ ...storyForm, caption: e.target.value })}
                   placeholder="Special weekend offer..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
                 <button
                   type="button"
                   disabled={saving}
@@ -456,9 +456,9 @@ export default function StoriesOffersPage() {
       {/* CREATE OFFER MODAL */}
       {isOfferModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="font-bold text-sm text-white">Create Promotional Offer</h3>
+          <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-sm text-slate-900">Create Promotional Offer</h3>
               <button onClick={() => setIsOfferModalOpen(false)}>
                 <X className="w-4 h-4 text-slate-400" />
               </button>
@@ -466,76 +466,76 @@ export default function StoriesOffersPage() {
 
             <form onSubmit={handleAddOffer} className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Offer Title *</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Offer Title *</label>
                 <input
                   type="text"
                   required
                   value={offerForm.title}
                   onChange={(e) => setOfferForm({ ...offerForm, title: e.target.value })}
                   placeholder="e.g. Festival Season Mega Discount"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Discount Tag *</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Discount Tag *</label>
                   <input
                     type="text"
                     required
                     value={offerForm.discount}
                     onChange={(e) => setOfferForm({ ...offerForm, discount: e.target.value })}
                     placeholder="e.g. ₹500 Off / 25% Off"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Validity (Days)</label>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Validity (Days)</label>
                   <input
                     type="number"
                     min={1}
                     max={90}
                     value={offerForm.endDateDays}
                     onChange={(e) => setOfferForm({ ...offerForm, endDateDays: parseInt(e.target.value) || 7 })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Business Name</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Business Name</label>
                 <input
                   type="text"
                   required
                   value={offerForm.businessName}
                   onChange={(e) => setOfferForm({ ...offerForm, businessName: e.target.value })}
                   placeholder="e.g. Yadadri Mega Township"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Banner/Photo URL</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Banner/Photo URL</label>
                 <input
                   type="url"
                   value={offerForm.imageUrl}
                   onChange={(e) => setOfferForm({ ...offerForm, imageUrl: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Offer Terms / Description</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Offer Terms / Description</label>
                 <textarea
                   rows={2}
                   value={offerForm.terms}
                   onChange={(e) => setOfferForm({ ...offerForm, terms: e.target.value })}
                   placeholder="Valid till Sunday. Min purchase ₹1,000..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
                 <button
                   type="button"
                   disabled={saving}

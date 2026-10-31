@@ -190,7 +190,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                           </div>
                         )}
                       </div>
-                      <div className="absolute bottom-2 left-2 bg-slate-950/80 backdrop-blur-xs text-white text-[10px] font-medium px-2 py-0.5 rounded">
+                      <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-xs text-white text-[10px] font-medium px-2 py-0.5 rounded">
                         {item.categoryName || 'Business'}
                       </div>
                     </Link>

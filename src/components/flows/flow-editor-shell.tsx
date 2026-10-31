@@ -68,16 +68,16 @@ export function FlowEditorShell({ initialFlow, initialNodes, baseReturnPath = "/
 
   return (
     <FlowEditorProvider initialFlow={initialFlow} initialNodes={initialNodes}>
-      <div className="flex h-full min-h-[calc(100vh-80px)] flex-col bg-slate-950 text-slate-100">
+      <div className="flex h-full min-h-[calc(100vh-80px)] flex-col bg-slate-50 text-slate-900">
         <EditorHeader />
 
         {/* ---- mode row: view toggle + node-type legend ---- */}
         {!isMobile && (
-          <div className="flex items-center gap-4 px-6 py-3 border-b border-slate-800/80 bg-slate-900/60">
+          <div className="flex items-center gap-4 px-6 py-3 border-b border-slate-200 bg-white">
             <div
               role="group"
               aria-label="Editor view"
-              className="inline-flex gap-0.5 rounded-lg border border-slate-800 bg-slate-950 p-1"
+              className="inline-flex gap-0.5 rounded-lg border border-slate-200 bg-slate-100 p-1"
             >
               <SegButton
                 active={effectiveView === "canvas"}
@@ -96,10 +96,10 @@ export function FlowEditorShell({ initialFlow, initialNodes, baseReturnPath = "/
               {LEGEND_TYPES.map((t_type) => (
                 <span
                   key={t_type}
-                  className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 font-medium"
+                  className="inline-flex items-center gap-1.5 text-[11px] text-slate-600 font-medium"
                 >
                   <span
-                    className="h-2.5 w-2.5 rounded-full ring-1 ring-white/20"
+                    className="h-2.5 w-2.5 rounded-full ring-1 ring-slate-300"
                     style={{ background: nodeColors(t_type).solid }}
                   />
                   {NODE_META[t_type]?.label || t_type}
@@ -110,7 +110,7 @@ export function FlowEditorShell({ initialFlow, initialNodes, baseReturnPath = "/
         )}
 
         {/* ---- stage: active view ---- */}
-        <div className="relative mx-4 my-3 min-h-[520px] flex-1 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40 shadow-inner">
+        <div className="relative mx-4 my-3 min-h-[520px] flex-1 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
           {effectiveView === "canvas" ? (
             <FlowCanvas />
           ) : (
@@ -161,10 +161,10 @@ function SegButton({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+        "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-semibold transition-colors",
         active
-          ? "bg-emerald-600 text-white shadow-sm"
-          : "text-slate-400 hover:text-white hover:bg-slate-900",
+          ? "bg-emerald-600 text-white shadow-xs"
+          : "text-slate-600 hover:text-slate-900 hover:bg-white",
       )}
     >
       {icon}

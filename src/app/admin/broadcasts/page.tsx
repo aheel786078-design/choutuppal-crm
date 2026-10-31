@@ -137,9 +137,9 @@ export default function BroadcastsAdminPage() {
           </div>
         )}
 
-        <form onSubmit={handleSendBroadcast} className="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4 shadow">
+        <form onSubmit={handleSendBroadcast} className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-4 shadow-xs text-slate-900">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-sm text-white flex items-center gap-2">
+            <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-400" />
               <span>Compose Staged WhatsApp Broadcast</span>
             </h3>
@@ -149,7 +149,7 @@ export default function BroadcastsAdminPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               Campaign Name / Internal Title *
             </label>
             <input
@@ -158,18 +158,18 @@ export default function BroadcastsAdminPage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Weekend Open Plots Festival Offer"
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               Target Audience
             </label>
             <select
               value={targetAudience}
               onChange={(e) => setTargetAudience(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500 cursor-pointer"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 cursor-pointer"
             >
               <option value="ALL">All Contacts &amp; Merchants ({audienceCounts.all} recipients)</option>
               <option value="REAL_ESTATE">Real Estate &amp; Land Inquirers ({audienceCounts.realEstate} recipients)</option>
@@ -178,7 +178,7 @@ export default function BroadcastsAdminPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               Media Attachment (Photo / Banner URL)
             </label>
             <input
@@ -186,12 +186,12 @@ export default function BroadcastsAdminPage() {
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://images.unsplash.com/..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-blue-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               WhatsApp Broadcast Message Text *
             </label>
             <textarea
@@ -200,11 +200,11 @@ export default function BroadcastsAdminPage() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="నమస్కారం! చౌటుప్పల్ లో సరికొత్త ఓపెన్ ప్లాట్ల వెంచర్ ప్రారంభమైనది..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
             />
           </div>
 
-          <div className="flex justify-end pt-2 border-t border-slate-800">
+          <div className="flex justify-end pt-2 border-t border-slate-200">
             <button
               type="submit"
               disabled={isSending}
@@ -217,9 +217,9 @@ export default function BroadcastsAdminPage() {
         </form>
 
         {/* Staged Campaigns List */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4 shadow">
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 space-y-4 shadow-xs text-slate-900">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-sm text-white flex items-center gap-2">
+            <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
               <Users className="w-4 h-4 text-emerald-400" />
               <span>Staged Broadcast Campaigns ({broadcasts.length})</span>
             </h3>
@@ -234,7 +234,7 @@ export default function BroadcastsAdminPage() {
               <span>Loading staged campaigns...</span>
             </div>
           ) : broadcasts.length === 0 ? (
-            <div className="p-8 text-center text-slate-500 text-xs border border-dashed border-slate-800 rounded-xl">
+            <div className="p-8 text-center text-slate-500 text-xs border border-dashed border-slate-200 rounded-xl">
               No broadcast campaigns staged yet. Compose a campaign above to stage it for your territory.
             </div>
           ) : (

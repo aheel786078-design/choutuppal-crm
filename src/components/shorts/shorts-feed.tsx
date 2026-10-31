@@ -125,7 +125,7 @@ export function ShortsFeed({ shorts: initialShorts }: ShortsFeedProps) {
                 />
               </div>
             ) : (
-              <div className="w-[320px] h-[560px] bg-slate-900 rounded-xl flex items-center justify-center text-white/50 text-xs">
+              <div className="w-[320px] h-[560px] bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-500 text-xs">
                 Loading Reel...
               </div>
             )

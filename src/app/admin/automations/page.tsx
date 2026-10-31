@@ -6,7 +6,7 @@ import { AdminHeader } from '@/components/admin/admin-header'
 
 export default function AdminAutomationsPage() {
   return (
-    <div className="flex-1 flex flex-col min-h-screen bg-slate-950">
+    <div className="flex-1 flex flex-col min-h-screen bg-slate-50 text-slate-900">
       <AdminHeader
         title="WhatsApp Automations & Trigger Rules"
         subtitle="Manage keyword triggers, auto-tagging, listing recommendations, and dry-run testing"

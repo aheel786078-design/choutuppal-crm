@@ -52,7 +52,7 @@ function getStatusBadge(status: HealthStatusLabel) {
       )
     case 'NOT_CONFIGURED':
       return (
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-400 border border-slate-700">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
           <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
           NOT CONFIGURED
         </span>
@@ -110,7 +110,7 @@ export default function SystemHealthAdminPage() {
   }, [])
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen bg-slate-950 text-slate-100">
+    <div className="flex-1 flex flex-col min-h-screen bg-slate-50 text-slate-900">
       <AdminHeader
         title="System Health & Diagnostics"
         subtitle="Real-time process runtime, local data store integrity, and integration status inspection"
@@ -120,7 +120,7 @@ export default function SystemHealthAdminPage() {
       <div className="p-6 space-y-6 max-w-7xl mx-auto w-full">
         {/* Loading State */}
         {loading && !report && (
-          <div className="p-12 text-center bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
+          <div className="p-12 text-center bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 space-y-3">
             <RefreshCw className="w-8 h-8 text-blue-400 animate-spin mx-auto" />
             <p className="text-sm font-semibold text-slate-300">Running diagnostic health probes...</p>
             <p className="text-xs text-slate-500">Inspecting process, local data store, and configuration safely.</p>
@@ -146,7 +146,7 @@ export default function SystemHealthAdminPage() {
         {report && (
           <>
             {/* Top Process & Overall Status Banner */}
-            <div className="rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900/90 to-blue-950/40 border border-slate-800 p-6 shadow-lg">
+            <div className="rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900/90 to-blue-950/40 border border-slate-200 p-6 shadow-lg">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div
@@ -177,31 +177,31 @@ export default function SystemHealthAdminPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6 text-xs text-slate-400 border-t md:border-t-0 md:border-l border-slate-800 pt-3 md:pt-0 md:pl-6">
+                <div className="flex items-center gap-6 text-xs text-slate-400 border-t md:border-t-0 md:border-l border-slate-200 pt-3 md:pt-0 md:pl-6">
                   <div>
                     <span className="block text-slate-500 text-[11px]">Process Uptime</span>
-                    <span className="font-semibold text-slate-200 text-sm">{formatUptime(report.app.uptimeSeconds)}</span>
+                    <span className="font-semibold text-slate-800 text-sm">{formatUptime(report.app.uptimeSeconds)}</span>
                   </div>
                   <div>
                     <span className="block text-slate-500 text-[11px]">Heap Memory</span>
-                    <span className="font-semibold text-slate-200 text-sm">
+                    <span className="font-semibold text-slate-800 text-sm">
                       {report.app.memoryUsageMB.heapUsed} / {report.app.memoryUsageMB.heapTotal} MB
                     </span>
                   </div>
                   <div>
                     <span className="block text-slate-500 text-[11px]">Last Probe</span>
-                    <span className="font-semibold text-slate-200 text-sm">{lastFetchTime || 'Just now'}</span>
+                    <span className="font-semibold text-slate-800 text-sm">{lastFetchTime || 'Just now'}</span>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Storage Health & Record Integrity Card */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4">
+            <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-4">
                 <div className="flex items-center gap-2.5">
                   <Database className="w-5 h-5 text-blue-400" />
-                  <h3 className="font-bold text-sm text-white">Local JSON Data Store Status</h3>
+                  <h3 className="font-bold text-sm text-slate-900">Local JSON Data Store Status</h3>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xs text-slate-400 font-mono">{report.storage.storePath}</span>
@@ -211,34 +211,34 @@ export default function SystemHealthAdminPage() {
 
               {/* Storage Diagnostic Badges */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800">
                   <span className="text-slate-500 text-[11px] block">Readability</span>
                   <span className={`font-semibold ${report.storage.readable ? 'text-emerald-400' : 'text-red-400'}`}>
                     {report.storage.readable ? '✓ File Readable' : '✗ Unreadable'}
                   </span>
                 </div>
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800">
                   <span className="text-slate-500 text-[11px] block">JSON Parse Test</span>
                   <span className={`font-semibold ${report.storage.parseable ? 'text-emerald-400' : 'text-red-400'}`}>
                     {report.storage.parseable ? '✓ Parse Succeeded' : '✗ Parse Failed'}
                   </span>
                 </div>
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800">
                   <span className="text-slate-500 text-[11px] block">File Size</span>
-                  <span className="font-semibold text-slate-200">
+                  <span className="font-semibold text-slate-800">
                     {(report.storage.fileSizeBytes / 1024).toFixed(1)} KB ({report.storage.fileSizeBytes.toLocaleString()} bytes)
                   </span>
                 </div>
-                <div className="bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800">
                   <span className="text-slate-500 text-[11px] block">Last Modified</span>
-                  <span className="font-semibold text-slate-200 truncate block" title={report.storage.lastModified}>
+                  <span className="font-semibold text-slate-800 truncate block" title={report.storage.lastModified}>
                     {new Date(report.storage.lastModified).toLocaleDateString()} {new Date(report.storage.lastModified).toLocaleTimeString()}
                   </span>
                 </div>
               </div>
 
               {/* SHA-256 Checksum */}
-              <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span className="text-slate-400">Diagnostic Checksum (SHA-256):</span>
@@ -253,41 +253,41 @@ export default function SystemHealthAdminPage() {
                   Persistent Entity Inventory
                 </h4>
                 <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2 text-center text-xs">
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/60">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200/60">
                     <span className="block text-slate-500 text-[10px]">Listings</span>
-                    <span className="font-bold text-slate-200">{report.storage.recordCounts.listings}</span>
+                    <span className="font-bold text-slate-800">{report.storage.recordCounts.listings}</span>
                   </div>
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/60">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200/60">
                     <span className="block text-slate-500 text-[10px]">Contacts</span>
-                    <span className="font-bold text-slate-200">{report.storage.recordCounts.contacts}</span>
+                    <span className="font-bold text-slate-800">{report.storage.recordCounts.contacts}</span>
                   </div>
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/60">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200/60">
                     <span className="block text-slate-500 text-[10px]">Deals</span>
-                    <span className="font-bold text-slate-200">{report.storage.recordCounts.deals}</span>
+                    <span className="font-bold text-slate-800">{report.storage.recordCounts.deals}</span>
                   </div>
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/60">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200/60">
                     <span className="block text-slate-500 text-[10px]">Franchises</span>
-                    <span className="font-bold text-slate-200">{report.storage.recordCounts.franchises}</span>
+                    <span className="font-bold text-slate-800">{report.storage.recordCounts.franchises}</span>
                   </div>
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/60">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200/60">
                     <span className="block text-slate-500 text-[10px]">Territories</span>
-                    <span className="font-bold text-slate-200">{report.storage.recordCounts.territories}</span>
+                    <span className="font-bold text-slate-800">{report.storage.recordCounts.territories}</span>
                   </div>
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/60">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200/60">
                     <span className="block text-slate-500 text-[10px]">Automations</span>
-                    <span className="font-bold text-slate-200">{report.storage.recordCounts.automations}</span>
+                    <span className="font-bold text-slate-800">{report.storage.recordCounts.automations}</span>
                   </div>
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/60">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200/60">
                     <span className="block text-slate-500 text-[10px]">Orders</span>
-                    <span className="font-bold text-slate-200">{report.storage.recordCounts.orders}</span>
+                    <span className="font-bold text-slate-800">{report.storage.recordCounts.orders}</span>
                   </div>
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/60">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200/60">
                     <span className="block text-slate-500 text-[10px]">Subscriptions</span>
-                    <span className="font-bold text-slate-200">{report.storage.recordCounts.subscriptions}</span>
+                    <span className="font-bold text-slate-800">{report.storage.recordCounts.subscriptions}</span>
                   </div>
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800/60">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200/60">
                     <span className="block text-slate-500 text-[10px]">Govt Contacts</span>
-                    <span className="font-bold text-slate-200">{report.storage.recordCounts.governmentContacts}</span>
+                    <span className="font-bold text-slate-800">{report.storage.recordCounts.governmentContacts}</span>
                   </div>
                 </div>
               </div>
@@ -296,8 +296,8 @@ export default function SystemHealthAdminPage() {
             {/* External Integrations Health Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Card 1: WhatsApp Cloud API */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3.5">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-5 space-y-3.5">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                   <div className="flex items-center gap-2">
                     <Smartphone className="w-4 h-4 text-emerald-400" />
                     <h3 className="font-semibold text-sm text-white">WhatsApp Cloud API (Meta)</h3>
@@ -306,27 +306,27 @@ export default function SystemHealthAdminPage() {
                 </div>
 
                 <div className="space-y-2 text-xs">
-                  <div className="flex justify-between py-1 border-b border-slate-800/50">
+                  <div className="flex justify-between py-1 border-b border-slate-200/50">
                     <span className="text-slate-400">Phone Number ID</span>
-                    <span className="font-medium text-slate-200">
+                    <span className="font-medium text-slate-800">
                       {report.integrations.whatsappCloudApi.phoneNumberIdConfigured ? '✓ Configured' : '✗ Not Configured'}
                     </span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-slate-800/50">
+                  <div className="flex justify-between py-1 border-b border-slate-200/50">
                     <span className="text-slate-400">Permanent Access Token</span>
-                    <span className="font-medium text-slate-200">
+                    <span className="font-medium text-slate-800">
                       {report.integrations.whatsappCloudApi.tokenConfigured ? '✓ Configured (Masked)' : '✗ Not Configured'}
                     </span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-slate-800/50">
+                  <div className="flex justify-between py-1 border-b border-slate-200/50">
                     <span className="text-slate-400">CRM Flow Auto-Sync</span>
-                    <span className="font-medium text-slate-200">
+                    <span className="font-medium text-slate-800">
                       {report.integrations.whatsappCloudApi.syncListingsConfigured ? '✓ Enabled' : 'Disabled'}
                     </span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                <p className="text-xs text-slate-400 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-slate-800">
                   {report.integrations.whatsappCloudApi.details}
                 </p>
 
@@ -342,8 +342,8 @@ export default function SystemHealthAdminPage() {
               </div>
 
               {/* Card 2: Payment Gateway */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3.5">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-5 space-y-3.5">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                   <div className="flex items-center gap-2">
                     <CreditCard className="w-4 h-4 text-purple-400" />
                     <h3 className="font-semibold text-sm text-white">Payment Gateway</h3>
@@ -352,23 +352,23 @@ export default function SystemHealthAdminPage() {
                 </div>
 
                 <div className="space-y-2 text-xs">
-                  <div className="flex justify-between py-1 border-b border-slate-800/50">
+                  <div className="flex justify-between py-1 border-b border-slate-200/50">
                     <span className="text-slate-400">Active Adapter</span>
-                    <code className="font-mono text-slate-200 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
+                    <code className="font-mono text-slate-800 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
                       {report.integrations.paymentGateway.activeAdapter}
                     </code>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-slate-800/50">
+                  <div className="flex justify-between py-1 border-b border-slate-200/50">
                     <span className="text-slate-400">Webhook Verification</span>
                     <span className="font-medium text-emerald-400">✓ HMAC-SHA256 Active</span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-slate-800/50">
+                  <div className="flex justify-between py-1 border-b border-slate-200/50">
                     <span className="text-slate-400">Order Idempotency</span>
                     <span className="font-medium text-emerald-400">✓ Enforced</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                <p className="text-xs text-slate-400 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-slate-800">
                   {report.integrations.paymentGateway.details}
                 </p>
 
@@ -384,8 +384,8 @@ export default function SystemHealthAdminPage() {
               </div>
 
               {/* Card 3: Cloudflare R2 Media Storage */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3.5">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-5 space-y-3.5">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                   <div className="flex items-center gap-2">
                     <Cloud className="w-4 h-4 text-amber-400" />
                     <h3 className="font-semibold text-sm text-white">Cloudflare R2 Media Storage</h3>
@@ -393,7 +393,7 @@ export default function SystemHealthAdminPage() {
                   {getStatusBadge(report.integrations.r2Storage.status)}
                 </div>
 
-                <p className="text-xs text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                <p className="text-xs text-slate-400 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-slate-800">
                   {report.integrations.r2Storage.details}
                 </p>
 
@@ -403,8 +403,8 @@ export default function SystemHealthAdminPage() {
               </div>
 
               {/* Card 4: WhatsApp Automations Engine */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3.5">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs text-slate-900 p-5 space-y-3.5">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                   <div className="flex items-center gap-2">
                     <Zap className="w-4 h-4 text-emerald-400" />
                     <h3 className="font-semibold text-sm text-white">WhatsApp Automations Engine</h3>
@@ -413,21 +413,21 @@ export default function SystemHealthAdminPage() {
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200">
                     <span className="block text-slate-500 text-[10px]">Total Rules</span>
-                    <span className="font-bold text-slate-200">{report.automations.totalRules}</span>
+                    <span className="font-bold text-slate-800">{report.automations.totalRules}</span>
                   </div>
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200">
                     <span className="block text-slate-500 text-[10px]">Draft (Sandbox)</span>
                     <span className="font-bold text-amber-400">{report.automations.draftRules}</span>
                   </div>
-                  <div className="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200">
                     <span className="block text-slate-500 text-[10px]">Active</span>
                     <span className="font-bold text-emerald-400">{report.automations.activeRules}</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+                <p className="text-xs text-slate-400 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-slate-800">
                   {report.automations.details}
                 </p>
 
@@ -444,7 +444,7 @@ export default function SystemHealthAdminPage() {
             </div>
 
             {/* Privacy & Zero-Side-Effect Guarantee Banner */}
-            <div className="p-4 bg-slate-900/60 border border-slate-800/80 rounded-xl flex items-center gap-3 text-xs text-slate-400">
+            <div className="p-4 bg-slate-100 border border-slate-200/80 rounded-xl flex items-center gap-3 text-xs text-slate-400">
               <Lock className="w-4 h-4 text-emerald-400 shrink-0" />
               <span>
                 <strong>Zero Secret Leakage Guarantee:</strong> All API keys, tokens, and session secrets are cryptographically protected and never rendered in browser payloads. Diagnostic health checks are strictly read-only and generate zero outbound network side effects.

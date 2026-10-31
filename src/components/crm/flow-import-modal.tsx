@@ -138,15 +138,15 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden text-slate-900">
         {/* Header */}
-        <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-blue-500/10 text-blue-400 rounded-lg border border-blue-500/20">
               <FileSpreadsheet className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-white text-sm">Import WhatsApp Flows from CSV</h3>
+              <h3 className="font-bold text-slate-900 text-sm">Import WhatsApp Flows from CSV</h3>
               <p className="text-[11px] text-slate-400">
                 Bulk upload conversational flows with Telugu Unicode &amp; interactive buttons (Zero Template Overwrite).
               </p>
@@ -154,7 +154,7 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -168,7 +168,7 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
             className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
               file
                 ? 'border-emerald-500/50 bg-emerald-500/5'
-                : 'border-slate-700 hover:border-blue-500 bg-slate-950/40 hover:bg-slate-950/80'
+                : 'border-slate-300 hover:border-emerald-500 bg-slate-50 hover:bg-slate-100'
             }`}
           >
             <input
@@ -181,7 +181,7 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
             <Upload className="w-8 h-8 mx-auto mb-2 text-slate-400" />
             {file ? (
               <div>
-                <p className="font-semibold text-white">{file.name}</p>
+                <p className="font-semibold text-slate-900">{file.name}</p>
                 <p className="text-[11px] text-emerald-400 mt-1">
                   ✓ {parsedFlows.length} Valid flow(s) parsed with Telugu Unicode preserved
                 </p>
@@ -199,11 +199,11 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
           </div>
 
           {/* Import Posture Selector */}
-          <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
+          <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-blue-400" />
               <div>
-                <div className="text-white font-medium text-xs">Import Status Mode</div>
+                <div className="text-slate-900 font-medium text-xs">Import Status Mode</div>
                 <div className="text-[10px] text-slate-400">
                   {importStatus === 'draft'
                     ? 'Safe Mode: Newly imported flows stay in draft until reviewed'
@@ -211,14 +211,14 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
               <button
                 type="button"
                 onClick={() => handleStatusChange('draft')}
                 className={`px-3 py-1 rounded text-[11px] font-bold transition-all ${
                   importStatus === 'draft'
                     ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-400 hover:text-slate-900'
                 }`}
               >
                 Draft (Safe)
@@ -229,7 +229,7 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
                 className={`px-3 py-1 rounded text-[11px] font-bold transition-all ${
                   importStatus === 'published'
                     ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-400 hover:text-slate-900'
                 }`}
               >
                 Published (Live)
@@ -238,15 +238,15 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
           </div>
 
           {/* Download Sample Button */}
-          <div className="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800">
-            <div className="flex items-center gap-2 text-slate-300">
-              <Sparkles className="w-4 h-4 text-amber-400" />
+          <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200 text-slate-800">
+            <div className="flex items-center gap-2 text-slate-600">
+              <Sparkles className="w-4 h-4 text-emerald-600" />
               <span>Need the validated 39 Flows master dataset?</span>
             </div>
             <button
               type="button"
               onClick={handleDownloadMasterCsv}
-              className="flex items-center gap-1.5 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-medium transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg font-medium transition-colors shadow-2xs"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Download Master CSV</span>
@@ -274,7 +274,7 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
 
           {/* Detected Column Mappings */}
           {Object.keys(detectedMappings).length > 0 && (
-            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
               <div className="flex items-center justify-between text-[11px]">
                 <span className="font-semibold text-slate-300">Detected Column Mappings</span>
                 <span className="text-slate-500 font-mono text-[10px]">
@@ -288,7 +288,7 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
                     className={`px-2 py-0.5 rounded text-[10px] font-mono flex items-center gap-1 ${
                       colName
                         ? 'bg-emerald-950/40 border border-emerald-800/60 text-emerald-300'
-                        : 'bg-slate-900 border border-slate-800 text-slate-500'
+                        : 'bg-white border border-slate-200 text-slate-500'
                     }`}
                   >
                     <span className="font-semibold">{field}:</span>
@@ -341,12 +341,12 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
                 <span>Previewing {parsedFlows.length} Flows to be imported:</span>
                 <span className="text-emerald-400 font-mono">100% Graph Auto-Linked</span>
               </div>
-              <div className="border border-slate-800 rounded-xl overflow-hidden divide-y divide-slate-800 max-h-48 overflow-y-auto bg-slate-950">
+              <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100 max-h-48 overflow-y-auto bg-white">
                 {parsedFlows.slice(0, 10).map((f) => (
-                  <div key={f.id} className="p-2.5 flex items-center justify-between hover:bg-slate-900/50">
+                  <div key={f.id} className="p-2.5 flex items-center justify-between hover:bg-slate-50">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-white truncate">{f.name}</span>
+                        <span className="font-semibold text-slate-900 truncate">{f.name}</span>
                         <span className="text-[9px] bg-blue-500/10 text-blue-400 px-1.5 py-0.2 rounded border border-blue-500/20">
                           {f.id}
                         </span>
@@ -362,7 +362,7 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
                       </p>
                     </div>
                     {f.button_options && f.button_options.length > 0 && (
-                      <span className="text-[10px] text-slate-400 shrink-0 ml-3 bg-slate-800 px-2 py-0.5 rounded">
+                      <span className="text-[10px] text-slate-600 shrink-0 ml-3 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
                         {f.button_options.length} Buttons
                       </span>
                     )}
@@ -374,12 +374,12 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-800 flex items-center justify-between bg-slate-950">
+        <div className="p-4 border-t border-slate-200 flex items-center justify-between bg-slate-50/80">
           <button
             type="button"
             onClick={handleDryRun}
             disabled={parsedFlows.length === 0 || isDryRunning}
-            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-300 hover:text-white rounded-xl font-medium text-xs flex items-center gap-1.5 transition-colors"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 disabled:opacity-50 text-slate-700 hover:text-slate-900 rounded-xl font-medium text-xs flex items-center gap-1.5 transition-colors shadow-2xs"
           >
             {isDryRunning ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -392,14 +392,14 @@ export function FlowImportModal({ isOpen, onClose, onSuccess }: FlowImportModalP
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium text-xs transition-colors"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl font-medium text-xs transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleImportSubmit}
               disabled={parsedFlows.length === 0 || isImporting}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-blue-600/20 transition-all"
+              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all"
             >
               {isImporting ? (
                 <>
