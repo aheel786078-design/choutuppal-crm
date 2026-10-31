@@ -3,7 +3,7 @@
 import { MessageCircle, Youtube, Instagram, Facebook } from 'lucide-react'
 
 export function StickySocials() {
-  const message = encodeURIComponent('Hi Choutuppal App team!')
+  const message = encodeURIComponent('Hi Choutuppal App team, I need assistance!')
   return (
     <div className="fixed bottom-1/3 left-4 z-50 hidden flex-col gap-3 md:flex">
       <a

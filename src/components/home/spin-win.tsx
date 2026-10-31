@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Gift, Sparkles, ChevronRight, X, RotateCw } from 'lucide-react'
+import { Gift, Sparkles, ChevronRight, X, RotateCw, MessageCircle } from 'lucide-react'
 import { SectionHeading } from './section-heading'
 import { Button } from '@/components/ui/button'
 
@@ -20,15 +20,21 @@ export function SpinWin() {
   const [isOpen, setIsOpen] = useState(false)
   const [rotation, setRotation] = useState(0)
   const [spinning, setSpinning] = useState(false)
+  const [wonPrize, setWonPrize] = useState<string | null>(null)
 
   const spin = () => {
     if (spinning) return
     setSpinning(true)
-    const winner = Math.floor(Math.random() * SEGMENTS.length)
+    setWonPrize(null)
+    const winnerIdx = Math.floor(Math.random() * SEGMENTS.length)
+    const winner = SEGMENTS[winnerIdx].label
     const segAngle = 360 / SEGMENTS.length
-    const target = 360 * 5 + (360 - winner * segAngle - segAngle / 2)
+    const target = 360 * 5 + (360 - winnerIdx * segAngle - segAngle / 2)
     setRotation((prev) => prev + target)
-    window.setTimeout(() => setSpinning(false), 4200)
+    window.setTimeout(() => {
+      setSpinning(false)
+      setWonPrize(winner)
+    }, 4200)
   }
 
   return (
@@ -156,6 +162,23 @@ export function SpinWin() {
                 </div>
               </div>
             </div>
+
+            {wonPrize && !spinning && (
+              <div className="w-full mb-4 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-center animate-in fade-in zoom-in duration-300">
+                <p className="text-xs font-bold uppercase tracking-wider text-amber-700">🎉 Congratulations!</p>
+                <p className="text-xl font-black text-slate-900 mt-1">You Won: {wonPrize}</p>
+                <p className="text-xs text-slate-600 mt-1">Claim your reward or discount directly with our WhatsApp Bot:</p>
+                <a
+                  href={`https://wa.me/919494348175?text=${encodeURIComponent(`Hi Choutuppal, I won "${wonPrize}" on Spin & Win! How do I claim my reward?`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <span>Claim on WhatsApp Bot (9494348175)</span>
+                </a>
+              </div>
+            )}
 
             <Button
               onClick={spin}

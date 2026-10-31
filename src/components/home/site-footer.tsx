@@ -125,7 +125,7 @@ export function SiteFooter({ tenant = DEFAULT_TENANT }: SiteFooterProps) {
               <li className="flex items-center gap-2">
                 <MessageCircle className="h-4 w-4 shrink-0 text-green-500" />
                 <a
-                  href="https://wa.me/919494348175"
+                  href={`https://wa.me/919494348175?text=${encodeURIComponent('నమస్కారం చౌటుప్పల్ యాప్, నాకు సహాయం / సమాచారం కావాలి.')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-semibold text-slate-700 hover:text-green-600"

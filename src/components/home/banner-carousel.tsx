@@ -46,6 +46,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
   const [mounted, setMounted] = useState(false)
   const [progress, setProgress] = useState(0)
   const [isLiked, setIsLiked] = useState(false)
+  const [bannerReplyText, setBannerReplyText] = useState('')
   const touchStartX = useRef<number | null>(null)
 
   useEffect(() => {
@@ -361,15 +362,33 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
               </div>
             </div>
 
-            {/* Bottom Bar: Like & Comment */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent flex items-center gap-4 z-[10001] pointer-events-auto">
+            {/* Bottom Bar: Like & WhatsApp Reply */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent flex items-center gap-3 z-[10001] pointer-events-auto">
               <input
                 type="text"
-                placeholder="Reply or express interest..."
-                className="flex-1 bg-white/10 text-white rounded-full px-4 py-2 outline-none border border-white/20 text-sm focus:border-white/50"
+                value={bannerReplyText}
+                onChange={(e) => setBannerReplyText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const text = bannerReplyText.trim() || 'I am interested in this banner offer'
+                    window.open(`https://wa.me/919494348175?text=${encodeURIComponent(`Hi Choutuppal, regarding banner "${current?.title || 'Offer'}": ${text}`)}`, '_blank')
+                    setBannerReplyText('')
+                  }
+                }}
+                placeholder="Inquire on WhatsApp..."
+                className="flex-1 bg-white/10 text-white rounded-full px-4 py-2 outline-none border border-white/20 text-xs sm:text-sm placeholder:text-slate-400 focus:border-emerald-400"
               />
-              <button className="text-white hover:text-blue-400 shrink-0 p-1" aria-label="Send">
-                <Send className="h-5 w-5" />
+              <button
+                onClick={() => {
+                  const text = bannerReplyText.trim() || 'I am interested in this banner offer'
+                  window.open(`https://wa.me/919494348175?text=${encodeURIComponent(`Hi Choutuppal, regarding banner "${current?.title || 'Offer'}": ${text}`)}`, '_blank')
+                  setBannerReplyText('')
+                }}
+                className="flex items-center justify-center h-9 w-9 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-md transition shrink-0"
+                title="Send via WhatsApp Bot"
+                aria-label="Send via WhatsApp Bot"
+              >
+                <MessageCircle className="h-4 w-4" />
               </button>
               <button onClick={() => setIsLiked(!isLiked)} className="text-white shrink-0 p-1" aria-label="Like banner">
                 <Heart className={cn('h-6 w-6 transition', isLiked ? 'fill-red-500 text-red-500' : 'hover:text-red-400')} />

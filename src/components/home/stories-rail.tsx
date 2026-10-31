@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import { Plus, Star, Heart, Send } from 'lucide-react'
+import { Plus, Star, Heart, Send, MessageCircle } from 'lucide-react'
 import { cn, sanitizeImageUrl } from '@/lib/utils'
 import { toast } from 'sonner'
 import type { UserStory as Story } from '@/lib/types'
@@ -39,6 +39,7 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
   const [mounted, setMounted] = useState(false)
   const [progress, setProgress] = useState(0)
   const [isLiked, setIsLiked] = useState(false)
+  const [storyReplyText, setStoryReplyText] = useState('')
 
   useEffect(() => {
     setMounted(true)
@@ -270,18 +271,35 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
               )}
             </div>
 
-            {/* Bottom Bar: Like & Comment */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center gap-4 z-[10001] pointer-events-auto">
+            {/* Bottom Bar: Like & WhatsApp Quick Reply */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center gap-3 z-[10001] pointer-events-auto">
               <input
                 type="text"
-                placeholder="Reply..."
-                className="flex-1 bg-white/10 text-white rounded-full px-4 py-2 outline-none border border-white/20"
+                value={storyReplyText}
+                onChange={(e) => setStoryReplyText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const text = storyReplyText.trim() || storyItems[viewerIndex]?.caption || 'Story Offer'
+                    window.open(`https://wa.me/919494348175?text=${encodeURIComponent(`Hi Choutuppal, I saw your Story from "${storyItems[viewerIndex]?.owner?.name || 'Business'}": ${text}`)}`, '_blank')
+                    setStoryReplyText('')
+                  }
+                }}
+                placeholder="Reply via WhatsApp..."
+                className="flex-1 bg-white/10 text-white rounded-full px-4 py-2 outline-none border border-white/20 text-xs sm:text-sm placeholder:text-slate-400 focus:border-emerald-400"
               />
-              <button className="text-white hover:text-blue-400 shrink-0">
-                <Send className="h-5 w-5" />
+              <button
+                onClick={() => {
+                  const text = storyReplyText.trim() || storyItems[viewerIndex]?.caption || 'Story Offer'
+                  window.open(`https://wa.me/919494348175?text=${encodeURIComponent(`Hi Choutuppal, I saw your Story from "${storyItems[viewerIndex]?.owner?.name || 'Business'}": ${text}`)}`, '_blank')
+                  setStoryReplyText('')
+                }}
+                className="flex items-center justify-center h-9 w-9 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-md transition shrink-0"
+                title="Send to WhatsApp Bot"
+              >
+                <MessageCircle className="h-4 w-4" />
               </button>
-              <button onClick={() => setIsLiked(!isLiked)} className="text-white shrink-0">
-                <Heart className={cn('h-7 w-7 transition', isLiked && 'fill-red-500 text-red-500')} />
+              <button onClick={() => setIsLiked(!isLiked)} className="text-white shrink-0 p-1" title="Like story">
+                <Heart className={cn('h-6 w-6 transition', isLiked && 'fill-red-500 text-red-500')} />
               </button>
             </div>
           </div>

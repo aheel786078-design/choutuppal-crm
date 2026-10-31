@@ -340,6 +340,47 @@ export async function POST(req: Request) {
         return NextResponse.json(withShadow({ status: 'vendor_claim_sent', listingId: matchedListing.id }))
       }
 
+      // 2.1. CITIZEN & GENERAL VISITOR GREETING / WELCOME MENU
+      const isGreeting =
+        lower === 'hi' ||
+        lower === 'hello' ||
+        lower === 'నమస్కారం' ||
+        lower === 'హలో' ||
+        lower === 'menu' ||
+        lower === 'మెనూ' ||
+        lower.includes('సమాచారం కావాలి') ||
+        lower.includes('చౌటుప్పల్ యాప్ గురించి సమాచారం') ||
+        lower.includes('choutuppal app team')
+
+      if (isGreeting && !matchedListing) {
+        const citizenWelcomeMsg =
+          `🌟 *చౌటుప్పల్ సూపర్ యాప్ & వాట్సాప్ బాట్ కు స్వాగతం!* 🙏\n\n` +
+          `నమస్కారం ${senderName} గారు! Mana Choutuppal అధికారిక బాట్ ద్వారా మీకు ఏ సమాచారం కావాలి?\n\n` +
+          `1️⃣ *షాపులు & బిజినెస్ డైరెక్టరీ* -> షాప్ పేరు లేదా కేటగిరీ టైప్ చేయండి (ఉదా: 'ఆటోమొబైల్', 'హోటల్')\n` +
+          `2️⃣ *24/7 ఎమర్జెన్సీ టాక్సీ & ఆటో* -> 'Taxi' లేదా 'Auto' అని పంపండి\n` +
+          `3️⃣ *ఎమర్జెన్సీ ప్లంబర్ & ఎలక్ట్రీషియన్* -> 'Plumber' లేదా 'Electrician' అని పంపండి\n` +
+          `4️⃣ *ఓపెన్ ప్లాట్లు & రియల్ ఎస్టేట్* -> 'Plots' అని పంపండి\n` +
+          `5️⃣ *నేటి ప్రత్యేక ఆఫర్లు & స్టోరీలు* -> 'Stories' అని పంపండి\n` +
+          `6️⃣ *మీ వ్యాపారాన్ని ఉచితంగా నమోదు చేయండి* -> 'నా వ్యాపారాన్ని చేర్చండి' అని పంపండి\n` +
+          `7️⃣ *ఉచిత షాప్ కౌంటర్ QR స్టాండీ* -> 'QR' అని పంపండి\n` +
+          `8️⃣ *లోకల్ వార్తలు పంపండి* -> 'వార్త' అని పంపండి\n\n` +
+          `📞 అడ్మిన్ హెల్ప్‌లైన్: 9441348175\n` +
+          `🌐 అధికారిక పోర్టల్: ${townUrl}`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: citizenWelcomeMsg,
+          imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80',
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        return NextResponse.json(withShadow({ status: 'citizen_welcome_menu_dispatched' }))
+      }
+
       // 3.1. LISTING DETAILS INQUIRY FROM WEBSITE BUTTONS & CARDS
       // Matches: "want details for ... (Ref: ...)" or "inquiry for ... (Ref: ...)" or ref/id tags
       const refMatch = incomingText.match(/\b(?:ref|id):\s*([a-zA-Z0-9_\-]+)/i)
@@ -455,21 +496,73 @@ export async function POST(req: Request) {
         }
       }
 
-      // 3.3. BANNER AD BOOKING FLOW
+      // 3.3. ADVERTISING & PROMOTIONS (BANNER, STORY AD, REELS PROMO, BULK MSG, FESTIVAL)
       if (
         lower.includes('banner ad') ||
         lower.includes('బ్యానర్ అడ్') ||
         lower.includes('బ్యానర్ ప్రమోషన్') ||
-        lower.includes('book a banner')
+        lower.includes('book a banner') ||
+        lower.includes('story ad') ||
+        lower.includes('99/day') ||
+        lower.includes('promote my reel') ||
+        lower.includes('reels promo') ||
+        lower.includes('299/3 days') ||
+        lower.includes('bulk promo') ||
+        lower.includes('bulk msg') ||
+        lower.includes('499 bulk') ||
+        lower.includes('promote my listing') ||
+        lower.includes('listings promo') ||
+        lower.includes('199/week') ||
+        lower.includes('festival greeting') ||
+        lower.includes('ఫెస్టివల్') ||
+        lower.includes('greeting for ₹149')
       ) {
+        let promoTitle = 'చౌటుప్పల్ యాప్ ప్రమోషన్ ప్యాకేజీలు'
+        let promoDetails = ''
+
+        if (lower.includes('story ad') || lower.includes('99')) {
+          promoTitle = 'హోమ్‌పేజీ స్టోరీ యాడ్ (₹99 / రోజు)'
+          promoDetails =
+            `• యాప్ హోమ్‌పేజీ టాప్ సర్కిల్స్‌లో మీ షాప్ ఆఫర్ లేదా ఫోటో 24 గంటల పాటు ప్రదర్శించబడుతుంది\n` +
+            `• 5,000+ స్థానిక కస్టమర్ల వీక్షణ & డైరెక్ట్ వాట్సాప్ లీడ్స్\n` +
+            `• ధర: ₹99/రోజు మాత్రమే`
+        } else if (lower.includes('reel') || lower.includes('రీల్') || lower.includes('299')) {
+          promoTitle = 'రీల్స్ & షార్ట్స్ ప్రమోషన్ (₹299 / 3 రోజులు)'
+          promoDetails =
+            `• మీ షాప్ వీడియో రీల్‌ను హోమ్‌పేజీ రీల్స్ రైల్ మరియు యూట్యూబ్/ఇన్‌స్టాగ్రామ్‌లో 3 రోజుల పాటు ప్రమోట్ చేస్తాము\n` +
+            `• వ్యూయర్ అనలిటిక్స్ & డైరెక్ట్ కస్టమర్ ఎంక్వైరీలు\n` +
+            `• ధర: ₹299 (3 రోజుల వ్యవధి)`
+        } else if (lower.includes('bulk') || lower.includes('బల్క్') || lower.includes('499')) {
+          promoTitle = 'బల్క్ వాట్సాప్ ప్రమోషన్ (₹499 / క్యాంపెయిన్)'
+          promoDetails =
+            `• చౌటుప్పల్ మరియు పరిసర గ్రామాలలోని 1,000+ ధృవీకరించబడిన స్థానిక కస్టమర్లకు డైరెక్ట్ WhatsApp బ్రాడ్‌కాస్ట్\n` +
+            `• మీ షాప్ ఫోటో, ఆఫర్ వివరణ & ఆర్డర్ బటన్లతో తక్షణ డెలివరీ\n` +
+            `• ధర: ₹499 ప్రతి క్యాంపెయిన్‌కు`
+        } else if (lower.includes('promote my listing') || lower.includes('listings promo') || lower.includes('199')) {
+          promoTitle = 'కేటగిరీ టాప్ లిస్టింగ్ ప్రమోషన్ (₹199 / వారం)'
+          promoDetails =
+            `• మీ కేటగిరీ శోధనలో మీ షాప్ నెంబర్ #1 స్థానంలో పిన్ చేయబడుతుంది\n` +
+            `• 'Verified Featured' బ్యాడ్జ్ & డైరెక్ట్ కాల్/వాట్సాప్ బటన్లు\n` +
+            `• ధర: ₹199 / వారం`
+        } else if (lower.includes('festival') || lower.includes('ఫెస్టివల్') || lower.includes('149')) {
+          promoTitle = 'ఫెస్టివల్ గ్రీటింగ్ డిజిటల్ పోస్టర్ (₹149)'
+          promoDetails =
+            `• మీ షాప్ పేరు, లోగో & మొబైల్ నంబర్‌తో ప్రొఫెషనల్ పండుగ శుభాకాంక్షల హెచ్‌డీ పోస్టర్ డిజైన్\n` +
+            `• యాప్ కమ్యూనిటీ ఫీడ్‌లో పోస్ట్ & సోషల్ మీడియా షేరింగ్ ఫైల్\n` +
+            `• ధర: ₹149 మాత్రమే`
+        } else {
+          promoTitle = 'చౌటుప్పల్ యాప్ బ్యానర్ అడ్వర్టైజింగ్ ప్యాకేజీలు'
+          promoDetails =
+            `• స్టాండర్డ్ బ్యానర్: ₹499 / నెల (హోమ్‌పేజీ రొటేషన్ + కాల్ బటన్)\n` +
+            `• ప్రీమియం స్పాన్సర్డ్: ₹999 / నెల (టాప్ పిన్డ్ + WhatsApp ఆర్డర్ బటన్ + సోషల్ ప్రమోషన్)`
+        }
+
         const bannerReply =
-          `📢 *చౌటుప్పల్ యాప్ బ్యానర్ అడ్వర్టైజింగ్ ప్యాకేజీలు* 🎯\n\n` +
-          `నమస్కారం ${senderName} గారు! 🙏\n` +
-          `చౌటుప్పల్ యాప్ హోమ్‌పేజీలో ప్రతిరోజూ వేలాది మంది స్థానిక కస్టమర్లు చూసే టాప్ బ్యానర్ స్లాట్లు:\n\n` +
-          `🌟 *1. స్టాండర్డ్ బ్యానర్:* ₹499 / నెల (హోమ్‌పేజీ రొటేషన్ + డైరెక్ట్ కాల్ బటన్)\n` +
-          `🔥 *2. ప్రీమియం స్పాన్సర్డ్:* ₹999 / నెల (టాప్ పిన్డ్ పొజిషన్ + WhatsApp ఆర్డర్ బటన్ + సోషల్ ప్రమోషన్)\n\n` +
-          `💡 *మీ యాడ్ ఇవ్వడానికి:*\n` +
-          `మీ షాప్ పేరు, ఫోటో/బ్యానర్ మరియు ఆఫర్ వివరాలను ఈ చాట్ లోనే పంపించండి. మా డిజైనర్ టీమ్ 2 గంటల్లో లైవ్ చేస్తుంది!\n\n` +
+          `📢 *${promoTitle}* 🎯\n\n` +
+          `నమస్కారం ${senderName} గారు! 🙏\n\n` +
+          `${promoDetails}\n\n` +
+          `💡 *మీ యాడ్ బుక్ చేసుకోవడానికి:*\n` +
+          `మీ షాప్ పేరు, ఫోటో/వీడియో మరియు ఆఫర్ వివరాలను ఈ చాట్ లోనే పంపించండి. మా డిజైనర్ టీమ్ 2 గంటల్లో లైవ్ చేస్తుంది!\n\n` +
           `📞 అడ్వర్టైజింగ్ హెల్ప్‌లైన్: 9441348175\n` +
           `🌐 Website: ${townUrl}`
 
@@ -484,7 +577,7 @@ export async function POST(req: Request) {
           createdAt: new Date().toISOString(),
         })
 
-        return NextResponse.json(withShadow({ status: 'banner_booking_dispatched' }))
+        return NextResponse.json(withShadow({ status: 'ad_promotion_dispatched', package: promoTitle }))
       }
 
       // 3.7. UPGRADE LISTING TO FEATURED FLOW
@@ -575,6 +668,202 @@ export async function POST(req: Request) {
         })
 
         return NextResponse.json(withShadow({ status: 'ward_group_dispatched', ward: wardNum }))
+      }
+
+      // 3.10. LOCAL NEWS SUBMISSION FLOW
+      if (
+        lower.includes('ముఖ్యమైన వార్త') ||
+        lower.includes('వార్త') ||
+        (lower.includes('news') && (lower.includes('post') || lower.includes('send') || lower.includes('update') || lower.includes('యాప్ లో')))
+      ) {
+        const newApprovalId = `appr_news_${Date.now()}`
+        store.approvals.unshift({
+          id: newApprovalId,
+          territoryId: territory.id,
+          type: 'NEWS' as any,
+          title: `News Submission from ${senderName}`,
+          submitterName: senderName,
+          submitterPhone: senderPhone,
+          status: 'pending',
+          data: {
+            text: incomingText,
+            phone: senderPhone,
+          },
+          submittedAt: new Date().toISOString(),
+        })
+
+        const newsAckMsg =
+          `📢 *చౌటుప్పల్ లోకల్ న్యూస్ & మీడియా డెస్క్* 📰\n\n` +
+          `నమస్కారం ${senderName} గారు! 🙏\n` +
+          `మీరు పంపిన వార్త/ఈవెంట్ సమాచారం మా ఎడిటోరియల్ టీమ్‌కు చేరింది.\n\n` +
+          `దయచేసి వార్తకు సంబంధించిన ఫోటోలు, వీడియోలు లేదా ప్రెస్ నోట్ వివరాలను ఇక్కడే పంపించండి. మా ఎడిటర్స్ పరిశీలించి యాప్‌లో మరియు సోషల్ మీడియాలో వెంటనే ప్రచురిస్తారు.\n\n` +
+          `🌐 లైవ్ న్యూస్ చూడటానికి: ${townUrl}/news\n` +
+          `📞 న్యూస్ డెస్క్ హెల్ప్‌లైన్: 9441348175`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: newsAckMsg,
+          imageUrl: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80',
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        return NextResponse.json(withShadow({ status: 'news_submission_queued', approvalId: newApprovalId }))
+      }
+
+      // 3.11. SPIN & WIN REWARD CLAIM FLOW
+      if (
+        lower.includes('spin & win') ||
+        lower.includes('స్పిన్') ||
+        lower.includes('claim my reward') ||
+        (lower.includes('won') && (lower.includes('prize') || lower.includes('spin')))
+      ) {
+        const prizeMatch = incomingText.match(/won ["“']?([^"”']+)["”']? on spin/i)
+        const prizeName = prizeMatch ? prizeMatch[1].trim() : 'స్పిన్ రివార్డ్'
+
+        const spinClaimMsg =
+          `🎉 *చౌటుప్పల్ స్పిన్ & విన్ బహుమతి నిర్ధారణ* 🎁\n\n` +
+          `నమస్కారం ${senderName} గారు! అభినందనలు! 🎊\n` +
+          `మీరు గెలుచుకున్న బహుమతి: *${prizeName}*\n\n` +
+          `మీ రివార్డును యాక్టివేట్ చేయడానికి మీ పేరు మరియు షాప్/కాలనీ వివరాలు ఇక్కడ పంపించండి. మా టీమ్ మీ ఆఫర్ డిస్కౌంట్ కూపన్ కోడ్‌ను వెంటనే జారీ చేస్తుంది!\n\n` +
+          `🌐 మీ డ్యాష్‌బోర్డ్: ${townUrl}/dashboard\n` +
+          `📞 హెల్ప్‌లైన్: 9441348175`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: spinClaimMsg,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        return NextResponse.json(withShadow({ status: 'spin_reward_claim_dispatched', prize: prizeName }))
+      }
+
+      // 3.12. REAL ESTATE DIRECT INQUIRY & VENTURE ADVERTISING
+      if (
+        lower.includes('interested in real estate') ||
+        lower.includes('looking for property in choutuppal') ||
+        lower.includes('advertise my real estate venture')
+      ) {
+        let propTitle = ''
+        const propMatch = incomingText.match(/interested in real estate property:\s*(.+)$/i)
+        if (propMatch) {
+          propTitle = propMatch[1].trim()
+        }
+
+        const isVentureAd = lower.includes('advertise my real estate venture')
+
+        const reReply = isVentureAd
+          ? `🏡 *చౌటుప్పల్ రియల్ ఎస్టేట్ వెంచర్ అడ్వర్టైజింగ్ డెస్క్* 🚀\n\n` +
+            `నమస్కారం ${senderName} గారు! మీ DTCP/HMDA లేఅవుట్, ఓపెన్ ప్లాట్లు లేదా కమర్షియల్ ప్రాపర్టీలను వేలాది మంది హైదరాబాదీ మరియు స్థానిక కొనుగోలుదారులకు చేరువ చేయడానికి మా ప్లాట్‌ఫామ్ సిద్ధంగా ఉంది:\n\n` +
+            `• వెరిఫైడ్ డ్రోన్ వీడియో షూట్ & హోమ్‌పేజీ రైల్ డిస్‌ప్లే\n` +
+            `• డైరెక్ట్ వాట్సాప్ సైట్ విజిట్ లీడ్స్ (జీరో బ్రోకరేజ్)\n\n` +
+            `మీ వెంచర్ బ్రోచర్/లొకేషన్ ఇక్కడ పంపించండి. మా రియల్ ఎస్టేట్ మేనేజర్ (9441348175) మిమ్మల్ని వెంటనే సంప్రదిస్తారు!\n` +
+            `🌐 పోర్టల్: ${townUrl}/real-estate`
+          : `🏡 *చౌటుప్పల్ రియల్ ఎస్టేట్ & ఓపెన్ ప్లాట్ల సమాచారం* 📍\n\n` +
+            `నమస్కారం ${senderName} గారు! 🙏\n` +
+            (propTitle ? `మీరు ఆసక్తి చూపిన వెంచర్: *${propTitle}*\n\n` : '') +
+            `చౌటుప్పల్, NH-65 హైవే మరియు పరిసర ప్రాంతాలలో 100% క్లియర్ టైటిల్, DTCP & HMDA అప్రూవ్డ్ ఓపెన్ ప్లాట్లు, అగ్రికల్చర్ ఫామ్‌ల్యాండ్స్ మరియు ఇళ్ల వివరాలు సిద్ధంగా ఉన్నాయి.\n\n` +
+            `ఉచిత సైట్ విజిట్ లేదా ధరల బ్రోచర్ కోసం మా వెరిఫైడ్ ప్రాపర్టీ అడ్వైజర్ మిమ్మల్ని వెంటనే సంప్రదిస్తారు.\n\n` +
+            `📞 ప్రాపర్టీ డెస్క్: 9441348175\n` +
+            `🌐 అన్ని ప్లాట్లు చూడండి: ${townUrl}/real-estate`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: reReply,
+          imageUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        return NextResponse.json(withShadow({ status: 'real_estate_inquiry_dispatched', property: propTitle || 'general' }))
+      }
+
+      // 3.13. ON-DEMAND SERVICE DIRECT INQUIRY & REGISTRATION
+      if (
+        (lower.includes('i need') && lower.includes('service in choutuppal')) ||
+        lower.includes('i want to list my service on the app')
+      ) {
+        if (lower.includes('list my service')) {
+          const listSrvMsg =
+            `🛠️ *చౌటుప్పల్ టెక్నీషియన్ & సర్వీసెస్ ఉచిత రిజిస్ట్రేషన్* 🤝\n\n` +
+            `నమస్కారం ${senderName} గారు! మీరు టాక్సీ డ్రైవర్, ఆటో ఓనర్, ఎలక్ట్రీషియన్, ప్లంబర్ లేదా టెక్నీషియన్ అయితే, మీ సేవలను చౌటుప్పల్ యాప్‌లో ఉచితంగా నమోదు చేయండి:\n\n` +
+            `👉 నమోదు లింక్: ${townUrl}/register\n\n` +
+            `లేదా మీ పేరు, వృత్తి మరియు మొబైల్ నంబర్ ఇక్కడే పంపించండి, మా అడ్మిన్ టీమ్ నమోదు చేస్తుంది.\n` +
+            `📞 హెల్ప్‌లైన్: 9441348175`
+
+          store.messages.unshift({
+            id: `msg_out_${Date.now()}`,
+            territoryId: territory.id,
+            phone: senderPhone,
+            direction: 'outbound',
+            messageText: listSrvMsg,
+            status: 'sent',
+            createdAt: new Date().toISOString(),
+          })
+
+          return NextResponse.json(withShadow({ status: 'service_registration_prompt_sent' }))
+        } else {
+          const srvMatch = incomingText.match(/i need (.+?) service in choutuppal/i)
+          const requestedService = srvMatch ? srvMatch[1].trim() : 'ఆన్-డిమాండ్ సర్వీస్'
+
+          const srvBookingMsg =
+            `⚡ *చౌటుప్పల్ ఎమర్జెన్సీ & ఆన్-డిమాండ్ సర్వీస్ బుకింగ్* 🛠️\n\n` +
+            `నమస్కారం ${senderName} గారు! 🙏\n` +
+            `మీరు కోరిన సేవ: *${requestedService}*\n\n` +
+            `మీ సమస్య మరియు పికప్/ఇంటి లొకేషన్ వివరాలను ఇక్కడ మెసేజ్ చేయండి. మా వెరిఫైడ్ టెక్నీషియన్ 15-30 నిమిషాల్లో మిమ్మల్ని సంప్రదిస్తారు.\n\n` +
+            `📞 అర్జంట్ కాల్ హెల్ప్‌లైన్: 9441348175\n` +
+            `🌐 అన్ని సేవలు చూడండి: ${townUrl}/services`
+
+          store.messages.unshift({
+            id: `msg_out_${Date.now()}`,
+            territoryId: territory.id,
+            phone: senderPhone,
+            direction: 'outbound',
+            messageText: srvBookingMsg,
+            status: 'sent',
+            createdAt: new Date().toISOString(),
+          })
+
+          return NextResponse.json(withShadow({ status: 'on_demand_service_requested', service: requestedService }))
+        }
+      }
+
+      // 3.14. CLAIMING OFFER & STORY/BANNER QUICK REPLIES
+      if (
+        lower.includes('claiming offer') ||
+        lower.includes('saw your story from') ||
+        lower.includes('regarding story from') ||
+        lower.includes('regarding banner')
+      ) {
+        const claimReply =
+          `🎁 *చౌటుప్పల్ ఆఫర్ & ప్రమోషన్ ఎంక్వైరీ నిర్ధారణ* ✨\n\n` +
+          `నమస్కారం ${senderName} గారు! 🙏\n` +
+          `మీ ఎంక్వైరీ సంబంధిత వ్యాపార నిర్వాహకులకు చేరింది. త్వరలో వారు మీకు ప్రత్యేక ఆఫర్ వివరాలు లేదా సమాధానం అందిస్తారు.\n\n` +
+          `👉 *అన్ని లైవ్ స్టోరీలు & ఆఫర్లు చూడండి:*\n` +
+          `🌐 ${townUrl}/stories\n\n` +
+          `📞 హెల్ప్‌లైన్: 9441348175`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: claimReply,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        return NextResponse.json(withShadow({ status: 'story_offer_inquiry_dispatched' }))
       }
 
       // 3.4. SHOP COUNTER QR STANDEE DISPATCH & PRINT LINK
