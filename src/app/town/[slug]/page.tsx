@@ -52,7 +52,7 @@ export default async function TownTerritoryPage({ params }: TownPageProps) {
           </p>
           <div className="pt-2 flex flex-col gap-2">
             <a
-              href={`https://wa.me/919441348175?text=${encodeURIComponent(`హలో! నేను '${slug}' పట్టణంలో సూపర్ యాప్ & వాట్సాప్ బాట్ ఫ్రాంచైజీ ప్రారంభించడానికి ఆసక్తిగా ఉన్నాను.`)}`}
+              href={`https://wa.me/919494348175?text=${encodeURIComponent(`హలో! నేను '${slug}' పట్టణంలో సూపర్ యాప్ & వాట్సాప్ బాట్ ఫ్రాంచైజీ ప్రారంభించడానికి ఆసక్తిగా ఉన్నాను.`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 shadow-xs transition-colors"
@@ -106,7 +106,7 @@ export default async function TownTerritoryPage({ params }: TownPageProps) {
     (s) => (s.territoryId || FLAGSHIP_TERRITORY_ID) === territory.id && s.status === 'published'
   )
 
-  const whatsappPhone = territory.whatsappNumber || territory.contactPhone || '9441348175'
+  const whatsappPhone = territory.whatsappNumber || territory.contactPhone || '9494348175'
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">

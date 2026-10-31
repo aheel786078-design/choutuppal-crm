@@ -59,7 +59,7 @@ const DEFAULT_BANNERS: BannerItem[] = [
     id: 'bnr_default_2',
     title: 'టాప్ హోమ్‌పేజీ బ్యానర్ యాడ్స్ ద్వారా 10,000+ స్థానిక కస్టమర్లను చేరుకోండి',
     imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
-    linkUrl: 'https://wa.me/919441348175?text=Hi%20Choutuppal%2C%20I%20want%20to%20book%20a%20Banner%20Ad',
+    linkUrl: 'https://wa.me/919494348175?text=Hi%20Choutuppal%2C%20I%20want%20to%20book%20a%20Banner%20Ad',
     isActive: true,
     type: 'TOP_BANNER',
     territoryId: 'territory_choutuppal',

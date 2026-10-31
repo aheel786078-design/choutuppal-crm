@@ -59,7 +59,7 @@ export default function GlobalError({
         <div className="pt-4 border-t border-slate-100 flex items-center justify-center gap-4 text-xs text-slate-500">
           <span>సహాయం కోసం:</span>
           <a
-            href="https://wa.me/919441348175?text=Hello%20Mana%20Choutuppal%2C%20I%20faced%20an%20issue%20on%20the%20website."
+            href="https://wa.me/919494348175?text=Hello%20Mana%20Choutuppal%2C%20I%20faced%20an%20issue%20on%20the%20website."
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 font-bold text-emerald-600 hover:text-emerald-700"

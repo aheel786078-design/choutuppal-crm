@@ -90,7 +90,7 @@ export default function StoriesPage() {
           </div>
 
           <a
-            href="https://wa.me/919441348175?text=Hello%20Choutuppal%20App,%20I%20want%20to%20post%20a%20Story%20or%20Offer%20for%20my%20business."
+            href="https://wa.me/919494348175?text=Hello%20Choutuppal%20App,%20I%20want%20to%20post%20a%20Story%20or%20Offer%20for%20my%20business."
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold shadow-xs transition"
@@ -288,13 +288,13 @@ export default function StoriesPage() {
             చౌటుప్పల్ యాప్ ద్వారా మీ వ్యాపార ఆఫర్‌లు, కొత్త స్టాక్ మరియు ప్రత్యేక డిస్కౌంట్లను వేలాది మంది స్థానిక కస్టమర్లకు వాట్సాప్ మరియు వెబ్‌సైట్ ద్వారా చేరువ చేయండి.
           </p>
           <a
-            href="https://wa.me/919441348175?text=Hello,%20I%20want%20to%20advertise%20my%20business%20offer%20on%20Choutuppal%20App."
+            href="https://wa.me/919494348175?text=Hello,%20I%20want%20to%20advertise%20my%20business%20offer%20on%20Choutuppal%20App."
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold shadow-xs transition"
           >
             <MessageCircle className="h-4 w-4" />
-            <span>WhatsApp ద్వారా ఆఫర్ పంపండి (9441348175)</span>
+            <span>WhatsApp ద్వారా ఆఫర్ పంపండి (9494348175)</span>
           </a>
         </section>
       </div>

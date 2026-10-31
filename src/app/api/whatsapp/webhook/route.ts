@@ -340,6 +340,243 @@ export async function POST(req: Request) {
         return NextResponse.json(withShadow({ status: 'vendor_claim_sent', listingId: matchedListing.id }))
       }
 
+      // 3.1. LISTING DETAILS INQUIRY FROM WEBSITE BUTTONS & CARDS
+      // Matches: "want details for ... (Ref: ...)" or "inquiry for ... (Ref: ...)" or ref/id tags
+      const refMatch = incomingText.match(/\b(?:ref|id):\s*([a-zA-Z0-9_\-]+)/i)
+      const isListingInquiry =
+        refMatch ||
+        lower.includes('want details for') ||
+        lower.includes('inquiry for') ||
+        lower.includes('details for') ||
+        lower.includes('వ్యాపారం చూసి') ||
+        lower.includes('వివరాలు కావాలి')
+
+      if (isListingInquiry && !lower.includes('interested in "')) {
+        const targetId = refMatch ? refMatch[1] : null
+        const targetListing = targetId
+          ? (store.listings || []).find((l) => l.id === targetId || l.slug === targetId || l.id === `lst_${targetId}`)
+          : (store.listings || []).find((l) => isListingPublished(l) && lower.includes(l.title.toLowerCase().slice(0, 15)))
+
+        if (targetListing) {
+          const listingUrl = `${townUrl}/business/${targetListing.slug || targetListing.id}`
+          const listingCover =
+            targetListing.coverImage ||
+            'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80'
+
+          const listingReply =
+            `🏢 *${targetListing.title}* (చౌటుప్పల్ అధికారిక వెరిఫైడ్ మినీ వెబ్‌సైట్) ✅\n\n` +
+            `నమస్కారం ${senderName} గారు! 🙏\n` +
+            `మీరు కోరిన వ్యాపార వివరాలు సిద్ధంగా ఉన్నాయి:\n\n` +
+            `📍 *చిరునామా:* ${targetListing.address || `${targetListing.villageName || 'చౌటుప్పల్'}, తెలంగాణ`}\n` +
+            `🏷️ *కేటగిరీ:* ${targetListing.categoryName || 'వ్యాపారం'} · ${targetListing.villageName || 'చౌటుప్పల్'}\n` +
+            `📞 *డైరెక్ట్ కాల్:* +91 ${targetListing.phone}\n` +
+            `💬 *ఓనర్ వాట్సాప్:* +91 ${targetListing.whatsapp || targetListing.phone}\n` +
+            `⏰ *పని వేళలు:* ఉదయం 9:00 - రాత్రి 9:00 (రోజూ తెరిచి ఉంటుంది)\n` +
+            (targetListing.price ? `💰 *ధర:* ${targetListing.price}\n` : '') +
+            `\n👉 *ఫోటోలు, సేవలు, ధరలు & కస్టమర్ రివ్యూల కోసం పూర్తి మినీ వెబ్‌సైట్ చూడండి:*\n` +
+            `🌐 ${listingUrl}\n\n` +
+            `🖨️ *షాప్ కౌంటర్ QR స్టాండీ కోసం 'QR' అని పంపండి.*\n` +
+            `📢 చౌటుప్పల్ యాప్ హెల్ప్‌లైన్: 9441348175`
+
+          store.messages.unshift({
+            id: `msg_out_${Date.now()}`,
+            territoryId: territory.id,
+            phone: senderPhone,
+            contactName: targetListing.title,
+            direction: 'outbound',
+            messageText: listingReply,
+            imageUrl: listingCover,
+            status: 'sent',
+            createdAt: new Date().toISOString(),
+          })
+
+          if (existingContact) {
+            existingContact.listingId = targetListing.id
+            existingContact.listingTitle = targetListing.title
+            if (!existingContact.tags) existingContact.tags = []
+            if (!existingContact.tags.includes('Listing Lead')) {
+              existingContact.tags.push('Listing Lead')
+            }
+          }
+
+          return NextResponse.json(
+            withShadow({
+              status: 'listing_details_dispatched',
+              listingId: targetListing.id,
+              listingTitle: targetListing.title,
+              url: listingUrl,
+            })
+          )
+        }
+      }
+
+      // 3.2. SPECIFIC SERVICE / PRODUCT INQUIRY FROM LISTING CATALOG
+      // Matches: "interested in "<Item>" from <Business> (Ref: ...)"
+      if (lower.includes('interested in "') || (lower.includes('interested in') && lower.includes('from'))) {
+        const itemMatch = incomingText.match(/interested in ["“']([^"”']+)["”'] from (.+?)(?:\s*\(ref:|$)/i)
+        const serviceItemName = itemMatch ? itemMatch[1].trim() : 'Service'
+        const rawShopName = itemMatch ? itemMatch[2].trim() : ''
+
+        const targetListing = (store.listings || []).find((l) =>
+          (refMatch && (l.id === refMatch[1] || l.slug === refMatch[1])) ||
+          (rawShopName && (l.title.toLowerCase().includes(rawShopName.toLowerCase()) || rawShopName.toLowerCase().includes(l.title.toLowerCase())))
+        ) || (store.listings || [])[0]
+
+        if (targetListing) {
+          const serviceReply =
+            `🛍️ *${targetListing.title}* వద్ద *${serviceItemName}* వివరాలు! ✨\n\n` +
+            `నమస్కారం ${senderName} గారు! 🙏\n` +
+            `మీరు విచారించిన '${serviceItemName}' సేవ/ఉత్పత్తి వివరాలు సిద్ధంగా ఉన్నాయి.\n\n` +
+            `📞 *షాప్ ఓనర్ ఫోన్ నంబర్:* +91 ${targetListing.phone}\n` +
+            `💬 *షాప్ ఓనర్ వాట్సాప్:* https://wa.me/91${(targetListing.whatsapp || targetListing.phone).replace(/\D/g, '')}\n` +
+            `📍 *షాప్ లొకేషన్:* ${targetListing.address || 'చౌటుప్పల్, తెలంగాణ'}\n\n` +
+            `👉 *పూర్తి సర్వీస్ మెనూ, ధరలు & ఫోటోల కోసం మినీ వెబ్‌సైట్ చూడండి:*\n` +
+            `🌐 ${townUrl}/business/${targetListing.slug || targetListing.id}\n\n` +
+            `📢 చౌటుప్పల్ యాప్ హెల్ప్‌లైన్: 9441348175`
+
+          store.messages.unshift({
+            id: `msg_out_${Date.now()}`,
+            territoryId: territory.id,
+            phone: senderPhone,
+            direction: 'outbound',
+            messageText: serviceReply,
+            imageUrl: targetListing.coverImage,
+            status: 'sent',
+            createdAt: new Date().toISOString(),
+          })
+
+          return NextResponse.json(
+            withShadow({
+              status: 'service_inquiry_dispatched',
+              listingId: targetListing.id,
+              serviceItem: serviceItemName,
+            })
+          )
+        }
+      }
+
+      // 3.3. BANNER AD BOOKING FLOW
+      if (
+        lower.includes('banner ad') ||
+        lower.includes('బ్యానర్ అడ్') ||
+        lower.includes('బ్యానర్ ప్రమోషన్') ||
+        lower.includes('book a banner')
+      ) {
+        const bannerReply =
+          `📢 *చౌటుప్పల్ యాప్ బ్యానర్ అడ్వర్టైజింగ్ ప్యాకేజీలు* 🎯\n\n` +
+          `నమస్కారం ${senderName} గారు! 🙏\n` +
+          `చౌటుప్పల్ యాప్ హోమ్‌పేజీలో ప్రతిరోజూ వేలాది మంది స్థానిక కస్టమర్లు చూసే టాప్ బ్యానర్ స్లాట్లు:\n\n` +
+          `🌟 *1. స్టాండర్డ్ బ్యానర్:* ₹499 / నెల (హోమ్‌పేజీ రొటేషన్ + డైరెక్ట్ కాల్ బటన్)\n` +
+          `🔥 *2. ప్రీమియం స్పాన్సర్డ్:* ₹999 / నెల (టాప్ పిన్డ్ పొజిషన్ + WhatsApp ఆర్డర్ బటన్ + సోషల్ ప్రమోషన్)\n\n` +
+          `💡 *మీ యాడ్ ఇవ్వడానికి:*\n` +
+          `మీ షాప్ పేరు, ఫోటో/బ్యానర్ మరియు ఆఫర్ వివరాలను ఈ చాట్ లోనే పంపించండి. మా డిజైనర్ టీమ్ 2 గంటల్లో లైవ్ చేస్తుంది!\n\n` +
+          `📞 అడ్వర్టైజింగ్ హెల్ప్‌లైన్: 9441348175\n` +
+          `🌐 Website: ${townUrl}`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: bannerReply,
+          imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        return NextResponse.json(withShadow({ status: 'banner_booking_dispatched' }))
+      }
+
+      // 3.7. UPGRADE LISTING TO FEATURED FLOW
+      if (
+        lower.includes('upgrade my listing to featured') ||
+        lower.includes('featured listing') ||
+        lower.includes('ఫీచర్డ్ లిస్టింగ్')
+      ) {
+        const upgradeReply =
+          `🌟 *చౌటుప్పల్ ఫీచర్డ్ & ప్రీమియం లిస్టింగ్ అప్‌గ్రేడ్* 🚀\n\n` +
+          `నమస్కారం ${senderName} గారు! 🙏\n` +
+          `మీ వ్యాపారాన్ని కేటగిరీ సెర్చ్‌లో టాప్‌లో ఉంచి 10 రెట్లు ఎక్కువ కస్టమర్లను పొందడానికి ఫీచర్డ్ ప్లాన్ అందుబాటులో ఉంది:\n\n` +
+          `✨ *ఫీచర్లు:*\n` +
+          `• కేటగిరీలో నెంబర్ #1 స్థానం\n` +
+          `• 'Verified Featured' గోల్డెన్ స్టార్ బ్యాడ్జ్\n` +
+          `• వాట్సాప్ బాట్ సిఫార్సులలో మొదటి ప్రాధాన్యత\n` +
+          `• ఉచిత కలర్ కౌంటర్ QR స్టాండీ\n\n` +
+          `👉 *వెంటనే అప్‌గ్రేడ్ చేసుకోవడానికి లింక్:*\n` +
+          `🌐 ${townUrl}/dashboard\n\n` +
+          `📞 హెల్ప్‌లైన్: 9441348175`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: upgradeReply,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        return NextResponse.json(withShadow({ status: 'featured_upgrade_info_dispatched' }))
+      }
+
+      // 3.8. GENERAL ASSISTANCE & SUPPORT HELPLINE FLOW
+      if (
+        lower.includes('need assistance') ||
+        lower.includes('faced an issue') ||
+        lower.includes('సహాయం కావాలి') ||
+        lower.includes('update my merchant profile') ||
+        lower === 'support' ||
+        lower === 'హెల్ప్‌లైన్'
+      ) {
+        const supportReply =
+          `🤝 *చౌటుప్పల్ యాప్ అధికారిక సపోర్ట్ & హెల్ప్‌డెస్క్* 🛠️\n\n` +
+          `నమస్కారం ${senderName} గారు! మేము మీకు ఎలా సహాయపడగలం?\n\n` +
+          `1️⃣ మీ షాప్ వివరాలను ఉచితంగా చేర్చడానికి -> 'నా వ్యాపారాన్ని చేర్చండి' అని పంపండి\n` +
+          `2️⃣ ఉచిత షాప్ కౌంటర్ QR స్టాండీ కోసం -> 'QR' అని పంపండి\n` +
+          `3️⃣ నేటి స్టోరీలు & ఆఫర్ల కోసం -> 'Stories' అని పంపండి\n` +
+          `4️⃣ మీ డ్యాష్‌బోర్డ్ పాస్‌వర్డ్-లెస్ లాగిన్ కోసం -> 'Login' అని పంపండి\n` +
+          `5️⃣ బ్యానర్ యాడ్స్ & బిజినెస్ ప్రమోషన్ల కోసం -> 'Banner' అని పంపండి\n\n` +
+          `📞 నేరుగా మాట్లాడటానికి అడ్మిన్ హెల్ప్‌లైన్: 9441348175\n` +
+          `🌐 అధికారిక పోర్టల్: ${townUrl}`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: supportReply,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        return NextResponse.json(withShadow({ status: 'support_menu_dispatched' }))
+      }
+
+      // 3.9. WARD COMMUNITY WHATSAPP GROUP FLOW
+      if (lower.includes('community whatsapp group') || (lower.includes('ward') && lower.includes('group'))) {
+        const wardMatch = incomingText.match(/ward\s*(\d+)/i)
+        const wardNum = wardMatch ? wardMatch[1] : '1'
+        const wardReply =
+          `👥 *చౌటుప్పల్ వార్డ్ ${wardNum} కమ్యూనిటీ వాట్సాప్ గ్రూప్* 📢\n\n` +
+          `నమస్కారం ${senderName} గారు! 🙏\n` +
+          `మీ వార్డ్ పరిధిలోని స్థానిక వార్తలు, మున్సిపల్ సమాచారం, తాగునీరు, విద్యుత్ మరియు అత్యవసర సేవల అప్‌డేట్స్ పొందడానికి గ్రూప్‌లో చేరండి:\n\n` +
+          `👉 *వార్డ్ ${wardNum} అధికారిక గ్రూప్ లింక్:*\n` +
+          `🌐 https://chat.whatsapp.com/choutuppal-ward-${wardNum}\n\n` +
+          `🌐 Website: ${townUrl}/community`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: wardReply,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        return NextResponse.json(withShadow({ status: 'ward_group_dispatched', ward: wardNum }))
+      }
+
       // 3.4. SHOP COUNTER QR STANDEE DISPATCH & PRINT LINK
       if (
         buttonPayload === 'btn_my_qr' ||
@@ -772,7 +1009,12 @@ export async function POST(req: Request) {
       const matchedCategory = (store.listings || []).find((l) =>
         (l.territoryId || FLAGSHIP_TERRITORY_ID) === territory.id &&
         isListingPublished(l) &&
-        (lower.includes(l.categoryName?.toLowerCase() || '') || l.title.toLowerCase().includes(lower))
+        (
+          (l.categoryName && lower.includes(l.categoryName.toLowerCase())) ||
+          (l.categoryId && lower.includes(l.categoryId.toLowerCase().replace('cat-', ''))) ||
+          lower.includes(l.title.toLowerCase()) ||
+          lower.includes(l.slug.toLowerCase())
+        )
       )
 
       if (matchedCategory) {

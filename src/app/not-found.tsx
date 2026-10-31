@@ -62,7 +62,7 @@ export default function NotFound() {
         <div className="pt-4 border-t border-slate-100 flex items-center justify-center gap-4 text-xs text-slate-500">
           <span>Need help?</span>
           <a
-            href="https://wa.me/919441348175?text=Hello%20Mana%20Choutuppal%2C%20I%20need%20assistance."
+            href="https://wa.me/919494348175?text=Hello%20Mana%20Choutuppal%2C%20I%20need%20assistance."
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 font-bold text-emerald-600 hover:text-emerald-700"

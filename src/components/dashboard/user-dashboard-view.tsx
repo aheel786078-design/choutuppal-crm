@@ -74,7 +74,7 @@ export function UserDashboardView({ user, listings = [], allListings = [] }: Use
 
   const getListingWhatsAppUrl = (title: string, id: string) => {
     const text = encodeURIComponent(`Hi, I am interested in your listing "${title}" on Choutuppal App (ID: ${id}). Please share more details.`)
-    return `https://wa.me/919441348175?text=${text}`
+    return `https://wa.me/919494348175?text=${text}`
   }
 
   return (
@@ -285,7 +285,7 @@ export function UserDashboardView({ user, listings = [], allListings = [] }: Use
                     </p>
                   </div>
                   <a
-                    href="https://wa.me/919441348175?text=Hi%20Choutuppal%2C%20I%20want%20to%20upgrade%20my%20listing%20to%20Featured"
+                    href="https://wa.me/919494348175?text=Hi%20Choutuppal%2C%20I%20want%20to%20upgrade%20my%20listing%20to%20Featured"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-4 text-xs font-bold text-amber-700 hover:text-amber-800 flex items-center gap-1 cursor-pointer"
@@ -628,7 +628,7 @@ export function UserDashboardView({ user, listings = [], allListings = [] }: Use
               <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
                 <span className="text-xs text-slate-500">Need to update phone or ownership?</span>
                 <a
-                  href="https://wa.me/919441348175?text=Hi%20Choutuppal%2C%20I%20want%20to%20update%20my%20merchant%20profile"
+                  href="https://wa.me/919494348175?text=Hi%20Choutuppal%2C%20I%20want%20to%20update%20my%20merchant%20profile"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs font-bold text-emerald-700 hover:underline"

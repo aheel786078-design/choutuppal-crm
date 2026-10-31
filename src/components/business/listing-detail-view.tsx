@@ -204,13 +204,13 @@ END:VCARD`
     return `https://www.google.com/maps/search/?api=1&query=${query}`
   }
 
-  // Send direct inquiry
+  // Send direct inquiry to WhatsApp Bot (9494348175) to trigger official reply flow
   const handleSendInquiry = (e: React.FormEvent) => {
     e.preventDefault()
     const msg = inquiryText.trim()
-      ? `నమస్తే ${listing.title}! చౌటుప్పల్ యాప్‌లో మీ వ్యాపారం చూసి సంప్రదిస్తున్నాను (ID: ${listing.id}). ${inquiryText.trim()}`
-      : `నమస్తే ${listing.title}! చౌటుప్పల్ యాప్‌లో మీ వ్యాపారం చూసి సంప్రదిస్తున్నాను. పూర్తి వివరాలు తెలపగలరు.`
-    const url = `https://wa.me/91${whatsappNum}?text=${encodeURIComponent(msg)}`
+      ? `Hi Choutuppal, inquiry for ${listing.title} (Ref: ${listing.id}): ${inquiryText.trim()}`
+      : `Hi Choutuppal, I want details for ${listing.title} (Ref: ${listing.id})`
+    const url = `https://wa.me/919494348175?text=${encodeURIComponent(msg)}`
     window.open(url, '_blank')
     setInquiryText('')
   }
@@ -754,7 +754,7 @@ END:VCARD`
                         <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between">
                           <span className="text-xs font-black text-emerald-700">{item.price}</span>
                           <a
-                            href={`https://wa.me/91${whatsappNum}?text=${encodeURIComponent(`నమస్తే! ${listing.title} వద్ద "${item.title}" గురించి వివరాలు కావాలి.`)}`}
+                            href={`https://wa.me/919494348175?text=${encodeURIComponent(`Hi Choutuppal, interested in "${item.title}" from ${listing.title} (Ref: ${listing.id})`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
@@ -803,7 +803,7 @@ END:VCARD`
 
                       <div className="mt-4 pt-3 border-t border-slate-100">
                         <a
-                          href={`https://wa.me/91${whatsappNum}?text=${encodeURIComponent(`నమస్తే! ${listing.title} వద్ద "${item.title}" గురించి వివరాలు కావాలి.`)}`}
+                          href={`https://wa.me/919494348175?text=${encodeURIComponent(`Hi Choutuppal, interested in "${item.title}" from ${listing.title} (Ref: ${listing.id})`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="w-full flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition"
@@ -1178,7 +1178,7 @@ END:VCARD`
                         <span>కాల్</span>
                       </a>
                       <a
-                        href={`https://wa.me/91${relWaNum}?text=${encodeURIComponent(`Hi ${rel.title}, inquiring via Choutuppal App.`)}`}
+                        href={`https://wa.me/919494348175?text=${encodeURIComponent(`Hi Choutuppal, I want details for ${rel.title} (Ref: ${rel.id})`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center justify-center gap-1 py-1.5 px-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl text-[11px] font-bold transition"
