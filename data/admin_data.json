@@ -11865,7 +11865,21 @@
       "status": "published",
       "expiresAt": "2027-12-31T23:59:59.000Z",
       "createdAt": "2026-10-31T06:00:00.000Z",
-      "territoryId": "territory_choutuppal"
+      "territoryId": "territory_choutuppal",
+      "likesCount": 8,
+      "likedUserIps": [],
+      "comments": [
+        {
+          "id": "cm_1793450176191_90d4g",
+          "storyId": "st_1",
+          "userName": "రమేష్ కుమార్",
+          "text": "ఈ వీకెండ్ ఆఫర్ ఆదివారం వరకు ఉంటుందా అండి?",
+          "isOwnerReply": false,
+          "createdAt": "2026-10-31T12:36:16.191Z",
+          "status": "published"
+        }
+      ],
+      "sharesCount": 4
     },
     {
       "id": "st_2",
@@ -11877,7 +11891,11 @@
       "status": "published",
       "expiresAt": "2027-12-31T23:59:59.000Z",
       "createdAt": "2026-10-31T06:00:00.000Z",
-      "territoryId": "territory_choutuppal"
+      "territoryId": "territory_choutuppal",
+      "likesCount": 8,
+      "likedUserIps": [],
+      "comments": [],
+      "sharesCount": 3
     },
     {
       "id": "st_3",
@@ -11889,7 +11907,11 @@
       "status": "published",
       "expiresAt": "2027-12-31T23:59:59.000Z",
       "createdAt": "2026-10-31T06:00:00.000Z",
-      "territoryId": "territory_choutuppal"
+      "territoryId": "territory_choutuppal",
+      "likesCount": 8,
+      "likedUserIps": [],
+      "comments": [],
+      "sharesCount": 3
     },
     {
       "id": "st_4",
@@ -11901,7 +11923,11 @@
       "status": "published",
       "expiresAt": "2027-12-31T23:59:59.000Z",
       "createdAt": "2026-10-31T06:00:00.000Z",
-      "territoryId": "territory_choutuppal"
+      "territoryId": "territory_choutuppal",
+      "likesCount": 8,
+      "likedUserIps": [],
+      "comments": [],
+      "sharesCount": 3
     }
   ],
   "offers": [
@@ -12030,327 +12056,22 @@
   ],
   "magicTokens": [
     {
-      "tokenHash": "1d23bcb67fb30bae0df0780f0693eb11a7fee71cc0ebb666539e2f4b28fd4828",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792964730720,
-      "used": true,
-      "createdAt": "2026-10-25T21:30:30Z"
+      "tokenHash": "63c9eadff2312bd53c29f41032b2399afe86e84526ac762aa2dddc39033609e9",
+      "phone": "9441348175",
+      "territoryId": "territory_choutuppal",
+      "role": "SUPER_ADMIN",
+      "expiresAt": 1793438991273,
+      "used": false,
+      "createdAt": "2026-10-31T09:14:51.273Z"
     },
     {
-      "tokenHash": "cc633459ce59cbca38f80a583f231aa2e8374d2200c3eef939248b8253905005",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792963825814,
-      "used": false
-    },
-    {
-      "tokenHash": "aecdb00f81fbdc412c177e572288f434744e112d88ace21568c5dde7c2c3b801",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792964767759,
-      "used": true,
-      "createdAt": "2026-10-25T21:31:07Z"
-    },
-    {
-      "tokenHash": "b39b5e909fdcdf189011b5af410fbc7dddc6edead91d6a6b4a7a1e1713d9c719",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792963862842,
-      "used": false
-    },
-    {
-      "tokenHash": "e3c5a20287f0fd3b2bcb645adfd657d51701dde1b418fe10ba0a5bc590bb1ff0",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792964774718,
-      "used": true,
-      "createdAt": "2026-10-25T21:31:14Z"
-    },
-    {
-      "tokenHash": "33fe73eafc528a2cb10f48ad95a7a5c4158717c5da8415d5ecfee95bcd13c317",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792963869817,
-      "used": false
-    },
-    {
-      "tokenHash": "e8f47db2a6c56e1f58b52e67b0dffa4151ad1db79dffa5a3aa8875e6b2a93f14",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792964892091,
-      "used": true,
-      "createdAt": "2026-10-25T21:33:12Z"
-    },
-    {
-      "tokenHash": "bc44b0458b63a37b81aaaac1438b122db3b1c0a72edd250205d0056a84ed2812",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792963987205,
-      "used": false
-    },
-    {
-      "tokenHash": "ee60e30bd731c79af8c4df50f9477f96d7a7ea24e9ae5dfeb6087e8c96735cd2",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792987929506,
-      "used": true,
-      "createdAt": "2026-10-26T03:57:09Z"
-    },
-    {
-      "tokenHash": "5dc96769a152a38573738855814935c163ce1be2c4e548791d5104e644f0c7fc",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792987024617,
-      "used": false
-    },
-    {
-      "tokenHash": "bdfa45730836b533e34426a24b1471976b2ce99f7d15e358ae8bf89f6684a74a",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792988991117,
-      "used": true,
-      "createdAt": "2026-10-26T04:14:51Z"
-    },
-    {
-      "tokenHash": "7b112b2f5e128d8892d3efb0c4dcdccb21310f5ed592416745544e1582ad617b",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792988086231,
-      "used": false
-    },
-    {
-      "tokenHash": "fac849d41bda5b3f2a283f2fbd5168011e55fe1b0bb98fcbc67b299e1b1a24c2",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792989624700,
-      "used": true,
-      "createdAt": "2026-10-26T04:25:24Z"
-    },
-    {
-      "tokenHash": "1eff22fff987d2ade5ece0993e11075218e1f346d0a66da1d112ba90f207514f",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792988719794,
-      "used": false
-    },
-    {
-      "tokenHash": "27a11b4e61244f232305046d4faf60dcd8f641ba16a5581ca9a696745992040a",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792991537289,
-      "used": true,
-      "createdAt": "2026-10-26T04:57:17Z"
-    },
-    {
-      "tokenHash": "6f26e088ed995a312600c0f4107043b5168f9cc6082c0032d8a2d210fa2ec263",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792990632387,
-      "used": false
-    },
-    {
-      "tokenHash": "9fc482ff98a85d0c71fab1760773891a0df8b8c078c346429160c3954cbf4088",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792993478795,
-      "used": true,
-      "createdAt": "2026-10-26T05:29:38Z"
-    },
-    {
-      "tokenHash": "02ba2b4bf8804104eaa40dca9eb19eecb634b1f38827140f3c74a568179473ca",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792992573912,
-      "used": false
-    },
-    {
-      "tokenHash": "f270aa985ca5377ab856ce601d39b2e66be30d1f181cd3b6a8a2f68f259f5a9e",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792994596570,
-      "used": true,
-      "createdAt": "2026-10-26T05:48:16Z"
-    },
-    {
-      "tokenHash": "ccc4068c8fb095879c8993b107d08e54d04fe80c4ffdf51fd4f178c4e7c8ffea",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792993691685,
-      "used": false
-    },
-    {
-      "tokenHash": "428d4f5b9e6b125c0ae8132d3bf790cc38e05bdd7ab709681866c9480c8c5bdd",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792996419639,
-      "used": true,
-      "createdAt": "2026-10-26T06:18:39Z"
-    },
-    {
-      "tokenHash": "ff513d44fbbfc7e5f787c95bd32ec286802311f40bf5817f7caedc1bfc8cb105",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792995514757,
-      "used": false
-    },
-    {
-      "tokenHash": "0ab94be5d94976d9efbdf0d6c41e8129c230aae63a5cf25b1359adc5e7a5b923",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792997681686,
-      "used": true,
-      "createdAt": "2026-10-26T06:39:41Z"
-    },
-    {
-      "tokenHash": "cce11586a6af966af49947e1d5470ed60f937499a272192fe99b8f277555a5a2",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792996777566,
-      "used": false
-    },
-    {
-      "tokenHash": "97c664c6dd9fb674546e84d53d8c2f4cf87b65c44cb62fbb1a0c2fb7d7554140",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792997904988,
-      "used": true,
-      "createdAt": "2026-10-26T06:43:24Z"
-    },
-    {
-      "tokenHash": "97ec7cb2aa7ec5c9c1c473fc1391b62a7518540cf1f98eaa9d25460f50889277",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792997000462,
-      "used": false
-    },
-    {
-      "tokenHash": "5790b8decaac3d8f35e47a9efa754a941a11f8acf5f457305cbc2d01f8ff519b",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792999733154,
-      "used": true,
-      "createdAt": "2026-10-26T07:13:53Z"
-    },
-    {
-      "tokenHash": "496f81c9838670622f5fe94ea42c58ba1ff22caafb656563d645992cb72d9a68",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1792998828305,
-      "used": false
-    },
-    {
-      "tokenHash": "f097dc71fb0da687636188cda85544c844909e1094b91646eada0ff6ce2174a2",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1793006554226,
-      "used": true,
-      "createdAt": "2026-10-26T09:07:34Z"
-    },
-    {
-      "tokenHash": "561cc7e9659943c1400dc3300fe751fe2661ce66c6e56ff83af88d97f75f8355",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1793005649399,
-      "used": false
-    },
-    {
-      "tokenHash": "9f3078fb6891763f5e21b18c57609ebbf5ae9b13c7e0751b282a4f2a3c18a84b",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1793007826151,
-      "used": true,
-      "createdAt": "2026-10-26T09:28:46Z"
-    },
-    {
-      "tokenHash": "0a1b5e878ec0575959cf08018dbdc2960a116a0eb8427cf344433d8e1e7da32c",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1793006921304,
-      "used": false
-    },
-    {
-      "tokenHash": "e595798b45fbfb4fb976ca9325a2979969cb5da958781dd79c4f3a520c385e6c",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1793019923509,
-      "used": true,
-      "createdAt": "2026-10-26T12:50:23Z"
-    },
-    {
-      "tokenHash": "02077c1ea80d5e352aa309477af1180c4f41f2ae41782eb5e8862b7beb2814bd",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1793019018668,
-      "used": false
-    },
-    {
-      "tokenHash": "65ff6b40e3cbbe264c3f16cb29586849f4f3037f3bd6ae4f525899d99b3dec4b",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1793020089741,
-      "used": true,
-      "createdAt": "2026-10-26T12:53:09Z"
-    },
-    {
-      "tokenHash": "69aff493e3ae10cb2ac1ee42e9c6d0cc2427bd77546f2e5ba80adecdb6d7252d",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1793019184892,
-      "used": false
-    },
-    {
-      "tokenHash": "a8397e9e16e3f13a367ed24c0a33b8831ea67603a8635f99392f3dc7f0b1d227",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1793020878567,
-      "used": true,
-      "createdAt": "2026-10-26T13:06:18Z"
-    },
-    {
-      "tokenHash": "db5112e1b664fd55cd513dd3a68e56ea3ce371ec16d73cfb65a1e8d3a8ea3243",
-      "phone": "9848011223",
-      "territoryId": "territory_nalgonda",
-      "role": "FRANCHISE_ADMIN",
-      "expiresAt": 1793019973729,
-      "used": false
+      "tokenHash": "1a97229def30f1c932b6c5753018be24a962956f3c3d6f7e33e8b8d8c3ac726c",
+      "phone": "9441348175",
+      "territoryId": "territory_choutuppal",
+      "role": "SUPER_ADMIN",
+      "expiresAt": 1793438998457,
+      "used": false,
+      "createdAt": "2026-10-31T09:14:58.458Z"
     }
   ],
   "territories": [
