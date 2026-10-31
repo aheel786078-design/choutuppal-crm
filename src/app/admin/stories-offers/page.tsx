@@ -15,6 +15,11 @@ import {
   ExternalLink,
   Send,
   X,
+  Heart,
+  MessageSquare,
+  Share2,
+  Eye,
+  Lock,
 } from 'lucide-react'
 import { AdminHeader } from '@/components/admin/admin-header'
 import { UserStory, UserOffer } from '@/lib/types'
@@ -292,15 +297,35 @@ export default function StoriesOffersPage() {
                     <span className="absolute top-2 left-2 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
                       {st.status.toUpperCase()}
                     </span>
-                    <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-sm shadow-xs border border-slate-200/60 p-2 rounded-lg text-white text-xs">
+                    <div className="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur-sm shadow-xs border border-slate-200/60 p-2 rounded-lg text-slate-800 text-xs">
                       <p className="line-clamp-2">{st.caption}</p>
                     </div>
                   </div>
 
-                  <div className="p-3.5 space-y-2">
+                  <div className="p-3.5 space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <h5 className="font-bold text-xs text-white truncate max-w-[65%]">{st.businessName}</h5>
-                      <span className="text-[10px] text-emerald-400 font-mono">{st.ownerPhone}</span>
+                      <h5 className="font-bold text-xs text-slate-900 truncate max-w-[65%]">{st.businessName}</h5>
+                      <span className="text-[10px] text-emerald-600 font-mono font-medium">{st.ownerPhone}</span>
+                    </div>
+
+                    {/* Private Analytics Bar */}
+                    <div className="grid grid-cols-4 gap-1 py-1.5 px-2 bg-slate-50 rounded-lg text-slate-600 text-[10px] font-medium border border-slate-100">
+                      <span className="flex items-center gap-1 justify-center" title="Views">
+                        <Eye className="w-3 h-3 text-slate-400" />
+                        <span>{st.viewsCount ?? 0}</span>
+                      </span>
+                      <span className="flex items-center gap-1 justify-center" title="Likes (Private)">
+                        <Heart className="w-3 h-3 text-rose-500 fill-rose-500/20" />
+                        <span>{st.likesCount ?? 0}</span>
+                      </span>
+                      <span className="flex items-center gap-1 justify-center" title="Questions/Comments (Private)">
+                        <MessageSquare className="w-3 h-3 text-blue-500" />
+                        <span>{st.commentsCount ?? (st.comments?.length || 0)}</span>
+                      </span>
+                      <span className="flex items-center gap-1 justify-center" title="Shares (Private)">
+                        <Share2 className="w-3 h-3 text-emerald-500" />
+                        <span>{st.sharesCount ?? 0}</span>
+                      </span>
                     </div>
 
                     <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-100">
@@ -308,13 +333,19 @@ export default function StoriesOffersPage() {
                         <Clock className="w-3 h-3 text-slate-500" />
                         {st.expiresAt ? `Expires ${new Date(st.expiresAt).toLocaleDateString()}` : 'Live'}
                       </span>
-                      <button
-                        onClick={() => handleDeleteStory(st.id)}
-                        className="text-red-400 hover:text-red-300 p-1"
-                        title="Delete story"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <span className="flex items-center gap-0.5 text-[9px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded font-mono">
+                          <Lock className="w-2.5 h-2.5" />
+                          Private Stats
+                        </span>
+                        <button
+                          onClick={() => handleDeleteStory(st.id)}
+                          className="text-red-400 hover:text-red-600 p-1"
+                          title="Delete story"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

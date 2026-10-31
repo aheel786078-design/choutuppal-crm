@@ -436,10 +436,6 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
                     className="h-full w-full object-cover"
                   />
                 </div>
-                <span className="absolute -bottom-1 -right-1 bg-black/75 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full border border-white/40 flex items-center gap-0.5">
-                  <Heart className="w-2 h-2 fill-red-500 text-red-500" />
-                  {data.likesCount}
-                </span>
               </div>
               <span className="mt-1 w-18 truncate text-center text-xs font-medium text-slate-800">
                 {story.owner.name}
@@ -603,7 +599,7 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
                 </button>
               </div>
 
-              {/* ❤️ Like Button with Counter */}
+              {/* ❤️ Like Button (Private Count: Hidden from Public) */}
               <button
                 type="button"
                 onClick={() => handleToggleLike(currentStory.id)}
@@ -616,21 +612,21 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
                     currentData.isLiked ? 'fill-red-500 text-red-500' : 'text-white'
                   )}
                 />
-                <span className="text-[10px] font-bold text-white/90 -mt-0.5">
-                  {currentData.likesCount}
+                <span className="text-[10px] font-medium text-white/80 -mt-0.5">
+                  లైక్
                 </span>
               </button>
 
-              {/* 💬 Comments Drawer Button with Counter */}
+              {/* 💬 Comments Drawer Button (Private Count: Hidden from Public) */}
               <button
                 type="button"
                 onClick={() => handleOpenComments(currentStory.id)}
                 className="flex flex-col items-center justify-center min-w-[38px] text-white hover:scale-110 active:scale-90 transition cursor-pointer"
-                title="View comments"
+                title="View & post comments"
               >
                 <MessageSquare className="w-6 h-6 text-white" />
-                <span className="text-[10px] font-bold text-white/90 -mt-0.5">
-                  {currentData.commentsCount}
+                <span className="text-[10px] font-medium text-white/80 -mt-0.5">
+                  కమెంట్స్
                 </span>
               </button>
 
@@ -642,8 +638,8 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
                 title="Share story"
               >
                 <Share2 className="w-6 h-6 text-white" />
-                <span className="text-[10px] font-bold text-white/90 -mt-0.5">
-                  {currentData.sharesCount}
+                <span className="text-[10px] font-medium text-white/80 -mt-0.5">
+                  షేర్
                 </span>
               </button>
             </div>
@@ -651,12 +647,12 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
             {/* 💬 COMMENTS BOTTOM DRAWER MODAL */}
             {commentsDrawerOpen && (
               <div className="absolute inset-x-0 bottom-0 max-h-[70%] h-[70%] bg-slate-900/95 backdrop-blur-xl border-t border-white/20 rounded-t-3xl z-[10005] flex flex-col shadow-2xl text-white pointer-events-auto animate-in slide-in-from-bottom duration-200">
-                {/* Drawer Header */}
+                {/* Drawer Header (Private Count: Hidden from Public) */}
                 <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between shrink-0">
                   <div className="flex items-center gap-2">
                     <MessageSquare className="w-4 h-4 text-emerald-400" />
                     <h4 className="text-sm font-bold text-white">
-                      కమెంట్లు & ప్రశ్నలు ({activeComments.length})
+                      కమెంట్లు &amp; ప్రశ్నలు (Comments &amp; Inquiries)
                     </h4>
                   </div>
                   <button

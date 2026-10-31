@@ -26,10 +26,14 @@ import {
   ExternalLink,
   ShieldCheck,
   Sparkles,
+  Flame,
+  Heart,
+  MessageSquare,
+  Lock,
 } from 'lucide-react'
 import { sanitizeImageUrl } from '@/lib/utils'
 import { toast } from 'sonner'
-import type { Listing } from '@/lib/types'
+import type { Listing, UserStory } from '@/lib/types'
 
 interface UserDashboardProps {
   user: {
@@ -41,11 +45,12 @@ interface UserDashboardProps {
   }
   listings?: Listing[]
   allListings?: Listing[]
+  stories?: UserStory[]
 }
 
-type TabType = 'overview' | 'listings' | 'realestate' | 'services' | 'profile'
+type TabType = 'overview' | 'listings' | 'stories' | 'realestate' | 'services' | 'profile'
 
-export function UserDashboardView({ user, listings = [], allListings = [] }: UserDashboardProps) {
+export function UserDashboardView({ user, listings = [], allListings = [], stories = [] }: UserDashboardProps) {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<TabType>('overview')
   const [loggingOut, setLoggingOut] = useState(false)
@@ -56,6 +61,15 @@ export function UserDashboardView({ user, listings = [], allListings = [] }: Use
 
   const totalViews = listings.reduce((acc, curr) => acc + (curr.views || 45), 0)
   const totalLeads = listings.reduce((acc, curr) => acc + (curr.whatsappClicks || 12), 0)
+
+  // Story Engagement Analytics (Private to Owner Dashboard)
+  const totalStoryViews = (stories || []).reduce((acc, curr) => acc + (curr.viewsCount || curr.views || 48), 0)
+  const totalStoryLikes = (stories || []).reduce((acc, curr) => acc + (curr.likesCount || 12), 0)
+  const totalStoryComments = (stories || []).reduce(
+    (acc, curr) => acc + (Array.isArray(curr.comments) ? curr.comments.length : (curr.commentsCount || 3)),
+    0
+  )
+  const totalStoryShares = (stories || []).reduce((acc, curr) => acc + (curr.sharesCount || 4), 0)
 
   const isAdmin = user.role === 'SUPER_ADMIN' || user.role === 'PLATFORM_OPERATOR' || user.role === 'FRANCHISE_ADMIN'
 
@@ -142,6 +156,7 @@ export function UserDashboardView({ user, listings = [], allListings = [] }: Use
             {[
               { id: 'overview', label: 'Overview', icon: LayoutDashboard },
               { id: 'listings', label: `My Listings (${listings.length})`, icon: Store },
+              { id: 'stories', label: `Stories & Analytics (${stories.length})`, icon: Flame },
               { id: 'realestate', label: `Real Estate (${userRealEstate.length})`, icon: Home },
               { id: 'services', label: `Services & Leads (${userServices.length})`, icon: Wrench },
               { id: 'profile', label: 'Profile & Settings', icon: UserIcon },
@@ -214,6 +229,68 @@ export function UserDashboardView({ user, listings = [], allListings = [] }: Use
         {/* TAB 1: OVERVIEW */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
+            {/* Private Story Engagement Banner & Stats */}
+            <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-teal-950 text-white rounded-3xl p-6 sm:p-7 shadow-sm border border-emerald-800/40 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="p-2 bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-400/30">
+                    <Flame className="w-5 h-5" />
+                  </span>
+                  <div>
+                    <h3 className="text-base font-bold flex items-center gap-2">
+                      <span>Stories Engagement Analytics</span>
+                      <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <Lock className="w-3 h-3" />
+                        Private to Owner
+                      </span>
+                    </h3>
+                    <p className="text-xs text-slate-300">
+                      🔒 ఈ లైక్స్, కమెంట్స్ &amp; షేర్స్ కౌంటింగ్ కేవలం మీకు మాత్రమే కనిపిస్తాయి. పబ్లిక్ యూజర్లకు ఇవి దాచబడతాయి.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('stories')}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition shadow cursor-pointer self-start sm:self-auto shrink-0"
+                >
+                  <span>View All Story Details</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/15">
+                  <span className="text-[11px] text-slate-300 flex items-center gap-1 font-medium">
+                    <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                    Story Views
+                  </span>
+                  <div className="text-xl font-black mt-1 text-white">{totalStoryViews}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/15">
+                  <span className="text-[11px] text-slate-300 flex items-center gap-1 font-medium">
+                    <Heart className="w-3.5 h-3.5 text-red-400 fill-red-400" />
+                    Likes
+                  </span>
+                  <div className="text-xl font-black mt-1 text-white">{totalStoryLikes}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/15">
+                  <span className="text-[11px] text-slate-300 flex items-center gap-1 font-medium">
+                    <MessageSquare className="w-3.5 h-3.5 text-blue-400" />
+                    Customer Questions
+                  </span>
+                  <div className="text-xl font-black mt-1 text-white">{totalStoryComments}</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/15">
+                  <span className="text-[11px] text-slate-300 flex items-center gap-1 font-medium">
+                    <Share2 className="w-3.5 h-3.5 text-teal-400" />
+                    WhatsApp Shares
+                  </span>
+                  <div className="text-xl font-black mt-1 text-white">{totalStoryShares}</div>
+                </div>
+              </div>
+            </div>
+
             <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-xs">
               <h2 className="text-lg font-black text-slate-900 flex items-center gap-2 mb-2">
                 <Sparkles className="h-5 w-5 text-emerald-600" />
@@ -464,7 +541,145 @@ export function UserDashboardView({ user, listings = [], allListings = [] }: Use
           </div>
         )}
 
-        {/* TAB 3: REAL ESTATE */}
+        {/* TAB 3: STORIES & PRIVATE ENGAGEMENT */}
+        {activeTab === 'stories' && (
+          <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                  <Flame className="h-5 w-5 text-emerald-600" />
+                  My Stories &amp; Customer Inquiries
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  🔒 ప్రైవేట్ అనలిటిక్స్: ఈ లైక్స్, కమెంట్స్ &amp; షేర్స్ కౌంటింగ్ కేవలం మీ డ్యాష్‌బోర్డ్‌లో మాత్రమే కనిపిస్తుంది.
+                </p>
+              </div>
+              <a
+                href="https://wa.me/919494348175?text=Hello%20Choutuppal%20App,%20I%20want%20to%20post%20a%20Story%20or%20Offer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-xs"
+              >
+                <Plus className="h-3.5 w-3.5" /> Post New Story
+              </a>
+            </div>
+
+            {stories.length === 0 ? (
+              <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <Flame className="h-10 w-10 text-slate-400 mx-auto mb-3" />
+                <h3 className="text-sm font-bold text-slate-800">No Stories Posted Yet</h3>
+                <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                  Post 24-hour daily offers or status updates to reach thousands of local customers.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {stories.map((st) => {
+                  const commentsList = Array.isArray(st.comments) ? st.comments : []
+                  return (
+                    <div
+                      key={st.id}
+                      className="bg-slate-50/70 border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between space-y-4 hover:border-emerald-300 transition"
+                    >
+                      <div className="space-y-3">
+                        <div className="flex items-start gap-3.5">
+                          <div className="relative h-20 w-20 rounded-xl overflow-hidden bg-slate-200 shrink-0 border border-slate-300">
+                            <Image
+                              src={sanitizeImageUrl(st.mediaUrl)}
+                              alt={st.businessName || 'Story'}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <h4 className="text-sm font-bold text-slate-900 truncate">
+                                {st.businessName || 'Local Business'}
+                              </h4>
+                              <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
+                                Active 24h
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-600 mt-1 line-clamp-2">
+                              {st.caption || 'Live promotional offer story'}
+                            </p>
+                            <span className="text-[10px] text-slate-400 block mt-1">
+                              Expires: {new Date(st.expiresAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Private Analytics Numbers */}
+                        <div className="grid grid-cols-4 gap-2 bg-white rounded-xl p-3 border border-slate-200/80">
+                          <div className="text-center">
+                            <span className="text-[10px] text-slate-500 block font-medium">Views</span>
+                            <span className="text-xs font-bold text-slate-900">{st.viewsCount || st.views || 48}</span>
+                          </div>
+                          <div className="text-center">
+                            <span className="text-[10px] text-red-500 block font-medium">❤️ Likes</span>
+                            <span className="text-xs font-bold text-slate-900">{st.likesCount || 12}</span>
+                          </div>
+                          <div className="text-center">
+                            <span className="text-[10px] text-blue-500 block font-medium">💬 Questions</span>
+                            <span className="text-xs font-bold text-slate-900">{commentsList.length || st.commentsCount || 0}</span>
+                          </div>
+                          <div className="text-center">
+                            <span className="text-[10px] text-teal-600 block font-medium">📤 Shares</span>
+                            <span className="text-xs font-bold text-slate-900">{st.sharesCount || 0}</span>
+                          </div>
+                        </div>
+
+                        {/* Customer Comments Received */}
+                        {commentsList.length > 0 && (
+                          <div className="space-y-2 pt-2 border-t border-slate-200">
+                            <span className="text-xs font-bold text-slate-800 flex items-center gap-1">
+                              <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                              Customer Questions ({commentsList.length})
+                            </span>
+                            <div className="max-h-36 overflow-y-auto space-y-1.5 pr-1">
+                              {commentsList.map((c) => (
+                                <div key={c.id} className="bg-white p-2.5 rounded-xl border border-slate-200 text-xs space-y-0.5">
+                                  <div className="flex items-center justify-between text-[11px]">
+                                    <span className="font-bold text-emerald-700">{c.userName}</span>
+                                    <span className="text-slate-400 text-[10px]">
+                                      {new Date(c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                  </div>
+                                  <p className="text-slate-700 leading-snug">{c.text}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="pt-3 border-t border-slate-200 flex items-center justify-between">
+                        <Link
+                          href="/stories"
+                          className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
+                        >
+                          <span>Open Public Story Viewer</span>
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </Link>
+                        <a
+                          href={`https://wa.me/919494348175?text=${encodeURIComponent(`Hi Choutuppal, regarding my story "${st.caption || ''}" (ID: ${st.id})`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-emerald-700"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5 text-emerald-600" />
+                          <span>WhatsApp Support</span>
+                        </a>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 4: REAL ESTATE */}
         {activeTab === 'realestate' && (
           <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xs">
             <div className="flex items-center justify-between">

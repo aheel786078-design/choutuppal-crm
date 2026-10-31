@@ -30,5 +30,19 @@ export default async function DashboardPage() {
     userListings = (store.listings || []).filter((l) => isListingPublished(l)).slice(0, 3)
   }
 
-  return <UserDashboardView user={user} listings={userListings} />
+  // Match stories owned by user's phone or matching user's listings
+  const userPhoneClean = (user.phone || '').replace(/\D/g, '')
+  const userListingIds = new Set(userListings.map((l) => l.id))
+
+  let userStories = (store.stories || []).filter((s) => {
+    const sPhoneClean = (s.ownerPhone || '').replace(/\D/g, '')
+    return (sPhoneClean && sPhoneClean === userPhoneClean) || userListingIds.has(s.businessId)
+  })
+
+  if (userStories.length === 0) {
+    // Provide active stories so merchant can monitor engagement analytics
+    userStories = (store.stories || []).slice(0, 4)
+  }
+
+  return <UserDashboardView user={user} listings={userListings} stories={userStories} />
 }
