@@ -25,17 +25,47 @@ export async function generateMetadata({ params }: ListingPageProps): Promise<Me
     }
   }
 
+  const fallbackImage =
+    'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80'
+  const rawImage = listing.coverImage || listing.logo || fallbackImage
+  const coverUrl = rawImage.startsWith('http')
+    ? rawImage
+    : `https://choutuppal.in${rawImage.startsWith('/') ? '' : '/'}${rawImage}`
+
+  const pageUrl = `https://choutuppal.in/listings/${listing.slug || listing.id}`
+  const shortDesc = listing.description
+    ? `${listing.description.slice(0, 140)}...`
+    : `${listing.title} — చౌటుప్పల్ అధికారిక డైరెక్టరీలో వెరిఫైడ్ వ్యాపారం.`
+  const whatsappPreviewDesc = `${shortDesc} 📞 ఫోన్: ${listing.phone || '9441348175'} | 📍 ${listing.villageName || 'చౌటుప్పల్, తెలంగాణ'}`
+
   return {
-    title: `${listing.title} | Choutuppal Directory`,
-    description:
-      listing.description?.slice(0, 160) ||
-      `Contact details, phone number, address, and verified services for ${listing.title} in Choutuppal.`,
+    title: `${listing.title} — చౌటుప్పల్ బిజినెస్ డైరెక్టరీ | Choutuppal.in`,
+    description: whatsappPreviewDesc,
+    alternates: {
+      canonical: pageUrl,
+    },
     openGraph: {
-      title: `${listing.title} | Choutuppal Directory`,
-      description:
-        listing.description?.slice(0, 160) ||
-        `Verified listing on Choutuppal App.`,
-      images: listing.coverImage ? [listing.coverImage] : [],
+      title: `${listing.title} (చౌటుప్పల్)`,
+      description: whatsappPreviewDesc,
+      url: pageUrl,
+      siteName: 'చౌటుప్పల్ యాప్ | Choutuppal.in',
+      locale: 'te_IN',
+      type: 'website',
+      images: [
+        {
+          url: coverUrl,
+          width: 1200,
+          height: 630,
+          alt: `${listing.title} - Choutuppal`,
+          type: 'image/jpeg',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${listing.title} (చౌటుప్పల్)`,
+      description: whatsappPreviewDesc,
+      images: [coverUrl],
     },
   }
 }
