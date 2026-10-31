@@ -28,6 +28,8 @@ import {
   ChevronRight,
   X,
   Search,
+  Workflow,
+  Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAdminUI } from '@/components/admin/admin-ui-context'
@@ -82,8 +84,10 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'WhatsApp Automation',
     items: [
-      { href: '/admin/crm-flows', label: 'WhatsApp Bot & Flows', icon: GitBranch, badge: 'Cards' },
-      { href: '/crm/flows', label: 'Visual Flow Canvas (CRM)', icon: Sparkles, badge: 'Editor' },
+      { href: '/admin/flows', label: 'Flows Builder (Canvas)', icon: Workflow, badge: '11 Nodes' },
+      { href: '/admin/crm-flows', label: 'WhatsApp Bot & Simulator', icon: GitBranch, badge: 'Cards' },
+      { href: '/admin/automations', label: 'Automations (Rules)', icon: Zap, badge: 'Rules' },
+      { href: '/crm/flows', label: 'Visual Flow Canvas (CRM)', icon: Sparkles, badge: 'CRM' },
     ],
   },
   {

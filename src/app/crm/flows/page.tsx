@@ -1,9 +1,11 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import {
   Workflow,
   Plus,
+  GitFork,
   Search,
   Upload,
   Download,
@@ -914,9 +916,19 @@ export default function CRMFlowsPage() {
                     </button>
                   </div>
 
-                  <span className="text-[10px] font-mono text-slate-500">
-                    {flow.nodes?.length || 3} Nodes
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <Link
+                      href={`/crm/flows/${flow.id}`}
+                      className="px-2 py-1 rounded bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600 hover:text-white border border-emerald-500/30 text-[10px] font-semibold flex items-center gap-1 transition-colors"
+                      title="Open Interactive Visual Canvas"
+                    >
+                      <GitFork className="w-3 h-3" />
+                      <span>Canvas</span>
+                    </Link>
+                    <span className="text-[10px] font-mono text-slate-500">
+                      {flow.nodes?.length || 3} Nodes
+                    </span>
+                  </div>
                 </div>
               </div>
             )
