@@ -16,6 +16,12 @@ export interface WhatsAppSendOptions {
   footerText?: string
   territoryId?: string
   contactName?: string
+  contacts?: Array<{
+    name: { formatted_name: string; first_name?: string; last_name?: string }
+    phones?: Array<{ phone: string; type: string }>
+    urls?: Array<{ url: string; type: string }>
+    org?: { company: string }
+  }>
 }
 
 export interface WhatsAppDispatchResult {
@@ -64,6 +70,13 @@ export function buildWhatsAppPayload(options: WhatsAppSendOptions, cleanPhone: s
     messaging_product: 'whatsapp',
     recipient_type: 'individual',
     to: cleanPhone,
+  }
+
+  // 0. Native Contact vCard Message
+  if (options.contacts && options.contacts.length > 0) {
+    payload.type = 'contacts'
+    payload.contacts = options.contacts
+    return payload
   }
 
   // 1. Interactive Buttons (up to 3 buttons)

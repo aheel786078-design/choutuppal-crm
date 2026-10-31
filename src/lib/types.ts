@@ -211,6 +211,10 @@ export interface CRMContact {
   messageCount: number
   lastMessage?: string
   lastContactAt: string
+  contactCardSentAt?: string
+  termsAcceptedAt?: string
+  preferredWard?: number
+  sessionState?: string
   createdAt: string
 }
 
