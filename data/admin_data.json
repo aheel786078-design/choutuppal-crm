@@ -11204,7 +11204,7 @@
       "id": "flow_1793406931070_mooi",
       "name": "Choutuppal Official Bot V2",
       "description": "",
-      "status": "draft",
+      "status": "published",
       "territoryId": "territory_choutuppal",
       "version": 1,
       "trigger_type": "keyword",
@@ -11409,6 +11409,11 @@
             "footer_text": "🌐 https://choutuppal.in",
             "buttons": [
               {
+                "reply_id": "btn_stories",
+                "title": "🔥 స్టోరీస్ & ఆఫర్స్",
+                "next_node_key": "goto_stories"
+              },
+              {
                 "reply_id": "btn_dir",
                 "title": "డైరెక్టరీ",
                 "next_node_key": "goto_directory"
@@ -11417,11 +11422,6 @@
                 "reply_id": "btn_biz",
                 "title": "వ్యాపారం",
                 "next_node_key": "goto_business"
-              },
-              {
-                "reply_id": "btn_more",
-                "title": "ఇతర సేవలు",
-                "next_node_key": "goto_more_services"
               }
             ]
           },
@@ -11529,6 +11529,17 @@
           "config": {},
           "positionX": 660,
           "positionY": 580
+        },
+        {
+          "id": "goto_stories",
+          "name": "goto_stories",
+          "type": "send_message",
+          "config": {
+            "text": "🔥 *చౌటుప్పల్ నేటి ప్రత్యేక స్టోరీస్ & ఆఫర్లు* 🛍️\n\nస్థానిక దుకాణాలు మరియు వ్యాపారాల డిస్కౌంట్లు & ఆఫర్లు ఇక్కడ చూడవచ్చు!\n\n👉 *మొబైల్ స్టేటస్ తరహాలో ఫుల్‌స్క్రీన్‌లో అన్ని స్టోరీలు చూడటానికి:*\n🌐 https://choutuppal.in/stories\n\n💡 మీ వ్యాపార ఆఫర్‌ను లేదా స్టోరీని WhatsApp ద్వారా పోస్ట్ చేయడానికి 'ఆఫర్ పోస్ట్' అని రిప్లై ఇవ్వండి.",
+            "next_node_key": "send_app_vcard"
+          },
+          "positionX": 720,
+          "positionY": -50
         }
       ],
       "createdAt": "2026-10-31T00:35:31.073Z",
@@ -11537,6 +11548,29 @@
         {
           "type": "keyword",
           "value": "CHOUTUPPAL_OFFICIAL_BOT_V2"
+        }
+      ],
+      "triggerKeywords": [
+        "hi",
+        "hello",
+        "నమస్కారం",
+        "హాయ్",
+        "నమస్తే",
+        "menu",
+        "మెనూ",
+        "start"
+      ],
+      "edges": [
+        {
+          "id": "e_welcome_stories",
+          "source": "welcome_intro",
+          "sourceHandle": "btn_stories",
+          "target": "goto_stories"
+        },
+        {
+          "id": "e_stories_vcard",
+          "source": "goto_stories",
+          "target": "send_app_vcard"
         }
       ]
     },
@@ -11827,27 +11861,78 @@
       "businessName": "Sri Sai Ram Automobiles",
       "ownerPhone": "9848012345",
       "mediaUrl": "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=800",
-      "caption": "Weekend Monsoon Free Oil Checkup & Computer Wheel Alignment camp at Choutuppal bypass!",
+      "caption": "వీకెండ్ స్పెషల్: కార్ & బైక్ ఉచిత కంప్యూటర్ వీల్ అలైన్‌మెంట్ & ఏసీ ఫిల్టర్ చెకప్!",
       "status": "published",
-      "expiresAt": "2026-10-27T18:00:00.000Z",
-      "createdAt": "2026-10-25T10:00:00.000Z",
+      "expiresAt": "2027-12-31T23:59:59.000Z",
+      "createdAt": "2026-10-31T06:00:00.000Z",
+      "territoryId": "territory_choutuppal"
+    },
+    {
+      "id": "st_2",
+      "businessId": "lst_lakshmi",
+      "businessName": "శ్రీ లక్ష్మి హ్యాండ్‌లూమ్స్ & క్లాత్ స్టోర్",
+      "ownerPhone": "9441348175",
+      "mediaUrl": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800",
+      "caption": "పండుగ స్పెషల్ ఆఫర్: అన్ని చేనేత చీరలు & డ్రెస్ మెటీరియల్స్‌పై 20% ఫ్లాట్ డిస్కౌంట్!",
+      "status": "published",
+      "expiresAt": "2027-12-31T23:59:59.000Z",
+      "createdAt": "2026-10-31T06:00:00.000Z",
+      "territoryId": "territory_choutuppal"
+    },
+    {
+      "id": "st_3",
+      "businessId": "lst_greenfield",
+      "businessName": "గ్రీన్‌ఫీల్డ్ హైవే ఎస్టేట్స్",
+      "ownerPhone": "9848099887",
+      "mediaUrl": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800",
+      "caption": "NH-65 హైవే ఫేసింగ్ క్లియర్ టైటిల్ ఓపెన్ ప్లాట్లు — స్పాట్ రిజిస్ట్రేషన్ సౌకర్యం!",
+      "status": "published",
+      "expiresAt": "2027-12-31T23:59:59.000Z",
+      "createdAt": "2026-10-31T06:00:00.000Z",
+      "territoryId": "territory_choutuppal"
+    },
+    {
+      "id": "st_4",
+      "businessId": "lst_dairy",
+      "businessName": "చౌటుప్పల్ ఆర్గానిక్ డెయిరీ ఫార్మ్",
+      "ownerPhone": "9123456789",
+      "mediaUrl": "https://images.unsplash.com/photo-1527153857715-3908f2ae5e81?w=800",
+      "caption": "స్వచ్ఛమైన గిర్ ఆవు పాలు & సంప్రదాయ నెయ్యి — నేరుగా మీ ఇంటికే ఉచిత డెలివరీ!",
+      "status": "published",
+      "expiresAt": "2027-12-31T23:59:59.000Z",
+      "createdAt": "2026-10-31T06:00:00.000Z",
       "territoryId": "territory_choutuppal"
     }
   ],
   "offers": [
     {
       "id": "off_1",
-      "businessId": "lst_2",
-      "businessName": "Yadadri Mega Township",
+      "businessId": "lst_greenfield",
+      "businessName": "గ్రీన్‌ఫీల్డ్ హైవే ఎస్టేట్స్",
       "ownerPhone": "9848099887",
-      "title": "Highway Plots Spot Registration ₹50,000 Cash Discount",
+      "title": "హైవే ప్లాట్స్ స్పాట్ రిజిస్ట్రేషన్ పై ₹50,000 క్యాష్ డిస్కౌంట్",
       "discount": "₹50,000 Off",
       "imageUrl": "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800",
-      "terms": "Applicable for 200 sq.yards and above. Valid till Sunday.",
-      "startDate": "2026-10-25T00:00:00.000Z",
-      "endDate": "2026-11-02T23:59:59.000Z",
+      "terms": "200 గజాలు మరియు అంతకంటే ఎక్కువ ప్లాట్లకు వర్తిస్తుంది. పరిమిత ప్లాట్లు మాత్రమే.",
+      "startDate": "2026-10-01T00:00:00.000Z",
+      "endDate": "2027-12-31T23:59:59.000Z",
       "status": "published",
-      "createdAt": "2026-10-25T09:00:00.000Z",
+      "createdAt": "2026-10-31T06:00:00.000Z",
+      "territoryId": "territory_choutuppal"
+    },
+    {
+      "id": "off_2",
+      "businessId": "lst_lakshmi",
+      "businessName": "శ్రీ లక్ష్మి హ్యాండ్‌లూమ్స్ & క్లాత్ స్టోర్",
+      "ownerPhone": "9441348175",
+      "title": "ఫెస్టివల్ వెడ్డింగ్ కలెక్షన్ పై ఫ్లాట్ 20% డిస్కౌంట్",
+      "discount": "20% Off",
+      "imageUrl": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800",
+      "terms": "రూ. 3,000 పైబడిన కొనుగోళ్లపై ప్రత్యేక కాంప్లిమెంటరీ గిఫ్ట్.",
+      "startDate": "2026-10-01T00:00:00.000Z",
+      "endDate": "2027-12-31T23:59:59.000Z",
+      "status": "published",
+      "createdAt": "2026-10-31T06:00:00.000Z",
       "territoryId": "territory_choutuppal"
     }
   ],

@@ -363,6 +363,100 @@ export async function POST(req: Request) {
         return NextResponse.json(withShadow({ status: 'magic_link_dispatched' }))
       }
 
+      // 3.5. STORIES & DAILY OFFERS REQUEST VIA WHATSAPP (KEYWORD OR BUTTON CLICK)
+      if (
+        buttonPayload === 'btn_stories' ||
+        lower.includes('stories') ||
+        lower.includes('స్టోరీస్') ||
+        lower.includes('ఆఫర్స్') ||
+        lower.includes('offers') ||
+        lower.includes('స్టోరీ')
+      ) {
+        const activeStories = (store.stories || []).filter((s) => s.status === 'published')
+        const activeOffers = (store.offers || []).filter((o) => o.status === 'published')
+
+        let storiesSummary = ''
+        if (activeOffers.length > 0) {
+          storiesSummary += `\n*🛍️ నేటి ప్రత్యేక డిస్కౌంట్లు & ఆఫర్లు:*\n`
+          activeOffers.slice(0, 3).forEach((off, idx) => {
+            storiesSummary += `${idx + 1}. *${off.businessName}*: ${off.title} (${off.discount})\n`
+          })
+        }
+
+        if (activeStories.length > 0) {
+          storiesSummary += `\n*🔥 లైవ్ బిజినెస్ స్టోరీస్:*\n`
+          activeStories.slice(0, 3).forEach((st, idx) => {
+            storiesSummary += `• *${st.businessName}*: ${st.caption || 'Live Update'}\n`
+          })
+        }
+
+        const storiesMsg =
+          `✨ *${territoryName} నేటి ప్రత్యేక స్టోరీస్ & ఆఫర్లు* 🛍️\n` +
+          storiesSummary +
+          `\n👉 *మొబైల్ స్టేటస్ మాదిరిగా ఫుల్‌స్క్రీన్‌లో అన్ని స్టోరీలు వీక్షించడానికి:*\n` +
+          `🌐 ${townUrl}/stories\n\n` +
+          `💡 మీ షాప్ ఆఫర్‌ను లేదా స్టోరీని పోస్ట్ చేయడానికి 'ఆఫర్ పోస్ట్' అని పంపండి.\n` +
+          `🌐 Website: ${townUrl}`
+
+        const topMedia = activeStories[0]?.mediaUrl || activeOffers[0]?.imageUrl || undefined
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: storiesMsg,
+          imageUrl: topMedia,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        return NextResponse.json(
+          withShadow({
+            status: 'stories_dispatched',
+            storiesCount: activeStories.length,
+            offersCount: activeOffers.length,
+            storiesUrl: `${townUrl}/stories`,
+          })
+        )
+      }
+
+      // 3.6. POST STORY / OFFER VIA WHATSAPP -> QUEUE TO APPROVALS
+      if (lower.includes('ఆఫర్ పోస్ట్') || lower.includes('post offer') || lower.includes('post story')) {
+        const newApprovalId = `appr_offer_${Date.now()}`
+        store.approvals.unshift({
+          id: newApprovalId,
+          territoryId: territory.id,
+          type: 'STORY',
+          title: `Story/Offer Submission from ${senderName}`,
+          submitterName: senderName,
+          submitterPhone: senderPhone,
+          status: 'pending',
+          data: {
+            caption: incomingText,
+            phone: senderPhone,
+          },
+          submittedAt: new Date().toISOString(),
+        })
+
+        const postAckMsg =
+          `ధన్యవాదాలు ${senderName} గారు! 🙏\n\n` +
+          `మీ ఆఫర్/స్టోరీ వివరాలు మా అడ్మిన్ టీమ్ పరిశీలనకు చేరాయి. 2 గంటలలోపు పరిశీలించి ఆమోదించబడిన తర్వాత చౌటుప్పల్ యాప్ మరియు వాట్సాప్ బాట్‌లో లైవ్ చేయబడుతుంది.\n\n` +
+          `🌐 లైవ్ స్టోరీలు చూడటానికి: ${townUrl}/stories`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: postAckMsg,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        return NextResponse.json(withShadow({ status: 'story_queued_for_approval', approvalId: newApprovalId }))
+      }
+
       // 4. NEW LISTING SUBMISSION VIA WHATSAPP -> INSERTS INTO APPROVAL QUEUE WITH TERRITORY
       if (lower.includes('నా వ్యాపారాన్ని చేర్చండి') || lower.includes('add listing') || lower.includes('కొత్త షాప్')) {
         const newApprovalId = `appr_${Date.now()}`

@@ -130,12 +130,25 @@ const WELCOME_MENU: FlowTemplate = {
         footer_text: "🌐 https://choutuppal.in",
         buttons: [
           {
+            reply_id: "btn_stories",
+            title: "🔥 స్టోరీస్ & ఆఫర్స్",
+            next_node_key: "stories_intro",
+          },
+          {
             reply_id: "btn_start",
             title: "సేవలు ప్రారంభించండి",
             next_node_key: "handoff_1",
           },
         ],
       } as SendButtonsNodeConfig,
+    },
+    {
+      node_key: "stories_intro",
+      node_type: "send_message",
+      config: {
+        text: "🔥 *చౌటుప్పల్ నేటి ప్రత్యేక స్టోరీస్ & ఆఫర్లు* 🛍️\n\nస్థానిక దుకాణాలు మరియు వ్యాపారాల డిస్కౌంట్లు, కొత్త ఉత్పత్తులు & ఆఫర్ల వివరాలు ఇక్కడ చూడండి!\n\n👉 *మొబైల్ స్టేటస్ తరహాలో ఫుల్‌స్క్రీన్‌లో అన్ని స్టోరీలు వీక్షించడానికి:*\n🌐 https://choutuppal.in/stories\n\n💡 మీ వ్యాపార ఆఫర్‌ను లేదా ప్రమోషన్‌ను పోస్ట్ చేయడానికి 'ఆఫర్ పోస్ట్' అని పంపండి.",
+        next_node_key: "handoff_1",
+      } as SendMessageNodeConfig,
     },
     {
       node_key: "handoff_1",
@@ -297,11 +310,19 @@ const WELCOME_MENU_V2: FlowTemplate = {
         text: "నమస్కారం! 🙏 చౌటుప్పల్ యాప్‌కి స్వాగతం.\n\nమన చౌటుప్పల్ పట్టణ మరియు పరిసర ప్రాంతాల వ్యాపార సమాచారం, అత్యవసర సేవలు మరియు స్థానిక అప్‌డేట్స్ కోసం క్రింది ఆప్షన్ ఎంచుకోండి.",
         footer_text: "🌐 https://choutuppal.in",
         buttons: [
+          { reply_id: "btn_stories", title: "🔥 స్టోరీస్ & ఆఫర్స్", next_node_key: "goto_stories" },
           { reply_id: "btn_dir", title: "డైరెక్టరీ", next_node_key: "goto_directory" },
           { reply_id: "btn_biz", title: "వ్యాపారం", next_node_key: "goto_business" },
-          { reply_id: "btn_more", title: "ఇతర సేవలు", next_node_key: "goto_more_services" },
         ],
       } as SendButtonsNodeConfig,
+    },
+    {
+      node_key: "goto_stories",
+      node_type: "send_message",
+      config: {
+        text: "🔥 *చౌటుప్పల్ నేటి ప్రత్యేక స్టోరీస్ & ఆఫర్లు* 🛍️\n\nస్థానిక దుకాణాలు మరియు వ్యాపారాల డిస్కౌంట్లు & ఆఫర్లు ఇక్కడ చూడవచ్చు!\n\n👉 *మొబైల్ స్టేటస్ తరహాలో ఫుల్‌స్క్రీన్‌లో అన్ని స్టోరీలు చూడటానికి:*\n🌐 https://choutuppal.in/stories\n\n💡 మీ వ్యాపార ఆఫర్‌ను లేదా స్టోరీని WhatsApp ద్వారా పోస్ట్ చేయడానికి 'ఆఫర్ పోస్ట్' అని రిప్లై ఇవ్వండి.",
+        next_node_key: "send_app_vcard",
+      } as SendMessageNodeConfig,
     },
     {
       node_key: "goto_directory",
