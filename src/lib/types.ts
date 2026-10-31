@@ -406,6 +406,17 @@ export interface ApprovalItem {
   reviewedAt?: string
 }
 
+export interface StoryComment {
+  id: string
+  storyId: string
+  userName: string
+  userPhone?: string
+  text: string
+  isOwnerReply?: boolean
+  createdAt: string
+  status: 'published' | 'hidden'
+}
+
 export interface UserStory {
   id: string
   businessId: string
@@ -416,6 +427,13 @@ export interface UserStory {
   territoryId: string
   franchiseId?: string
   status: 'pending_approval' | 'published' | 'expired' | 'rejected'
+  views?: number
+  viewsCount?: number
+  likesCount?: number
+  likedUserIps?: string[]
+  comments?: StoryComment[]
+  commentsCount?: number
+  sharesCount?: number
   expiresAt: string
   createdAt: string
 }

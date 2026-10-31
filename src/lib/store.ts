@@ -224,7 +224,16 @@ export function loadStore(customPath?: string): AdminDataStore {
     // Backfill territory_id on contacts, approvals, stories, offers, news, shorts, banners, tickers
     if (parsed.contacts) parsed.contacts = parsed.contacts.map((c: any) => ({ ...c, territoryId: c.territoryId || FLAGSHIP_TERRITORY_ID }))
     if (parsed.approvals) parsed.approvals = parsed.approvals.map((a: any) => ({ ...a, territoryId: a.territoryId || FLAGSHIP_TERRITORY_ID }))
-    if (parsed.stories) parsed.stories = parsed.stories.map((s: any) => ({ ...s, territoryId: s.territoryId || FLAGSHIP_TERRITORY_ID }))
+    if (parsed.stories) {
+      parsed.stories = parsed.stories.map((s: any) => ({
+        ...s,
+        territoryId: s.territoryId || FLAGSHIP_TERRITORY_ID,
+        likesCount: typeof s.likesCount === 'number' ? s.likesCount : (s.views ? Math.max(3, Math.floor(s.views / 3)) : 8),
+        likedUserIps: Array.isArray(s.likedUserIps) ? s.likedUserIps : [],
+        comments: Array.isArray(s.comments) ? s.comments : [],
+        sharesCount: typeof s.sharesCount === 'number' ? s.sharesCount : 3,
+      }))
+    }
     if (parsed.offers) parsed.offers = parsed.offers.map((o: any) => ({ ...o, territoryId: o.territoryId || FLAGSHIP_TERRITORY_ID }))
     if (parsed.news) parsed.news = parsed.news.map((n: any) => ({ ...n, territoryId: n.territoryId || FLAGSHIP_TERRITORY_ID }))
     if (parsed.shorts) parsed.shorts = parsed.shorts.map((s: any) => ({ ...s, territoryId: s.territoryId || FLAGSHIP_TERRITORY_ID }))

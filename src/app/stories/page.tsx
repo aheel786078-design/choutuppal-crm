@@ -50,6 +50,9 @@ export default function StoriesPage() {
     mediaType: 'IMAGE',
     caption: s.caption || null,
     views: s.views || 48,
+    likesCount: s.likesCount || 12,
+    commentsCount: Array.isArray(s.comments) ? s.comments.length : 3,
+    sharesCount: s.sharesCount || 4,
     expiresAt: s.expiresAt ? new Date(s.expiresAt) : null,
     createdAt: s.createdAt ? new Date(s.createdAt) : new Date(),
     owner: {
