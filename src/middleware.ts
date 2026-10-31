@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Protected admin and CRM path prefixes
-const PROTECTED_PREFIXES = ['/admin', '/crm']
+// Protected path prefixes
+const PROTECTED_PREFIXES = ['/admin', '/crm', '/dashboard']
+const ADMIN_ONLY_PREFIXES = ['/admin', '/crm']
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -36,6 +37,21 @@ export function middleware(request: NextRequest) {
         response.cookies.delete('session_token')
         return response
       }
+
+      // Role check: merchants cannot access /admin or /crm
+      const isAdminRoute = ADMIN_ONLY_PREFIXES.some(
+        (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+      )
+
+      if (isAdminRoute) {
+        const role = payload.role
+        const hasAdminAccess = role === 'SUPER_ADMIN' || role === 'FRANCHISE_ADMIN' || role === 'STAFF'
+        if (!hasAdminAccess) {
+          // Merchant attempted to open admin/crm -> safely divert to their merchant dashboard
+          const dashboardUrl = new URL('/dashboard', request.url)
+          return NextResponse.redirect(dashboardUrl)
+        }
+      }
     } catch {
       // Malformed cookie
       const loginUrl = new URL('/login', request.url)
@@ -48,5 +64,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/crm/:path*'],
+  matcher: ['/admin/:path*', '/crm/:path*', '/dashboard/:path*'],
 }

@@ -47,13 +47,37 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
   const [pwaEvent, setPwaEvent] = useState<BeforeInstallPromptEvent | null>(null)
 
   useEffect(() => {
+    // 1. Check server session authentication via /api/auth/me
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setUser(data.user)
+        } else {
+          // Fallback to Supabase if configured
+          const supabase = getSupabaseBrowserClient()
+          if (supabase) {
+            supabase.auth.getUser().then(({ data: sbData }) => {
+              if (sbData?.user) setUser(sbData.user)
+            })
+          }
+        }
+      })
+      .catch(() => {
+        const supabase = getSupabaseBrowserClient()
+        if (supabase) {
+          supabase.auth.getUser().then(({ data: sbData }) => {
+            if (sbData?.user) setUser(sbData.user)
+          })
+        }
+      })
+
     const supabase = getSupabaseBrowserClient()
     if (supabase) {
-      supabase.auth.getUser().then(({ data }) => {
-        if (data?.user) setUser(data.user)
-      })
       const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user ?? null)
+        if (session?.user) {
+          setUser(session.user)
+        }
       })
       return () => {
         authListener.subscription.unsubscribe()
@@ -83,12 +107,16 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
   }
 
   async function handleSignOut() {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+    } catch {}
     const supabase = getSupabaseBrowserClient()
     if (supabase) {
-      await supabase.auth.signOut()
+      await supabase.auth.signOut().catch(() => {})
     }
     setUser(null)
     toast.success('Logged out successfully')
+    window.location.href = '/'
   }
 
   // Hide on admin and crm routes
@@ -97,6 +125,8 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
   }
 
   const isLoggedIn = !!user
+  const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'FRANCHISE_ADMIN' || user?.role === 'STAFF'
+  const isMerchant = user?.role === 'MERCHANT' || (isLoggedIn && !isAdmin)
   const isDefault = tenant.id === DEFAULT_TENANT.id
 
   return (
@@ -169,22 +199,26 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2">
-          {/* Quick links to Admin and CRM */}
-          <Link
-            href="/admin"
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition"
-          >
-            <LayoutDashboard className="h-3.5 w-3.5 text-blue-600" />
-            <span>Admin</span>
-          </Link>
+          {/* Admin shortcuts ONLY for authenticated admins */}
+          {isAdmin && (
+            <>
+              <Link
+                href="/admin"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition"
+              >
+                <LayoutDashboard className="h-3.5 w-3.5 text-blue-600" />
+                <span>Admin</span>
+              </Link>
 
-          <Link
-            href="/crm"
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 transition"
-          >
-            <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
-            <span>CRM</span>
-          </Link>
+              <Link
+                href="/crm"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 transition"
+              >
+                <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
+                <span>CRM</span>
+              </Link>
+            </>
+          )}
 
           {isLoggedIn ? (
             <>
@@ -193,7 +227,10 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
                 size="sm"
                 className="hidden gap-2 gradient-brand text-white shadow-xs md:inline-flex"
               >
-                <Link href="/admin/dashboard">Panel</Link>
+                <Link href={isAdmin ? '/admin/dashboard' : '/dashboard'}>
+                  <LayoutDashboard className="h-3.5 w-3.5" />
+                  <span>{isAdmin ? 'Admin Panel' : 'Dashboard'}</span>
+                </Link>
               </Button>
               <Button
                 onClick={handleSignOut}
@@ -248,9 +285,17 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
           <MobileLink href="/news" icon={Newspaper} label="న్యూస్ &amp; అప్‌డేట్స్" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/community" icon={Users} label="కమ్యూనిటీ వార్డ్స్" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/government-contacts" icon={AlertTriangle} label="ప్రభుత్వ & అత్యవసర" onClick={() => setMobileOpen(false)} />
-          <MobileLink href="/admin" icon={LayoutDashboard} label="అడ్మిన్ ప్యానెల్" onClick={() => setMobileOpen(false)} />
-          <MobileLink href="/crm" icon={MessageSquare} label="CRM ఫ్లో ఇంజిన్" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/about" icon={Info} label="అబౌట్ అస్" onClick={() => setMobileOpen(false)} />
+          {/* Admin shortcuts ONLY if authenticated as admin */}
+          {isAdmin && (
+            <>
+              <MobileLink href="/admin" icon={LayoutDashboard} label="అడ్మిన్ ప్యానెల్" onClick={() => setMobileOpen(false)} />
+              <MobileLink href="/crm" icon={MessageSquare} label="CRM ఫ్లో ఇంజిన్" onClick={() => setMobileOpen(false)} />
+            </>
+          )}
+          {isMerchant && (
+            <MobileLink href="/dashboard" icon={LayoutDashboard} label="నా డాష్‌బోర్డ్" onClick={() => setMobileOpen(false)} />
+          )}
         </nav>
 
         {/* Dedicated Bottom Actions Section */}
@@ -266,12 +311,12 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
           {isLoggedIn ? (
             <div className="grid grid-cols-2 gap-2">
               <Link
-                href="/admin"
+                href={isAdmin ? '/admin/dashboard' : '/dashboard'}
                 onClick={() => setMobileOpen(false)}
                 className="flex h-11 items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50/80 font-bold text-blue-700 active:scale-[0.98]"
               >
                 <LayoutDashboard className="h-4 w-4 text-blue-600" />
-                <span className="text-sm">Admin</span>
+                <span className="text-sm">{isAdmin ? 'Admin' : 'Dashboard'}</span>
               </Link>
               <button
                 onClick={() => { handleSignOut(); setMobileOpen(false) }}

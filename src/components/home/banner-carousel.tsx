@@ -337,7 +337,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
                     </a>
                   ) : (
                     <a
-                      href="/dashboard"
+                      href="/register"
                       className="w-full sm:flex-1"
                     >
                       <Button size="lg" className="w-full gap-2 gradient-brand text-white shadow-lg">
