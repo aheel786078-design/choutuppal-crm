@@ -29,10 +29,12 @@ import {
   Calendar,
   Layers,
   ArrowRight,
+  X,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { sanitizeImageUrl } from '@/lib/utils'
 import { getListingWhatsAppUrl } from '@/lib/constants'
+import { ShopQrStandee } from '@/components/business/shop-qr-standee'
 import type { Listing, ListingEntitlements } from '@/lib/types'
 
 export interface ListingDetailViewProps {
@@ -170,11 +172,11 @@ END:VCARD`
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => setShowQrModal(true)}
-              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-bold transition shadow-xs cursor-pointer"
-              title="Show QR Code"
+              className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-xs font-bold transition shadow-2xs cursor-pointer"
+              title="షాప్ కౌంటర్ QR స్టాండీ"
             >
               <QrCode className="h-4 w-4 text-emerald-600" />
-              <span className="hidden sm:inline">QR Code</span>
+              <span>కౌంటర్ QR స్టాండీ</span>
             </button>
 
             <button
@@ -623,50 +625,53 @@ END:VCARD`
         </div>
       </div>
 
-      {/* 5. QR CODE MODAL */}
+      {/* 5. QR CODE STANDEE MODAL */}
       {showQrModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto"
           onClick={() => setShowQrModal(false)}
         >
           <div
-            className="bg-white rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl relative"
+            className="bg-white rounded-3xl p-4 sm:p-6 max-w-lg w-full shadow-2xl relative my-8"
             onClick={(e) => e.stopPropagation()}
           >
-            <span className="inline-block bg-emerald-100 text-emerald-800 font-extrabold text-[10px] px-2.5 py-1 rounded-full uppercase">
-              Scan with Any Mobile Camera
-            </span>
-            <h3 className="text-lg font-black text-slate-900 mt-2 truncate">
-              {listing.title}
-            </h3>
-            <p className="text-xs text-slate-500 mt-1">
-              Instant contact card on Choutuppal App
-            </p>
-
-            <div className="my-5 flex justify-center">
-              <div className="p-3 bg-white rounded-2xl border-2 border-slate-200 shadow-inner">
-                <img
-                  src={qrCodeImageUrl}
-                  alt={`QR code for ${listing.title}`}
-                  className="h-56 w-56 object-contain"
-                />
+            <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="p-1 rounded-lg bg-emerald-50 text-emerald-700">
+                  <QrCode className="h-4 w-4" />
+                </span>
+                <h4 className="text-sm font-bold text-slate-900">
+                  అధికారిక షాప్ కౌంటర్ QR స్టాండీ
+                </h4>
               </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleShare}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition cursor-pointer"
-              >
-                <Share2 className="h-4 w-4" /> Share Link
-              </button>
               <button
                 type="button"
                 onClick={() => setShowQrModal(false)}
-                className="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-xl text-xs font-bold transition cursor-pointer"
+                className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer"
+                aria-label="Close"
               >
-                Close
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <ShopQrStandee listing={listing} isStandalonePage={false} />
+
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+              <Link
+                href={`/business/${listing.slug || listing.id}/qr`}
+                target="_blank"
+                className="text-xs font-bold text-emerald-600 hover:text-emerald-700 hover:underline flex items-center gap-1"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                <span>పూర్తి పేజీలో ఓపెన్ చేయండి</span>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => setShowQrModal(false)}
+                className="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer"
+              >
+                మూసివేయండి (Close)
               </button>
             </div>
           </div>

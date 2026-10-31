@@ -431,7 +431,16 @@ export function UserDashboardView({ user, listings = [], allListings = [] }: Use
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 w-full md:w-auto">
+                  <div className="flex items-center flex-wrap gap-2 w-full md:w-auto">
+                    <Link
+                      href={`/business/${item.slug || item.id}/qr`}
+                      target="_blank"
+                      className="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold px-3.5 py-2.5 rounded-xl transition shadow-2xs"
+                      title="షాప్ కౌంటర్ QR స్టాండీ పోస్టర్ డౌన్‌లోడ్ / ప్రింట్ చేయండి"
+                    >
+                      <QrCode className="h-3.5 w-3.5 text-emerald-600" />
+                      <span>కౌంటర్ QR స్టాండీ</span>
+                    </Link>
                     <Link
                       href={`/business/${item.slug || item.id}`}
                       className="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold px-4 py-2.5 rounded-xl transition"

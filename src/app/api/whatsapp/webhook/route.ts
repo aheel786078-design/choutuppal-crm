@@ -320,8 +320,8 @@ export async function POST(req: Request) {
           `📞 ఫోన్: ${matchedListing.phone}\n` +
           `📍 చిరునామా: ${matchedListing.address}\n\n` +
           `మీరు ఈ వ్యాపార యజమాని అయితే, వివరాలను సరిచూసుకొని నిర్ధారించండి లేదా మార్పులు చేయండి:\n` +
-          `1. 'సవరించండి' - ఫోటోలు లేదా వివరాలు మార్చడానికి\n` +
-          `2. 'తొలగించండి' - షాప్ క్లోజ్ అయితే రిమూవ్ చేయడానికి\n` +
+          `1. 'QR' - మీ షాప్ కౌంటర్ QR స్టాండీని డౌన్‌లోడ్/ప్రింట్ చేయడానికి\n` +
+          `2. 'సవరించండి' - ఫోటోలు లేదా వివరాలు మార్చడానికి\n` +
           `3. 'కన్ఫర్మ్' - వివరాలు సరైనవే అని ధృవీకరించడానికి\n\n` +
           `🌐 Website: ${townUrl}`
 
@@ -338,6 +338,83 @@ export async function POST(req: Request) {
         })
 
         return NextResponse.json(withShadow({ status: 'vendor_claim_sent', listingId: matchedListing.id }))
+      }
+
+      // 3.4. SHOP COUNTER QR STANDEE DISPATCH & PRINT LINK
+      if (
+        buttonPayload === 'btn_my_qr' ||
+        lower === 'qr' ||
+        lower === 'క్యూఆర్' ||
+        lower.includes('qr code') ||
+        lower.includes('క్యూఆర్ కోడ్') ||
+        lower.includes('my qr') ||
+        lower.includes('షాప్ qr') ||
+        lower.includes('standee') ||
+        lower.includes('స్టాండీ')
+      ) {
+        if (matchedListing) {
+          const standeePrintUrl = `${townUrl}/business/${matchedListing.slug || matchedListing.id}/qr`
+          const listingUrl = `${townUrl}/business/${matchedListing.slug || matchedListing.id}`
+          const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=10&format=png&data=${encodeURIComponent(
+            listingUrl
+          )}`
+
+          const qrMsg =
+            `🏢 *${matchedListing.title}* అధికారిక కౌంటర్ QR స్టాండీ! 🖨️\n\n` +
+            `నమస్కారం ${senderName} గారు! 🙏\n` +
+            `మీ షాప్ కోసం చౌటుప్పల్ యాప్ అధికారిక బ్రాండెడ్ కౌంటర్ QR స్టాండీ సిద్ధంగా ఉంది.\n\n` +
+            `👉 *కలర్ ప్రింట్ తీసుకోవడానికి లింక్ (Print A4):*\n` +
+            `🌐 ${standeePrintUrl}\n\n` +
+            `👉 *షాప్ ఆన్‌లైన్ ప్రొఫైల్:*\n` +
+            `🌐 ${listingUrl}\n\n` +
+            `💡 *వ్యాపారులకు సూచన:*\n` +
+            `ఈ మెసేజ్ లేదా లింక్‌ను మీ సమీపంలోని జిరాక్స్ / ఫ్లెక్స్ ప్రింటింగ్ షాపుకు WhatsApp ద్వారా ఫార్వర్డ్ చేసి, A4 కలర్ ప్రింట్ తీసి మీ షాప్ కౌంటర్‌పై పెట్టుకోండి. కస్టమర్లు స్కాన్ చేయగానే మీ ఆఫర్లు, ఫోటోలు చూస్తారు మరియు నేరుగా WhatsApp లో ఆర్డర్ చేయగలరు!\n\n` +
+            `📢 Helpline: 9441348175 | Website: ${townUrl}`
+
+          store.messages.unshift({
+            id: `msg_out_${Date.now()}`,
+            territoryId: territory.id,
+            phone: senderPhone,
+            contactName: matchedListing.title,
+            direction: 'outbound',
+            messageText: qrMsg,
+            imageUrl: qrImageUrl,
+            status: 'sent',
+            createdAt: new Date().toISOString(),
+          })
+
+          return NextResponse.json(
+            withShadow({
+              status: 'shop_qr_standee_dispatched',
+              listingId: matchedListing.id,
+              qrPrintUrl: standeePrintUrl,
+            })
+          )
+        } else {
+          const generalQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=10&format=png&data=${encodeURIComponent(
+            townUrl
+          )}`
+          const noListingMsg =
+            `📲 *చౌటుప్పల్ యాప్ షాప్ కౌంటర్ QR స్టాండీ* 🖨️\n\n` +
+            `నమస్కారం ${senderName} గారు! 🙏\n` +
+            `మీ షాప్ లేదా వ్యాపారం కోసం ఉచిత బ్రాండెడ్ కౌంటర్ QR స్టాండీని పొందడానికి, ముందుగా మీ వ్యాపార వివరాలను నమోదు చేసుకోండి:\n\n` +
+            `👉 ఉచిత నమోదు లింక్: ${townUrl}/register\n\n` +
+            `లేదా మీ షాప్ వివరాలను ఇక్కడే WhatsApp లో పంపడానికి 'నా వ్యాపారాన్ని చేర్చండి' అని రిప్లై ఇవ్వండి.\n` +
+            `🌐 Website: ${townUrl}`
+
+          store.messages.unshift({
+            id: `msg_out_${Date.now()}`,
+            territoryId: territory.id,
+            phone: senderPhone,
+            direction: 'outbound',
+            messageText: noListingMsg,
+            imageUrl: generalQrUrl,
+            status: 'sent',
+            createdAt: new Date().toISOString(),
+          })
+
+          return NextResponse.json(withShadow({ status: 'qr_registration_prompt_sent' }))
+        }
       }
 
       // 3. MAGIC LOGIN LINK REQUEST

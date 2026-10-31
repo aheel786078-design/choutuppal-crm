@@ -593,11 +593,19 @@ const MY_BUSINESS: FlowTemplate = {
         text: "🏪 *చౌటుప్పల్ వ్యాపార కేంద్రం*\n\nమీ వ్యాపారాన్ని డైరెక్టరీలో సులభంగా నిర్వహించండి.\n\nమీరు ఏమి చేయాలనుకుంటున్నారు?",
         footer_text: "🌐 https://choutuppal.in/business",
         buttons: [
+          { reply_id: "btn_my_qr", title: "📲 నా QR స్టాండీ", next_node_key: "biz_qr_standee" },
           { reply_id: "btn_edit_details", title: "వివరాలు సవరణ", next_node_key: "biz_edit_name_prompt" },
           { reply_id: "btn_update_photos", title: "ఫోటోలు మార్పు", next_node_key: "biz_photo_prompt" },
-          { reply_id: "btn_all_good", title: "సరిగ్గా ఉన్నాయి", next_node_key: "biz_confirmed" },
         ],
       } as SendButtonsNodeConfig,
+    },
+    {
+      node_key: "biz_qr_standee",
+      node_type: "send_message",
+      config: {
+        text: "🖨️ *మీ షాప్ కౌంటర్ QR స్టాండీ పోస్టర్*\n\nమీ షాప్ అధికారిక చౌటుప్పల్ యాప్ కౌంటర్ QR స్టాండీని ప్రింట్ చేయడానికి లేదా షేర్ చేయడానికి క్రింది లింక్ నొక్కండి:\n\n👉 https://choutuppal.in/dashboard\n\n💡 మీ షాప్ బిల్లింగ్ కౌంటర్‌పై A4 కలర్ ప్రింట్ తీసి లామినేట్ చేసి పెట్టుకోండి. కస్టమర్లు స్కాన్ చేసి మీ వివరాలు చూడగలరు!",
+        next_node_key: "biz_confirmed",
+      } as SendMessageNodeConfig,
     },
     {
       node_key: "biz_edit_name_prompt",
