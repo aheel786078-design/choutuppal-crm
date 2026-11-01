@@ -362,19 +362,14 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
   }
 
   function handleAddClick() {
-    if (!viewer.isLoggedIn) {
-      toast.info('స్టోరీ పోస్ట్ చేయడానికి దయచేసి లాగిన్ అవ్వండి')
-      router.push('/login')
+    if (viewer.isLoggedIn && viewer.isPremium) {
+      setCreatorOpen(true)
       return
     }
-    if (!viewer.isPremium) {
-      toast.error('స్టోరీలు పోస్ట్ చేయడం కేవలం ప్రీమియం యూజర్లకే. ఇప్పుడే అప్‌గ్రేడ్ చేయండి!', {
-        duration: 5000,
-        action: { label: 'Upgrade', onClick: () => router.push('/dashboard') },
-      })
-      return
-    }
-    setCreatorOpen(true)
+    const waUrl =
+      'https://wa.me/919494348175?text=%E0%B0%A8%E0%B0%AE%E0%B0%B8%E0%B1%8D%E0%B0%95%E0%B0%BE%E0%B0%B0%E0%B0%82!%20%E0%B0%A8%E0%B1%87%E0%B0%A8%E0%B1%81%20%E2%82%B999%20%E0%B0%B8%E0%B1%8D%E0%B0%9F%E0%B1%8B%E0%B0%B0%E0%B1%80%20%E0%B0%B5%E0%B0%BF%E0%B0%B7%E0%B1%86%E0%B0%B8%E0%B1%8D%20/%20%E0%B0%86%E0%B0%AB%E0%B0%B0%E0%B1%8D%20%E0%B0%AA%E0%B1%8B%E0%B0%B8%E0%B1%8D%E0%B0%9F%E0%B1%8D%20%E0%B0%9A%E0%B1%87%E0%B0%AF%E0%B0%BE%E0%B0%B2%E0%B0%A8%E0%B1%81%E0%B0%95%E0%B1%81%E0%B0%82%E0%B0%9F%E0%B1%81%E0%B0%A8%E0%B1%8D%E0%B0%A8%E0%B0%BE%E0%B0%A8%E0%B1%81.'
+    window.open(waUrl, '_blank')
+    toast.success('వాట్సాప్‌లో వివరాలు పంపండి! 30 నిమిషాల్లో స్టోరీ లైవ్ అవుతుంది.')
   }
 
   const currentStory = viewerIndex !== null ? storyItems[viewerIndex] : null
@@ -390,12 +385,23 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
   return (
     <section className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-6">
       <div className="flex items-center justify-between px-1">
-        <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-600">
-          Stories & Offers
-        </h2>
-        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-          24h Live
-        </span>
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-600">
+            Stories &amp; Offers
+          </h2>
+          <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+            24h Live
+          </span>
+        </div>
+        <a
+          href="https://wa.me/919494348175?text=%E0%B0%A8%E0%B0%AE%E0%B0%B8%E0%B1%8D%E0%B0%95%E0%B0%BE%E0%B0%B0%E0%B0%82!%20%E0%B0%A8%E0%B1%87%E0%B0%A8%E0%B1%81%20%E2%82%B999%20%E0%B0%B8%E0%B1%8D%E0%B0%9F%E0%B1%8B%E0%B0%B0%E0%B1%80%20%E0%B0%B5%E0%B0%BF%E0%B0%B7%E0%B1%86%E0%B0%B8%E0%B1%8D%20/%20%E0%B0%86%E0%B0%AB%E0%B0%B0%E0%B1%8D%20%E0%B0%AA%E0%B1%8B%E0%B0%B8%E0%B1%8D%E0%B0%9F%E0%B1%8D%20%E0%B0%9A%E0%B1%87%E0%B0%AF%E0%B0%BE%E0%B0%B2%E0%B0%A8%E0%B1%81%E0%B0%95%E0%B1%81%E0%B0%82%E0%B0%9F%E0%B1%81%E0%B0%A8%E0%B1%8D%E0%B0%A8%E0%B0%BE%E0%B0%A8%E0%B1%81."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-rose-500 px-3 py-1 text-xs font-bold text-white shadow-xs hover:opacity-95 transition active:scale-95"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>పోస్ట్ స్టోరీ (₹99)</span>
+        </a>
       </div>
 
       {/* Horizontal Story Rail */}
@@ -412,8 +418,8 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
           <span className="relative grid h-16 w-16 place-items-center rounded-full border-2 border-dashed border-emerald-400 bg-emerald-50/60 text-emerald-600 transition group-hover:border-emerald-600 group-hover:scale-105 shadow-xs">
             <Plus className="h-6 w-6" />
           </span>
-          <span className="mt-1 w-16 truncate text-center text-xs font-medium text-slate-700">
-            ఆఫర్ పోస్ట్
+          <span className="mt-1 w-16 truncate text-center text-xs font-bold text-slate-700">
+            పోస్ట్ (₹99)
           </span>
         </button>
 

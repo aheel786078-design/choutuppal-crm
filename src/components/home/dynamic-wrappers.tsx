@@ -3,8 +3,10 @@
 import nextDynamic from 'next/dynamic'
 
 // Direct components for Above-the-fold critical viewport
+export { HeroQuickActions } from '@/components/home/hero-quick-actions'
 export { StoriesRail } from '@/components/home/stories-rail'
 export { BannerCarousel } from '@/components/home/banner-carousel'
+export { WishingStudioBanner } from '@/components/home/wishing-studio-banner'
 export { CategoriesGrid } from '@/components/home/categories-grid'
 export { FeaturedRail } from '@/components/home/featured-rail'
 
