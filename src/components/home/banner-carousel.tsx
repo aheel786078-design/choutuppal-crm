@@ -141,9 +141,9 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
   if (!current) return null
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-3 sm:px-4 lg:px-6">
+    <section className="w-full relative z-10" aria-label="Promotional Banners">
       {/* Badge row — ABOVE the banner image (no overlap) */}
-      <div className="mb-2 flex items-center gap-2">
+      <div className="mb-2 flex items-center gap-2 px-1">
         <span className="flex items-center gap-1.5 rounded-full gradient-brand px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow-sm">
           <Sparkles className="h-3.5 w-3.5" />
           Banner Ad

@@ -383,7 +383,7 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
     : { likesCount: 12, isLiked: false, commentsCount: 3, sharesCount: 4 }
 
   return (
-    <section className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-6">
+    <section className="w-full relative z-10" aria-label="Stories and Offers">
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-600">
@@ -406,7 +406,7 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
 
       {/* Horizontal Story Rail */}
       <div
-        className="no-scrollbar mt-3 flex w-full max-w-full justify-start gap-4 overflow-x-auto px-4 pb-3 flex-nowrap touch-pan-x"
+        className="no-scrollbar mt-3 flex w-full max-w-full justify-start gap-4 overflow-x-auto px-1 pb-3 flex-nowrap touch-pan-x"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {/* Add story button */}

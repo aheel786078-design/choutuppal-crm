@@ -2,10 +2,8 @@ import { getHomePageData } from '@/lib/home-data'
 import { Ticker } from '@/components/home/ticker'
 import { StickySocials } from '@/components/home/sticky-socials'
 import {
-  HeroQuickActions,
   StoriesRail,
   BannerCarousel,
-  WishingStudioBanner,
   CategoriesGrid,
   FeaturedRail,
   RealEstateRail,
@@ -132,24 +130,20 @@ export default async function Home() {
         </h1>
 
         <div className="mx-auto flex w-full overflow-visible max-w-7xl flex-col gap-6 sm:gap-7 px-3 py-4 sm:px-4 sm:py-6 lg:px-6 relative z-20">
-          {/* 1. Hero & Instant Services Hub */}
-          <HeroQuickActions />
-
-          {/* 2. Stories & Banners Container */}
-          <div className="relative w-full overflow-hidden bg-white/70 backdrop-blur-md rounded-[2rem] p-4 shadow-sm border border-slate-200/80">
+          {/* 1. Stories Rail (Clean, separate section) */}
+          <div className="w-full">
             <StoriesRail stories={formattedStories} viewer={viewerInfo} />
-            <div className="mt-4">
-              <BannerCarousel banners={formattedBanners} />
-            </div>
+          </div>
+
+          {/* 2. Featured Promotional Banners (Separate section) */}
+          <div className="w-full">
+            <BannerCarousel banners={formattedBanners} />
           </div>
 
           {/* 3. Browse Categories */}
           <CategoriesGrid />
 
-          {/* 4. Wishing & Promotion Studio (Income Back-bone) */}
-          <WishingStudioBanner />
-
-          {/* 5. Top Local Businesses Grid */}
+          {/* 4. Top Local Businesses Grid */}
           <FeaturedRail listings={formattedFeatured} />
 
           {/* 4. Premium Properties Grid */}
