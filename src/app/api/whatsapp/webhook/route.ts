@@ -12,9 +12,9 @@ export async function GET(req: Request) {
   const token = searchParams.get('hub.verify_token')
   const challenge = searchParams.get('hub.challenge')
 
-  const expectedToken = process.env.WHATSAPP_VERIFY_TOKEN || 'choutuppal_verify_token'
+  const expectedToken = (process.env.WHATSAPP_VERIFY_TOKEN || 'choutuppal_verify_token').trim().replace(/^["']|["']$/g, '')
 
-  if (mode === 'subscribe' && token === expectedToken) {
+  if (mode === 'subscribe' && token && token.trim() === expectedToken) {
     return new Response(challenge, { status: 200 })
   }
   return new Response('Verification token mismatch', { status: 403 })
