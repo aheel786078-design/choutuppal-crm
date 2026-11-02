@@ -384,29 +384,9 @@ export function StoriesRail({ stories, viewer }: StoriesRailProps) {
 
   return (
     <section className="w-full relative z-10" aria-label="Stories and Offers">
-      <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-600">
-            Stories &amp; Offers
-          </h2>
-          <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-            24h Live
-          </span>
-        </div>
-        <a
-          href="https://wa.me/919494348175?text=%E0%B0%A8%E0%B0%AE%E0%B0%B8%E0%B1%8D%E0%B0%95%E0%B0%BE%E0%B0%B0%E0%B0%82!%20%E0%B0%A8%E0%B1%87%E0%B0%A8%E0%B1%81%20%E2%82%B999%20%E0%B0%B8%E0%B1%8D%E0%B0%9F%E0%B1%8B%E0%B0%B0%E0%B1%80%20%E0%B0%B5%E0%B0%BF%E0%B0%B7%E0%B1%86%E0%B0%B8%E0%B1%8D%20/%20%E0%B0%86%E0%B0%AB%E0%B0%B0%E0%B1%8D%20%E0%B0%AA%E0%B1%8B%E0%B0%B8%E0%B1%8D%E0%B0%9F%E0%B1%8D%20%E0%B0%9A%E0%B1%87%E0%B0%AF%E0%B0%BE%E0%B0%B2%E0%B0%A8%E0%B1%81%E0%B0%95%E0%B1%81%E0%B0%82%E0%B0%9F%E0%B1%81%E0%B0%A8%E0%B1%8D%E0%B0%A8%E0%B0%BE%E0%B0%A8%E0%B1%81."
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-rose-500 px-3 py-1 text-xs font-bold text-white shadow-xs hover:opacity-95 transition active:scale-95"
-        >
-          <Sparkles className="h-3.5 w-3.5" />
-          <span>పోస్ట్ స్టోరీ (₹99)</span>
-        </a>
-      </div>
-
       {/* Horizontal Story Rail */}
       <div
-        className="no-scrollbar mt-3 flex w-full max-w-full justify-start gap-4 overflow-x-auto px-1 pb-3 flex-nowrap touch-pan-x"
+        className="no-scrollbar flex w-full max-w-full justify-start gap-4 overflow-x-auto px-1 pb-2 flex-nowrap touch-pan-x"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {/* Add story button */}
