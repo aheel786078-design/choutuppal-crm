@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { ChevronLeft, ChevronRight, Megaphone, Sparkles, MessageCircle, X, ExternalLink, Heart, Send } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Megaphone, MessageCircle, X, ExternalLink, Heart, Send } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
@@ -142,20 +142,6 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
 
   return (
     <section className="w-full relative z-10" aria-label="Promotional Banners">
-      {/* Badge row — ABOVE the banner image (no overlap) */}
-      <div className="mb-2 flex items-center gap-2 px-1">
-        <span className="flex items-center gap-1.5 rounded-full gradient-brand px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow-sm">
-          <Sparkles className="h-3.5 w-3.5" />
-          Banner Ad
-        </span>
-        <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-bold text-amber-700">
-          ₹99/day
-        </span>
-        <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-bold text-emerald-700">
-          Early Bird FREE
-        </span>
-      </div>
-
       {/* Banner image — 16:9, full width, constrained height on desktop */}
       <div
         onClick={handleBannerClick}
@@ -241,23 +227,6 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
             ))}
           </div>
         ) : null}
-      </div>
-
-      {/* CTA buttons — BELOW the banner */}
-      <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
-        <Button onClick={handleBannerClick} size="sm" className="gap-2 bg-white text-blue-700 shadow-sm border border-slate-200 hover:bg-blue-50 font-semibold text-xs sm:text-sm">
-          <Megaphone className="h-4 w-4 text-blue-600" />
-          View Offer Details
-        </Button>
-        <a
-          href={`https://wa.me/919494348175?text=${encodeURIComponent('నమస్కారం చౌటుప్పల్ యాప్, నా బిజినెస్ కోసం బ్యానర్ అడ్ ఇవ్వాలనుకుంటున్నాను. వివరాలు దయచేసి పంచండి.')}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-lg border border-emerald-500 bg-white/90 px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-emerald-700 shadow-sm backdrop-blur transition-all hover:bg-emerald-50"
-        >
-          <MessageCircle className="h-4 w-4 shrink-0 text-emerald-600" />
-          <span>ప్రమోట్ చేయండి</span>
-        </a>
       </div>
 
       {/* Full-Screen Banner Modal */}
