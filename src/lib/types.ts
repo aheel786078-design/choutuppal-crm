@@ -545,6 +545,7 @@ export interface WhatsAppMessage {
   providerMessageId?: string
   assignedStaffId?: string
   assignedStaffName?: string
+  errorDetails?: string
   createdAt: string
 }
 
@@ -816,6 +817,7 @@ export interface AdminDataStore {
   settings: {
     whatsappToken: string
     whatsappPhoneNumberId: string
+    whatsappBusinessAccountId?: string
     whatsappVerifyToken: string
     syncListingsToCrmFlow: boolean
     autoSendListingPhotoInChat: boolean

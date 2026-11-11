@@ -14,6 +14,7 @@ export async function GET(req: Request) {
     const settings = store.settings || {
       whatsappToken: '',
       whatsappPhoneNumberId: '',
+      whatsappBusinessAccountId: '',
       whatsappVerifyToken: 'choutuppal_verify_token',
       syncListingsToCrmFlow: true,
       autoSendListingPhotoInChat: true,
@@ -24,10 +25,23 @@ export async function GET(req: Request) {
       ? `${token.slice(0, 4)}...${token.slice(-4)}`
       : (token ? '********' : '')
 
+    // Recent 10 messages for real-time diagnostic visibility
+    const recentActivity = (store.messages || []).slice(0, 10).map((m) => ({
+      id: m.id,
+      phone: m.phone,
+      contactName: m.contactName,
+      direction: m.direction,
+      messageText: m.messageText,
+      status: m.status,
+      errorDetails: m.errorDetails,
+      createdAt: m.createdAt,
+    }))
+
     return NextResponse.json({
       success: true,
       settings: {
         whatsappPhoneNumberId: settings.whatsappPhoneNumberId || '',
+        whatsappBusinessAccountId: settings.whatsappBusinessAccountId || '',
         whatsappVerifyToken: settings.whatsappVerifyToken || 'choutuppal_verify_token',
         syncListingsToCrmFlow: settings.syncListingsToCrmFlow !== false,
         autoSendListingPhotoInChat: settings.autoSendListingPhotoInChat !== false,
@@ -35,6 +49,7 @@ export async function GET(req: Request) {
         maskedToken,
       },
       webhookCallbackUrl: `${getBaseUrl()}/api/whatsapp/webhook`,
+      recentActivity,
     })
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 })
@@ -53,6 +68,7 @@ export async function POST(req: Request) {
       store.settings = {
         whatsappToken: '',
         whatsappPhoneNumberId: '',
+        whatsappBusinessAccountId: '',
         whatsappVerifyToken: 'choutuppal_verify_token',
         syncListingsToCrmFlow: true,
         autoSendListingPhotoInChat: true,
@@ -66,6 +82,10 @@ export async function POST(req: Request) {
 
     if (typeof body.whatsappPhoneNumberId === 'string') {
       store.settings.whatsappPhoneNumberId = body.whatsappPhoneNumberId.trim()
+    }
+
+    if (typeof body.whatsappBusinessAccountId === 'string') {
+      store.settings.whatsappBusinessAccountId = body.whatsappBusinessAccountId.trim()
     }
 
     if (typeof body.whatsappVerifyToken === 'string') {

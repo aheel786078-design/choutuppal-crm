@@ -266,6 +266,7 @@ export async function sendWhatsAppFlowMessage(
     imageUrl: options.imageUrl,
     territoryId,
     status: msgStatus,
+    errorDetails: dispatchError,
     createdAt: new Date().toISOString(),
   })
 
