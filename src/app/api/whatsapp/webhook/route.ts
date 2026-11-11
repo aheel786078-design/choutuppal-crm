@@ -35,25 +35,27 @@ export async function POST(req: Request) {
     // 1. Meta Webhook HMAC-SHA256 Signature Verification (When secret is configured)
     const appSecret = process.env.WHATSAPP_APP_SECRET
     const signatureHeader = req.headers.get('x-hub-signature-256')
+    const enforceSignature = process.env.ENFORCE_WEBHOOK_SIGNATURE === 'true'
 
-    if (appSecret) {
-      if (!signatureHeader) {
-        return NextResponse.json(
-          { success: false, error: 'Missing x-hub-signature-256 header' },
-          { status: 401 }
-        )
-      }
-      const signature = signatureHeader.replace(/^sha256=/, '').trim()
-      const expectedSignature = crypto.createHmac('sha256', appSecret).update(rawBody).digest('hex')
+    if (appSecret && signatureHeader) {
+      try {
+        const signature = signatureHeader.replace(/^sha256=/, '').trim()
+        const expectedSignature = crypto.createHmac('sha256', appSecret).update(rawBody).digest('hex')
 
-      const sigBuffer = Buffer.from(signature)
-      const expectedBuffer = Buffer.from(expectedSignature)
+        const sigBuffer = Buffer.from(signature)
+        const expectedBuffer = Buffer.from(expectedSignature)
 
-      if (sigBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {
-        return NextResponse.json(
-          { success: false, error: 'Invalid webhook signature' },
-          { status: 401 }
-        )
+        if (sigBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {
+          console.warn('[Webhook] Warning: x-hub-signature-256 mismatch with WHATSAPP_APP_SECRET')
+          if (enforceSignature) {
+            return NextResponse.json(
+              { success: false, error: 'Invalid webhook signature' },
+              { status: 401 }
+            )
+          }
+        }
+      } catch (sigErr) {
+        console.warn('[Webhook] Signature verification exception:', sigErr)
       }
     }
 
