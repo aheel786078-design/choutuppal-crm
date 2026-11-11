@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
-import { loadStore } from '@/lib/store'
+import { loadStore, saveStore, FLAGSHIP_TERRITORY_ID } from '@/lib/store'
 import { requireSuperAdmin } from '@/lib/auth-server'
 import { getBaseUrl } from '@/lib/utils'
 import { sendWhatsAppFlowMessage } from '@/lib/whatsapp-cloud-api'
+import { getSupabaseAdminClient } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,18 +33,62 @@ export async function POST(req: Request) {
 
     const body = await req.json().catch(() => ({}))
     const store = loadStore()
+    const supabase = getSupabaseAdminClient()
+    let savedSettings: any = store.settings || {}
+
+    if (!savedSettings.whatsappToken && supabase) {
+      try {
+        const { data: t } = await supabase.from('territories').select('branding').eq('id', FLAGSHIP_TERRITORY_ID).single()
+        if (t?.branding?.whatsappSettings) {
+          savedSettings = { ...savedSettings, ...t.branding.whatsappSettings }
+        }
+      } catch {}
+    }
 
     // Resolve credentials (from body or saved store settings or process.env)
     const token = (
       body.whatsappToken && !body.whatsappToken.includes('...') && !body.whatsappToken.startsWith('****')
         ? body.whatsappToken
-        : store.settings?.whatsappToken || process.env.WHATSAPP_TOKEN || ''
+        : savedSettings.whatsappToken || process.env.WHATSAPP_TOKEN || ''
     ).trim()
 
-    const phoneId = (body.whatsappPhoneNumberId || store.settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID || '').trim()
-    const wabaId = (body.whatsappBusinessAccountId || store.settings?.whatsappBusinessAccountId || '').trim()
-    const verifyToken = (body.whatsappVerifyToken || store.settings?.whatsappVerifyToken || 'choutuppal_verify_token').trim()
+    const phoneId = (body.whatsappPhoneNumberId || savedSettings.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID || '').trim()
+    const wabaId = (body.whatsappBusinessAccountId || savedSettings.whatsappBusinessAccountId || '').trim()
+    const verifyToken = (body.whatsappVerifyToken || savedSettings.whatsappVerifyToken || 'choutuppal_verify_token').trim()
     const testPhone = (body.testPhone || '').replace(/\D/g, '')
+
+    // Handle action: 'register_phone' (2-step verification PIN activation)
+    if (body.action === 'register_phone') {
+      if (!phoneId || !token) {
+        return NextResponse.json({ success: false, error: 'Phone Number ID and Access Token are required' }, { status: 400 })
+      }
+      const pin = (body.pin || '123456').trim()
+      const regUrl = `https://graph.facebook.com/v21.0/${phoneId}/register`
+      const regRes = await fetch(regUrl, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          pin,
+        }),
+      })
+      const regData = await regRes.json().catch(() => ({}))
+      if (regRes.ok && (regData.success || regData.id)) {
+        return NextResponse.json({
+          success: true,
+          registered: true,
+          message: 'ఫోన్ నంబర్ విజయవంతంగా రిజిస్టర్ చేయబడింది! 6-డిజిట్ పిన్ యాక్టివేట్ అయింది.',
+        })
+      } else {
+        return NextResponse.json({
+          success: false,
+          error: regData?.error?.message || 'Meta Phone registration call failed',
+        }, { status: 400 })
+      }
+    }
 
     const diagnostics: {
       webhook: { ok: boolean; status: string; url: string; details?: string }
@@ -147,7 +192,7 @@ export async function POST(req: Request) {
     }
 
     // ------------------------------------------------------------------------
-    // 3. TEST WABA ID (Optional)
+    // 3. TEST WABA ID & AUTO-SUBSCRIBE WEBHOOKS
     // ------------------------------------------------------------------------
     if (wabaId && token) {
       try {
@@ -157,6 +202,20 @@ export async function POST(req: Request) {
           cache: 'no-store',
         })
         const wabaData = await wabaRes.json().catch(() => ({}))
+
+        // Ensure Meta App is subscribed to receive incoming WABA webhook messages
+        let wabaSubscribed = false
+        try {
+          const subRes = await fetch(`https://graph.facebook.com/v21.0/${wabaId}/subscribed_apps`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          const subData = await subRes.json().catch(() => ({}))
+          wabaSubscribed = Boolean(subData.success)
+        } catch (subErr) {
+          console.warn('[Test Connection] WABA subscription call error:', subErr)
+        }
+
         if (wabaRes.ok && wabaData.id) {
           diagnostics.metaWabaApi = {
             ok: true,
@@ -165,6 +224,7 @@ export async function POST(req: Request) {
               wabaId: wabaData.id,
               name: wabaData.name || 'WABA Account',
               currency: wabaData.currency || 'INR',
+              wabaSubscribed,
             },
           }
         } else {
@@ -179,6 +239,35 @@ export async function POST(req: Request) {
           ok: false,
           status: 'NETWORK_ERROR',
           error: wabaErr.message,
+        }
+      }
+    }
+
+    // ------------------------------------------------------------------------
+    // AUTO-PERSIST TO SUPABASE (If credentials tested successfully)
+    // ------------------------------------------------------------------------
+    if (diagnostics.metaPhoneApi.ok && token && phoneId) {
+      store.settings = {
+        ...(store.settings || {}),
+        whatsappToken: token,
+        whatsappPhoneNumberId: phoneId,
+        whatsappBusinessAccountId: wabaId,
+        whatsappVerifyToken: verifyToken,
+        syncListingsToCrmFlow: store.settings?.syncListingsToCrmFlow !== false,
+        autoSendListingPhotoInChat: store.settings?.autoSendListingPhotoInChat !== false,
+      }
+      saveStore(store)
+
+      if (supabase) {
+        try {
+          const { data: t } = await supabase.from('territories').select('branding').eq('id', FLAGSHIP_TERRITORY_ID).single()
+          const updatedBranding = {
+            ...(t?.branding || {}),
+            whatsappSettings: { ...store.settings },
+          }
+          await supabase.from('territories').update({ branding: updatedBranding }).eq('id', FLAGSHIP_TERRITORY_ID)
+        } catch (syncDbErr) {
+          console.warn('[Test Connection] Supabase persist error:', syncDbErr)
         }
       }
     }

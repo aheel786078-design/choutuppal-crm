@@ -1,4 +1,5 @@
-import { loadStore, saveStore } from './store'
+import { loadStore, saveStore, FLAGSHIP_TERRITORY_ID } from './store'
+import { getSupabaseAdminClient } from './supabase'
 import type { Listing } from './types'
 
 export interface WhatsAppSendOptions {
@@ -209,10 +210,25 @@ export async function sendWhatsAppFlowMessage(
 ): Promise<WhatsAppDispatchResult> {
   const store = existingStore || loadStore()
   const cleanPhone = options.toPhone.replace(/\D/g, '')
-  const territoryId = options.territoryId || 'territory_choutuppal'
+  const territoryId = options.territoryId || FLAGSHIP_TERRITORY_ID
 
-  const token = store.settings?.whatsappToken || process.env.WHATSAPP_TOKEN
-  const phoneId = store.settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID
+  let token = store.settings?.whatsappToken || process.env.WHATSAPP_TOKEN
+  let phoneId = store.settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID
+
+  const supabase = getSupabaseAdminClient()
+
+  // Fallback to Supabase persistent branding if local container settings are uninitialized
+  if ((!token || !phoneId) && supabase) {
+    try {
+      const { data: t } = await supabase.from('territories').select('branding').eq('id', FLAGSHIP_TERRITORY_ID).single()
+      if (t?.branding?.whatsappSettings) {
+        token = token || t.branding.whatsappSettings.whatsappToken
+        phoneId = phoneId || t.branding.whatsappSettings.whatsappPhoneNumberId
+      }
+    } catch (syncErr) {
+      console.warn('[WhatsApp Cloud API] Supabase credentials sync error:', syncErr)
+    }
+  }
 
   let providerDelivered = false
   let msgStatus: 'sent' | 'delivered' | 'failed' = 'sent'
@@ -272,6 +288,29 @@ export async function sendWhatsAppFlowMessage(
 
   if (!existingStore) {
     saveStore(store)
+  }
+
+  // Also persist to Supabase whatsapp_messages table
+  if (supabase) {
+    try {
+      await supabase.from('whatsapp_messages').insert({
+        id: generatedMsgId,
+        territory_id: territoryId,
+        contact_name: options.contactName || null,
+        phone: cleanPhone,
+        direction: 'OUTBOUND',
+        sender: 'system',
+        text: options.messageText || '(Media Message)',
+        message_text: options.messageText || '(Media Message)',
+        message_type: options.imageUrl ? 'image' : 'text',
+        media_url: options.imageUrl || options.mediaUrl || null,
+        status: msgStatus,
+        metadata: dispatchError ? { errorDetails: dispatchError } : {},
+        timestamp: new Date().toISOString(),
+      })
+    } catch (sbMsgErr) {
+      console.warn('[WhatsApp Cloud API] Supabase message insert error:', sbMsgErr)
+    }
   }
 
   if (dispatchError) {

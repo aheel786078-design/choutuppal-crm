@@ -67,6 +67,39 @@ export default function SettingsAdminPage() {
   const [sendingTestMsg, setSendingTestMsg] = useState(false)
   const [testMsgStatus, setTestMsgStatus] = useState<{ ok: boolean; message: string } | null>(null)
 
+  // 2-Step Phone Registration State
+  const [registerPin, setRegisterPin] = useState('123456')
+  const [registeringPhone, setRegisteringPhone] = useState(false)
+  const [registerMsg, setRegisterMsg] = useState<{ ok: boolean; message: string } | null>(null)
+
+  const handleRegisterPhone = async () => {
+    setRegisteringPhone(true)
+    setRegisterMsg(null)
+    try {
+      const res = await fetch('/api/admin/settings/test-connection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'register_phone',
+          whatsappPhoneNumberId: phoneId,
+          whatsappToken: token,
+          pin: registerPin || '123456',
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setRegisterMsg({ ok: true, message: data.message || 'ఫోన్ నంబర్ విజయవంతంగా రిజిస్టర్ అయింది!' })
+        setTimeout(() => handleTestConnection(), 1500)
+      } else {
+        setRegisterMsg({ ok: false, message: data.error || 'రిజిస్ట్రేషన్ విఫలమైంది.' })
+      }
+    } catch (err: any) {
+      setRegisterMsg({ ok: false, message: err.message || 'నెట్‌వర్క్ ఎర్రర్.' })
+    } finally {
+      setRegisteringPhone(false)
+    }
+  }
+
   const fetchSettings = async () => {
     try {
       setLoading(true)
@@ -469,10 +502,51 @@ export default function SettingsAdminPage() {
                     </span>
                   </div>
                   {diagnosticResult.metaPhoneApi.ok ? (
-                    <div className="text-[11px] text-slate-700 space-y-0.5 font-sans">
+                    <div className="text-[11px] text-slate-700 space-y-1 font-sans">
                       <div><strong>ఫోన్ నంబర్:</strong> {diagnosticResult.metaPhoneApi.details?.displayPhoneNumber}</div>
                       <div><strong>బిజినెస్ పేరు:</strong> {diagnosticResult.metaPhoneApi.details?.verifiedName}</div>
-                      <div><strong>క్వాలిటీ:</strong> <span className="text-emerald-700 font-bold">{diagnosticResult.metaPhoneApi.details?.qualityRating}</span> | <strong>స్థితి:</strong> {diagnosticResult.metaPhoneApi.details?.verificationStatus}</div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span><strong>క్వాలిటీ:</strong> <span className="text-emerald-700 font-bold">{diagnosticResult.metaPhoneApi.details?.qualityRating}</span></span>
+                        <span>|</span>
+                        <span><strong>స్థితి:</strong> <span className={diagnosticResult.metaPhoneApi.details?.verificationStatus === 'EXPIRED' ? 'text-amber-700 font-bold' : 'text-emerald-700 font-bold'}>{diagnosticResult.metaPhoneApi.details?.verificationStatus}</span></span>
+                      </div>
+
+                      {/* 2-Step Registration PIN if status is EXPIRED */}
+                      {diagnosticResult.metaPhoneApi.details?.verificationStatus === 'EXPIRED' && (
+                        <div className="mt-2.5 p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-2 text-xs">
+                          <div className="flex items-center gap-1.5 font-bold text-amber-900">
+                            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                            <span>2-Step PIN రిజిస్ట్రేషన్ అవసరం (ఫోన్ స్థితి EXPIRED):</span>
+                          </div>
+                          <p className="text-[11px] text-amber-800 leading-relaxed">
+                            వాట్సాప్ లో ఇన్కమింగ్ మెసేజ్‌లు మరియు ఆటో-రిప్లైస్ పనిచేయాలంటే 6-అంకెల PIN రిజిస్టర్ అవ్వాలి. 6-అంకెల PIN ఎంటర్ చేసి క్రింద బటన్ క్లిక్ చేయండి.
+                          </p>
+                          <div className="flex items-center gap-2 pt-0.5">
+                            <input
+                              type="password"
+                              maxLength={6}
+                              value={registerPin}
+                              onChange={(e) => setRegisterPin(e.target.value.replace(/\D/g, ''))}
+                              placeholder="123456"
+                              className="w-32 bg-white border border-amber-300 rounded-lg px-2.5 py-1 text-xs font-mono tracking-widest text-slate-900 focus:outline-none focus:border-amber-500"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleRegisterPhone}
+                              disabled={registeringPhone}
+                              className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 transition-all cursor-pointer disabled:opacity-50"
+                            >
+                              {registeringPhone ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+                              <span>{registeringPhone ? 'యాక్టివేట్ అవుతోంది...' : 'Activate & Register Phone'}</span>
+                            </button>
+                          </div>
+                          {registerMsg && (
+                            <div className={`p-2 rounded text-[11px] font-medium ${registerMsg.ok ? 'bg-emerald-100 text-emerald-900' : 'bg-red-100 text-red-900'}`}>
+                              {registerMsg.message}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="text-[11px] text-red-700 space-y-1">
@@ -490,10 +564,18 @@ export default function SettingsAdminPage() {
               {/* Optional WABA Card */}
               {diagnosticResult.metaWabaApi && (
                 <div className={`p-3 rounded-xl border ${diagnosticResult.metaWabaApi.ok ? 'bg-slate-50 border-slate-200' : 'bg-amber-50 border-amber-200'} text-xs flex items-center justify-between`}>
-                  <span className="font-semibold text-slate-700 flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <Building2 className="w-4 h-4 text-slate-600" />
-                    WABA Account: {diagnosticResult.metaWabaApi.details?.name || 'Verified'}
-                  </span>
+                    <span className="font-semibold text-slate-700">
+                      WABA Account: {diagnosticResult.metaWabaApi.details?.name || 'Verified'}
+                    </span>
+                    {diagnosticResult.metaWabaApi.details?.wabaSubscribed && (
+                      <span className="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                        <Check className="w-3 h-3 text-emerald-600" />
+                        Webhooks Subscribed
+                      </span>
+                    )}
+                  </div>
                   <span className="text-[11px] font-mono text-slate-500">
                     ID: {diagnosticResult.metaWabaApi.details?.wabaId} ({diagnosticResult.metaWabaApi.details?.currency})
                   </span>
@@ -501,6 +583,17 @@ export default function SettingsAdminPage() {
               )}
             </div>
           )}
+
+          {/* Testing Reminder Card */}
+          <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1 text-slate-700">
+            <div className="font-bold flex items-center gap-1.5 text-slate-900">
+              <Info className="w-3.5 h-3.5 text-blue-600" />
+              <span>టెస్ట్ చేసేటప్పుడు ముఖ్య గమనిక:</span>
+            </div>
+            <p className="text-[11px] text-slate-600 leading-relaxed">
+              బిజినెస్ నంబర్ (9494348175) నుండి అదే నంబర్‌కు మెసేజ్ పంపితే వాట్సాప్ డెలివరీ చేయదు. రిప్లైని టెస్ట్ చేయడానికి మీ <strong>వ్యక్తిగత మొబైల్ లేదా స్నేహితుని ఫోన్ నుండి</strong> 9494348175 కు <strong>&apos;Hi&apos;</strong> లేదా <strong>&apos;Menu&apos;</strong> అని పంపండి.
+            </p>
+          </div>
 
           {/* Send Live Test Ping to a Phone Number */}
           <div className="pt-3 border-t border-slate-100 space-y-3">

@@ -5,6 +5,7 @@ import { sendListingWhatsAppCard, sendWhatsAppFlowMessage } from '@/lib/whatsapp
 import type { Territory } from '@/lib/types'
 import { runAutomationShadowEvaluation } from '@/lib/automation-shadow-runner'
 import { evaluateFlow } from '@/lib/flow-runtime-engine'
+import { getSupabaseAdminClient } from '@/lib/supabase'
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
@@ -139,6 +140,23 @@ export async function POST(req: Request) {
       if (!store.contacts) store.contacts = []
       if (!store.approvals) store.approvals = []
 
+      // If store settings token is empty, pull from Supabase territory_choutuppal branding
+      const supabase = getSupabaseAdminClient()
+      if (!store.settings?.whatsappToken && supabase) {
+        try {
+          const { data: tData } = await supabase
+            .from('territories')
+            .select('branding')
+            .eq('id', FLAGSHIP_TERRITORY_ID)
+            .single()
+          if (tData?.branding?.whatsappSettings) {
+            store.settings = { ...(store.settings || {}), ...tData.branding.whatsappSettings }
+          }
+        } catch (sbSyncErr) {
+          console.warn('[Webhook POST] Supabase settings sync error:', sbSyncErr)
+        }
+      }
+
       const webhookMsgId = message.id
       if (webhookMsgId && store.messages) {
         const isDuplicate = store.messages.some(
@@ -217,9 +235,11 @@ export async function POST(req: Request) {
       const townDomain = territory.primaryDomain || `${territory.slug}.choutuppal.in`
       const townUrl = territory.isFlagship ? 'https://choutuppal.in' : `https://${townDomain}`
 
+      const incomingMsgId = `msg_in_${Date.now()}`
+
       // 1. Log inbound message with territory isolation
       store.messages.unshift({
-        id: `msg_in_${Date.now()}`,
+        id: incomingMsgId,
         providerMessageId: webhookMsgId || undefined,
         territoryId: territory.id,
         phone: senderPhone,
@@ -229,6 +249,28 @@ export async function POST(req: Request) {
         status: 'received',
         createdAt: new Date().toISOString(),
       })
+
+      // Also persist inbound message to Supabase
+      if (supabase) {
+        try {
+          await supabase.from('whatsapp_messages').insert({
+            id: incomingMsgId,
+            territory_id: territory.id,
+            contact_name: senderName,
+            phone: senderPhone,
+            direction: 'INBOUND',
+            sender: 'customer',
+            text: incomingText || '(Interactive Reply)',
+            message_text: incomingText || '(Interactive Reply)',
+            message_type: 'text',
+            status: 'received',
+            provider_message_id: webhookMsgId || null,
+            timestamp: new Date().toISOString(),
+          })
+        } catch (sbWhErr) {
+          console.warn('[Webhook POST] Supabase inbound insert error:', sbWhErr)
+        }
+      }
 
       // 2. Inbound contact matching & auto-upsert with 10-digit deduplication
       const senderClean = senderPhone.replace(/\D/g, '')
