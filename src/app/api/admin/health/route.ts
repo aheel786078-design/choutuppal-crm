@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import crypto from 'crypto'
 import { requireAuth } from '@/lib/auth-server'
+import { getDataFilePath } from '@/lib/store'
 import { isR2Configured } from '@/lib/r2-storage'
 import { getPaymentGatewayAdapter } from '@/lib/payment-gateway'
 import type { SystemHealthReport, HealthStatusLabel } from '@/lib/types'
@@ -32,8 +33,7 @@ export async function GET(req: Request) {
     }
 
     // 3. Local JSON Data Store Diagnostics (Strictly Non-Destructive)
-    const storeRelativePath = path.join('data', 'admin_data.json')
-    const storeAbsolutePath = path.resolve(process.cwd(), storeRelativePath)
+    const storeAbsolutePath = getDataFilePath()
 
     let storageStatus: 'CONNECTED' | 'ERROR' = 'ERROR'
     let isReadable = false
@@ -133,7 +133,7 @@ export async function GET(req: Request) {
       storage: {
         status: storageStatus,
         type: 'LOCAL_JSON',
-        storePath: storeRelativePath,
+        storePath: storeAbsolutePath,
         readable: isReadable,
         writable: isWritable,
         parseable: isParseable,

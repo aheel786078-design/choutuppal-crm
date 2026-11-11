@@ -171,18 +171,17 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
         <div className="absolute -bottom-12 right-10 h-48 w-48 rounded-full bg-amber-300/30 blur-3xl pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.15),transparent_45%)] pointer-events-none" />
 
-        {/* Dark gradient at bottom for text readability */}
-        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/40 to-transparent pointer-events-none" />
-
-        {/* Title overlay at the bottom */}
-        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 lg:p-10 pointer-events-none">
-          <h2 className="text-xl font-black leading-tight text-white drop-shadow-md sm:text-2xl lg:text-3xl max-w-3xl">
-            {current?.title ?? 'Promote Your Business to 10,000+ Locals'}
-          </h2>
-          <p className="mt-1 hidden max-w-xl text-sm text-white/90 sm:block drop-shadow">
-            Reach customers across Choutuppal, Panthangi, Lingojiguda, Koyyalagudem &amp; nearby villages.
-          </p>
-        </div>
+        {/* Subtle title overlay only if a title is explicitly present */}
+        {current?.title ? (
+          <>
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6 lg:p-8 pointer-events-none">
+              <h2 className="text-base font-bold leading-tight text-white drop-shadow-md sm:text-lg lg:text-xl max-w-2xl">
+                {current.title}
+              </h2>
+            </div>
+          </>
+        ) : null}
 
         {/* Navigation arrows — only when more than 1 banner */}
         {count > 1 ? (
