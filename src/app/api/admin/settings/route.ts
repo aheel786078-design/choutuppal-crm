@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { loadStore, saveStore, logAuditEvent, FLAGSHIP_TERRITORY_ID } from '@/lib/store'
 import { requireSuperAdmin } from '@/lib/auth-server'
+import { getBaseUrl } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,7 +34,7 @@ export async function GET(req: Request) {
         hasCustomToken: Boolean(token),
         maskedToken,
       },
-      webhookCallbackUrl: 'https://choutuppal.in/api/whatsapp/webhook',
+      webhookCallbackUrl: `${getBaseUrl()}/api/whatsapp/webhook`,
     })
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 })

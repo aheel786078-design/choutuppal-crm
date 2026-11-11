@@ -9,12 +9,19 @@ import { evaluateFlow } from '@/lib/flow-runtime-engine'
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
   const mode = searchParams.get('hub.mode')
-  const token = searchParams.get('hub.verify_token')
+  const token = (searchParams.get('hub.verify_token') || '').trim()
   const challenge = searchParams.get('hub.challenge')
 
-  const expectedToken = (process.env.WHATSAPP_VERIFY_TOKEN || 'choutuppal_verify_token').trim().replace(/^["']|["']$/g, '')
+  let storeVerifyToken = ''
+  try {
+    const store = loadStore()
+    storeVerifyToken = (store.settings?.whatsappVerifyToken || '').trim()
+  } catch {}
 
-  if (mode === 'subscribe' && token && token.trim() === expectedToken) {
+  const envToken = (process.env.WHATSAPP_VERIFY_TOKEN || '').trim().replace(/^["']|["']$/g, '')
+  const validTokens = [envToken, storeVerifyToken, 'choutuppal_verify_token'].filter(Boolean)
+
+  if (mode === 'subscribe' && token && validTokens.includes(token)) {
     return new Response(challenge, { status: 200 })
   }
   return new Response('Verification token mismatch', { status: 403 })
@@ -312,17 +319,13 @@ export async function POST(req: Request) {
           `3. 'కన్ఫర్మ్' - వివరాలు సరైనవే అని ధృవీకరించడానికి\n\n` +
           `🌐 Website: ${townUrl}`
 
-        store.messages.unshift({
-          id: `msg_out_${Date.now()}`,
-          territoryId: territory.id,
-          phone: senderPhone,
-          contactName: matchedListing.title,
-          direction: 'outbound',
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
           messageText: vendorClaimMsg,
           imageUrl: matchedListing.coverImage,
-          status: 'sent',
-          createdAt: new Date().toISOString(),
-        })
+          contactName: matchedListing.title,
+          territoryId: territory.id,
+        }, store)
 
         return NextResponse.json(withShadow({ status: 'vendor_claim_sent', listingId: matchedListing.id }))
       }
@@ -1855,16 +1858,14 @@ export async function POST(req: Request) {
           `డ్రైవర్ నేరుగా మిమ్మల్ని సంప్రదిస్తారు. లేదా కాల్ చేయండి: ${territory.contactPhone || '9494348175'}\n` +
           `🌐 ${townUrl}/services`
 
-        store.messages.unshift({
-          id: `msg_out_${Date.now()}`,
-          territoryId: territory.id,
-          phone: senderPhone,
-          direction: 'outbound',
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
           messageText: taxiReply,
           imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=800',
-          status: 'sent',
-          createdAt: new Date().toISOString(),
-        })
+          contactName: senderName,
+          territoryId: territory.id,
+        }, store)
+
         return NextResponse.json(withShadow({ status: 'taxi_automation_dispatched', territoryId: territory.id }))
       }
 
@@ -1876,15 +1877,13 @@ export async function POST(req: Request) {
           `మీ పికప్ లొకేషన్ పంపండి, సమీప ఆటో డ్రైవర్ త్వరలో చేరుకుంటారు.\n` +
           `🌐 ${townUrl}/services`
 
-        store.messages.unshift({
-          id: `msg_out_${Date.now()}`,
-          territoryId: territory.id,
-          phone: senderPhone,
-          direction: 'outbound',
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
           messageText: autoReply,
-          status: 'sent',
-          createdAt: new Date().toISOString(),
-        })
+          contactName: senderName,
+          territoryId: territory.id,
+        }, store)
+
         return NextResponse.json(withShadow({ status: 'auto_automation_dispatched', territoryId: territory.id }))
       }
 
@@ -1896,15 +1895,13 @@ export async function POST(req: Request) {
           `మీ లొకేషన్ మరియు సమస్యను ఇక్కడ మెసేజ్ చేయండి.\n` +
           `🌐 ${townUrl}/services`
 
-        store.messages.unshift({
-          id: `msg_out_${Date.now()}`,
-          territoryId: territory.id,
-          phone: senderPhone,
-          direction: 'outbound',
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
           messageText: plumberReply,
-          status: 'sent',
-          createdAt: new Date().toISOString(),
-        })
+          contactName: senderName,
+          territoryId: territory.id,
+        }, store)
+
         return NextResponse.json(withShadow({ status: 'plumber_automation_dispatched', territoryId: territory.id }))
       }
 
@@ -1915,15 +1912,13 @@ export async function POST(req: Request) {
           `వైరింగ్, ఇన్వర్టర్ సెటప్, మోటార్ పంప్ రిపేర్ మరియు ఫ్యాన్ ఫిట్టింగ్ కోసం సర్వీస్ రెడీగా ఉంది.\n` +
           `🌐 ${townUrl}/services`
 
-        store.messages.unshift({
-          id: `msg_out_${Date.now()}`,
-          territoryId: territory.id,
-          phone: senderPhone,
-          direction: 'outbound',
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
           messageText: electricianReply,
-          status: 'sent',
-          createdAt: new Date().toISOString(),
-        })
+          contactName: senderName,
+          territoryId: territory.id,
+        }, store)
+
         return NextResponse.json(withShadow({ status: 'electrician_automation_dispatched', territoryId: territory.id }))
       }
 
@@ -1937,15 +1932,13 @@ export async function POST(req: Request) {
           `మా రియల్ ఎస్టేట్ అడ్వైజర్ మిమ్మల్ని వెంటనే సంప్రదిస్తారు.\n` +
           `🌐 అన్ని ప్లాట్లు చూడండి: ${townUrl}/real-estate`
 
-        store.messages.unshift({
-          id: `msg_out_${Date.now()}`,
-          territoryId: territory.id,
-          phone: senderPhone,
-          direction: 'outbound',
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
           messageText: realEstateReply,
-          status: 'sent',
-          createdAt: new Date().toISOString(),
-        })
+          contactName: senderName,
+          territoryId: territory.id,
+        }, store)
+
         return NextResponse.json(withShadow({ status: 'real_estate_automation_dispatched', territoryId: territory.id }))
       }
 
@@ -1970,7 +1963,30 @@ export async function POST(req: Request) {
         }))
       }
 
-      return NextResponse.json(withShadow({ status: 'processed_ok', territoryId: territory.id }))
+      // 8. CATCH-ALL INTELLIGENT FALLBACK (Ensure every incoming message gets an immediate reply)
+      const fallbackMsg =
+        `నమస్కారం ${senderName} గారు! 🙏\n\n` +
+        `చౌటుప్పల్ లోకల్ బిజినెస్ & సర్వీసెస్ కు స్వాగతం. మీరు కోరిన సమాచారం కోసం క్రింది ఆప్షన్లను ఎంచుకోండి లేదా సంబంధిత పదాన్ని టైప్ చేయండి:\n\n` +
+        `1️⃣ *వ్యాపారాలు* — షాపులు, సర్వీసులు & ఆస్పత్రులు\n` +
+        `2️⃣ *స్టోరీస్ & ఆఫర్స్* — నేటి తాజా డిస్కౌంట్లు & ఆఫర్లు\n` +
+        `3️⃣ *ప్రమోషన్* — మీ వ్యాపారాన్ని ప్రమోట్ చేయడానికి\n\n` +
+        `💡 ఏదైనా షాప్ లేదా సర్వీస్ కావాలంటే నేరుగా దాని పేరు టైప్ చేయండి (ఉదా: హాస్పిటల్, కిరాణా, టాక్సీ).\n` +
+        `🌐 వెబ్‌సైట్: ${townUrl}`
+
+      await sendWhatsAppFlowMessage({
+        toPhone: senderPhone,
+        messageText: fallbackMsg,
+        buttons: [
+          { id: 'btn_menu_directory', title: '1. వ్యాపారాలు' },
+          { id: 'btn_menu_stories', title: '2. స్టోరీస్ & ఆఫర్స్' },
+          { id: 'btn_menu_promote', title: '3. ప్రమోషన్' },
+        ],
+        footerText: `🌐 ${townUrl}`,
+        territoryId: territory.id,
+        contactName: senderName,
+      }, store)
+
+      return NextResponse.json(withShadow({ status: 'fallback_menu_dispatched', territoryId: territory.id }))
     })
   } catch (err: any) {
     console.error('[WhatsApp Webhook POST Exception]:', err)

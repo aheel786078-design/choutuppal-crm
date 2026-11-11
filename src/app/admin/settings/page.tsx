@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Settings, ShieldCheck, Check, Key, Smartphone, Globe, Save, Loader2, AlertCircle } from 'lucide-react'
+import { Settings, ShieldCheck, Check, Key, Smartphone, Globe, Save, Loader2, AlertCircle, Copy, Info } from 'lucide-react'
 import { AdminHeader } from '@/components/admin/admin-header'
 
 export default function SettingsAdminPage() {
@@ -10,7 +10,9 @@ export default function SettingsAdminPage() {
   const [verifyToken, setVerifyToken] = useState('choutuppal_verify_token')
   const [syncListings, setSyncListings] = useState(true)
   const [autoSendPhoto, setAutoSendPhoto] = useState(true)
-  const [webhookUrl, setWebhookUrl] = useState('https://choutuppal.in/api/whatsapp/webhook')
+  const [webhookUrl, setWebhookUrl] = useState('')
+  const [copiedUrl, setCopiedUrl] = useState(false)
+  const [copiedToken, setCopiedToken] = useState(false)
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -180,13 +182,48 @@ export default function SettingsAdminPage() {
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-100">
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Live Webhook Callback URL (Paste in Meta Developer Console)
-            </label>
-            <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-mono text-emerald-700 flex items-center justify-between">
-              <span>{webhookUrl}</span>
-              <span className="text-[10px] text-slate-500 font-sans font-semibold">Verified Route</span>
+          <div className="pt-3 border-t border-slate-100 space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Live Webhook Callback URL (Paste in Meta Developer Console)
+              </label>
+              <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-mono text-emerald-700 flex items-center justify-between gap-2">
+                <span className="truncate select-all">{webhookUrl || (typeof window !== 'undefined' ? `${window.location.origin}/api/whatsapp/webhook` : 'https://choutuppal-crm.vercel.app/api/whatsapp/webhook')}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const url = webhookUrl || (typeof window !== 'undefined' ? `${window.location.origin}/api/whatsapp/webhook` : 'https://choutuppal-crm.vercel.app/api/whatsapp/webhook')
+                    navigator.clipboard.writeText(url)
+                    setCopiedUrl(true)
+                    setTimeout(() => setCopiedUrl(false), 2000)
+                  }}
+                  className="px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg text-[11px] font-medium text-slate-700 flex items-center gap-1 shrink-0 cursor-pointer transition-all"
+                >
+                  {copiedUrl ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedUrl ? 'Copied!' : 'Copy URL'}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-3.5 bg-blue-50/80 border border-blue-200 rounded-xl space-y-2 text-xs text-blue-900">
+              <div className="flex items-center gap-2 font-bold text-blue-950">
+                <Info className="w-4 h-4 text-blue-600 shrink-0" />
+                <span>Meta Developer Console లో మెసేజ్ రిప్లై రావడానికి ముఖ్యమైన 3 సెట్టింగ్‌లు:</span>
+              </div>
+              <ul className="list-disc pl-5 space-y-1 text-[11px] leading-relaxed text-blue-800">
+                <li>
+                  <strong>1. Callback URL:</strong> పైన ఉన్న <code className="bg-blue-100 px-1 py-0.5 rounded text-blue-950 font-mono">https://choutuppal-crm.vercel.app/api/whatsapp/webhook</code> లింక్ మాత్రమే పేస్ట్ చేయండి.
+                </li>
+                <li>
+                  <strong>2. Verify Token:</strong> <code className="bg-blue-100 px-1 py-0.5 rounded text-blue-950 font-mono">{verifyToken || 'choutuppal_verify_token'}</code> ఇచ్చి <em>Verify and Save</em> కొట్టండి.
+                </li>
+                <li>
+                  <strong>3. Webhook Fields (అత్యంత ముఖ్యం):</strong> Meta లో <em>Webhook Fields</em> కింద <strong>Manage</strong> క్లిక్ చేసి <strong><code className="bg-emerald-100 text-emerald-900 px-1 py-0.5 rounded font-bold font-mono">messages</code></strong> బాక్స్‌ను టిక్ (Subscribe) చేయాలి. ఇది చేయకపోతే యూజర్లు పంపే మెసేజ్‌లు CRM కి రావు.
+                </li>
+                <li>
+                  <strong>4. Access Token:</strong> 24 గంటల Temporary టోకెన్ బదులు Meta Business Settings లో <em>System User Token</em> ను వాడండి.
+                </li>
+              </ul>
             </div>
           </div>
 
