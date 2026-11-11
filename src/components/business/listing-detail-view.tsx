@@ -138,21 +138,25 @@ export function ListingDetailView({
 
   // WhatsApp Share with rich preview card text
   const handleWhatsAppShare = () => {
-    const url =
+    const origin =
       typeof window !== 'undefined'
-        ? window.location.href
-        : `https://choutuppal.in/business/${listing.slug || listing.id}`
-    const text = `🏪 *${listing.title}*\n📍 ${listing.address || listing.villageName || 'చౌటుప్పల్, తెలంగాణ'}\n⭐ *${listing.categoryName || 'వ్యాపారం'}* · చౌటుప్పల్ అధికారిక వెరిఫైడ్ మినీ వెబ్‌సైట్\n📞 ఫోన్: ${displayPhone}\n💬 వాట్సాప్: +91 ${whatsappNum}\n\n👉 ఫోటోలు, సేవలు, ధరలు & పూర్తి వివరాల కోసం చూడండి:\n${url}`
+        ? window.location.origin
+        : 'https://choutuppal-crm.vercel.app'
+    const cleanSlug = listing.slug || listing.id
+    const pageUrl = `${origin}/business/${cleanSlug}`
+    const text = `🏪 *${listing.title}*\n📍 ${listing.address || listing.villageName || 'చౌటుప్పల్, తెలంగాణ'}\n⭐ *${listing.categoryName || 'వ్యాపారం'}* · చౌటుప్పల్ అధికారిక వెరిఫైడ్ మినీ వెబ్‌సైట్\n📞 ఫోన్: ${displayPhone}\n💬 వాట్సాప్: +91 ${whatsappNum}\n\n👉 పూర్తి వివరాలు & ఫోటోల కోసం లింక్ చూడండి:\n${pageUrl}`
     const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`
     window.open(waUrl, '_blank')
   }
 
   // Native Web Share or fallback to clipboard
   const handleShare = async () => {
-    const url =
+    const origin =
       typeof window !== 'undefined'
-        ? window.location.href
-        : `https://choutuppal.in/business/${listing.slug || listing.id}`
+        ? window.location.origin
+        : 'https://choutuppal-crm.vercel.app'
+    const cleanSlug = listing.slug || listing.id
+    const url = `${origin}/business/${cleanSlug}`
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share({
@@ -1418,6 +1422,53 @@ END:VCARD`
           </div>
         </div>
       )}
+
+      {/* 10. STICKY CALL & WHATSAPP FLOATING ACTION BAR (Always visible on mobile & desktop) */}
+      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-slate-200/90 bg-white/95 backdrop-blur-md px-3 py-2.5 sm:px-6 shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 sm:gap-3">
+          {/* Quick Call Button */}
+          <a
+            href={`tel:${cleanPhone || '9441348175'}`}
+            className="flex-1 flex items-center justify-center gap-2 h-12 px-3 sm:px-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm sm:text-base shadow-md active:scale-95 transition"
+          >
+            <PhoneCall className="h-5 w-5 animate-pulse" />
+            <span>కాల్ చేయండి</span>
+          </a>
+
+          {/* WhatsApp Chat Button */}
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 flex items-center justify-center gap-2 h-12 px-3 sm:px-4 rounded-2xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm sm:text-base shadow-md active:scale-95 transition"
+          >
+            <MessageCircle className="h-5 w-5" />
+            <span>వాట్సాప్ చాట్</span>
+          </a>
+
+          {/* Save Contact vCard */}
+          <button
+            type="button"
+            onClick={handleSaveContact}
+            className="flex items-center justify-center h-12 px-3 sm:px-4 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold text-xs sm:text-sm active:scale-95 transition shrink-0 cursor-pointer"
+            title="కాంటాక్ట్ మొబైల్ లో సేవ్ చేయండి"
+          >
+            <UserPlus className="h-5 w-5 text-emerald-600 sm:mr-1.5" />
+            <span className="hidden sm:inline">సేవ్ కాంటాక్ట్</span>
+          </button>
+
+          {/* Map Directions */}
+          <a
+            href={getDirectionsUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center h-12 w-12 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 active:scale-95 transition shrink-0"
+            title="గూగుల్ మ్యాప్స్ లొకేషన్"
+          >
+            <Navigation className="h-5 w-5 text-blue-600" />
+          </a>
+        </div>
+      </div>
     </div>
   )
 }

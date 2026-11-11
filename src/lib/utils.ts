@@ -32,3 +32,30 @@ export function sanitizeImageUrl(url: string | null | undefined): string {
   return url
 }
 
+/**
+ * Resolves the active base URL of the deployment (Vercel, custom domain, or localhost)
+ */
+export function getBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, '')
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
+  return 'https://choutuppal-crm.vercel.app'
+}
+
+/**
+ * Returns a clean, human-readable URL slug based on the shop's title/name
+ */
+export function getListingSlug(listing: { id: string; title: string; slug?: string }): string {
+  if (listing.slug && listing.slug !== '-choutuppal' && listing.slug.trim()) {
+    return listing.slug
+  }
+  const slugified = listing.title
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, '-')
+    .replace(/^-+|-+$/g, '')
+  if (slugified && slugified !== 'choutuppal') {
+    return slugified
+  }
+  return `shop-${listing.id.replace(/^lst_/, '')}`
+}
+

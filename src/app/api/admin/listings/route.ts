@@ -87,12 +87,13 @@ export async function POST(req: Request) {
       STANDARD_VILLAGES[0]
 
     // Generate clean slug
+    const titleSlug = title
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}]+/gu, '-')
+      .replace(/^-+|-+$/g, '')
     const cleanSlug =
       body.slug ||
-      `${title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '')}-${villageObj.slug}`
+      (titleSlug ? `${titleSlug}-${villageObj.slug}` : `shop-${Date.now().toString(36)}`)
 
     const newListing: Listing = {
       id: `lst_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
