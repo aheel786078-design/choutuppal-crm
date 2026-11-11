@@ -20,6 +20,7 @@ import {
   ArrowLeft,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { getBaseUrl } from '@/lib/utils'
 import type { Listing } from '@/lib/types'
 
 interface ShopQrStandeeProps {
@@ -30,7 +31,8 @@ interface ShopQrStandeeProps {
 export function ShopQrStandee({ listing, isStandalonePage = false }: ShopQrStandeeProps) {
   const standeeRef = useRef<HTMLDivElement>(null)
 
-  const businessUrl = `https://choutuppal.in/business/${listing.slug || listing.id}`
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : getBaseUrl()
+  const businessUrl = `${baseUrl}/business/${listing.slug || listing.id}`
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&margin=10&format=png&data=${encodeURIComponent(
     businessUrl
   )}`
@@ -64,7 +66,7 @@ export function ShopQrStandee({ listing, isStandalonePage = false }: ShopQrStand
   }
 
   const handleWhatsAppShare = () => {
-    const text = `నమస్కారం! మా షాప్ "${listing.title}" అధికారిక చౌటుప్పల్ యాప్ కౌంటర్ QR స్టాండీ పోస్టర్ చూడండి:\n👉 ${businessUrl}\n\nకలర్ ప్రింట్ తీసుకోవడానికి లింక్:\n👉 https://choutuppal.in/business/${listing.slug || listing.id}/qr`
+    const text = `నమస్కారం! మా షాప్ "${listing.title}" అధికారిక చౌటుప్పల్ యాప్ కౌంటర్ QR స్టాండీ పోస్టర్ చూడండి:\n👉 ${businessUrl}\n\nకలర్ ప్రింట్ తీసుకోవడానికి లింక్:\n👉 ${businessUrl}/qr`
     const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`
     window.open(waUrl, '_blank')
   }

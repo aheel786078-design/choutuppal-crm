@@ -164,6 +164,7 @@ export interface Listing {
   id: string
   slug: string
   title: string
+  ownerName?: string
   description: string
   status: ListingStatus
   type: 'BUSINESS' | 'SERVICE' | 'REAL_ESTATE'

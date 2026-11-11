@@ -7,6 +7,7 @@ import {
   Phone,
   PhoneCall,
   MessageCircle,
+  User,
   UserPlus,
   MapPin,
   Share2,
@@ -258,35 +259,49 @@ END:VCARD`
   // Category tailored services
   const getServicesCatalog = () => {
     const cat = (listing.categoryName || '').toLowerCase()
+    if (cat.includes('mobile') || cat.includes('cell') || cat.includes('electron') || cat.includes('phone')) {
+      return [
+        { title: 'కొత్త స్మార్ట్‌ఫోన్లు & మోడల్స్', price: 'బెస్ట్ ఆఫర్స్', desc: 'అన్ని ప్రముఖ బ్రాండ్ల స్మార్ట్‌ఫోన్లు & అధికారిక వారంటీ', tag: 'హాట్ డీల్', category: 'మొబైల్స్' },
+        { title: 'స్క్రీన్ & డిస్‌ప్లే రీప్లేస్‌మెంట్', price: 'క్విక్ ఫిక్స్', desc: 'ఒరిజినల్ టచ్ & డిస్‌ప్లే రీప్లేస్‌మెంట్, పర్ఫెక్ట్ ఫిట్టింగ్', tag: 'రిపేర్', category: 'రిపేర్లు' },
+        { title: 'ఒరిజినల్ బ్యాటరీ రీప్లేస్‌మెంట్', price: 'వారంటీతో', desc: 'లాంగ్ లైఫ్ ఒరిజినల్ బ్యాటరీలు & తక్షణ ఫిట్టింగ్', tag: 'జెన్యూన్', category: 'రిపేర్లు' },
+        { title: 'ఛార్జింగ్ పోర్ట్ & స్పీకర్ రిపేర్', price: '₹150 నుండి', desc: 'ఛార్జింగ్ ప్రాబ్లమ్స్, మైక్ మరియు స్పీకర్ సమస్యల పరిష్కారం', tag: 'ఫాస్ట్ సర్వీస్', category: 'రిపేర్లు' },
+        { title: 'టెంపర్డ్ గ్లాస్ & బ్యాక్ కవర్స్', price: '₹99 నుండి', desc: '11D టెంపర్డ్ గ్లాస్, ప్రీమియం స్మోక్ & సిలికాన్ కవర్స్', tag: 'పాపులర్', category: 'యాక్సెసరీస్' },
+        { title: 'ఫాస్ట్ ఛార్జర్లు & డేటా కేబుల్స్', price: '₹199 నుండి', desc: 'Type-C, iPhone & Micro USB ఒరిజినల్ ఫాస్ట్ ఛార్జర్లు', tag: 'బెస్ట్ సెల్లర్', category: 'యాక్సెసరీస్' },
+        { title: 'బ్లూటూత్ ఇయర్‌బడ్స్ & నెక్‌బ్యాండ్స్', price: '₹499 నుండి', desc: 'హై-బాస్ బ్లూటూత్ హెడ్‌ఫోన్లు, ఇయర్‌బడ్స్ & సౌండ్ బార్స్', tag: 'టాప్ గేర్', category: 'యాక్సెసరీస్' },
+        { title: 'కొత్త సిమ్ కార్డ్స్ & నంబర్ పోర్టింగ్', price: 'ఉచిత సేవ', desc: 'Jio, Airtel, Vi 5G సిమ్ ఆక్టివేషన్ & సులభమైన MNP పోర్టింగ్', tag: 'ఇన్‌స్టంట్', category: 'సేవలు' },
+      ]
+    }
     if (cat.includes('auto') || cat.includes('garage')) {
       return [
-        { title: 'జనరల్ సర్వీసింగ్ & వాష్', price: '₹350 నుండి', desc: 'ఇంజిన్ ఆయిల్, ఫిల్టర్ క్లీనింగ్, వాషింగ్ & బ్రేక్ చెకప్', tag: 'పాపులర్' },
-        { title: 'ఇంజిన్ రిపేర్ & ట్యూనింగ్', price: 'ధర పనిని బట్టి', desc: 'అనుభవజ్ఞులైన మెకానిక్స్ తో పూర్తి ఇంజిన్ డయాగ్నస్టిక్స్', tag: 'గ్యారంటీ' },
-        { title: 'బ్యాటరీ & ఎలక్ట్రికల్ వర్క్స్', price: '₹150 నుండి', desc: 'వైరింగ్, హారన్, లైటింగ్ & బ్యాటరీ రీప్లేస్‌మెంట్', tag: 'క్విక్ సర్వీస్' },
-        { title: 'అసలైన స్పేర్ పార్ట్స్', price: 'బెస్ట్ మార్కెట్ ప్రైస్', desc: '100% జెన్యూన్ బ్రాండెడ్ స్పేర్ పార్ట్స్ లభించును', tag: 'జెన్యూన్' },
+        { title: 'జనరల్ సర్వీసింగ్ & వాష్', price: '₹350 నుండి', desc: 'ఇంజిన్ ఆయిల్, ఫిల్టర్ క్లీనింగ్, వాషింగ్ & బ్రేక్ చెకప్', tag: 'పాపులర్', category: 'సర్వీస్' },
+        { title: 'ఇంజిన్ రిపేర్ & ట్యూనింగ్', price: 'ధర పనిని బట్టి', desc: 'అనుభవజ్ఞులైన మెకానిక్స్ తో పూర్తి ఇంజిన్ డయాగ్నస్టిక్స్', tag: 'గ్యారంటీ', category: 'రిపేర్లు' },
+        { title: 'కంప్యూటర్ వీల్ అలైన్‌మెంట్', price: '₹250 నుండి', desc: 'హై-ప్రెసిషన్ డిజిటల్ వీల్ బ్యాలెన్సింగ్ & అలైన్‌మెంట్', tag: 'స్పెషల్', category: 'సర్వీస్' },
+        { title: 'బ్యాటరీ & ఎలక్ట్రికల్ వర్క్స్', price: '₹150 నుండి', desc: 'వైరింగ్, హారన్, లైటింగ్ & బ్యాటరీ రీప్లేస్‌మెంట్', tag: 'క్విక్ సర్వీస్', category: 'ఎలక్ట్రికల్' },
+        { title: 'అసలైన స్పేర్ పార్ట్స్', price: 'బెస్ట్ మార్కెట్ ప్రైస్', desc: '100% జెన్యూన్ బ్రాండెడ్ స్పేర్ పార్ట్స్ లభించును', tag: 'జెన్యూన్', category: 'స్పేర్స్' },
+        { title: 'ఏసీ గ్యాస్ రీఫిల్లింగ్ & సర్వీస్', price: '₹699 నుండి', desc: 'కార్ కూలింగ్ సిస్టమ్ చెకప్ & కూలెంట్ చేంజ్', tag: 'కూలింగ్', category: 'సర్వీస్' },
       ]
     }
     if (cat.includes('food') || cat.includes('hotel') || cat.includes('restaurant')) {
       return [
-        { title: 'స్పెషల్ భోజనం & మీల్స్', price: '₹120 నుండి', desc: 'పరిశుభ్రమైన, రుచికరమైన దేశీ భోజనం మరియు వెరైటీ కూరలు', tag: 'హాట్ ఫేవరెట్' },
-        { title: 'దమ్ బిర్యానీ (చికెన్/మటన్)', price: '₹180 నుండి', desc: 'ఘుమఘుమలాడే హైదరాబాదీ దమ్ బిర్యానీ, రైతా & గ్రేవీ', tag: 'బెస్ట్ సెల్లర్' },
-        { title: 'టిఫిన్స్ & స్నాక్స్ (ఉదయం & సాయంత్రం)', price: '₹40 నుండి', desc: 'ఇడ్లీ, దోశ, వడ, పూరీ మరియు ఈవెనింగ్ స్నాక్స్', tag: 'ఫ్రెష్' },
-        { title: 'పార్టీ ఆర్డర్లు & టేక్-అవే', price: 'ప్రత్యేక డిస్కౌంట్', desc: 'చిన్న, పెద్ద శుభకార్యాలకు స్పెషల్ క్యాటరింగ్ సౌకర్యం', tag: 'ఆర్డర్స్' },
+        { title: 'స్పెషల్ భోజనం & మీల్స్', price: '₹120 నుండి', desc: 'పరిశుభ్రమైన, రుచికరమైన దేశీ భోజనం మరియు వెరైటీ కూరలు', tag: 'హాట్ ఫేవరెట్', category: 'భోజనం' },
+        { title: 'దమ్ బిర్యానీ (చికెన్/మటన్)', price: '₹180 నుండి', desc: 'ఘుమఘుమలాడే హైదరాబాదీ దమ్ బిర్యానీ, రైతా & గ్రేవీ', tag: 'బెస్ట్ సెల్లర్', category: 'బిర్యానీ' },
+        { title: 'టిఫిన్స్ & స్నాక్స్ (ఉదయం & సాయంత్రం)', price: '₹40 నుండి', desc: 'ఇడ్లీ, దోశ, వడ, పూరీ మరియు ఈవెనింగ్ స్నాక్స్', tag: 'ఫ్రెష్', category: 'టిఫిన్స్' },
+        { title: 'పార్టీ ఆర్డర్లు & టేక్-అవే', price: 'ప్రత్యేక డిస్కౌంట్', desc: 'చిన్న, పెద్ద శుభకార్యాలకు స్పెషల్ క్యాటరింగ్ సౌకర్యం', tag: 'ఆర్డర్స్', category: 'క్యాటరింగ్' },
       ]
     }
     if (cat.includes('real') || listing.type === 'REAL_ESTATE') {
       return [
-        { title: 'DTCP & HMDA ఓపెన్ ప్లాట్లు', price: 'గజం ₹8,000 నుండి', desc: 'హైవేకి దగ్గరలో 100% క్లియర్ టైటిల్ తో కూడిన ప్లాట్లు', tag: 'వెరిఫైడ్' },
-        { title: 'వ్యవసాయ భూములు & ఫామ్‌ల్యాండ్స్', price: 'ఎకరం అనుకూల ధర', desc: 'బోరు, విద్యుత్ మరియు రోడ్డు సదుపాయం కలిగిన భూములు', tag: 'హాట్ డీల్' },
-        { title: 'ఇండ్లు & కమర్షియల్ స్థలాలు', price: 'ధర సంప్రదింపులపై', desc: 'చౌటుప్పల్ టౌన్ పరిధిలో రెడీ-టు-మూవ్ ఇండ్లు', tag: 'ప్రీమియం' },
-        { title: 'రిజిస్ట్రేషన్ & లీగల్ సపోర్ట్', price: 'ఉచిత సలహా', desc: 'డాక్యుమెంట్ వెరిఫికేషన్ మరియు సేల్ డీడ్ సహాయం', tag: 'ఫ్రీ సర్వీస్' },
+        { title: 'DTCP & HMDA ఓపెన్ ప్లాట్లు', price: 'గజం ₹8,000 నుండి', desc: 'హైవేకి దగ్గరలో 100% క్లియర్ టైటిల్ తో కూడిన ప్లాట్లు', tag: 'వెరిఫైడ్', category: 'ప్లాట్లు' },
+        { title: 'వ్యవసాయ భూములు & ఫామ్‌ల్యాండ్స్', price: 'ఎకరం అనుకూల ధర', desc: 'బోరు, విద్యుత్ మరియు రోడ్డు సదుపాయం కలిగిన భూములు', tag: 'హాట్ డీల్', category: 'ఫామ్‌ల్యాండ్స్' },
+        { title: 'ఇండ్లు & కమర్షియల్ స్థలాలు', price: 'ధర సంప్రదింపులపై', desc: 'చౌటుప్పల్ టౌన్ పరిధిలో రెడీ-టు-మూవ్ ఇండ్లు', tag: 'ప్రీమియం', category: 'ఇండ్లు' },
+        { title: 'రిజిస్ట్రేషన్ & లీగల్ సపోర్ట్', price: 'ఉచిత సలహా', desc: 'డాక్యుమెంట్ వెరిఫికేషన్ మరియు సేల్ డీడ్ సహాయం', tag: 'ఫ్రీ సర్వీస్', category: 'లీగల్' },
       ]
     }
     return [
-      { title: 'ప్రీమియం కస్టమర్ సర్వీస్', price: 'ఉత్తమ ధర', desc: 'చౌటుప్పల్ మరియు పరిసర ప్రాంతాలలో అత్యుత్తమ సేవలు', tag: 'వెరిఫైడ్' },
-      { title: 'నాణ్యమైన ఉత్పత్తులు & గ్యారంటీ', price: 'మార్కెట్ బెస్ట్ ప్రైస్', desc: 'విశ్వసనీయమైన నాణ్యత మరియు నమ్మకమైన అమ్మకాలు', tag: 'విశ్వసనీయం' },
-      { title: 'డోర్‌స్టెప్ సేవ & డెలివరీ', price: 'త్వరిత సదుపాయం', desc: 'కాల్ లేదా వాట్సాప్ చేయగానే తక్షణమే స్పందన', tag: 'ఫాస్ట్ రెస్పాన్స్' },
-      { title: 'ప్రత్యేక ఆఫర్లు & రాయితీలు', price: 'చౌటుప్పల్ యాప్ యూజర్లకు', desc: 'మా వద్ద కొనుగోలు చేసేవారికి ప్రత్యేక డిస్కౌంట్లు', tag: 'స్పెషల్ ఆఫర్' },
+      { title: 'ప్రీమియం కస్టమర్ సర్వీస్', price: 'ఉత్తమ ధర', desc: 'చౌటుప్పల్ మరియు పరిసర ప్రాంతాలలో అత్యుత్తమ సేవలు', tag: 'వెరిఫైడ్', category: 'సేవలు' },
+      { title: 'నాణ్యమైన ఉత్పత్తులు & గ్యారంటీ', price: 'మార్కెట్ బెస్ట్ ప్రైస్', desc: 'విశ్వసనీయమైన నాణ్యత మరియు నమ్మకమైన అమ్మకాలు', tag: 'విశ్వసనీయం', category: 'ఉత్పత్తులు' },
+      { title: 'డోర్‌స్టెప్ సేవ & డెలివరీ', price: 'త్వరిత సదుపాయం', desc: 'కాల్ లేదా వాట్సాప్ చేయగానే తక్షణమే స్పందన', tag: 'ఫాస్ట్ రెస్పాన్స్', category: 'డెలివరీ' },
+      { title: 'ప్రత్యేక ఆఫర్లు & రాయితీలు', price: 'చౌటుప్పల్ యాప్ యూజర్లకు', desc: 'మా వద్ద కొనుగోలు చేసేవారికి ప్రత్యేక డిస్కౌంట్లు', tag: 'స్పెషల్ ఆఫర్', category: 'ఆఫర్స్' },
     ]
   }
 
@@ -355,193 +370,187 @@ END:VCARD`
       </header>
 
       {/* 2. MAIN DIGITAL STOREFRONT WRAPPER */}
-      <div className="mx-auto max-w-5xl px-3 py-4 sm:px-6 sm:py-6 space-y-6">
+      <div className="mx-auto max-w-4xl px-3 py-4 sm:px-6 sm:py-6 space-y-6">
         
-        {/* HERO STOREFRONT CARD */}
-        <div className="bg-white rounded-3xl overflow-hidden shadow-xs border border-slate-200">
-          <div className="relative">
-            {/* Cover Image */}
-            <div className="relative aspect-[16/9] sm:h-80 md:h-96 w-full overflow-hidden bg-slate-100">
-              <Image
-                src={coverSrc}
-                alt={listing.title}
-                fill
-                priority
-                className="object-cover"
-                onError={() => setCoverError(true)}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent" />
+        {/* HERO STOREFRONT VISITING CARD */}
+        <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-slate-200/80 relative">
+          
+          {/* Top Cover Banner with Wave Arch */}
+          <div className="relative aspect-[16/8] sm:aspect-[21/9] sm:h-72 md:h-80 w-full overflow-hidden bg-slate-900">
+            <Image
+              src={coverSrc}
+              alt={listing.title}
+              fill
+              priority
+              className="object-cover opacity-90 scale-105 transition duration-700 hover:scale-100"
+              onError={() => setCoverError(true)}
+            />
+            {/* Rich Vignette & Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-900/40 to-slate-900/20" />
 
-              {/* Badges on Top Left */}
-              <div className="absolute top-4 left-4 flex flex-wrap items-center gap-2">
-                <span className="bg-white/95 backdrop-blur-md text-emerald-900 font-extrabold text-xs px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm border border-emerald-100">
-                  <BadgeCheck className="h-4 w-4 text-emerald-600" />
-                  అధికారిక వెరిఫైడ్
+            {/* Top Badges */}
+            <div className="absolute top-3.5 left-3.5 flex flex-wrap items-center gap-1.5 sm:gap-2 z-10">
+              <span className="bg-white/95 backdrop-blur-md text-emerald-900 font-extrabold text-[11px] sm:text-xs px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm border border-emerald-100">
+                <BadgeCheck className="h-4 w-4 text-emerald-600 fill-emerald-100" />
+                అధికారిక వెరిఫైడ్
+              </span>
+
+              {entitlements.isFeatured && (
+                <span className="bg-gradient-to-r from-amber-500 to-amber-600 text-white font-black text-[11px] sm:text-xs px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+                  <Star className="h-3.5 w-3.5 fill-white text-white" />
+                  ప్రీమియం
                 </span>
+              )}
+            </div>
 
-                <span className="bg-emerald-500/90 backdrop-blur-md text-white font-bold text-xs px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-sm">
-                  <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
-                  ప్రస్తుతం ఓపెన్ ఉంది
-                </span>
+            {/* Top Right Counters (Likes & Views) */}
+            <div className="absolute top-3.5 right-3.5 flex items-center gap-2 z-10">
+              <button
+                type="button"
+                onClick={handleToggleLike}
+                className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full backdrop-blur-md shadow-sm transition cursor-pointer border ${
+                  isLiked
+                    ? 'bg-rose-50/95 border-rose-200 text-rose-600'
+                    : 'bg-black/50 border-white/20 text-white hover:bg-black/70'
+                }`}
+                title="ఈ వ్యాపారాన్ని లైక్ చేయండి"
+              >
+                <Heart className={`h-3.5 w-3.5 ${isLiked ? 'fill-rose-500 text-rose-500' : 'text-rose-400'}`} />
+                <span>{likesCount}</span>
+              </button>
 
-                {entitlements.isFeatured && (
-                  <span className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-black text-xs px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1">
-                    <Star className="h-3.5 w-3.5 fill-amber-300 text-amber-300" />
-                    ఫీచర్డ్
-                  </span>
-                )}
-
-                <span className="bg-black/60 backdrop-blur-md text-white font-semibold text-xs px-2.5 py-1 rounded-lg flex items-center gap-1">
-                  <TypeIcon className="h-3.5 w-3.5 text-emerald-400" />
-                  {listing.type === 'SERVICE' ? 'సర్వీస్ ప్రొవైడర్' : listing.type === 'REAL_ESTATE' ? 'రియల్ ఎస్టేట్' : 'వ్యాపార సంస్థ'}
-                </span>
-              </div>
-
-              {/* Top Right Quick Counters (Likes & Views) */}
-              <div className="absolute top-4 right-4 flex items-center gap-2">
-                {/* Interactive Like Button */}
-                <button
-                  type="button"
-                  onClick={handleToggleLike}
-                  className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-lg backdrop-blur-md shadow-sm transition cursor-pointer border ${
-                    isLiked
-                      ? 'bg-rose-50 border-rose-200 text-rose-600'
-                      : 'bg-black/60 border-white/20 text-white hover:bg-black/80'
-                  }`}
-                  title="ఈ వ్యాపారాన్ని లైక్ చేయండి"
-                >
-                  <Heart className={`h-4 w-4 ${isLiked ? 'fill-rose-500 text-rose-500' : 'text-rose-400'}`} />
-                  <span>{likesCount} Likes</span>
-                </button>
-
-                {/* Views Counter */}
-                <div className="hidden xs:flex bg-black/60 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-lg items-center gap-1.5 border border-white/20">
-                  <Eye className="h-3.5 w-3.5 text-slate-300" />
-                  <span>{listing.views || 140} Views</span>
-                </div>
-              </div>
-
-              {/* Title & Info Overlay (Desktop) */}
-              <div className="hidden sm:flex absolute bottom-0 left-0 w-full p-6 items-end gap-5">
-                <div className="h-24 w-24 shrink-0 overflow-hidden rounded-2xl border-4 border-white/40 bg-white shadow-xl relative z-10">
-                  <Image
-                    src={logoSrc}
-                    alt={listing.title}
-                    fill
-                    className="object-cover"
-                    onError={() => setLogoError(true)}
-                  />
-                </div>
-
-                <div className="min-w-0 flex-1 text-white">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xs font-black uppercase tracking-wider bg-emerald-600 px-2.5 py-0.5 rounded-md text-white shadow-sm">
-                      {listing.categoryName || 'వ్యాపారం'}
-                    </span>
-                    <span className="text-xs font-bold bg-amber-400/90 text-amber-950 px-2 py-0.5 rounded-md flex items-center gap-1">
-                      <Star className="h-3.5 w-3.5 fill-amber-950 text-amber-950" />
-                      4.9 (52+ రివ్యూలు)
-                    </span>
-                  </div>
-
-                  <h1 className="text-2xl lg:text-3xl font-black text-white leading-tight drop-shadow-sm">
-                    {listing.title}
-                  </h1>
-
-                  <p className="mt-1 flex items-center gap-1.5 text-xs text-slate-200">
-                    <MapPin className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                    <span>{listing.address || `${listing.villageName || 'చౌటుప్పల్'}, యాదాద్రి భువనగిరి, తెలంగాణ`}</span>
-                  </p>
-                </div>
+              <div className="hidden xs:flex bg-black/50 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full items-center gap-1.5 border border-white/20">
+                <Eye className="h-3.5 w-3.5 text-slate-300" />
+                <span>{listing.views || 140} Views</span>
               </div>
             </div>
 
-            {/* Title & Info (Mobile View) */}
-            <div className="sm:hidden p-4 pt-3 border-b border-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 border-slate-200 bg-white shadow-sm relative">
-                  <Image
-                    src={logoSrc}
-                    alt={listing.title}
-                    fill
-                    className="object-cover"
-                    onError={() => setLogoError(true)}
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded inline-block">
-                      {listing.categoryName || 'వ్యాపారం'}
-                    </span>
-                    <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                      <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
-                      4.9
-                    </span>
-                  </div>
-                  <h1 className="text-base font-black text-slate-900 leading-snug truncate">
-                    {listing.title}
-                  </h1>
-                  <p className="flex items-center gap-1 text-[11px] text-slate-500 truncate mt-0.5">
-                    <MapPin className="h-3 w-3 text-emerald-600 shrink-0" />
-                    <span className="truncate">{listing.address || `${listing.villageName || 'చౌటుప్పల్'}, తెలంగాణ`}</span>
-                  </p>
-                </div>
-              </div>
+            {/* Smooth SVG Wave at bottom of cover */}
+            <svg
+              className="absolute -bottom-0.5 inset-x-0 w-full h-8 sm:h-12 text-white fill-current z-10"
+              viewBox="0 0 1440 120"
+              preserveAspectRatio="none"
+            >
+              <path d="M0,48L80,58.7C160,69,320,91,480,90.7C640,91,800,69,960,58.7C1120,48,1280,48,1360,48L1440,48L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z" />
+            </svg>
+          </div>
+
+          {/* Elevated Circular Logo Overlapping Wave */}
+          <div className="relative -mt-12 sm:-mt-16 mx-auto h-24 w-24 sm:h-28 sm:w-28 rounded-full border-4 border-white shadow-2xl overflow-hidden ring-4 ring-emerald-500/20 bg-white z-20">
+            <Image
+              src={logoSrc}
+              alt={listing.title}
+              fill
+              className="object-cover"
+              onError={() => setLogoError(true)}
+            />
+          </div>
+
+          {/* Shop Name & Metadata (Digital Card Centerpiece) */}
+          <div className="text-center px-4 pt-3 pb-5">
+            <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-black mb-1.5 border border-emerald-200/80">
+              <span className="uppercase tracking-wider">{listing.categoryName || 'వ్యాపార సంస్థ'}</span>
+            </div>
+
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight leading-tight max-w-2xl mx-auto">
+              {listing.title}
+            </h1>
+
+            {/* Owner & Address */}
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-600 font-medium">
+              {listing.ownerName && (
+                <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-800 px-2.5 py-0.5 rounded-full font-semibold">
+                  <User className="h-3.5 w-3.5 text-slate-500" />
+                  <span>ప్రొప్రైటర్: <strong>{listing.ownerName}</strong></span>
+                </span>
+              )}
+              <span className="inline-flex items-center gap-1 text-slate-600">
+                <MapPin className="h-3.5 w-3.5 text-emerald-600" />
+                <span>{listing.address || `${listing.villageName || 'చౌటుప్పల్'}, తెలంగాణ`}</span>
+              </span>
+            </div>
+
+            {/* Live Status & Rating Badges */}
+            <div className="mt-3.5 flex flex-wrap items-center justify-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200 shadow-2xs">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>ప్రస్తుతం తెరిచి ఉంది (Open Now)</span>
+              </span>
+
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-50 text-amber-900 font-bold text-xs border border-amber-200 shadow-2xs">
+                <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+                <span>4.9 / 5.0 (58+ వెరిఫైడ్ రివ్యూలు)</span>
+              </span>
+
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-900 font-bold text-xs border border-blue-200 shadow-2xs">
+                <Clock className="h-3.5 w-3.5 text-blue-600" />
+                <span>ఉదయం 9 AM – రాత్రి 10 PM</span>
+              </span>
             </div>
           </div>
 
-          {/* QUICK HERO ACTIONS (Call, WhatsApp, Save Contact, Directions, WhatsApp Card Share) */}
-          <div className="p-3 sm:p-5 bg-slate-50/70 border-t border-slate-100">
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-2.5">
-              {/* CALL NOW */}
+          {/* 5 DIGITAL VISITING CARD ICON TILES (Card CTAs) */}
+          <div className="px-3 sm:px-6 pb-6 pt-1 border-t border-slate-100 bg-slate-50/50">
+            <div className="grid grid-cols-5 gap-2 sm:gap-3 max-w-xl mx-auto pt-3">
+              {/* Call */}
               <a
                 href={`tel:${cleanPhone || '9441348175'}`}
-                className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 sm:py-3 px-3 rounded-2xl text-xs sm:text-sm shadow-sm transition cursor-pointer"
+                className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white hover:bg-blue-50/80 border border-slate-200/90 text-slate-800 transition active:scale-95 group shadow-2xs cursor-pointer"
               >
-                <PhoneCall className="h-4 w-4" />
-                <span>కాల్ చేయండి</span>
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition">
+                  <PhoneCall className="h-5 w-5" />
+                </span>
+                <span className="mt-1.5 text-[11px] font-bold text-slate-800">కాల్</span>
               </a>
 
-              {/* WHATSAPP */}
+              {/* WhatsApp */}
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 sm:py-3 px-3 rounded-2xl text-xs sm:text-sm shadow-sm transition cursor-pointer"
+                className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white hover:bg-emerald-50/80 border border-slate-200/90 text-slate-800 transition active:scale-95 group shadow-2xs cursor-pointer"
               >
-                <MessageCircle className="h-4 w-4" />
-                <span>వాట్సాప్</span>
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-[#25D366] text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition">
+                  <MessageCircle className="h-5 w-5" />
+                </span>
+                <span className="mt-1.5 text-[11px] font-bold text-slate-800">వాట్సాప్</span>
               </a>
 
-              {/* WHATSAPP RICH CARD SHARE */}
-              <button
-                type="button"
-                onClick={handleWhatsAppShare}
-                className="flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 font-bold py-2.5 sm:py-3 px-3 rounded-2xl text-xs sm:text-sm shadow-2xs transition cursor-pointer"
-              >
-                <Share2 className="h-4 w-4 text-emerald-600" />
-                <span>కార్డ్ షేర్</span>
-              </button>
-
-              {/* GET DIRECTIONS */}
+              {/* Directions */}
               <a
                 href={getDirectionsUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold py-2.5 sm:py-3 px-3 rounded-2xl text-xs sm:text-sm shadow-2xs transition cursor-pointer"
+                className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white hover:bg-slate-100/80 border border-slate-200/90 text-slate-800 transition active:scale-95 group shadow-2xs cursor-pointer"
               >
-                <Navigation className="h-4 w-4 text-indigo-600" />
-                <span>రూట్ మ్యాప్</span>
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-slate-800 text-white shadow-md shadow-slate-500/20 group-hover:scale-105 transition">
+                  <Navigation className="h-5 w-5" />
+                </span>
+                <span className="mt-1.5 text-[11px] font-bold text-slate-800">మ్యాప్</span>
               </a>
 
-              {/* SAVE CONTACT (vCard) */}
+              {/* Save Contact */}
               <button
                 type="button"
                 onClick={handleSaveContact}
-                className="col-span-2 sm:col-span-1 flex items-center justify-center gap-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold py-2.5 sm:py-3 px-3 rounded-2xl text-xs sm:text-sm shadow-2xs transition cursor-pointer"
+                className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white hover:bg-amber-50/80 border border-slate-200/90 text-slate-800 transition active:scale-95 group shadow-2xs cursor-pointer"
               >
-                <UserPlus className="h-4 w-4 text-emerald-600" />
-                <span>కాంటాక్ట్ సేవ్</span>
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-md shadow-amber-500/20 group-hover:scale-105 transition">
+                  <UserPlus className="h-5 w-5" />
+                </span>
+                <span className="mt-1.5 text-[11px] font-bold text-slate-800">సేవ్</span>
+              </button>
+
+              {/* Share Card */}
+              <button
+                type="button"
+                onClick={handleWhatsAppShare}
+                className="flex flex-col items-center justify-center p-2 rounded-2xl bg-white hover:bg-teal-50/80 border border-slate-200/90 text-slate-800 transition active:scale-95 group shadow-2xs cursor-pointer"
+              >
+                <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-teal-600 to-emerald-600 text-white shadow-md shadow-teal-500/20 group-hover:scale-105 transition">
+                  <Share2 className="h-5 w-5" />
+                </span>
+                <span className="mt-1.5 text-[11px] font-bold text-slate-800">షేర్</span>
               </button>
             </div>
           </div>
@@ -758,12 +767,12 @@ END:VCARD`
                         <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between">
                           <span className="text-xs font-black text-emerald-700">{item.price}</span>
                           <a
-                            href={`https://wa.me/919494348175?text=${encodeURIComponent(`Hi Choutuppal, interested in "${item.title}" from ${listing.title} (Ref: ${listing.id})`)}`}
+                            href={`https://wa.me/91${whatsappNum}?text=${encodeURIComponent(`నమస్కారం! నాకు ${listing.title} లోని "${item.title}" (${item.price || ''}) గురించి వివరాలు కావాలి.`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+                            className="text-[11px] font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200 flex items-center gap-1 transition shadow-2xs"
                           >
-                            <MessageCircle className="h-3 w-3" /> ఆర్డర్ / ఎంక్వైరీ
+                            <MessageCircle className="h-3.5 w-3.5 text-emerald-600" /> వాట్సాప్ ఎంక్వైరీ
                           </a>
                         </div>
                       </div>
@@ -807,13 +816,13 @@ END:VCARD`
 
                       <div className="mt-4 pt-3 border-t border-slate-100">
                         <a
-                          href={`https://wa.me/919494348175?text=${encodeURIComponent(`Hi Choutuppal, interested in "${item.title}" from ${listing.title} (Ref: ${listing.id})`)}`}
+                          href={`https://wa.me/91${whatsappNum}?text=${encodeURIComponent(`నమస్కారం! నాకు ${listing.title} లోని "${item.title}" (${item.price || ''}) గురించి వివరాలు కావాలి.`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-full flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition"
+                          className="w-full flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-2.5 rounded-xl text-xs shadow-sm transition active:scale-95"
                         >
-                          <MessageCircle className="h-3.5 w-3.5" />
-                          <span>వాట్సాప్‌లో సంప్రదించండి</span>
+                          <MessageCircle className="h-4 w-4" />
+                          <span>వాట్సాప్‌లో అడగండి (WhatsApp)</span>
                         </a>
                       </div>
                     </div>
