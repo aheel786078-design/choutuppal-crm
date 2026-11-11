@@ -100,7 +100,7 @@ export function buildWhatsAppPayload(options: WhatsAppSendOptions, cleanPhone: s
     if (options.imageUrl && /^https?:\/\//i.test(options.imageUrl)) {
       payload.interactive.header = {
         type: 'image',
-        image: { url: options.imageUrl },
+        image: { link: options.imageUrl },
       }
     }
     if (options.footerText) {
@@ -137,14 +137,12 @@ export function buildWhatsAppPayload(options: WhatsAppSendOptions, cleanPhone: s
       if (options.mediaType === 'video' || /\.(mp4|mov|avi|webm)(\?.*)?$/i.test(mediaUrl)) {
         payload.type = 'video'
         payload.video = {
-          url: mediaUrl,
           link: mediaUrl,
           caption: (options.messageText || '').slice(0, 1024),
         }
       } else if (options.mediaType === 'document' || /\.(pdf|doc|docx|csv|xlsx)(\?.*)?$/i.test(mediaUrl)) {
         payload.type = 'document'
         payload.document = {
-          url: mediaUrl,
           link: mediaUrl,
           caption: (options.messageText || '').slice(0, 1024),
           filename: mediaUrl.split('/').pop()?.split('?')[0] || 'document.pdf',
@@ -152,7 +150,6 @@ export function buildWhatsAppPayload(options: WhatsAppSendOptions, cleanPhone: s
       } else {
         payload.type = 'image'
         payload.image = {
-          url: mediaUrl,
           link: mediaUrl,
           caption: (options.messageText || '').slice(0, 1024),
         }
@@ -324,5 +321,46 @@ export async function sendWhatsAppFlowMessage(
     notice: providerDelivered
       ? 'Delivered via Meta WhatsApp Cloud API'
       : 'Saved locally in CRM inbox (WhatsApp provider credentials not configured)',
+  }
+}
+
+/**
+ * Marks an incoming WhatsApp message as read on Meta Cloud API (blue ticks).
+ */
+export async function markWhatsAppMessageAsRead(messageId: string): Promise<boolean> {
+  if (!messageId || !messageId.startsWith('wamid.')) return false
+  const store = loadStore()
+  let token = store.settings?.whatsappToken || process.env.WHATSAPP_TOKEN
+  let phoneId = store.settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID
+
+  const supabase = getSupabaseAdminClient()
+  if ((!token || !phoneId) && supabase) {
+    try {
+      const { data: t } = await supabase.from('territories').select('branding').eq('id', FLAGSHIP_TERRITORY_ID).single()
+      if (t?.branding?.whatsappSettings) {
+        token = token || t.branding.whatsappSettings.whatsappToken
+        phoneId = phoneId || t.branding.whatsappSettings.whatsappPhoneNumberId
+      }
+    } catch {}
+  }
+
+  if (!token || !phoneId) return false
+
+  try {
+    const res = await fetch(`https://graph.facebook.com/v21.0/${phoneId}/messages`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messaging_product: 'whatsapp',
+        status: 'read',
+        message_id: messageId,
+      }),
+    })
+    return res.ok
+  } catch {
+    return false
   }
 }

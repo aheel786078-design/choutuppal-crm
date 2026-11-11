@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { NextResponse } from 'next/server'
 import { loadStore, saveStore, mutateStore, generateMagicToken, FLAGSHIP_TERRITORY_ID, isListingPublished } from '@/lib/store'
-import { sendListingWhatsAppCard, sendWhatsAppFlowMessage } from '@/lib/whatsapp-cloud-api'
+import { sendListingWhatsAppCard, sendWhatsAppFlowMessage, markWhatsAppMessageAsRead } from '@/lib/whatsapp-cloud-api'
 import type { Territory } from '@/lib/types'
 import { runAutomationShadowEvaluation } from '@/lib/automation-shadow-runner'
 import { evaluateFlow } from '@/lib/flow-runtime-engine'
@@ -167,6 +167,13 @@ export async function POST(req: Request) {
         if (isDuplicate) {
           return NextResponse.json({ status: 'ignored_duplicate_webhook', messageId: webhookMsgId })
         }
+      }
+
+      // Mark incoming message as read on WhatsApp Cloud API (converts to blue ticks)
+      if (webhookMsgId && webhookMsgId.startsWith('wamid.')) {
+        markWhatsAppMessageAsRead(webhookMsgId).catch((readErr) => {
+          console.warn('[Webhook] Failed to mark message as read:', readErr)
+        })
       }
 
       const senderPhone = (message.from || '').replace(/\D/g, '')

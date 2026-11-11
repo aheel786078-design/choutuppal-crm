@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { loadStore, saveStore, FLAGSHIP_TERRITORY_ID } from '@/lib/store'
 import type { WhatsAppMessage, ConversationSummary, CRMContact } from '@/lib/types'
 import { requireAuth, requireTerritoryAccess } from '@/lib/auth-server'
+import { getSupabaseAdminClient } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
@@ -322,8 +323,19 @@ export async function POST(req: Request) {
     }
 
     // Check WhatsApp Provider Credentials
-    const token = store.settings?.whatsappToken || process.env.WHATSAPP_TOKEN
-    const phoneId = store.settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID
+    let token = store.settings?.whatsappToken || process.env.WHATSAPP_TOKEN
+    let phoneId = store.settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID
+
+    const supabase = getSupabaseAdminClient()
+    if ((!token || !phoneId) && supabase) {
+      try {
+        const { data: t } = await supabase.from('territories').select('branding').eq('id', FLAGSHIP_TERRITORY_ID).single()
+        if (t?.branding?.whatsappSettings) {
+          token = token || t.branding.whatsappSettings.whatsappToken
+          phoneId = phoneId || t.branding.whatsappSettings.whatsappPhoneNumberId
+        }
+      } catch {}
+    }
 
     let providerDelivered = false
     let providerStatus: 'sent' | 'delivered' | 'failed' = 'sent'
@@ -339,7 +351,7 @@ export async function POST(req: Request) {
 
         if (imageUrl) {
           payload.type = 'image'
-          payload.image = { url: imageUrl, caption: trimmedText }
+          payload.image = { link: imageUrl, caption: trimmedText }
         } else {
           payload.type = 'text'
           payload.text = { body: trimmedText }
