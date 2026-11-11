@@ -45,7 +45,12 @@ export function middleware(request: NextRequest) {
 
       if (isAdminRoute) {
         const role = payload.role
-        const hasAdminAccess = role === 'SUPER_ADMIN' || role === 'FRANCHISE_ADMIN' || role === 'STAFF'
+        const hasAdminAccess =
+          role === 'SUPER_ADMIN' ||
+          role === 'PLATFORM_OPERATOR' ||
+          role === 'FRANCHISE_ADMIN' ||
+          role === 'FRANCHISE_STAFF' ||
+          role === 'STAFF'
         if (!hasAdminAccess) {
           // Merchant attempted to open admin/crm -> safely divert to their merchant dashboard
           const dashboardUrl = new URL('/dashboard', request.url)

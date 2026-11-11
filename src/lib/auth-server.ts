@@ -127,7 +127,7 @@ export async function requireSuperAdmin(req: Request): Promise<{ user: AuthSessi
   const auth = await requireAuth(req)
   if (auth.errorResponse) return auth
 
-  if (auth.user.role !== 'SUPER_ADMIN') {
+  if (auth.user.role !== 'SUPER_ADMIN' && auth.user.role !== 'PLATFORM_OPERATOR') {
     return {
       errorResponse: NextResponse.json(
         { success: false, error: 'Access forbidden: Super Administrator privilege required.' },
@@ -148,8 +148,8 @@ export async function requireTerritoryAccess(
   const auth = await requireAuth(req)
   if (auth.errorResponse) return auth
 
-  // Super Admin can access all territories
-  if (auth.user.role === 'SUPER_ADMIN') {
+  // Super Admin & Platform Operator can access all territories
+  if (auth.user.role === 'SUPER_ADMIN' || auth.user.role === 'PLATFORM_OPERATOR') {
     return { user: auth.user }
   }
 

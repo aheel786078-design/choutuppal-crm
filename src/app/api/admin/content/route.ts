@@ -50,7 +50,8 @@ export async function GET(req: Request) {
     }
 
     // 2. Authenticated Admin Caller: Tenant isolation
-    if (user.role !== 'SUPER_ADMIN') {
+    const isSuperOrOperator = user.role === 'SUPER_ADMIN' || user.role === 'PLATFORM_OPERATOR'
+    if (!isSuperOrOperator) {
       // Franchise Admin: strictly scoped to caller's territory
       banners = banners.filter((b) => (b.territoryId || FLAGSHIP_TERRITORY_ID) === user.territoryId)
       stories = stories.filter((s) => (s.territoryId || FLAGSHIP_TERRITORY_ID) === user.territoryId)
@@ -129,7 +130,7 @@ export async function POST(req: Request) {
       const itemTerritoryId = existing.territoryId || FLAGSHIP_TERRITORY_ID
 
       // Guard: Franchise Admin cannot delete Flagship content
-      if (itemTerritoryId === FLAGSHIP_TERRITORY_ID && auth.user.role !== 'SUPER_ADMIN') {
+      if (itemTerritoryId === FLAGSHIP_TERRITORY_ID && auth.user.role !== 'SUPER_ADMIN' && auth.user.role !== 'PLATFORM_OPERATOR') {
         return NextResponse.json(
           { success: false, error: 'Forbidden: Flagship Choutuppal content can only be deleted by Super Admin' },
           { status: 403 }
@@ -225,7 +226,7 @@ export async function POST(req: Request) {
 
     // Territory Enactment: Franchise Admins are locked to their own territory
     let targetTerritoryId = item.territoryId || auth.user.territoryId || FLAGSHIP_TERRITORY_ID
-    if (auth.user.role !== 'SUPER_ADMIN') {
+    if (auth.user.role !== 'SUPER_ADMIN' && auth.user.role !== 'PLATFORM_OPERATOR') {
       targetTerritoryId = auth.user.territoryId
     }
     item.territoryId = targetTerritoryId
@@ -240,7 +241,7 @@ export async function POST(req: Request) {
       const access = await requireTerritoryAccess(req, existingTerritoryId)
       if (access.errorResponse) return access.errorResponse
 
-      if (auth.user.role !== 'SUPER_ADMIN') {
+      if (auth.user.role !== 'SUPER_ADMIN' && auth.user.role !== 'PLATFORM_OPERATOR') {
         item.territoryId = existingTerritoryId
       }
 

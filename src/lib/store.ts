@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import os from 'os'
 import crypto from 'crypto'
 import type {
   AdminDataStore,
@@ -127,21 +128,88 @@ export function getDefaultListingPlans(): ListingPlan[] {
   ]
 }
 
+let isReadOnlyCached: boolean | null = null
+
+function isServerlessReadOnlyEnv(): boolean {
+  if (isReadOnlyCached !== null) return isReadOnlyCached
+  if (process.env.VERCEL === '1' || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NOW_REGION) {
+    isReadOnlyCached = true
+    return true
+  }
+  try {
+    const testDir = path.join(process.cwd(), 'data')
+    if (!fs.existsSync(testDir)) {
+      fs.mkdirSync(testDir, { recursive: true })
+    }
+    const testFile = path.join(testDir, `.write_probe_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`)
+    fs.writeFileSync(testFile, '1')
+    fs.unlinkSync(testFile)
+    isReadOnlyCached = false
+    return false
+  } catch {
+    isReadOnlyCached = true
+    return true
+  }
+}
+
+let activeDataFilePath: string | null = null
+
 export function getDataFilePath(): string {
-  return process.env.CRM_DATA_FILE
-    ? path.resolve(process.env.CRM_DATA_FILE)
-    : path.join(process.cwd(), 'data', 'admin_data.json')
+  if (activeDataFilePath) return activeDataFilePath
+
+  if (process.env.CRM_DATA_FILE) {
+    activeDataFilePath = path.resolve(process.env.CRM_DATA_FILE)
+    return activeDataFilePath
+  }
+
+  // If in serverless (e.g. Vercel) or read-only filesystem, use /tmp
+  if (isServerlessReadOnlyEnv()) {
+    const tmpPath = path.join(os.tmpdir(), 'admin_data.json')
+    if (!fs.existsSync(tmpPath)) {
+      const bundledPath = path.join(process.cwd(), 'data', 'admin_data.json')
+      if (fs.existsSync(bundledPath)) {
+        try {
+          fs.copyFileSync(bundledPath, tmpPath)
+        } catch (copyErr) {
+          console.warn('[Admin Store] Could not seed /tmp from bundled data:', copyErr)
+        }
+      }
+    }
+    activeDataFilePath = tmpPath
+    return activeDataFilePath
+  }
+
+  activeDataFilePath = path.join(process.cwd(), 'data', 'admin_data.json')
+  return activeDataFilePath
 }
 
 const DATA_FILE = getDataFilePath()
 
+let inMemoryStoreCache: AdminDataStore | null = null
+
 export function loadStore(customPath?: string): AdminDataStore {
   const targetFile = customPath || getDataFilePath()
   try {
-    if (!fs.existsSync(targetFile)) {
+    let raw: string | null = null
+    if (fs.existsSync(targetFile)) {
+      raw = fs.readFileSync(targetFile, 'utf-8')
+    } else {
+      const bundledPath = path.join(process.cwd(), 'data', 'admin_data.json')
+      if (fs.existsSync(bundledPath)) {
+        raw = fs.readFileSync(bundledPath, 'utf-8')
+        try {
+          const dir = path.dirname(targetFile)
+          if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+          fs.writeFileSync(targetFile, raw, 'utf-8')
+        } catch (_) {}
+      }
+    }
+
+    if (!raw) {
+      if (inMemoryStoreCache) return inMemoryStoreCache
       return getFallbackStore()
     }
-    const raw = fs.readFileSync(targetFile, 'utf-8')
+
     const parsed = JSON.parse(raw)
 
     // Ensure Territories & Flagship Choutuppal Protection
@@ -306,9 +374,11 @@ export function loadStore(customPath?: string): AdminDataStore {
       parsed.governmentContacts = getDefaultGovernmentContacts()
     }
 
-    return parsed as AdminDataStore
+    inMemoryStoreCache = parsed as AdminDataStore
+    return inMemoryStoreCache
   } catch (err) {
     console.error('[Admin Store] Read error:', err)
+    if (inMemoryStoreCache) return inMemoryStoreCache
     return getFallbackStore()
   }
 }
@@ -316,7 +386,6 @@ export function loadStore(customPath?: string): AdminDataStore {
 export const getStore = loadStore
 
 export function saveStore(store: AdminDataStore, customPath?: string): void {
-  const targetFile = customPath || getDataFilePath()
   if (!store || typeof store !== 'object') {
     throw new Error('[Admin Store] Refusing to save: invalid store payload (not an object)')
   }
@@ -327,26 +396,52 @@ export function saveStore(store: AdminDataStore, customPath?: string): void {
     throw new Error('[Admin Store] Invariant Violation: refusing to save empty territories array')
   }
 
-  const dir = path.dirname(targetFile)
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true })
-  }
-  const tempFile = `${targetFile}.tmp.${Date.now()}.${Math.random().toString(36).substring(2, 6)}`
-  try {
-    fs.writeFileSync(tempFile, JSON.stringify(store, null, 2), 'utf-8')
-    const stat = fs.statSync(tempFile)
-    if (stat.size === 0) {
-      throw new Error('[Admin Store] Invariant Violation: temp store file is empty (0 bytes)')
+  // Update in-memory cache immediately so concurrent and subsequent reads are up-to-date
+  inMemoryStoreCache = store
+
+  let targetFile = customPath || getDataFilePath()
+
+  const writeAtomic = (filePath: string) => {
+    const dir = path.dirname(filePath)
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true })
     }
-    fs.renameSync(tempFile, targetFile)
-  } catch (err) {
-    if (fs.existsSync(tempFile)) {
+    const tempFile = `${filePath}.tmp.${Date.now()}.${Math.random().toString(36).substring(2, 6)}`
+    try {
+      fs.writeFileSync(tempFile, JSON.stringify(store, null, 2), 'utf-8')
+      const stat = fs.statSync(tempFile)
+      if (stat.size === 0) {
+        throw new Error('[Admin Store] Invariant Violation: temp store file is empty (0 bytes)')
+      }
       try {
+        fs.renameSync(tempFile, filePath)
+      } catch (renameErr) {
+        fs.copyFileSync(tempFile, filePath)
         fs.unlinkSync(tempFile)
-      } catch (_) {}
+      }
+    } finally {
+      if (fs.existsSync(tempFile)) {
+        try { fs.unlinkSync(tempFile) } catch (_) {}
+      }
     }
-    console.error('[Admin Store] Save error:', err)
-    throw err
+  }
+
+  try {
+    writeAtomic(targetFile)
+  } catch (err: any) {
+    // If write failed due to read-only filesystem, automatically switch to /tmp
+    if (err.code === 'EROFS' || err.message?.includes('read-only')) {
+      console.warn('[Admin Store] Read-only filesystem detected, switching active data file to /tmp/admin_data.json')
+      const tmpPath = path.join(os.tmpdir(), 'admin_data.json')
+      activeDataFilePath = tmpPath
+      try {
+        writeAtomic(tmpPath)
+        return
+      } catch (tmpErr: any) {
+        console.warn('[Admin Store] Failed to write to /tmp as well:', tmpErr.message)
+      }
+    }
+    console.warn('[Admin Store] File persistence warning, preserved in memory cache:', err.message)
   }
 }
 
@@ -396,14 +491,24 @@ export async function mutateStore<T>(
 }
 
 export function createStoreBackup(label?: string): string {
-  const dir = path.join(path.dirname(DATA_FILE), 'backups')
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true })
+  try {
+    const targetFile = getDataFilePath()
+    const dir = path.join(path.dirname(targetFile), 'backups')
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true })
+    }
+    const cleanLabel = label ? `_${label.replace(/[^a-zA-Z0-9_-]/g, '')}` : ''
+    const backupFile = path.join(dir, `admin_data_${Date.now()}${cleanLabel}.json`)
+    if (fs.existsSync(targetFile)) {
+      fs.copyFileSync(targetFile, backupFile)
+    } else if (inMemoryStoreCache) {
+      fs.writeFileSync(backupFile, JSON.stringify(inMemoryStoreCache, null, 2), 'utf-8')
+    }
+    return backupFile
+  } catch (err: any) {
+    console.warn('[Admin Store] Backup creation skipped or failed:', err.message)
+    return ''
   }
-  const cleanLabel = label ? `_${label.replace(/[^a-zA-Z0-9_-]/g, '')}` : ''
-  const backupFile = path.join(dir, `admin_data_${Date.now()}${cleanLabel}.json`)
-  fs.copyFileSync(DATA_FILE, backupFile)
-  return backupFile
 }
 
 // --------------------------------------------------------------------------
