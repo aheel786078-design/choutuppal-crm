@@ -27,6 +27,7 @@ export interface CategoryConfig {
   categoryIds: string[]
   icon: string
   fallbackCount: number
+  imageUrl?: string
 }
 
 export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
@@ -39,6 +40,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-electronics'],
     icon: '📱',
     fallbackCount: 1,
+    imageUrl: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80',
   },
   automobile: {
     key: 'automobile',
@@ -49,6 +51,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-automobile'],
     icon: '🚗',
     fallbackCount: 25,
+    imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=800&auto=format&fit=crop&q=80',
   },
   kirana: {
     key: 'kirana',
@@ -59,6 +62,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-retail'],
     icon: '🛒',
     fallbackCount: 10,
+    imageUrl: 'https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=800&auto=format&fit=crop&q=80',
   },
   food: {
     key: 'food',
@@ -69,6 +73,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-food'],
     icon: '🍽️',
     fallbackCount: 8,
+    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80',
   },
   health: {
     key: 'health',
@@ -79,6 +84,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-health'],
     icon: '🏥',
     fallbackCount: 6,
+    imageUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80',
   },
   electrical: {
     key: 'electrical',
@@ -89,6 +95,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-electrical'],
     icon: '⚡',
     fallbackCount: 17,
+    imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80',
   },
   services: {
     key: 'services',
@@ -99,6 +106,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-services'],
     icon: '🔧',
     fallbackCount: 16,
+    imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80',
   },
   internet: {
     key: 'internet',
@@ -109,6 +117,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-internet'],
     icon: '💻',
     fallbackCount: 27,
+    imageUrl: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&auto=format&fit=crop&q=80',
   },
   furniture: {
     key: 'furniture',
@@ -119,6 +128,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-furniture'],
     icon: '🪑',
     fallbackCount: 20,
+    imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&auto=format&fit=crop&q=80',
   },
   emergency: {
     key: 'emergency',
@@ -129,6 +139,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: [],
     icon: '🚨',
     fallbackCount: 6,
+    imageUrl: CHOUTUPPAL_BANNER_URL,
   },
 }
 
@@ -392,12 +403,27 @@ export async function sendCategoryShopList(
 
   // Case 2: Multiple listings in category (e.g. Automobile, Food, Health, etc.)
   if (sorted.length > 1) {
+    // 1. First send high-resolution Category Photo Banner with verified count
+    if (catConfig.imageUrl) {
+      const bannerCaption =
+        `${catConfig.icon} *చౌటుప్పల్ ${catConfig.teluguName}* 🏢\n` +
+        `━━━━━━━━━━━━━━━━━━━━\n` +
+        `📊 *మొత్తం వెరిఫైడ్ షాపులు:* ${sorted.length}\n` +
+        `⭐ *ర్యాంకింగ్:* టాప్ రేటెడ్ & ప్రాధాన్యత క్రమంలో`
+
+      await sendWhatsAppFlowMessage({
+        toPhone: ctx.toPhone,
+        messageText: bannerCaption,
+        imageUrl: catConfig.imageUrl,
+        footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+        territoryId: ctx.territory?.id || 'territory_choutuppal',
+        contactName: ctx.senderName,
+      }, ctx.store)
+    }
+
+    // 2. Immediately send the Interactive List Message for 1-tap selection
     const listBody =
-      `${catConfig.icon} *చౌటుప్పల్ ${catConfig.teluguName}* 🏢\n` +
-      `━━━━━━━━━━━━━━━━━━━━\n` +
-      `📊 *మొత్తం వెరిఫైడ్ షాపులు:* ${sorted.length}\n` +
-      `⭐ *ర్యాంకింగ్:* టాప్ రేటెడ్ & ప్రాధాన్యత క్రమంలో\n\n` +
-      `మన చౌటుప్పల్ పట్టణంలోని ప్రముఖ ${catConfig.teluguName} వివరాలు క్రింద ఉన్నాయి.\n\n` +
+      `మన చౌటుప్పల్ పట్టణంలోని ప్రముఖ ${catConfig.teluguName} వివరాలు క్రింద జాబితాలో ఉన్నాయి.\n\n` +
       `👇 షాప్ ఫోటోలు, లొకేషన్ & ఫోన్ నంబర్ కోసం క్రింది *'షాపుల జాబితా'* బటన్ నొక్కి ఎంచుకోండి:`
 
     const rows = sorted.slice(0, 10).map((l, index) => {
@@ -449,10 +475,10 @@ export async function sendCategoryShopList(
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
     messageText: fallbackText,
-    imageUrl: CHOUTUPPAL_BANNER_URL,
+    imageUrl: catConfig.imageUrl || CHOUTUPPAL_BANNER_URL,
     buttons: [
       { id: 'btn_open_directory', title: '📋 ఇతర కేటగిరీలు' },
-      { id: 'btn_app_vcard', title: '📲 యాప్ డౌన్‌లోడ్' },
+      { id: 'btn_social_media', title: '🌐 సోషల్ మీడియా' },
       { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
