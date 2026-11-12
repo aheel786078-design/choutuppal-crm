@@ -105,6 +105,7 @@ export async function POST(req: Request) {
       type: body.type || 'BUSINESS',
       isFeatured: Boolean(body.isFeatured),
       isPremium: Boolean(body.isPremium),
+      displayOrder: typeof body.displayOrder === 'number' ? body.displayOrder : (body.displayOrder ? parseInt(body.displayOrder, 10) : undefined),
       coverImage: body.coverImage || PRESET_PHOTO_COVERS[0].url,
       logo: body.logo || '',
       gallery: Array.isArray(body.gallery) && body.gallery.length > 0 ? body.gallery : [body.coverImage || PRESET_PHOTO_COVERS[0].url],
@@ -184,6 +185,7 @@ const ALLOWED_LISTING_UPDATE_FIELDS = [
   'status',
   'isFeatured',
   'isPremium',
+  'displayOrder',
   'type',
   'slug',
 ] as const

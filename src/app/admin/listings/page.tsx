@@ -93,6 +93,7 @@ export default function ListingsPage() {
     status: 'APPROVED',
     isFeatured: true,
     isPremium: false,
+    displayOrder: 100,
   })
 
   const fetchListings = async () => {
@@ -132,6 +133,7 @@ export default function ListingsPage() {
       status: 'APPROVED',
       isFeatured: true,
       isPremium: false,
+      displayOrder: 100,
     })
     setIsModalOpen(true)
   }
@@ -154,6 +156,7 @@ export default function ListingsPage() {
       status: item.status,
       isFeatured: item.isFeatured,
       isPremium: item.isPremium,
+      displayOrder: item.displayOrder !== undefined ? item.displayOrder : 100,
     })
     setIsModalOpen(true)
   }
@@ -352,22 +355,35 @@ export default function ListingsPage() {
     }
   }
 
-  // Filtered listings
-  const filteredListings = listings.filter((item) => {
-    const matchesSearch =
-      item.title.toLowerCase().includes(search.toLowerCase()) ||
-      item.address.toLowerCase().includes(search.toLowerCase()) ||
-      item.phone.includes(search)
-    const matchesCategory = categoryFilter === 'ALL' || item.categoryId === categoryFilter
-    const matchesStatus =
-      statusFilter === 'ALL' ||
-      (statusFilter === 'APPROVED'
-        ? item.status === 'APPROVED' || item.status === 'published' || item.status === 'approved'
-        : statusFilter === 'PENDING'
-        ? item.status === 'PENDING' || item.status === 'pending_approval' || item.status === 'draft'
-        : item.status === statusFilter)
-    return matchesSearch && matchesCategory && matchesStatus
-  })
+  // Filtered & Priority-Sorted listings
+  const filteredListings = listings
+    .filter((item) => {
+      const matchesSearch =
+        item.title.toLowerCase().includes(search.toLowerCase()) ||
+        item.address.toLowerCase().includes(search.toLowerCase()) ||
+        item.phone.includes(search)
+      const matchesCategory = categoryFilter === 'ALL' || item.categoryId === categoryFilter
+      const matchesStatus =
+        statusFilter === 'ALL' ||
+        (statusFilter === 'APPROVED'
+          ? item.status === 'APPROVED' || item.status === 'published' || item.status === 'approved'
+          : statusFilter === 'PENDING'
+          ? item.status === 'PENDING' || item.status === 'pending_approval' || item.status === 'draft'
+          : item.status === statusFilter)
+      return matchesSearch && matchesCategory && matchesStatus
+    })
+    .sort((a, b) => {
+      // 1. Featured first
+      if (Boolean(a.isFeatured) !== Boolean(b.isFeatured)) {
+        return a.isFeatured ? -1 : 1
+      }
+      // 2. Display Order ascending (1, 2, 3...)
+      const orderA = a.displayOrder !== undefined ? a.displayOrder : 100
+      const orderB = b.displayOrder !== undefined ? b.displayOrder : 100
+      if (orderA !== orderB) return orderA - orderB
+      // 3. Title alphabetical
+      return (a.title || '').localeCompare(b.title || '', 'en', { sensitivity: 'base' })
+    })
 
   // Pagination calculation
   const totalPages = Math.ceil(filteredListings.length / itemsPerPage)
@@ -674,8 +690,11 @@ export default function ListingsPage() {
                       <td className="py-3 px-4 align-top space-y-1">
                         <div className="flex items-center gap-2">
                           <h4 className="font-bold text-slate-900 text-xs leading-snug">{item.title}</h4>
+                          <span className="text-[10px] bg-blue-50 text-blue-700 font-bold px-1.5 py-0.5 rounded border border-blue-200" title={`Display Order: #${item.displayOrder !== undefined ? item.displayOrder : 100}`}>
+                            #{item.displayOrder !== undefined ? item.displayOrder : 100}
+                          </span>
                           {item.isFeatured && (
-                            <span className="text-[9px] bg-amber-500/10 text-amber-400 font-bold px-1.5 py-0.2 rounded border border-amber-500/20">
+                            <span className="text-[9px] bg-amber-500/10 text-amber-500 font-bold px-1.5 py-0.2 rounded border border-amber-500/20">
                               Featured
                             </span>
                           )}
@@ -1118,6 +1137,34 @@ export default function ListingsPage() {
                     />
                     <span>Featured in WhatsApp Bot</span>
                   </label>
+                </div>
+
+                {/* Display Order / Numbering Input */}
+                <div className="pt-3 border-t border-slate-700/60 bg-slate-900/60 p-3 rounded-xl border border-slate-700/40">
+                  <label className="block text-xs font-semibold text-amber-400 mb-1">
+                    డిస్‌ప్లే ఆర్డర్ / ర్యాంక్ (Display Order Number):
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="number"
+                      min="1"
+                      max="999"
+                      value={formData.displayOrder ?? 100}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          displayOrder: parseInt(e.target.value, 10) || 100,
+                        })
+                      }
+                      className="w-24 px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-amber-400 font-bold text-sm focus:border-amber-500 focus:outline-none"
+                    />
+                    <span className="text-[11px] text-slate-300">
+                      (1 = మొదటి స్థానం, 2 = రెండవ స్థానం, 3 = మూడవ స్థానం)
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    ఈ షాప్ వాట్సాప్ లిస్ట్ మరియు వెబ్‌సైట్ కేటగిరీలో ఏ నంబర్‌లో రావాలో నిర్ణయిస్తుంది.
+                  </p>
                 </div>
               </div>
 

@@ -2,6 +2,15 @@ import crypto from 'crypto'
 import { NextResponse } from 'next/server'
 import { loadStore, saveStore, mutateStore, generateMagicToken, FLAGSHIP_TERRITORY_ID, isListingPublished } from '@/lib/store'
 import { sendListingWhatsAppCard, sendWhatsAppFlowMessage, markWhatsAppMessageAsRead } from '@/lib/whatsapp-cloud-api'
+import {
+  sendWelcomeCard,
+  sendDirectoryListMenu,
+  sendAppAndContactVCard,
+  sendCategoryListingsCard,
+  sendOffersCard,
+  sendEmergencyCard,
+  type FlowCatalogContext,
+} from '@/lib/whatsapp-flow-catalog'
 import type { Territory } from '@/lib/types'
 import { runAutomationShadowEvaluation } from '@/lib/automation-shadow-runner'
 import { evaluateFlow } from '@/lib/flow-runtime-engine'
@@ -382,22 +391,119 @@ export async function POST(req: Request) {
       }
 
       // ------------------------------------------------------------------------
-      // 2.1. REFINED USER JOURNEY: WELCOME -> CONTACT CARD -> STORIES -> 3-OPTION MAIN MENU
+      // 2. ZERO-TYPING / TAP-ONLY WHATSAPP FLOW ROUTING ENGINE
       // ------------------------------------------------------------------------
+      const flowCtx: FlowCatalogContext = {
+        toPhone: senderPhone,
+        senderName,
+        territory,
+        store,
+      }
+
+      // Action 1: Open Directory List Menu
+      if (
+        buttonPayload === 'btn_open_directory' ||
+        buttonPayload === 'btn_menu_directory' ||
+        lower === 'directory' ||
+        lower === 'డైరెక్టరీ' ||
+        lower === 'మెనూ' ||
+        lower === 'menu' ||
+        lower === '1'
+      ) {
+        await sendDirectoryListMenu(flowCtx)
+        return NextResponse.json(withShadow({ status: 'directory_list_dispatched' }))
+      }
+
+      // Action 2: App Download & Official Native vCard
+      if (
+        buttonPayload === 'btn_app_vcard' ||
+        buttonPayload === 'row_app_vcard' ||
+        buttonPayload === 'btn_save_vcard' ||
+        buttonPayload === 'btn_contact_saved' ||
+        lower.includes('vcard') ||
+        lower.includes('యాప్') ||
+        lower.includes('app')
+      ) {
+        await sendAppAndContactVCard(flowCtx)
+        return NextResponse.json(withShadow({ status: 'app_vcard_dispatched' }))
+      }
+
+      // Action 3: Today's Deals & Stories
+      if (
+        buttonPayload === 'btn_view_offers' ||
+        buttonPayload === 'btn_menu_stories' ||
+        lower === 'offers' ||
+        lower === 'ఆఫర్లు' ||
+        lower === '2'
+      ) {
+        await sendOffersCard(flowCtx)
+        return NextResponse.json(withShadow({ status: 'offers_dispatched' }))
+      }
+
+      // Action 4: Interactive List Category Selections (Tap-Only)
+      if (buttonPayload === 'row_cat_mobiles' || lower.includes('mobile') || lower.includes('మొబైల్')) {
+        await sendCategoryListingsCard(flowCtx, 'mobiles', 'Mobiles & Electronics', 'మొబైల్స్ & ఎలక్ట్రానిక్స్')
+        return NextResponse.json(withShadow({ status: 'category_mobiles_dispatched' }))
+      }
+
+      if (buttonPayload === 'row_cat_kirana' || lower.includes('kirana') || lower.includes('కిరాణా')) {
+        await sendCategoryListingsCard(flowCtx, 'kirana', 'Kirana & Supermarket', 'కిరాణా & సూపర్ మార్కెట్')
+        return NextResponse.json(withShadow({ status: 'category_kirana_dispatched' }))
+      }
+
+      if (buttonPayload === 'row_cat_clothing' || lower.includes('cloth') || lower.includes('బట్టలు')) {
+        await sendCategoryListingsCard(flowCtx, 'clothing', 'Clothing & Fashion', 'బట్టలు & ఫ్యాషన్')
+        return NextResponse.json(withShadow({ status: 'category_clothing_dispatched' }))
+      }
+
+      if (buttonPayload === 'row_cat_taxi' || lower === 'taxi' || lower === 'టాక్సీ' || lower.includes('క్యాబ్')) {
+        await sendCategoryListingsCard(flowCtx, 'taxi', '24/7 Taxi & Cabs', '24/7 టాక్సీ & క్యాబ్స్')
+        return NextResponse.json(withShadow({ status: 'category_taxi_dispatched' }))
+      }
+
+      if (buttonPayload === 'row_cat_auto' || lower === 'auto' || lower === 'ఆటో') {
+        await sendCategoryListingsCard(flowCtx, 'auto', 'Local Auto Stand', 'లోకల్ ఆటో స్టాండ్')
+        return NextResponse.json(withShadow({ status: 'category_auto_dispatched' }))
+      }
+
+      if (buttonPayload === 'row_cat_services' || lower.includes('plumber') || lower.includes('electrician') || lower.includes('రిపేర్')) {
+        await sendCategoryListingsCard(flowCtx, 'services', 'Home Services & Technicians', 'ప్లంబర్, ఎలక్ట్రీషియన్ & మెకానిక్')
+        return NextResponse.json(withShadow({ status: 'category_services_dispatched' }))
+      }
+
+      if (buttonPayload === 'row_cat_hospitals' || lower.includes('hospital') || lower.includes('ఆసుపత్రి') || lower.includes('డాక్టర్')) {
+        await sendCategoryListingsCard(flowCtx, 'hospitals', 'Hospitals & Clinics', 'ఆస్పత్రులు & క్లినిక్స్')
+        return NextResponse.json(withShadow({ status: 'category_hospitals_dispatched' }))
+      }
+
+      if (buttonPayload === 'row_cat_medical' || lower.includes('medical') || lower.includes('మందులు')) {
+        await sendCategoryListingsCard(flowCtx, 'medical', '24/7 Medical Stores', '24/7 మెడికల్ షాపులు')
+        return NextResponse.json(withShadow({ status: 'category_medical_dispatched' }))
+      }
+
+      if (buttonPayload === 'row_cat_emergency' || lower.includes('emergency') || lower.includes('police') || lower.includes('పోలీస్') || lower.includes('108')) {
+        await sendEmergencyCard(flowCtx)
+        return NextResponse.json(withShadow({ status: 'emergency_dispatched' }))
+      }
+
+      // Action 5: Welcome Card (Home, Start, Greetings)
       const isGreeting =
+        buttonPayload === 'btn_home' ||
+        buttonPayload === 'btn_back_to_menu' ||
         lower === 'hi' ||
         lower === 'hello' ||
         lower === 'నమస్కారం' ||
         lower === 'హలో' ||
         lower === 'start' ||
         lower === 'హాయ్' ||
-        lower === 'menu' ||
-        lower === 'మెనూ' ||
         lower === 'back' ||
         lower === 'వెనక్కి'
 
-      const isExploreClick = buttonPayload === 'btn_explore' || lower === 'explore' || lower === 'ఎక్స్‌ప్లోర్'
-      const isContactSaveClick = buttonPayload === 'btn_contact_saved' || lower === 'save contact' || lower === 'సేవ్'
+      if (isGreeting) {
+        await sendWelcomeCard(flowCtx)
+        return NextResponse.json(withShadow({ status: 'welcome_card_dispatched' }))
+      }
+
       const isDirectoryClick = buttonPayload === 'btn_menu_directory' || lower === '1' || lower === 'డైరెక్టరీ' || lower === 'directory' || lower === 'షాపులు'
       const isStoriesClick = buttonPayload === 'btn_menu_stories' || lower === '2' || lower === 'స్టోరీస్' || lower === 'stories' || lower === 'ఆఫర్స్' || lower === 'offers'
       const isPromoteClick = buttonPayload === 'btn_menu_promote' || lower === '3' || lower === 'వ్యాపారం' || lower === 'ప్రమోషన్' || lower === 'promote' || lower === 'wishes' || lower === 'విషెస్'
@@ -411,176 +517,9 @@ export async function POST(req: Request) {
       const isTaxiClick = buttonPayload === 'btn_cat_taxi' || lower === 'taxi' || lower === 'టాక్సీ' || lower.includes('ట్రాన్స్‌పోర్ట్')
       const wardMatch = incomingText.match(/(?:ward|వార్డు)\s*([0-9]{1,2})/i)
 
-      // Helper function to dispatch active stories & 3-option main menu
       const dispatchStoriesAndMainMenu = async () => {
-        const activeStories = (store.stories || []).filter((s) => s.status === 'published')
-        const activeOffers = (store.offers || []).filter((o) => o.status === 'published')
-        const topMedia = activeStories[0]?.mediaUrl || activeOffers[0]?.imageUrl || 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80'
-
-        let storiesHighlight = ''
-        if (activeOffers.length > 0) {
-          activeOffers.slice(0, 2).forEach((off) => {
-            storiesHighlight += `• 🛍️ *${off.businessName}*: ${off.title} (${off.discount})\n`
-          })
-        }
-        if (activeStories.length > 0) {
-          activeStories.slice(0, 2).forEach((st) => {
-            storiesHighlight += `• 🌟 *${st.businessName}*: ${st.caption || 'Live Update'}\n`
-          })
-        }
-        if (!storiesHighlight) {
-          storiesHighlight =
-            `• 🛍️ స్థానిక వ్యాపారుల ప్రత్యేక డిస్కౌంట్లు\n` +
-            `• 🎂 పుట్టినరోజు & పెళ్లిరోజు శుభాకాంక్షల స్టోరీలు\n` +
-            `• 🏨 రెస్టారెంట్ & షాపింగ్ స్పెషల్ డీల్స్\n` +
-            `• 👗 సరికొత్త కలెక్షన్స్ & షోరూమ్ ఆఫర్లు\n`
-        }
-
-        const menuText =
-          `🌟 *చౌటుప్పల్ నేటి తాజా అప్‌డేట్స్ & ఆఫర్లు!* ✨\n\n` +
-          storiesHighlight +
-          `\n👉 ఫుల్‌స్క్రీన్‌లో అన్ని స్టోరీలు వీక్షించడానికి: ${townUrl}/stories\n\n` +
-          `━━━━━━━━━━━━━━━━━━━━\n` +
-          `📋 *చౌటుప్పల్ సూపర్ యాప్ మెయిన్ మెనూ:*\n` +
-          `మీరు ఏ సమాచారం కోసం చూస్తున్నారు?\n\n` +
-          `1️⃣ *వ్యాపార డైరెక్టరీ* — షాపులు, సర్వీసులు & ఆస్పత్రులు\n` +
-          `2️⃣ *తాజా ఆఫర్లు & స్టోరీలు* — నేటి ఆఫర్లు & లోకల్ విషెస్\n` +
-          `3️⃣ *వ్యాపార ప్రమోషన్ & విషింగ్స్* — మీ బ్రాండ్ లేదా శుభాకాంక్షలు ప్రమోట్ చేయండి\n\n` +
-          `🤝 కమ్యూనిటీ & వార్డు గ్రూపుల కోసం 'కమ్యూనిటీ' అని పంపండి.`
-
-        store.messages.unshift({
-          id: `msg_out_${Date.now()}`,
-          territoryId: territory.id,
-          phone: senderPhone,
-          direction: 'outbound',
-          messageText: menuText,
-          imageUrl: topMedia,
-          status: 'sent',
-          createdAt: new Date().toISOString(),
-        })
-
-        if (existingContact) {
-          existingContact.sessionState = 'main_menu'
-        }
-
-        await sendWhatsAppFlowMessage({
-          toPhone: senderPhone,
-          messageText: menuText,
-          imageUrl: topMedia,
-          buttons: [
-            { id: 'btn_menu_directory', title: '1. వ్యాపారాలు' },
-            { id: 'btn_menu_stories', title: '2. స్టోరీస్ & ఆఫర్స్' },
-            { id: 'btn_menu_promote', title: '3. ప్రమోషన్ & విషెస్' },
-          ],
-          footerText: '🌐 https://choutuppal.in',
-          territoryId: territory.id,
-          contactName: senderName,
-        }, store)
-
+        await sendOffersCard(flowCtx)
         return NextResponse.json(withShadow({ status: 'stories_and_menu_dispatched' }))
-      }
-
-      // STEP 1: FIRST INTERACTION ONLY -> CLEAN WELCOME (Explore Now)
-      if (isGreeting && !existingContact?.contactCardSentAt && !matchedListing) {
-        const welcomeText =
-          `🌟 *నమస్కారం! 🙏 చౌటుప్పల్ లోకల్ బిజినెస్ & సర్వీసెస్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం.*\n\n` +
-          `మన చౌటుప్పల్ పట్టణంలోని స్థానిక దుకాణాలు, తాజా ఆఫర్లు, స్టోరీలు మరియు ఉపయోగకరమైన సమాచారాన్ని ఇక్కడ సులభంగా పొందవచ్చు.`
-
-        store.messages.unshift({
-          id: `msg_out_${Date.now()}`,
-          territoryId: territory.id,
-          phone: senderPhone,
-          direction: 'outbound',
-          messageText: welcomeText,
-          imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80',
-          status: 'sent',
-          createdAt: new Date().toISOString(),
-        })
-
-        if (existingContact) {
-          existingContact.sessionState = 'awaiting_explore'
-        }
-
-        await sendWhatsAppFlowMessage({
-          toPhone: senderPhone,
-          messageText: welcomeText,
-          imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80',
-          buttons: [
-            { id: 'btn_explore', title: 'Explore Choutuppal 🚀' },
-          ],
-          footerText: '🌐 https://choutuppal.in',
-          territoryId: territory.id,
-          contactName: senderName,
-        }, store)
-
-        return NextResponse.json(withShadow({ status: 'welcome_explore_prompt_dispatched' }))
-      }
-
-      // STEP 2: FIRST INTERACTION ONLY -> CONTACT CARD PROMPT (Save Contact - NO phone numbers in text)
-      if (
-        (isExploreClick || (existingContact?.sessionState === 'awaiting_explore' && !existingContact?.contactCardSentAt)) &&
-        !matchedListing
-      ) {
-        const contactCardText =
-          `మెరుగైన సేవలను ఎలాంటి అంతరాయం లేకుండా కొనసాగించడానికి, దయచేసి మా అధికారిక కాంటాక్ట్‌ను మీ ఫోన్‌లో సేవ్ చేసుకోండి.`
-
-        const nowIso = new Date().toISOString()
-        if (existingContact) {
-          existingContact.contactCardSentAt = nowIso
-          existingContact.sessionState = 'contact_card_sent'
-        }
-
-        store.messages.unshift({
-          id: `msg_out_${Date.now()}`,
-          territoryId: territory.id,
-          phone: senderPhone,
-          direction: 'outbound',
-          messageText: contactCardText,
-          status: 'sent',
-          createdAt: nowIso,
-        })
-
-        // 1. Send native vCard contact message (No raw phone numbers in text)
-        await sendWhatsAppFlowMessage({
-          toPhone: senderPhone,
-          messageText: contactCardText,
-          contacts: [
-            {
-              name: {
-                formatted_name: 'చౌటుప్పల్ యాప్ హెల్ప్‌లైన్',
-                first_name: 'చౌటుప్పల్ యాప్',
-                last_name: 'హెల్ప్‌లైన్',
-              },
-              phones: [{ phone: '+919494348175', type: 'WORK' }],
-              urls: [{ url: 'https://choutuppal.in', type: 'WORK' }],
-              org: { company: 'Mana Choutuppal Local Services & CRM' },
-            },
-          ],
-          territoryId: territory.id,
-          contactName: senderName,
-        }, store)
-
-        // 2. Also send button prompt so user can immediately continue to experience
-        await sendWhatsAppFlowMessage({
-          toPhone: senderPhone,
-          messageText: contactCardText,
-          buttons: [
-            { id: 'btn_contact_saved', title: 'కంటిన్యూ చేయండి ➡️' },
-          ],
-          footerText: '🔒 అధికారిక వెరిఫైడ్ సర్వీస్',
-          territoryId: territory.id,
-          contactName: senderName,
-        }, store)
-
-        return NextResponse.json(withShadow({ status: 'contact_card_prompt_dispatched' }))
-      }
-
-      // STEP 3 & 4: RETURNING USERS OR AFTER CONTACT CARD -> STORIES HIGHLIGHTS + MAIN MENU
-      if (
-        (isContactSaveClick || (isGreeting && existingContact?.contactCardSentAt)) &&
-        !matchedListing
-      ) {
-        return await dispatchStoriesAndMainMenu()
       }
 
       // SECTION 1: BUSINESS DIRECTORY (CATEGORIES & LISTINGS WITH PHOTOS)
@@ -2014,30 +1953,9 @@ export async function POST(req: Request) {
         }))
       }
 
-      // 8. CATCH-ALL INTELLIGENT FALLBACK (Ensure every incoming message gets an immediate reply)
-      const fallbackMsg =
-        `నమస్కారం ${senderName} గారు! 🙏\n\n` +
-        `చౌటుప్పల్ లోకల్ బిజినెస్ & సర్వీసెస్ కు స్వాగతం. మీరు కోరిన సమాచారం కోసం క్రింది ఆప్షన్లను ఎంచుకోండి లేదా సంబంధిత పదాన్ని టైప్ చేయండి:\n\n` +
-        `1️⃣ *వ్యాపారాలు* — షాపులు, సర్వీసులు & ఆస్పత్రులు\n` +
-        `2️⃣ *స్టోరీస్ & ఆఫర్స్* — నేటి తాజా డిస్కౌంట్లు & ఆఫర్లు\n` +
-        `3️⃣ *ప్రమోషన్* — మీ వ్యాపారాన్ని ప్రమోట్ చేయడానికి\n\n` +
-        `💡 ఏదైనా షాప్ లేదా సర్వీస్ కావాలంటే నేరుగా దాని పేరు టైప్ చేయండి (ఉదా: హాస్పిటల్, కిరాణా, టాక్సీ).\n` +
-        `🌐 వెబ్‌సైట్: ${townUrl}`
-
-      await sendWhatsAppFlowMessage({
-        toPhone: senderPhone,
-        messageText: fallbackMsg,
-        buttons: [
-          { id: 'btn_menu_directory', title: '1. వ్యాపారాలు' },
-          { id: 'btn_menu_stories', title: '2. స్టోరీస్ & ఆఫర్స్' },
-          { id: 'btn_menu_promote', title: '3. ప్రమోషన్' },
-        ],
-        footerText: `🌐 ${townUrl}`,
-        territoryId: territory.id,
-        contactName: senderName,
-      }, store)
-
-      return NextResponse.json(withShadow({ status: 'fallback_menu_dispatched', territoryId: territory.id }))
+      // 8. CATCH-ALL ZERO-TYPING FALLBACK (Dispatches official Welcome Card with banner & 3 buttons)
+      await sendWelcomeCard(flowCtx)
+      return NextResponse.json(withShadow({ status: 'welcome_card_fallback_dispatched', territoryId: territory.id }))
     })
   } catch (err: any) {
     console.error('[WhatsApp Webhook POST Exception]:', err)

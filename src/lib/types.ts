@@ -170,6 +170,7 @@ export interface Listing {
   type: 'BUSINESS' | 'SERVICE' | 'REAL_ESTATE'
   isFeatured: boolean
   isPremium: boolean
+  displayOrder?: number // 1 = Rank 1, 2 = Rank 2, etc. within category/directory
   coverImage: string
   logo?: string
   gallery: string[]

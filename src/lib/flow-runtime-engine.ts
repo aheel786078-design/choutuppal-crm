@@ -289,6 +289,10 @@ export function sortAndFilterListings(
       const posB = matchCat(b.categoryId, b.categoryName, b.slug)
 
       if (posA !== posB) return posA - posB
+      if (Boolean(a.isFeatured) !== Boolean(b.isFeatured)) return a.isFeatured ? -1 : 1
+      const orderA = a.displayOrder !== undefined ? a.displayOrder : 100
+      const orderB = b.displayOrder !== undefined ? b.displayOrder : 100
+      if (orderA !== orderB) return orderA - orderB
       return (a.title || '').localeCompare(b.title || '', 'en', { sensitivity: 'base' })
     })
   } else if (sortMode === 'newest') {
@@ -323,6 +327,9 @@ export function sortAndFilterListings(
 
       if (featB !== featA) return featB - featA
       if (prioB !== prioA) return prioB - prioA
+      const orderA = a.displayOrder !== undefined ? a.displayOrder : 100
+      const orderB = b.displayOrder !== undefined ? b.displayOrder : 100
+      if (orderA !== orderB) return orderA - orderB
       return (a.title || '').localeCompare(b.title || '', 'en', { sensitivity: 'base' })
     })
   }
