@@ -6,9 +6,13 @@ import {
   sendWelcomeCard,
   sendDirectoryListMenu,
   sendAppAndContactVCard,
+  sendCategoryShopList,
   sendCategoryListingsCard,
+  sendSingleListingDetailsCard,
+  sendListingWebProfile,
   sendOffersCard,
   sendEmergencyCard,
+  getCachedListings,
   type FlowCatalogContext,
 } from '@/lib/whatsapp-flow-catalog'
 import type { Territory } from '@/lib/types'
@@ -440,53 +444,152 @@ export async function POST(req: Request) {
         return NextResponse.json(withShadow({ status: 'offers_dispatched' }))
       }
 
-      // Action 4: Interactive List Category Selections (Tap-Only)
+      // Action 4: Single Business Web Profile Request
+      if (buttonPayload?.startsWith('btn_prof_')) {
+        const listingId = buttonPayload.replace('btn_prof_', '').trim()
+        const allListings = await getCachedListings(territory.id, store)
+        const listing =
+          allListings.find((l) => l.id === listingId) ||
+          (store.listings || []).find((l: any) => l.id === listingId)
+
+        if (listing) {
+          await sendListingWebProfile(flowCtx, listing)
+          return NextResponse.json(withShadow({ status: 'listing_web_profile_dispatched', listingId }))
+        }
+      }
+
+      // Action 5: Individual Business Click from Category Sub-List
+      if (buttonPayload?.startsWith('row_biz_')) {
+        const listingId = buttonPayload.replace('row_biz_', '').trim()
+        const allListings = await getCachedListings(territory.id, store)
+        const listing =
+          allListings.find((l) => l.id === listingId) ||
+          (store.listings || []).find((l: any) => l.id === listingId)
+
+        if (listing) {
+          await sendSingleListingDetailsCard(flowCtx, listing)
+          return NextResponse.json(withShadow({ status: 'single_listing_dispatched', listingId }))
+        }
+      }
+
+      // Action 6: Interactive Category Sub-Lists (Tap-Only)
       if (buttonPayload === 'row_cat_mobiles' || lower.includes('mobile') || lower.includes('మొబైల్')) {
-        await sendCategoryListingsCard(flowCtx, 'mobiles', 'Mobiles & Electronics', 'మొబైల్స్ & ఎలక్ట్రానిక్స్')
+        await sendCategoryShopList(flowCtx, 'mobiles')
         return NextResponse.json(withShadow({ status: 'category_mobiles_dispatched' }))
       }
 
-      if (buttonPayload === 'row_cat_kirana' || lower.includes('kirana') || lower.includes('కిరాణా')) {
-        await sendCategoryListingsCard(flowCtx, 'kirana', 'Kirana & Supermarket', 'కిరాణా & సూపర్ మార్కెట్')
+      if (
+        buttonPayload === 'row_cat_automobile' ||
+        buttonPayload === 'row_cat_taxi' ||
+        buttonPayload === 'row_cat_auto' ||
+        lower.includes('auto') ||
+        lower.includes('garage') ||
+        lower.includes('ఆటో') ||
+        lower.includes('గ్యారేజ్') ||
+        lower.includes('టాక్సీ') ||
+        lower.includes('క్యాబ్')
+      ) {
+        await sendCategoryShopList(flowCtx, 'automobile')
+        return NextResponse.json(withShadow({ status: 'category_automobile_dispatched' }))
+      }
+
+      if (
+        buttonPayload === 'row_cat_kirana' ||
+        buttonPayload === 'row_cat_clothing' ||
+        lower.includes('kirana') ||
+        lower.includes('కిరాణా') ||
+        lower.includes('cloth') ||
+        lower.includes('బట్టలు') ||
+        lower.includes('సూపర్')
+      ) {
+        await sendCategoryShopList(flowCtx, 'kirana')
         return NextResponse.json(withShadow({ status: 'category_kirana_dispatched' }))
       }
 
-      if (buttonPayload === 'row_cat_clothing' || lower.includes('cloth') || lower.includes('బట్టలు')) {
-        await sendCategoryListingsCard(flowCtx, 'clothing', 'Clothing & Fashion', 'బట్టలు & ఫ్యాషన్')
-        return NextResponse.json(withShadow({ status: 'category_clothing_dispatched' }))
+      if (
+        buttonPayload === 'row_cat_food' ||
+        lower.includes('food') ||
+        lower.includes('hotel') ||
+        lower.includes('dining') ||
+        lower.includes('హోటల్') ||
+        lower.includes('రెస్టారెంట్') ||
+        lower.includes('బిర్యానీ')
+      ) {
+        await sendCategoryShopList(flowCtx, 'food')
+        return NextResponse.json(withShadow({ status: 'category_food_dispatched' }))
       }
 
-      if (buttonPayload === 'row_cat_taxi' || lower === 'taxi' || lower === 'టాక్సీ' || lower.includes('క్యాబ్')) {
-        await sendCategoryListingsCard(flowCtx, 'taxi', '24/7 Taxi & Cabs', '24/7 టాక్సీ & క్యాబ్స్')
-        return NextResponse.json(withShadow({ status: 'category_taxi_dispatched' }))
+      if (
+        buttonPayload === 'row_cat_health' ||
+        buttonPayload === 'row_cat_hospitals' ||
+        buttonPayload === 'row_cat_medical' ||
+        lower.includes('health') ||
+        lower.includes('hospital') ||
+        lower.includes('medical') ||
+        lower.includes('ఆసుపత్రి') ||
+        lower.includes('మందులు') ||
+        lower.includes('డాక్టర్')
+      ) {
+        await sendCategoryShopList(flowCtx, 'health')
+        return NextResponse.json(withShadow({ status: 'category_health_dispatched' }))
       }
 
-      if (buttonPayload === 'row_cat_auto' || lower === 'auto' || lower === 'ఆటో') {
-        await sendCategoryListingsCard(flowCtx, 'auto', 'Local Auto Stand', 'లోకల్ ఆటో స్టాండ్')
-        return NextResponse.json(withShadow({ status: 'category_auto_dispatched' }))
+      if (
+        buttonPayload === 'row_cat_electrical' ||
+        lower.includes('electrical') ||
+        lower.includes('hardware') ||
+        lower.includes('ఎలక్ట్రికల్') ||
+        lower.includes('హార్డ్‌వేర్')
+      ) {
+        await sendCategoryShopList(flowCtx, 'electrical')
+        return NextResponse.json(withShadow({ status: 'category_electrical_dispatched' }))
       }
 
-      if (buttonPayload === 'row_cat_services' || lower.includes('plumber') || lower.includes('electrician') || lower.includes('రిపేర్')) {
-        await sendCategoryListingsCard(flowCtx, 'services', 'Home Services & Technicians', 'ప్లంబర్, ఎలక్ట్రీషియన్ & మెకానిక్')
+      if (
+        buttonPayload === 'row_cat_services' ||
+        lower.includes('services') ||
+        lower.includes('plumber') ||
+        lower.includes('technician') ||
+        lower.includes('ప్లంబర్') ||
+        lower.includes('రిపేర్')
+      ) {
+        await sendCategoryShopList(flowCtx, 'services')
         return NextResponse.json(withShadow({ status: 'category_services_dispatched' }))
       }
 
-      if (buttonPayload === 'row_cat_hospitals' || lower.includes('hospital') || lower.includes('ఆసుపత్రి') || lower.includes('డాక్టర్')) {
-        await sendCategoryListingsCard(flowCtx, 'hospitals', 'Hospitals & Clinics', 'ఆస్పత్రులు & క్లినిక్స్')
-        return NextResponse.json(withShadow({ status: 'category_hospitals_dispatched' }))
+      if (
+        buttonPayload === 'row_cat_internet' ||
+        lower.includes('meeseva') ||
+        lower.includes('internet') ||
+        lower.includes('మీసేవ') ||
+        lower.includes('ఇంటర్నెట్')
+      ) {
+        await sendCategoryShopList(flowCtx, 'internet')
+        return NextResponse.json(withShadow({ status: 'category_internet_dispatched' }))
       }
 
-      if (buttonPayload === 'row_cat_medical' || lower.includes('medical') || lower.includes('మందులు')) {
-        await sendCategoryListingsCard(flowCtx, 'medical', '24/7 Medical Stores', '24/7 మెడికల్ షాపులు')
-        return NextResponse.json(withShadow({ status: 'category_medical_dispatched' }))
+      if (
+        buttonPayload === 'row_cat_furniture' ||
+        lower.includes('furniture') ||
+        lower.includes('ఫర్నిచర్')
+      ) {
+        await sendCategoryShopList(flowCtx, 'furniture')
+        return NextResponse.json(withShadow({ status: 'category_furniture_dispatched' }))
       }
 
-      if (buttonPayload === 'row_cat_emergency' || lower.includes('emergency') || lower.includes('police') || lower.includes('పోలీస్') || lower.includes('108')) {
+      if (
+        buttonPayload === 'row_cat_emergency' ||
+        lower.includes('emergency') ||
+        lower.includes('police') ||
+        lower.includes('పోలీస్') ||
+        lower.includes('100') ||
+        lower.includes('108')
+      ) {
         await sendEmergencyCard(flowCtx)
         return NextResponse.json(withShadow({ status: 'emergency_dispatched' }))
       }
 
-      // Action 5: Welcome Card (Home, Start, Greetings)
+      // Action 7: Welcome Card (Home, Start, Greetings)
       const isGreeting =
         buttonPayload === 'btn_home' ||
         buttonPayload === 'btn_back_to_menu' ||

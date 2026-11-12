@@ -6,6 +6,7 @@
 
 import { sendWhatsAppFlowMessage } from './whatsapp-cloud-api'
 import type { Territory, Listing } from './types'
+import { getListingsDAO } from './supabase-dao'
 
 export const CHOUTUPPAL_BANNER_URL = 'https://choutuppal-crm.vercel.app/assets/choutuppal-app-banner.jpg'
 export const CHOUTUPPAL_LOGO_URL = 'https://choutuppal-crm.vercel.app/assets/choutuppal-app-logo.jpg'
@@ -17,13 +18,222 @@ export interface FlowCatalogContext {
   store?: any
 }
 
+export interface CategoryConfig {
+  key: string
+  rowId: string
+  title: string // Max 24 chars for Meta List row title
+  teluguName: string
+  descriptionTemplate: string // Max 72 chars with count
+  categoryIds: string[]
+  icon: string
+  fallbackCount: number
+}
+
+export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
+  mobiles: {
+    key: 'mobiles',
+    rowId: 'row_cat_mobiles',
+    title: '📱 మొబైల్స్ & ఎలక్ట్రానిక్స్',
+    teluguName: 'మొబైల్స్ & ఎలక్ట్రానిక్స్',
+    descriptionTemplate: '{count} షాప్ • స్మార్ట్‌ఫోన్లు, సర్వీసింగ్ & సేల్స్',
+    categoryIds: ['cat-electronics'],
+    icon: '📱',
+    fallbackCount: 1,
+  },
+  automobile: {
+    key: 'automobile',
+    rowId: 'row_cat_automobile',
+    title: '🚗 ఆటోమొబైల్ & గ్యారేజ్',
+    teluguName: 'ఆటోమొబైల్ & గ్యారేజ్',
+    descriptionTemplate: '{count} షాపులు • గ్యారేజ్ & బైక్/కార్ సర్వీసింగ్',
+    categoryIds: ['cat-automobile'],
+    icon: '🚗',
+    fallbackCount: 25,
+  },
+  kirana: {
+    key: 'kirana',
+    rowId: 'row_cat_kirana',
+    title: '🛒 కిరాణా & సూపర్ మార్కెట్',
+    teluguName: 'కిరాణా & సూపర్ మార్కెట్స్',
+    descriptionTemplate: '{count} షాపులు • నిత్యావసరాలు & జనరల్ స్టోర్స్',
+    categoryIds: ['cat-retail'],
+    icon: '🛒',
+    fallbackCount: 10,
+  },
+  food: {
+    key: 'food',
+    rowId: 'row_cat_food',
+    title: '🍽️ హోటల్స్ & రెస్టారెంట్లు',
+    teluguName: 'హోటల్స్ & రెస్టారెంట్లు',
+    descriptionTemplate: '{count} షాపులు • టిఫిన్స్, బిర్యానీ & భోజనం',
+    categoryIds: ['cat-food'],
+    icon: '🍽️',
+    fallbackCount: 8,
+  },
+  health: {
+    key: 'health',
+    rowId: 'row_cat_health',
+    title: '🏥 ఆస్పత్రులు & మెడికల్స్',
+    teluguName: 'ఆస్పత్రులు & మెడికల్స్',
+    descriptionTemplate: '{count} షాపులు • క్లినిక్స్, మందులు & టెస్టులు',
+    categoryIds: ['cat-health'],
+    icon: '🏥',
+    fallbackCount: 6,
+  },
+  electrical: {
+    key: 'electrical',
+    rowId: 'row_cat_electrical',
+    title: '⚡ ఎలక్ట్రికల్ & హార్డ్‌వేర్',
+    teluguName: 'ఎలక్ట్రికల్ & హార్డ్‌వేర్',
+    descriptionTemplate: '{count} షాపులు • వైరింగ్, మోటార్స్ & శానిటరీ',
+    categoryIds: ['cat-electrical'],
+    icon: '⚡',
+    fallbackCount: 17,
+  },
+  services: {
+    key: 'services',
+    rowId: 'row_cat_services',
+    title: '🔧 సర్వీసెస్ & వర్కర్స్',
+    teluguName: 'సర్వీసెస్ & టెక్నీషియన్స్',
+    descriptionTemplate: '{count} షాపులు • ప్లంబర్, ఎలక్ట్రీషియన్ & రిపేర్లు',
+    categoryIds: ['cat-services'],
+    icon: '🔧',
+    fallbackCount: 16,
+  },
+  internet: {
+    key: 'internet',
+    rowId: 'row_cat_internet',
+    title: '💻 మీసేవ & ఆన్‌లైన్ సేవలు',
+    teluguName: 'మీసేవ & ఇంటర్నెట్ సెంటర్లు',
+    descriptionTemplate: '{count} షాపులు • ఆధార్, పాన్ & ఆన్‌లైన్ వర్క్స్',
+    categoryIds: ['cat-internet'],
+    icon: '💻',
+    fallbackCount: 27,
+  },
+  furniture: {
+    key: 'furniture',
+    rowId: 'row_cat_furniture',
+    title: '🪑 ఫర్నిచర్ & హోమ్ డెకర్',
+    teluguName: 'ఫర్నిచర్ & హోమ్ డెకర్',
+    descriptionTemplate: '{count} షాపులు • వుడెన్ వర్క్స్, సోఫా & ఇంటీరియర్',
+    categoryIds: ['cat-furniture'],
+    icon: '🪑',
+    fallbackCount: 20,
+  },
+  emergency: {
+    key: 'emergency',
+    rowId: 'row_cat_emergency',
+    title: '🚨 అత్యవసర హెల్ప్‌లైన్',
+    teluguName: 'అత్యవసర & హెల్ప్‌లైన్ నంబర్లు',
+    descriptionTemplate: 'పోలీస్ (100), అంబులెన్స్ (108), ఫైర్ (101)',
+    categoryIds: [],
+    icon: '🚨',
+    fallbackCount: 6,
+  },
+}
+
+let cachedListings: Listing[] = []
+let lastFetchedTime = 0
+const CACHE_TTL_MS = 60 * 1000 // 60 seconds cache
+
+export async function getCachedListings(territoryId: string = 'territory_choutuppal', store?: any): Promise<Listing[]> {
+  const now = Date.now()
+  if (cachedListings.length > 0 && now - lastFetchedTime < CACHE_TTL_MS) {
+    return cachedListings
+  }
+  try {
+    const res = await getListingsDAO({ territoryId, pageSize: 1000 })
+    if (res.data && res.data.length > 0) {
+      cachedListings = res.data
+      lastFetchedTime = now
+      return cachedListings
+    }
+  } catch (err) {
+    console.warn('[Flow Catalog] DAO getListingsDAO error, using store fallback:', err)
+  }
+  if (store?.listings?.length) {
+    return store.listings
+  }
+  return cachedListings
+}
+
+export function filterListingsByCategory(listings: Listing[], categoryKey: string): Listing[] {
+  const key = categoryKey.replace('row_cat_', '').toLowerCase()
+  return listings.filter((l: Listing) => {
+    const catId = (l.categoryId || '').toLowerCase()
+    const catName = (l.categoryName || '').toLowerCase()
+    const title = (l.title || '').toLowerCase()
+
+    if (key === 'mobiles' || key === 'electronics') {
+      return catId === 'cat-electronics' || catName.includes('mobile') || catName.includes('electronics') ||
+             title.includes('mobile') || title.includes('లక్ష్మి') || title.includes('మొబైల్')
+    }
+    if (key === 'automobile' || key === 'taxi' || key === 'auto') {
+      return catId === 'cat-automobile' || catName.includes('automobile') || catName.includes('garage') ||
+             title.includes('ఆటో') || title.includes('గ్యారేజ్') || title.includes('మెకానిక్') ||
+             title.includes('మోటార్స్') || title.includes('టాక్సీ') || title.includes('క్యాబ్')
+    }
+    if (key === 'kirana' || key === 'clothing' || key === 'retail') {
+      return catId === 'cat-retail' || catName.includes('retail') || catName.includes('shopping') ||
+             title.includes('కిరాణా') || title.includes('సూపర్') || title.includes('బజార్') ||
+             title.includes('బట్టలు') || title.includes('శారీస్') || title.includes('మ్యాచింగ్')
+    }
+    if (key === 'food' || key === 'hotel' || key === 'dining') {
+      return catId === 'cat-food' || catName.includes('food') || catName.includes('dining') ||
+             title.includes('హోటల్') || title.includes('రెస్టారెంట్') || title.includes('ధాబా') ||
+             title.includes('బిర్యానీ') || title.includes('టిఫిన్') || title.includes('క్యాటరింగ్')
+    }
+    if (key === 'health' || key === 'medical' || key === 'hospitals') {
+      return catId === 'cat-health' || catName.includes('health') || catName.includes('medical') ||
+             title.includes('హాస్పిటల్') || title.includes('క్లినిక్') || title.includes('డెంటల్') ||
+             title.includes('మెడికల్') || title.includes('ఫార్మసీ')
+    }
+    if (key === 'electrical' || key === 'hardware') {
+      return catId === 'cat-electrical' || catName.includes('electrical') || catName.includes('hardware') ||
+             title.includes('ఎలక్ట్రికల్') || title.includes('హార్డ్‌వేర్') || title.includes('లైటింగ్') ||
+             title.includes('శానిటరీ')
+    }
+    if (key === 'services' || key === 'technicians') {
+      return catId === 'cat-services' || catName.includes('service') ||
+             title.includes('సర్వీస్') || title.includes('ప్లంబర్') || title.includes('ఎలక్ట్రీషియన్') ||
+             title.includes('వర్క్స్')
+    }
+    if (key === 'internet' || key === 'meeseva') {
+      return catId === 'cat-internet' || catName.includes('internet') || catName.includes('meeseva') ||
+             title.includes('మీసేవ') || title.includes('ఇంటర్నెట్') || title.includes('ఆన్‌లైన్') ||
+             title.includes('ఆధార్')
+    }
+    if (key === 'furniture') {
+      return catId === 'cat-furniture' || catName.includes('furniture') ||
+             title.includes('ఫర్నిచర్') || title.includes('వుడ్') || title.includes('కార్పెంటర్') ||
+             title.includes('సోఫా')
+    }
+    return false
+  })
+}
+
+export function sortListingsByPriority(listings: Listing[]): Listing[] {
+  return [...listings].sort((a, b) => {
+    // 1. Featured first
+    if (Boolean(a.isFeatured) !== Boolean(b.isFeatured)) {
+      return a.isFeatured ? -1 : 1
+    }
+    // 2. Display order ascending (1, 2, 3...)
+    const orderA = a.displayOrder !== undefined && a.displayOrder !== null ? a.displayOrder : 100
+    const orderB = b.displayOrder !== undefined && b.displayOrder !== null ? b.displayOrder : 100
+    if (orderA !== orderB) {
+      return orderA - orderB
+    }
+    // 3. Alphabetical
+    return (a.title || '').localeCompare(b.title || '')
+  })
+}
+
 /**
  * Screen 1: Official Welcome Card
  * Banner Image + Concise Telugu greeting + 3 Primary Interactive Buttons
  */
 export async function sendWelcomeCard(ctx: FlowCatalogContext) {
-  const townUrl = ctx.territory?.primaryDomain ? `https://${ctx.territory.primaryDomain}` : 'https://choutuppal.in'
-  
   const welcomeText =
     `నమస్కారం! చౌటుప్పల్ యాప్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం. 🙏\n\n` +
     `*మన అందరం... మన చౌటుప్పల్!* 🚀\n` +
@@ -47,12 +257,25 @@ export async function sendWelcomeCard(ctx: FlowCatalogContext) {
 
 /**
  * Screen 2: Interactive List Menu
- * 10 categorized rows across 4 clean sections for 100% zero-typing tap navigation
+ * 10 categorized rows across 3 clean sections with live business counts
+ * for 100% zero-typing tap navigation
  */
 export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
+  const allListings = await getCachedListings(ctx.territory?.id, ctx.store)
+
+  const mobilesCount = filterListingsByCategory(allListings, 'mobiles').length || CATEGORY_CONFIGS.mobiles.fallbackCount
+  const autoCount = filterListingsByCategory(allListings, 'automobile').length || CATEGORY_CONFIGS.automobile.fallbackCount
+  const kiranaCount = filterListingsByCategory(allListings, 'kirana').length || CATEGORY_CONFIGS.kirana.fallbackCount
+  const foodCount = filterListingsByCategory(allListings, 'food').length || CATEGORY_CONFIGS.food.fallbackCount
+  const healthCount = filterListingsByCategory(allListings, 'health').length || CATEGORY_CONFIGS.health.fallbackCount
+  const electricalCount = filterListingsByCategory(allListings, 'electrical').length || CATEGORY_CONFIGS.electrical.fallbackCount
+  const servicesCount = filterListingsByCategory(allListings, 'services').length || CATEGORY_CONFIGS.services.fallbackCount
+  const internetCount = filterListingsByCategory(allListings, 'internet').length || CATEGORY_CONFIGS.internet.fallbackCount
+  const furnitureCount = filterListingsByCategory(allListings, 'furniture').length || CATEGORY_CONFIGS.furniture.fallbackCount
+
   const listBody =
-    `🔍 *చౌటుప్పల్ లోకల్ డైరెక్టరీ & సర్వీసెస్*\n` +
-    `మీకు అవసరమైన కేటగిరీని క్రింది లిస్ట్ నుండి ఎంచుకోండి:`
+    `🔍 *చౌటుప్పల్ లోకల్ బిజినెస్ డైరెక్టరీ* 🏢\n` +
+    `మన చౌటుప్పల్ పట్టణంలోని దుకాణాలు & సేవల కేటగిరీలు క్రింద ఉన్నాయి. ప్రతి కేటగిరీలోని షాపులను చూడటానికి క్రింది లిస్ట్ నుండి ఎంచుకోండి:`
 
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
@@ -60,72 +283,67 @@ export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
     listButtonText: '📋 కేటగిరీ ఎంచుకోండి',
     listSections: [
       {
-        title: '🛍️ ప్రముఖ దుకాణాలు & షాపింగ్',
+        title: '🛍️ ప్రముఖ షాపింగ్ & వాహనాలు',
         rows: [
           {
             id: 'row_cat_mobiles',
             title: '📱 మొబైల్స్ & ఎలక్ట్రానిక్స్',
-            description: 'స్మార్ట్‌ఫోన్లు, సర్వీసింగ్ & గ్యాడ్జెట్స్',
+            description: `${mobilesCount} షాప్ • స్మార్ట్‌ఫోన్లు, సర్వీసింగ్ & సేల్స్`,
+          },
+          {
+            id: 'row_cat_automobile',
+            title: '🚗 ఆటోమొబైల్ & గ్యారేజ్',
+            description: `${autoCount} షాపులు • గ్యారేజ్ & బైక్/కార్ సర్వీసింగ్`,
           },
           {
             id: 'row_cat_kirana',
             title: '🛒 కిరాణా & సూపర్ మార్కెట్',
-            description: 'నిత్యావసరాలు, కిరాణా & డెలివరీ',
+            description: `${kiranaCount} షాపులు • నిత్యావసరాలు & జనరల్ స్టోర్స్`,
           },
           {
-            id: 'row_cat_clothing',
-            title: '👗 బట్టలు & ఫ్యాషన్',
-            description: 'శారీస్, రెడీమేడ్స్ & టైలరింగ్',
+            id: 'row_cat_food',
+            title: '🍽️ హోటల్స్ & రెస్టారెంట్లు',
+            description: `${foodCount} షాపులు • టిఫిన్స్, బిర్యానీ & భోజనం`,
           },
         ],
       },
       {
-        title: '🚖 రవాణా & నిత్య సేవలు',
+        title: '🏥 ఆరోగ్యం & నిత్య సేవలు',
         rows: [
           {
-            id: 'row_cat_taxi',
-            title: '🚖 24/7 టాక్సీ & క్యాబ్స్',
-            description: 'ఎయిర్‌పోర్ట్ డ్రాప్స్ & హైవే రౌండ్ ట్రిప్స్',
+            id: 'row_cat_health',
+            title: '🏥 ఆస్పత్రులు & మెడికల్స్',
+            description: `${healthCount} షాపులు • క్లినిక్స్, మందులు & టెస్టులు`,
           },
           {
-            id: 'row_cat_auto',
-            title: '🛺 లోకల్ ఆటో స్టాండ్',
-            description: 'టౌన్ & గ్రామాలకు లోకల్ ప్రయాణం',
+            id: 'row_cat_electrical',
+            title: '⚡ ఎలక్ట్రికల్ & హార్డ్‌వేర్',
+            description: `${electricalCount} షాపులు • వైరింగ్, మోటార్స్ & శానిటరీ`,
           },
           {
             id: 'row_cat_services',
-            title: '🔧 ప్లంబర్, ఎలక్ట్రీషియన్',
-            description: 'హోమ్ రిపేర్లు & వర్కర్ల నంబర్లు',
+            title: '🔧 సర్వీసెస్ & వర్కర్స్',
+            description: `${servicesCount} షాపులు • ప్లంబర్, ఎలక్ట్రీషియన్ & రిపేర్లు`,
           },
         ],
       },
       {
-        title: '🏥 ఆరోగ్యం & ఎమర్జెన్సీ',
+        title: '💻 డిజిటల్, హోమ్ & ఎమర్జెన్సీ',
         rows: [
           {
-            id: 'row_cat_hospitals',
-            title: '🏥 ఆస్పత్రులు & క్లినిక్స్',
-            description: 'జనరల్, డెంటల్ & పిల్లల వైద్యం',
+            id: 'row_cat_internet',
+            title: '💻 మీసేవ & ఆన్‌లైన్ సేవలు',
+            description: `${internetCount} షాపులు • ఆధార్, పాన్ & ఆన్‌లైన్ వర్క్స్`,
           },
           {
-            id: 'row_cat_medical',
-            title: '💊 24/7 మెడికల్ షాపులు',
-            description: 'రాత్రి వేళల్లో అందుబాటులో ఉండే మందులు',
+            id: 'row_cat_furniture',
+            title: '🪑 ఫర్నిచర్ & హోమ్ డెకర్',
+            description: `${furnitureCount} షాపులు • వుడెన్ వర్క్స్, సోఫా & ఇంటీరియర్`,
           },
           {
             id: 'row_cat_emergency',
-            title: '🚨 పోలీస్, అంబులెన్స్, ఫైర్',
-            description: '100, 108, 101 తక్షణ అత్యవసర నంబర్లు',
-          },
-        ],
-      },
-      {
-        title: '📲 చౌటుప్పల్ యాప్',
-        rows: [
-          {
-            id: 'row_app_vcard',
-            title: '📲 యాప్ డౌన్‌లోడ్ & కాంటాక్ట్',
-            description: 'ఆండ్రాయిడ్ యాప్ & అధికారిక నంబర్ సేవ్',
+            title: '🚨 అత్యవసర హెల్ప్‌లైన్',
+            description: 'పోలీస్ (100), అంబులెన్స్ (108), ఫైర్ (101)',
           },
         ],
       },
@@ -137,8 +355,176 @@ export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
 }
 
 /**
- * Screen 3: All-in-One App Download & Official Native vCard
- * Combines official logo, download links, and native contact card
+ * Screen 3: Category Shop Sub-List or Direct Business Card
+ * If 1 shop in category -> opens Single Listing Details Card directly.
+ * If >1 shops -> presents Interactive List of businesses inside that category.
+ */
+export async function sendCategoryShopList(
+  ctx: FlowCatalogContext,
+  categoryKey: string
+) {
+  const normalizedKey = categoryKey.replace('row_cat_', '').toLowerCase()
+
+  if (normalizedKey === 'emergency') {
+    return await sendEmergencyCard(ctx)
+  }
+
+  const catConfig = CATEGORY_CONFIGS[normalizedKey] || {
+    key: normalizedKey,
+    rowId: `row_cat_${normalizedKey}`,
+    title: '🏢 స్థానిక వ్యాపారాలు',
+    teluguName: 'స్థానిక వ్యాపారాలు',
+    descriptionTemplate: '{count} షాపులు అందుబాటులో ఉన్నాయి',
+    categoryIds: [],
+    icon: '🏢',
+    fallbackCount: 1,
+  }
+
+  const allListings = await getCachedListings(ctx.territory?.id, ctx.store)
+  const matched = filterListingsByCategory(allListings, normalizedKey)
+  const sorted = sortListingsByPriority(matched)
+
+  // Case 1: Exactly 1 listing in category (e.g. Mobiles -> Sri Laxmi Mobiles)
+  if (sorted.length === 1) {
+    return await sendSingleListingDetailsCard(ctx, sorted[0], normalizedKey)
+  }
+
+  // Case 2: Multiple listings in category (e.g. Automobile, Food, Health, etc.)
+  if (sorted.length > 1) {
+    const listBody =
+      `${catConfig.icon} *${catConfig.teluguName} (${sorted.length} షాపులు)* 🏢\n\n` +
+      `చౌటుప్పల్ లోని ${catConfig.teluguName} దుకాణాలు మరియు సేవల జాబితా క్రింద ఉంది.\n\n` +
+      `💡 షాప్ పూర్తి సమాచారం, ఫోన్ నంబర్ & అడ్రస్ కోసం క్రింది బటన్ నొక్కి షాపును ఎంచుకోండి:`
+
+    const rows = sorted.slice(0, 10).map((l, index) => {
+      const cleanTitle = (l.title || `షాప్ #${index + 1}`).replace(/[\r\n]+/g, ' ').trim()
+      const cleanAddress = (l.address || 'చౌటుప్పల్ టౌన్').replace(/[\r\n]+/g, ' ').trim()
+      const cleanPhone = (l.phone || '').replace(/\D/g, '')
+
+      return {
+        id: `row_biz_${l.id}`,
+        title: cleanTitle.length > 24 ? `${cleanTitle.slice(0, 21)}...` : cleanTitle,
+        description: `${cleanAddress.slice(0, 48)} • 📞 ${cleanPhone || 'కాల్ చేయండి'}`.slice(0, 72),
+      }
+    })
+
+    return await sendWhatsAppFlowMessage({
+      toPhone: ctx.toPhone,
+      messageText: listBody,
+      listButtonText: '📋 షాపును ఎంచుకోండి',
+      listSections: [
+        {
+          title: `🏪 ${catConfig.teluguName.slice(0, 20)}`,
+          rows,
+        },
+      ],
+      footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+      territoryId: ctx.territory?.id || 'territory_choutuppal',
+      contactName: ctx.senderName,
+    }, ctx.store)
+  }
+
+  // Case 3: Zero listings fallback
+  const fallbackText =
+    `${catConfig.icon} *${catConfig.teluguName}*\n\n` +
+    `మన చౌటుప్పల్ పట్టణంలో ఈ కేటగిరీకి చెందిన వెరిఫైడ్ దుకాణాలు త్వరలో పూర్తి వివరాలతో అప్‌డేట్ అవుతాయి.\n\n` +
+    `📞 మీ షాపును ఉచితంగా నమోదు చేసుకోవడానికి లేదా ఇతర కేటగిరీలను చూడటానికి క్రింది బటన్ నొక్కండి:`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: fallbackText,
+    imageUrl: CHOUTUPPAL_BANNER_URL,
+    buttons: [
+      { id: 'btn_open_directory', title: '📋 ఇతర కేటగిరీలు' },
+      { id: 'btn_app_vcard', title: '📲 యాప్ డౌన్‌లోడ్' },
+      { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 4: Single Business Details Card
+ * Displays storefront photo, bold business title, clean verified badge (no open/recommended tags),
+ * structured contact details, and clean action buttons (Full Profile button replaces App Download).
+ */
+export async function sendSingleListingDetailsCard(
+  ctx: FlowCatalogContext,
+  listing: Listing,
+  categoryKey?: string
+) {
+  const cleanPhone = (listing.whatsapp || listing.phone || '9494348175').replace(/\D/g, '')
+  const phoneFormatted = cleanPhone.length === 10 ? `+91 ${cleanPhone.slice(0, 5)} ${cleanPhone.slice(5)}` : (listing.phone || cleanPhone)
+  const verifiedBadge = listing.isFeatured ? '⭐ *వెరిఫైడ్ లోకల్ బిజినెస్ (Verified)* ✅\n' : ''
+
+  let cardText =
+    `🏪 *${listing.title.trim()}*\n` +
+    verifiedBadge +
+    `\n📍 *చిరునామా:* ${listing.address || 'చౌటుప్పల్ టౌన్'}\n` +
+    `📞 *ఫోన్ నంబర్:* ${phoneFormatted}\n` +
+    `💬 *వాట్సాప్:* wa.me/91${cleanPhone}\n` +
+    `⏰ *వేళలు:* ఉదయం 9:00 AM – రాత్రి 9:30 PM\n`
+
+  if (listing.description && listing.description.trim()) {
+    cardText += `\n📝 *సేవలు & వివరాలు:*\n${listing.description.trim().slice(0, 160)}\n`
+  }
+
+  cardText += `\n💡 షాప్ ఫోటోలు, లొకేషన్ & ఆఫర్ల కోసం క్రింది 'పూర్తి ప్రొఫైల్' బటన్ నొక్కండి:`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: cardText,
+    imageUrl: listing.coverImage || CHOUTUPPAL_BANNER_URL,
+    buttons: [
+      { id: `btn_prof_${listing.id}`, title: '🌐 పూర్తి ప్రొఫైల్' },
+      { id: 'btn_open_directory', title: '📋 ఇతర షాపులు' },
+      { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 5: Business Web Profile URL Message
+ * Delivered when citizen taps "🌐 పూర్తి ప్రొఫైల్" button.
+ */
+export async function sendListingWebProfile(ctx: FlowCatalogContext, listing: Listing) {
+  const slug = listing.slug || listing.id
+  const profileUrl = `https://choutuppal.in/business/${slug}`
+
+  const profileText =
+    `🌐 *${listing.title.trim()}*\n` +
+    `*అధికారిక వెబ్ ప్రొఫైల్ (Web Profile)* 🚀\n\n` +
+    `ఈ షాప్ యొక్క పూర్తి సమాచారం కోసం క్రింది లింక్ క్లిక్ చేయండి:\n` +
+    `👉 ${profileUrl}\n\n` +
+    `✨ *వెబ్‌సైట్‌లో అందుబాటులో ఉన్న సమాచారం:*\n` +
+    `• షాప్ గ్యాలరీ ఫోటోలు 📸\n` +
+    `• గూగుల్ మ్యాప్ డైరెక్షన్స్ & రూట్ 🗺️\n` +
+    `• కస్టమర్ రివ్యూలు & రేటింగ్స్ ⭐\n` +
+    `• నేటి ప్రత్యేక ఆఫర్లు & డిస్కౌంట్లు 🏷️\n\n` +
+    `💡 ఇతర సేవల కోసం క్రింది బటన్ నొక్కండి:`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: profileText,
+    imageUrl: listing.coverImage || CHOUTUPPAL_BANNER_URL,
+    buttons: [
+      { id: 'btn_open_directory', title: '📋 ఇతర కేటగిరీలు' },
+      { id: 'btn_app_vcard', title: '📲 యాప్ డౌన్‌లోడ్' },
+      { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 6: All-in-One App Download & Official Native vCard
  */
 export async function sendAppAndContactVCard(ctx: FlowCatalogContext) {
   const appMsg =
@@ -187,113 +573,7 @@ export async function sendAppAndContactVCard(ctx: FlowCatalogContext) {
 }
 
 /**
- * Screen 4: Category Listings Card
- * Retrieves top listings in category ordered by isFeatured (first) and displayOrder (1, 2, 3...)
- */
-export async function sendCategoryListingsCard(
-  ctx: FlowCatalogContext,
-  categoryKey: string,
-  categoryLabel: string,
-  categoryTelugu: string
-) {
-  const store = ctx.store
-  const listings: Listing[] = (store?.listings || []).filter((l: Listing) => {
-    const cat = (l.categoryId || '').toLowerCase()
-    const name = (l.categoryName || '').toLowerCase()
-    const title = (l.title || '').toLowerCase()
-
-    if (categoryKey === 'mobiles') {
-      return cat.includes('electronics') || cat.includes('mobile') || name.includes('mobile') || title.includes('mobile') || title.includes('లక్ష్మి')
-    }
-    if (categoryKey === 'kirana') {
-      return cat.includes('retail') || cat.includes('kirana') || name.includes('kirana') || title.includes('kirana') || title.includes('బజార్')
-    }
-    if (categoryKey === 'clothing') {
-      return cat.includes('retail') || cat.includes('cloth') || name.includes('cloth') || title.includes('మ్యాచింగ్') || title.includes('శారీస్')
-    }
-    if (categoryKey === 'taxi') {
-      return cat.includes('transport') || cat.includes('automobile') || name.includes('taxi') || title.includes('టాక్సీ') || title.includes('క్యాబ్')
-    }
-    if (categoryKey === 'auto') {
-      return cat.includes('transport') || cat.includes('automobile') || title.includes('ఆటో')
-    }
-    if (categoryKey === 'services') {
-      return cat.includes('services') || cat.includes('electrical') || name.includes('service') || title.includes('వర్క్స్') || title.includes('ఎలక్ట్రికల్')
-    }
-    if (categoryKey === 'hospitals') {
-      return cat.includes('health') || name.includes('health') || title.includes('హాస్పిటల్') || title.includes('క్లినిక్') || title.includes('డెంటల్')
-    }
-    if (categoryKey === 'medical') {
-      return cat.includes('health') || title.includes('మెడికల్') || title.includes('ఫార్మసీ')
-    }
-    return false
-  })
-
-  // Sort by isFeatured first, then displayOrder ascending (1, 2, 3...)
-  listings.sort((a: Listing, b: Listing) => {
-    if (Boolean(a.isFeatured) !== Boolean(b.isFeatured)) return a.isFeatured ? -1 : 1
-    const orderA = a.displayOrder !== undefined ? a.displayOrder : 100
-    const orderB = b.displayOrder !== undefined ? b.displayOrder : 100
-    if (orderA !== orderB) return orderA - orderB
-    return (a.title || '').localeCompare(b.title || '')
-  })
-
-  const topListing = listings[0]
-
-  if (topListing) {
-    const rankBadge = topListing.displayOrder ? `[ ర్యాంక్ #${topListing.displayOrder} ]` : '[ టాప్ రికమండెడ్ ]'
-    const featuredBadge = topListing.isFeatured ? ' • [ వెరిఫైడ్ ✅ ]' : ''
-    const cleanPhone = (topListing.whatsapp || topListing.phone || '9494348175').replace(/\D/g, '')
-
-    const cardText =
-      `🏪 *${topListing.title}*\n` +
-      `${rankBadge}${featuredBadge} • [ 🟢 ప్రస్తుతం ఓపెన్ ]\n\n` +
-      `📍 *చిరునామా:* ${topListing.address}\n` +
-      (topListing.description ? `📝 *వివరాలు:* ${topListing.description.slice(0, 140)}\n\n` : '\n') +
-      `⏰ *వేళలు:* ఉదయం 9:00 AM – రాత్రి 9:30 PM\n` +
-      `📞 *కాల్ చేయండి:* ${topListing.phone}\n` +
-      `💬 *వాట్సాప్ చాట్:* https://wa.me/91${cleanPhone}\n` +
-      `🌐 *పూర్తి ప్రొఫైల్:* https://choutuppal.in/business/${topListing.slug}`
-
-    return await sendWhatsAppFlowMessage({
-      toPhone: ctx.toPhone,
-      messageText: cardText,
-      imageUrl: topListing.coverImage || CHOUTUPPAL_BANNER_URL,
-      buttons: [
-        { id: 'btn_open_directory', title: '📋 ఇతర కేటగిరీలు' },
-        { id: 'btn_app_vcard', title: '📲 యాప్ డౌన్‌లోడ్' },
-        { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
-      ],
-      footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
-      territoryId: ctx.territory?.id || 'territory_choutuppal',
-      contactName: ctx.senderName,
-    }, store)
-  }
-
-  // Fallback if no specific listing in category yet
-  const fallbackText =
-    `🛍️ *${categoryTelugu} (${categoryLabel})*\n\n` +
-    `మన చౌటుప్పల్ పట్టణంలో ఈ కేటగిరీకి చెందిన వెరిఫైడ్ దుకాణాలు మరియు సేవల జాబితా ఇక్కడ అందుబాటులో ఉంది.\n\n` +
-    `📞 నేరుగా సంప్రదించడానికి లేదా మీ వ్యాపారాన్ని ఉచితంగా నమోదు చేయడానికి క్రింది బటన్ నొక్కండి.\n` +
-    `🌐 వెబ్‌సైట్: https://choutuppal.in/listings`
-
-  return await sendWhatsAppFlowMessage({
-    toPhone: ctx.toPhone,
-    messageText: fallbackText,
-    imageUrl: CHOUTUPPAL_BANNER_URL,
-    buttons: [
-      { id: 'btn_open_directory', title: '📋 ఇతర కేటగిరీలు' },
-      { id: 'btn_app_vcard', title: '📲 యాప్ డౌన్‌లోడ్' },
-      { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
-    ],
-    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
-    territoryId: ctx.territory?.id || 'territory_choutuppal',
-    contactName: ctx.senderName,
-  }, store)
-}
-
-/**
- * Screen 5: Active Offers & Deals
+ * Screen 7: Active Offers & Deals
  */
 export async function sendOffersCard(ctx: FlowCatalogContext) {
   const store = ctx.store
@@ -334,7 +614,7 @@ export async function sendOffersCard(ctx: FlowCatalogContext) {
 }
 
 /**
- * Screen 6: Emergency Helpline Hub
+ * Screen 8: Emergency Helpline Hub
  */
 export async function sendEmergencyCard(ctx: FlowCatalogContext) {
   const emergencyText =
@@ -361,3 +641,6 @@ export async function sendEmergencyCard(ctx: FlowCatalogContext) {
     contactName: ctx.senderName,
   }, ctx.store)
 }
+
+// Backward compatibility alias
+export const sendCategoryListingsCard = sendCategoryShopList
