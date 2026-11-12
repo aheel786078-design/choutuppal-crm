@@ -1,6 +1,27 @@
 {
   "listings": [
     {
+      "id": "lst_sri_laxmi_mobiles",
+      "title": "శ్రీ లక్ష్మీ మొబైల్స్ (SRI LAXMI MOBILES)",
+      "slug": "sri-laxmi-mobiles",
+      "phone": "9848012345",
+      "whatsapp": "9848012345",
+      "address": "చిన్నకొండూర్ రోడ్డు, చౌటుప్పల్, యాదాద్రి భువనగిరి జిల్లా",
+      "description": "అన్ని రకాల కొత్త మొబైల్స్ అమ్మకాలు, ఒరిజినల్ డిస్ప్లే రీప్లేస్‌మెంట్, చిప్ లెవల్ రిపేరింగ్, టెంపర్డ్ గ్లాస్ & మొబైల్ యాక్సెసరీస్ లభించును.",
+      "coverImage": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
+      "categoryId": "cat-electronics",
+      "categoryName": "Electronics & Mobiles",
+      "territoryId": "territory_choutuppal",
+      "status": "published",
+      "isFeatured": true,
+      "displayOrder": 1,
+      "views": 1250,
+      "rating": 4.9,
+      "reviewCount": 38,
+      "createdAt": "2026-11-12T13:49:25.893Z",
+      "updatedAt": "2026-11-12T13:49:25.914Z"
+    },
+    {
       "id": "lst_1",
       "slug": "sri-sai-ram-automobiles-choutuppal",
       "title": "Sri Sai Ram Automobiles & Multi-Brand Garage",

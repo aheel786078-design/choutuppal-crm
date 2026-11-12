@@ -19,9 +19,9 @@ export interface WhatsAppSendOptions {
   contactName?: string
   contacts?: Array<{
     name: { formatted_name: string; first_name?: string; last_name?: string }
-    phones?: Array<{ phone: string; type: string }>
+    phones?: Array<{ phone: string; type: string; wa_id?: string }>
     urls?: Array<{ url: string; type: string }>
-    org?: { company: string }
+    org?: { company?: string }
   }>
 }
 

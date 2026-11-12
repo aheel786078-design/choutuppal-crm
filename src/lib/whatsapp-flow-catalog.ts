@@ -494,8 +494,9 @@ export async function sendSingleListingDetailsCard(
  * Delivered when citizen taps "🌐 పూర్తి ప్రొఫైల్" button.
  */
 export async function sendListingWebProfile(ctx: FlowCatalogContext, listing: Listing) {
-  const slug = listing.slug || listing.id
-  const profileUrl = `https://choutuppal.in/business/${slug}`
+  const rawSlug = (listing.slug || '').trim()
+  const cleanSlug = rawSlug && rawSlug !== '-choutuppal' && !rawSlug.startsWith('-') ? rawSlug : listing.id
+  const profileUrl = `https://choutuppal-crm.vercel.app/business/${cleanSlug}`
 
   const profileText =
     `🌐 *${listing.title.trim()}*\n` +
@@ -531,11 +532,11 @@ export async function sendAppAndContactVCard(ctx: FlowCatalogContext) {
   const appMsg =
     `📱 *చౌటుప్పల్ యాప్ (CHOUTUPPAL APP)*\n` +
     `*మీ ఊరు.. మీ యాప్!* 🚀\n\n` +
-    `మన చౌటుప్పల్ పట్టణ సేవలను మరింత వేగంగా పొందడానికి చౌటుప్పల్ మొబైల్ యాప్‌ను ఇప్పుడే డౌన్‌లోడ్ చేసుకోండి!\n\n` +
-    `📥 *యాప్ డౌన్‌లోడ్ లింక్:*\n` +
-    `https://choutuppal.in/app (Google Play & Web App)\n\n` +
-    `📇 *అధికారిక నంబర్:* +91 94943 48175\n` +
-    `(క్రింద పంపిన కాంటాక్ట్ కార్డును ఒక్క క్లిక్‌తో మీ ఫోన్‌లో సేవ్ చేసుకోండి)`
+    `మన చౌటుప్పల్ పట్టణ సేవలను మరింత వేగంగా పొందడానికి చౌటుప్పల్ మొబైల్ యాప్‌ను ఉపయోగించండి!\n\n` +
+    `📥 *యాప్ డౌన్‌లోడ్ & వెబ్ పోర్టల్:*\n` +
+    `https://choutuppal-crm.vercel.app (Android & Web App)\n\n` +
+    `📇 *అధికారిక వాట్సాప్ హెల్ప్‌లైన్:* +91 94943 48175\n\n` +
+    `💡 క్రింద పంపిన కాంటాక్ట్ కార్డుపై క్లిక్ చేసి 'Add to Contacts' లేదా 'Save' ఎంచుకోండి.`
 
   // 1. Send Logo Image Card with action buttons
   await sendWhatsAppFlowMessage({
@@ -552,20 +553,26 @@ export async function sendAppAndContactVCard(ctx: FlowCatalogContext) {
     contactName: ctx.senderName,
   }, ctx.store)
 
-  // 2. Immediately send native WhatsApp Contact vCard
+  // 2. Immediately send native WhatsApp Contact vCard with CELL type and wa_id
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
     messageText: 'చౌటుప్పల్ యాప్ అధికారిక కాంటాక్ట్ కార్డ్',
     contacts: [
       {
         name: {
-          formatted_name: 'Choutuppal App (చౌటుప్పల్ యాప్)',
-          first_name: 'Choutuppal App',
-          last_name: '(చౌటుప్పల్ యాప్)',
+          formatted_name: 'Choutuppal App',
+          first_name: 'Choutuppal',
+          last_name: 'App',
         },
-        phones: [{ phone: '+919494348175', type: 'WORK' }],
-        urls: [{ url: 'https://choutuppal.in', type: 'WORK' }],
-        org: { company: 'Choutuppal Local Business & Services Hub' },
+        phones: [
+          {
+            phone: '+91 94943 48175',
+            type: 'CELL',
+            wa_id: '919494348175',
+          },
+        ],
+        urls: [{ url: 'https://choutuppal-crm.vercel.app', type: 'WORK' }],
+        org: { company: 'Choutuppal Local Services Hub' },
       },
     ],
     territoryId: ctx.territory?.id || 'territory_choutuppal',

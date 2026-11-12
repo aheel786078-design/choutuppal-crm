@@ -4,6 +4,9 @@ import { loadStore, isListingPublished } from '@/lib/store'
 import { resolveListingEntitlements } from '@/lib/entitlement-resolver'
 import { ListingDetailView } from '@/components/business/listing-detail-view'
 import { getBaseUrl, getListingSlug } from '@/lib/utils'
+import { getSupabaseAdminClient, getSupabaseBrowserClient, isSupabaseConfigured } from '@/lib/supabase'
+import { mapListingFromDb } from '@/lib/supabase-dao'
+import type { Listing } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,10 +33,34 @@ function findMatchingListing(listings: any[], slugParam: string) {
   })
 }
 
+async function getListingAsync(slugParam: string): Promise<Listing | null> {
+  const store = loadStore()
+  const localListing = findMatchingListing(store.listings, slugParam)
+  if (localListing) return localListing
+
+  const client = getSupabaseAdminClient() || getSupabaseBrowserClient()
+  if (isSupabaseConfigured && client) {
+    try {
+      const cleanParam = decodeURIComponent(slugParam).trim()
+      const { data, error } = await client
+        .from('listings')
+        .select('*')
+        .or(`id.eq.${cleanParam},slug.eq.${cleanParam},id.eq.lst_${cleanParam}`)
+        .limit(1)
+        .maybeSingle()
+      if (!error && data) {
+        return mapListingFromDb(data)
+      }
+    } catch (sbErr) {
+      console.warn('[BusinessDetailPage] Supabase fetch error:', sbErr)
+    }
+  }
+  return null
+}
+
 export async function generateMetadata({ params }: BusinessPageProps): Promise<Metadata> {
   const { slug } = await params
-  const store = loadStore()
-  const listing = findMatchingListing(store.listings, slug)
+  const listing = await getListingAsync(slug)
 
   if (!listing) {
     return {
@@ -95,7 +122,7 @@ export async function generateMetadata({ params }: BusinessPageProps): Promise<M
 export default async function BusinessDetailPage({ params }: BusinessPageProps) {
   const { slug } = await params
   const store = loadStore()
-  const listing = findMatchingListing(store.listings, slug)
+  const listing = await getListingAsync(slug)
 
   if (!listing) {
     notFound()
