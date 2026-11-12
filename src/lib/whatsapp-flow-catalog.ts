@@ -165,8 +165,9 @@ export function filterListingsByCategory(listings: Listing[], categoryKey: strin
     const title = (l.title || '').toLowerCase()
 
     if (key === 'mobiles' || key === 'electronics') {
+      if (catId === 'cat-automobile' || title.includes('ఆటో')) return false
       return catId === 'cat-electronics' || catName.includes('mobile') || catName.includes('electronics') ||
-             title.includes('mobile') || title.includes('లక్ష్మి') || title.includes('మొబైల్')
+             title.includes('mobile') || title.includes('లక్ష్మి') || (title.includes('మొబైల్') && !title.includes('ఆటోమొబైల్'))
     }
     if (key === 'automobile' || key === 'taxi' || key === 'auto') {
       return catId === 'cat-automobile' || catName.includes('automobile') || catName.includes('garage') ||

@@ -473,24 +473,28 @@ export async function POST(req: Request) {
       }
 
       // Action 6: Interactive Category Sub-Lists (Tap-Only)
-      if (buttonPayload === 'row_cat_mobiles' || lower.includes('mobile') || lower.includes('మొబైల్')) {
-        await sendCategoryShopList(flowCtx, 'mobiles')
-        return NextResponse.json(withShadow({ status: 'category_mobiles_dispatched' }))
-      }
-
       if (
         buttonPayload === 'row_cat_automobile' ||
         buttonPayload === 'row_cat_taxi' ||
         buttonPayload === 'row_cat_auto' ||
-        lower.includes('auto') ||
+        lower.includes('ఆటోమొబైల్') ||
+        lower.includes('automobile') ||
         lower.includes('garage') ||
-        lower.includes('ఆటో') ||
         lower.includes('గ్యారేజ్') ||
+        lower.includes('ఆటో') ||
         lower.includes('టాక్సీ') ||
         lower.includes('క్యాబ్')
       ) {
         await sendCategoryShopList(flowCtx, 'automobile')
         return NextResponse.json(withShadow({ status: 'category_automobile_dispatched' }))
+      }
+
+      if (
+        buttonPayload === 'row_cat_mobiles' ||
+        (!lower.includes('ఆటో') && (lower.includes('mobile') || lower.includes('మొబైల్') || lower.includes('electronics')))
+      ) {
+        await sendCategoryShopList(flowCtx, 'mobiles')
+        return NextResponse.json(withShadow({ status: 'category_mobiles_dispatched' }))
       }
 
       if (
