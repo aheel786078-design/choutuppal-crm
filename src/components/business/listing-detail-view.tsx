@@ -554,6 +554,48 @@ END:VCARD`
               </button>
             </div>
           </div>
+
+          {/* COMMUNITY & SOCIAL MEDIA CONNECT BAR */}
+          <div className="px-3 sm:px-6 py-2.5 bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span className="font-bold text-slate-700 flex items-center gap-1.5">
+              <span>🌐</span>
+              <span>చౌటుప్పల్ యాప్ సోషల్ మీడియా:</span>
+            </span>
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <a
+                href="https://www.instagram.com/choutuppalapp/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 rounded-lg bg-pink-600 text-white font-bold text-[11px] hover:bg-pink-700 transition shadow-2xs"
+              >
+                Instagram
+              </a>
+              <a
+                href="https://www.youtube.com/@choutuppalapp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 rounded-lg bg-red-600 text-white font-bold text-[11px] hover:bg-red-700 transition shadow-2xs"
+              >
+                YouTube
+              </a>
+              <a
+                href="https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] hover:bg-emerald-700 transition shadow-2xs"
+              >
+                WhatsApp ఛానల్
+              </a>
+              <a
+                href="https://chat.whatsapp.com/ItRGBPJJQSZF6x40IozSJe"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-[11px] hover:bg-blue-700 transition shadow-2xs"
+              >
+                కమ్యూనిటీ
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* 3. MINI-WEBSITE INTERACTIVE NAVIGATION TABS */}

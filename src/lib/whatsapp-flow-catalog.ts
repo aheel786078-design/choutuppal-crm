@@ -329,7 +329,7 @@ export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
         ],
       },
       {
-        title: '💻 డిజిటల్, హోమ్ & ఎమర్జెన్సీ',
+        title: '💻 డిజిటల్, సోషల్ & ఎమర్జెన్సీ',
         rows: [
           {
             id: 'row_cat_internet',
@@ -337,9 +337,9 @@ export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
             description: `${internetCount} షాపులు • ఆధార్, పాన్ & ఆన్‌లైన్ వర్క్స్`,
           },
           {
-            id: 'row_cat_furniture',
-            title: '🪑 ఫర్నిచర్ & హోమ్ డెకర్',
-            description: `${furnitureCount} షాపులు • వుడెన్ వర్క్స్, సోఫా & ఇంటీరియర్`,
+            id: 'row_social_media',
+            title: '🌐 సోషల్ మీడియా & గ్రూప్స్',
+            description: 'యూట్యూబ్, ఇన్‌స్టాగ్రామ్, వాట్సాప్ ఛానల్ & గ్రూప్స్',
           },
           {
             id: 'row_cat_emergency',
@@ -393,26 +393,41 @@ export async function sendCategoryShopList(
   // Case 2: Multiple listings in category (e.g. Automobile, Food, Health, etc.)
   if (sorted.length > 1) {
     const listBody =
-      `${catConfig.icon} *${catConfig.teluguName} (${sorted.length} షాపులు)* 🏢\n\n` +
-      `చౌటుప్పల్ లోని ${catConfig.teluguName} దుకాణాలు మరియు సేవల జాబితా క్రింద ఉంది.\n\n` +
-      `💡 షాప్ పూర్తి సమాచారం, ఫోన్ నంబర్ & అడ్రస్ కోసం క్రింది బటన్ నొక్కి షాపును ఎంచుకోండి:`
+      `${catConfig.icon} *చౌటుప్పల్ ${catConfig.teluguName}* 🏢\n` +
+      `━━━━━━━━━━━━━━━━━━━━\n` +
+      `📊 *మొత్తం వెరిఫైడ్ షాపులు:* ${sorted.length}\n` +
+      `⭐ *ర్యాంకింగ్:* టాప్ రేటెడ్ & ప్రాధాన్యత క్రమంలో\n\n` +
+      `మన చౌటుప్పల్ పట్టణంలోని ప్రముఖ ${catConfig.teluguName} వివరాలు క్రింద ఉన్నాయి.\n\n` +
+      `👇 షాప్ ఫోటోలు, లొకేషన్ & ఫోన్ నంబర్ కోసం క్రింది *'షాపుల జాబితా'* బటన్ నొక్కి ఎంచుకోండి:`
 
     const rows = sorted.slice(0, 10).map((l, index) => {
       const cleanTitle = (l.title || `షాప్ #${index + 1}`).replace(/[\r\n]+/g, ' ').trim()
-      const cleanAddress = (l.address || 'చౌటుప్పల్ టౌన్').replace(/[\r\n]+/g, ' ').trim()
+      const prefix = l.isFeatured ? '⭐ ' : `${index + 1}. `
+      const availableLen = 24 - prefix.length
+      const displayTitle = `${prefix}${cleanTitle.slice(0, availableLen)}`.slice(0, 24)
+
+      const cleanAddress = (l.address || 'చౌటుప్పల్ టౌన్')
+        .replace(/,?\s*(Telangana|Yadadri Bhuvanagiri District|యాదాద్రి భువనగిరి జిల్లా|508252)/gi, '')
+        .replace(/[\r\n]+/g, ' ')
+        .trim()
       const cleanPhone = (l.phone || '').replace(/\D/g, '')
+      const phoneDisplay = cleanPhone.length >= 10 ? cleanPhone.slice(-10) : cleanPhone
+
+      const desc = phoneDisplay
+        ? `📍 ${cleanAddress.slice(0, 42)} • 📞 ${phoneDisplay}`
+        : `📍 ${cleanAddress.slice(0, 60)}`
 
       return {
         id: `row_biz_${l.id}`,
-        title: cleanTitle.length > 24 ? `${cleanTitle.slice(0, 21)}...` : cleanTitle,
-        description: `${cleanAddress.slice(0, 48)} • 📞 ${cleanPhone || 'కాల్ చేయండి'}`.slice(0, 72),
+        title: displayTitle,
+        description: desc.slice(0, 72),
       }
     })
 
     return await sendWhatsAppFlowMessage({
       toPhone: ctx.toPhone,
       messageText: listBody,
-      listButtonText: '📋 షాపును ఎంచుకోండి',
+      listButtonText: '📋 షాపుల జాబితా',
       listSections: [
         {
           title: `🏪 ${catConfig.teluguName.slice(0, 20)}`,
@@ -460,19 +475,24 @@ export async function sendSingleListingDetailsCard(
   const phoneFormatted = cleanPhone.length === 10 ? `+91 ${cleanPhone.slice(0, 5)} ${cleanPhone.slice(5)}` : (listing.phone || cleanPhone)
   const verifiedBadge = listing.isFeatured ? '⭐ *వెరిఫైడ్ లోకల్ బిజినెస్ (Verified)* ✅\n' : ''
 
+  const cleanAddress = (listing.address || 'చౌటుప్పల్, తెలంగాణ').replace(/[\r\n]+/g, ' ').trim()
+
   let cardText =
     `🏪 *${listing.title.trim()}*\n` +
     verifiedBadge +
-    `\n📍 *చిరునామా:* ${listing.address || 'చౌటుప్పల్ టౌన్'}\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `📍 *చిరునామా:* ${cleanAddress}\n` +
     `📞 *ఫోన్ నంబర్:* ${phoneFormatted}\n` +
-    `💬 *వాట్సాప్:* wa.me/91${cleanPhone}\n` +
+    `💬 *వాట్సాప్ చాట్:* wa.me/91${cleanPhone}\n` +
     `⏰ *వేళలు:* ఉదయం 9:00 AM – రాత్రి 9:30 PM\n`
 
   if (listing.description && listing.description.trim()) {
     cardText += `\n📝 *సేవలు & వివరాలు:*\n${listing.description.trim().slice(0, 160)}\n`
   }
 
-  cardText += `\n💡 షాప్ ఫోటోలు, లొకేషన్ & ఆఫర్ల కోసం క్రింది 'పూర్తి ప్రొఫైల్' బటన్ నొక్కండి:`
+  cardText +=
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `💡 షాప్ ఫోటోలు, లొకేషన్ రూట్ & పూర్తి సమాచారం కోసం క్రింది *'పూర్తి ప్రొఫైల్'* బటన్ నొక్కండి:`
 
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
@@ -500,15 +520,18 @@ export async function sendListingWebProfile(ctx: FlowCatalogContext, listing: Li
 
   const profileText =
     `🌐 *${listing.title.trim()}*\n` +
-    `*అధికారిక వెబ్ ప్రొఫైల్ (Web Profile)* 🚀\n\n` +
-    `ఈ షాప్ యొక్క పూర్తి సమాచారం కోసం క్రింది లింక్ క్లిక్ చేయండి:\n` +
+    `*అధికారిక వెబ్ ప్రొఫైల్ (Web Profile)* 🚀\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `ఈ షాప్ యొక్క పూర్తి వివరాలను ఆన్‌లైన్‌లో చూడటానికి క్రింది లింక్ క్లిక్ చేయండి:\n` +
     `👉 ${profileUrl}\n\n` +
-    `✨ *వెబ్‌సైట్‌లో అందుబాటులో ఉన్న సమాచారం:*\n` +
-    `• షాప్ గ్యాలరీ ఫోటోలు 📸\n` +
-    `• గూగుల్ మ్యాప్ డైరెక్షన్స్ & రూట్ 🗺️\n` +
-    `• కస్టమర్ రివ్యూలు & రేటింగ్స్ ⭐\n` +
-    `• నేటి ప్రత్యేక ఆఫర్లు & డిస్కౌంట్లు 🏷️\n\n` +
-    `💡 ఇతర సేవల కోసం క్రింది బటన్ నొక్కండి:`
+    `✨ *వెబ్‌సైట్‌లో మీకు లభించే సమాచారం:*\n` +
+    `• 📸 షాప్ గ్యాలరీ & స్టోర్‌ఫ్రంట్ ఫోటోలు\n` +
+    `• 🗺️ గూగుల్ మ్యాప్ డైరెక్షన్స్ & లైవ్ రూట్\n` +
+    `• ⭐ కస్టమర్ రివ్యూలు & రేటింగ్స్\n` +
+    `• 🏷️ ప్రత్యేక ఆఫర్లు & డిస్కౌంట్లు\n` +
+    `• 📲 వన్-ట్యాప్ డైరెక్ట్ కాల్ & వాట్సాప్\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `💡 ఇతర సేవలు లేదా మెనూ కోసం క్రింది బటన్ నొక్కండి:`
 
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
@@ -516,7 +539,7 @@ export async function sendListingWebProfile(ctx: FlowCatalogContext, listing: Li
     imageUrl: listing.coverImage || CHOUTUPPAL_BANNER_URL,
     buttons: [
       { id: 'btn_open_directory', title: '📋 ఇతర కేటగిరీలు' },
-      { id: 'btn_app_vcard', title: '📲 యాప్ డౌన్‌లోడ్' },
+      { id: 'btn_social_media', title: '🌐 సోషల్ మీడియా' },
       { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
@@ -531,11 +554,19 @@ export async function sendListingWebProfile(ctx: FlowCatalogContext, listing: Li
 export async function sendAppAndContactVCard(ctx: FlowCatalogContext) {
   const appMsg =
     `📱 *చౌటుప్పల్ యాప్ (CHOUTUPPAL APP)*\n` +
-    `*మీ ఊరు.. మీ యాప్!* 🚀\n\n` +
+    `*మీ ఊరు.. మీ యాప్!* 🚀\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
     `మన చౌటుప్పల్ పట్టణ సేవలను మరింత వేగంగా పొందడానికి చౌటుప్పల్ మొబైల్ యాప్‌ను ఉపయోగించండి!\n\n` +
     `📥 *యాప్ డౌన్‌లోడ్ & వెబ్ పోర్టల్:*\n` +
-    `https://choutuppal-crm.vercel.app (Android & Web App)\n\n` +
-    `📇 *అధికారిక వాట్సాప్ హెల్ప్‌లైన్:* +91 94943 48175\n\n` +
+    `👉 https://choutuppal-crm.vercel.app\n\n` +
+    `🌐 *అధికారిక సోషల్ మీడియా & కమ్యూనిటీ:*\n` +
+    `• 📸 Instagram: https://www.instagram.com/choutuppalapp/\n` +
+    `• 📺 YouTube: https://www.youtube.com/@choutuppalapp\n` +
+    `• 📘 Facebook: https://www.facebook.com/Choutuppalapp/\n` +
+    `• 📢 WhatsApp Channel: https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a\n` +
+    `• 👥 WhatsApp Group: https://chat.whatsapp.com/ItRGBPJJQSZF6x40IozSJe\n\n` +
+    `📇 *హెల్ప్‌లైన్ నంబర్:* +91 94943 48175\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
     `💡 క్రింద పంపిన కాంటాక్ట్ కార్డుపై క్లిక్ చేసి 'Add to Contacts' లేదా 'Save' ఎంచుకోండి.`
 
   // 1. Send Logo Image Card with action buttons
@@ -545,7 +576,7 @@ export async function sendAppAndContactVCard(ctx: FlowCatalogContext) {
     imageUrl: CHOUTUPPAL_LOGO_URL,
     buttons: [
       { id: 'btn_open_directory', title: '📋 మెనూ తెరవండి' },
-      { id: 'btn_view_offers', title: '🔥 నేటి ఆఫర్లు' },
+      { id: 'btn_social_media', title: '🌐 సోషల్ మీడియా' },
       { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
@@ -604,7 +635,7 @@ export async function sendOffersCard(ctx: FlowCatalogContext) {
     `🔥 *చౌటుప్పల్ నేటి తాజా ఆఫర్లు & డిస్కౌంట్లు (Today's Deals)* 🛍️\n\n` +
     highlights +
     `\n👉 లైవ్ వీడియో స్టోరీలు చూడటానికి:\n` +
-    `🌐 https://choutuppal.in/stories`
+    `🌐 https://choutuppal-crm.vercel.app/stories`
 
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
@@ -612,7 +643,7 @@ export async function sendOffersCard(ctx: FlowCatalogContext) {
     imageUrl: activeStories[0]?.mediaUrl || CHOUTUPPAL_BANNER_URL,
     buttons: [
       { id: 'btn_open_directory', title: '📋 మెనూ తెరవండి' },
-      { id: 'btn_app_vcard', title: '📲 యాప్ డౌన్‌లోడ్' },
+      { id: 'btn_social_media', title: '🌐 సోషల్ మీడియా' },
       { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
@@ -641,7 +672,46 @@ export async function sendEmergencyCard(ctx: FlowCatalogContext) {
     messageText: emergencyText,
     buttons: [
       { id: 'btn_open_directory', title: '📋 మెనూ తెరవండి' },
-      { id: 'btn_app_vcard', title: '📲 యాప్ & కాంటాక్ట్' },
+      { id: 'btn_social_media', title: '🌐 సోషల్ మీడియా' },
+      { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 9: Official Social Media & Community Hub
+ * Direct clickable links to Instagram, YouTube, Facebook, WhatsApp Channel & Community
+ */
+export async function sendSocialMediaCard(ctx: FlowCatalogContext) {
+  const socialText =
+    `🌐 *చౌటుప్పల్ యాప్ అధికారిక సోషల్ మీడియా & కమ్యూనిటీ* 🚀\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `మన చౌటుప్పల్ పట్టణ తాజా వార్తలు, స్థానిక ఆఫర్లు మరియు వ్యాపార విశేషాల కోసం మా అధికారిక సోషల్ మీడియా పేజీలను ఫాలో అవ్వండి:\n\n` +
+    `📸 *ఇన్‌స్టాగ్రామ్ (Instagram):*\n` +
+    `👉 https://www.instagram.com/choutuppalapp/\n` +
+    `*(రీల్స్, డైలీ అప్‌డేట్స్ & పట్టణ విశేషాలు)*\n\n` +
+    `📺 *యూట్యూబ్ ఛానల్ (YouTube):*\n` +
+    `👉 https://www.youtube.com/@choutuppalapp\n` +
+    `*(వీడియో స్టోరీలు & బిజినెస్ ఇంటర్వ్యూలు)*\n\n` +
+    `📘 *ఫేస్‌బుక్ పేజీ (Facebook):*\n` +
+    `👉 https://www.facebook.com/Choutuppalapp/\n\n` +
+    `📢 *అధికారిక వాట్సాప్ ఛానల్ (WhatsApp Channel):*\n` +
+    `👉 https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a\n\n` +
+    `👥 *వాట్సాప్ కమ్యూనిటీ గ్రూప్ (Public Group):*\n` +
+    `👉 https://chat.whatsapp.com/ItRGBPJJQSZF6x40IozSJe\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `💡 క్రింది బటన్ నొక్కి డైరెక్టరీ మెనూ చూడండి:`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: socialText,
+    imageUrl: CHOUTUPPAL_BANNER_URL,
+    buttons: [
+      { id: 'btn_open_directory', title: '📋 మెనూ తెరవండి' },
+      { id: 'btn_view_offers', title: '🔥 నేటి ఆఫర్లు' },
       { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',

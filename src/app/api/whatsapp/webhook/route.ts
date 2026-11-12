@@ -12,6 +12,7 @@ import {
   sendListingWebProfile,
   sendOffersCard,
   sendEmergencyCard,
+  sendSocialMediaCard,
   getCachedListings,
   type FlowCatalogContext,
 } from '@/lib/whatsapp-flow-catalog'
@@ -442,6 +443,26 @@ export async function POST(req: Request) {
       ) {
         await sendOffersCard(flowCtx)
         return NextResponse.json(withShadow({ status: 'offers_dispatched' }))
+      }
+
+      // Action 3b: Official Social Media & Community Hub
+      if (
+        buttonPayload === 'btn_social_media' ||
+        buttonPayload === 'row_social_media' ||
+        lower === 'social' ||
+        lower.includes('social') ||
+        lower.includes('instagram') ||
+        lower.includes('youtube') ||
+        lower.includes('facebook') ||
+        lower.includes('సోషల్') ||
+        lower.includes('ఇన్‌స్టాగ్రామ్') ||
+        lower.includes('యూట్యూబ్') ||
+        lower.includes('కమ్యూనిటీ') ||
+        lower.includes('ఛానల్') ||
+        lower.includes('గ్రూప్')
+      ) {
+        await sendSocialMediaCard(flowCtx)
+        return NextResponse.json(withShadow({ status: 'social_media_dispatched' }))
       }
 
       // Action 4: Single Business Web Profile Request
