@@ -249,7 +249,7 @@ export async function sendWelcomeCard(ctx: FlowCatalogContext) {
   const welcomeText =
     `నమస్కారం! చౌటుప్పల్ యాప్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం. 🙏\n\n` +
     `*మన అందరం... మన చౌటుప్పల్!* 🚀\n` +
-    `మీ ఊరు.. మీ యాప్! చౌటుప్పల్ పట్టణంలోని స్థానిక దుకాణాలు, ఆఫర్లు, టాక్సీలు మరియు సేవల సమాచారాన్ని ఇక్కడ సులభంగా పొందవచ్చు.\n\n` +
+    `మీ ఊరు.. మీ యాప్! చౌటుప్పల్ పట్టణంలోని స్థానిక దుకాణాలు, నా సేవలు, వోచర్లు & వీడియో ప్రకటనలను ఇక్కడ సులభంగా పొందవచ్చు.\n\n` +
     `💡 క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:`
 
   return await sendWhatsAppFlowMessage({
@@ -257,8 +257,8 @@ export async function sendWelcomeCard(ctx: FlowCatalogContext) {
     messageText: welcomeText,
     imageUrl: CHOUTUPPAL_BANNER_URL,
     buttons: [
-      { id: 'btn_open_directory', title: '📋 మెనూ తెరవండి' },
-      { id: 'btn_view_offers', title: '🔥 నేటి ఆఫర్లు' },
+      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+      { id: 'btn_view_offers', title: '🎟️ వోచర్లు & డీల్స్' },
       { id: 'btn_app_vcard', title: '📲 యాప్ & కాంటాక్ట్' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
@@ -280,22 +280,18 @@ export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
   const kiranaCount = filterListingsByCategory(allListings, 'kirana').length || CATEGORY_CONFIGS.kirana.fallbackCount
   const foodCount = filterListingsByCategory(allListings, 'food').length || CATEGORY_CONFIGS.food.fallbackCount
   const healthCount = filterListingsByCategory(allListings, 'health').length || CATEGORY_CONFIGS.health.fallbackCount
-  const electricalCount = filterListingsByCategory(allListings, 'electrical').length || CATEGORY_CONFIGS.electrical.fallbackCount
-  const servicesCount = filterListingsByCategory(allListings, 'services').length || CATEGORY_CONFIGS.services.fallbackCount
-  const internetCount = filterListingsByCategory(allListings, 'internet').length || CATEGORY_CONFIGS.internet.fallbackCount
-  const furnitureCount = filterListingsByCategory(allListings, 'furniture').length || CATEGORY_CONFIGS.furniture.fallbackCount
 
   const listBody =
-    `🔍 *చౌటుప్పల్ లోకల్ బిజినెస్ డైరెక్టరీ* 🏢\n` +
-    `మన చౌటుప్పల్ పట్టణంలోని దుకాణాలు & సేవల కేటగిరీలు క్రింద ఉన్నాయి. ప్రతి కేటగిరీలోని షాపులను చూడటానికి క్రింది లిస్ట్ నుండి ఎంచుకోండి:`
+    `🔍 *చౌటుప్పల్ లోకల్ సూపర్ మెనూ* 🏢\n` +
+    `షాపులు, నా సేవలు, వోచర్లు, వీడియో అడ్స్ & బిజినెస్ నమోదు వివరాలు క్రింద ఉన్నాయి. కావలసిన ఆప్షన్‌ను క్రింది జాబితా నుండి ఎంచుకోండి:`
 
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
     messageText: listBody,
-    listButtonText: '📋 కేటగిరీ ఎంచుకోండి',
+    listButtonText: '📋 ఆప్షన్ ఎంచుకోండి',
     listSections: [
       {
-        title: '🛍️ ప్రముఖ షాపింగ్ & వాహనాలు',
+        title: '🛍️ ప్రముఖ వ్యాపారాలు',
         rows: [
           {
             id: 'row_cat_mobiles',
@@ -317,45 +313,45 @@ export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
             title: '🍽️ హోటల్స్ & రెస్టారెంట్లు',
             description: `${foodCount} షాపులు • టిఫిన్స్, బిర్యానీ & భోజనం`,
           },
-        ],
-      },
-      {
-        title: '🏥 ఆరోగ్యం & నిత్య సేవలు',
-        rows: [
           {
             id: 'row_cat_health',
             title: '🏥 ఆస్పత్రులు & మెడికల్స్',
             description: `${healthCount} షాపులు • క్లినిక్స్, మందులు & టెస్టులు`,
           },
-          {
-            id: 'row_cat_electrical',
-            title: '⚡ ఎలక్ట్రికల్ & హార్డ్‌వేర్',
-            description: `${electricalCount} షాపులు • వైరింగ్, మోటార్స్ & శానిటరీ`,
-          },
-          {
-            id: 'row_cat_services',
-            title: '🔧 సర్వీసెస్ & వర్కర్స్',
-            description: `${servicesCount} షాపులు • ప్లంబర్, ఎలక్ట్రీషియన్ & రిపేర్లు`,
-          },
         ],
       },
       {
-        title: '💻 డిజిటల్, సోషల్ & ఎమర్జెన్సీ',
+        title: '🔧 నా సేవలు & ఎమర్జెన్సీ',
         rows: [
           {
-            id: 'row_cat_internet',
-            title: '💻 మీసేవ & ఆన్‌లైన్ సేవలు',
-            description: `${internetCount} షాపులు • ఆధార్, పాన్ & ఆన్‌లైన్ వర్క్స్`,
-          },
-          {
-            id: 'row_social_media',
-            title: '🌐 సోషల్ మీడియా & గ్రూప్స్',
-            description: 'యూట్యూబ్, ఇన్‌స్టాగ్రామ్, వాట్సాప్ ఛానల్ & గ్రూప్స్',
+            id: 'row_cat_services',
+            title: '🔧 నా సేవలు (Services)',
+            description: 'ప్లంబర్, ఎలక్ట్రీషియన్, ఏసీ రిపేర్ & టెక్నీషియన్లు',
           },
           {
             id: 'row_cat_emergency',
             title: '🚨 అత్యవసర హెల్ప్‌లైన్',
             description: 'పోలీస్ (100), అంబులెన్స్ (108), ఫైర్ (101)',
+          },
+        ],
+      },
+      {
+        title: '🎟️ వోచర్లు, వీడియోలు & యాడ్',
+        rows: [
+          {
+            id: 'row_vouchers_deals',
+            title: '🎟️ వోచర్లు & తాజా ఆఫర్లు',
+            description: 'డిస్కౌంట్ కూపన్లు, క్యాష్‌బ్యాక్ & స్పెషల్ డీల్స్',
+          },
+          {
+            id: 'row_video_ads',
+            title: '🎬 వీడియో అడ్స్ & రీల్స్',
+            description: 'లోకల్ దుకాణాల 24h వీడియో ప్రకటనలు & స్టోరీలు',
+          },
+          {
+            id: 'row_add_listing',
+            title: '🏪 వ్యాపారాన్ని చేర్చండి',
+            description: 'మీ షాపును యాడ్ చేయండి లేదా వివరాలు అప్‌డేట్ చేయండి',
           },
         ],
       },
@@ -638,7 +634,8 @@ export async function sendAppAndContactVCard(ctx: FlowCatalogContext) {
 }
 
 /**
- * Screen 7: Active Offers & Deals
+ * Screen 7: Active Offers & Vouchers Hub
+ * Shows discount coupons, cashbacks, and special deals
  */
 export async function sendOffersCard(ctx: FlowCatalogContext) {
   const store = ctx.store
@@ -648,29 +645,32 @@ export async function sendOffersCard(ctx: FlowCatalogContext) {
   let highlights = ''
   if (activeOffers.length > 0) {
     activeOffers.slice(0, 3).forEach((off: any, idx: number) => {
-      highlights += `${idx + 1}️⃣ *${off.businessName}*: ${off.title} (${off.discount})\n`
+      highlights += `${idx + 1}️⃣ *${off.businessName}*: ${off.title} (🎟️ *${off.discount}*)\n`
     })
   } else {
     highlights =
-      `1️⃣ *శ్రీ లక్ష్మి మొబైల్స్:* కొత్త స్మార్ట్‌ఫోన్‌పై 10% డిస్కౌంట్ + ఉచిత ఇయర్‌బడ్స్!\n` +
-      `2️⃣ *రైతు బజార్ సూపర్‌మార్కెట్:* రూ. 1,000 పైన కొనుగోలుపై 5% క్యాష్‌బ్యాక్.\n` +
-      `3️⃣ *హైవే ఫ్యామిలీ ధాబా:* స్పెషల్ బిర్యానీ ఫ్యామిలీ ప్యాక్ కాంబో ఆఫర్.\n`
+      `1️⃣ *శ్రీ లక్ష్మి మొబైల్స్:* కొత్త స్మార్ట్‌ఫోన్‌పై 10% డిస్కౌంట్ + ఉచిత ఇయర్‌బడ్స్! (🎟️ కోడ్: *CPL10*)\n` +
+      `2️⃣ *రైతు బజార్ సూపర్‌మార్కెట్:* రూ. 1,000 పైన కొనుగోలుపై 5% క్యాష్‌బ్యాక్! (🎟️ కోడ్: *SUPER5*)\n` +
+      `3️⃣ *హైవే ఫ్యామిలీ ధాబా:* స్పెషల్ బిర్యానీ ఫ్యామిలీ ప్యాక్ కాంబో ఆఫర్! (🎟️ కోడ్: *FOODIE*)\n`
   }
 
   const offersText =
-    `🔥 *చౌటుప్పల్ నేటి తాజా ఆఫర్లు & డిస్కౌంట్లు (Today's Deals)* 🛍️\n\n` +
+    `🎟️ *చౌటుప్పల్ నేటి తాజా వోచర్లు & డిస్కౌంట్లు (Today's Deals)* 🛍️\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
     highlights +
-    `\n👉 లైవ్ వీడియో స్టోరీలు చూడటానికి:\n` +
-    `🌐 https://choutuppal-crm.vercel.app/stories`
+    `\n👉 లైవ్ వీడియో స్టోరీలు & వోచర్లు చూడటానికి:\n` +
+    `🌐 https://choutuppal-crm.vercel.app/stories\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `💡 క్రింది బటన్ నొక్కి వీడియో అడ్స్ లేదా మెనూ చూడండి:`
 
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
     messageText: offersText,
     imageUrl: activeStories[0]?.mediaUrl || CHOUTUPPAL_BANNER_URL,
     buttons: [
-      { id: 'btn_open_directory', title: '📋 మెనూ తెరవండి' },
-      { id: 'btn_social_media', title: '🌐 సోషల్ మీడియా' },
-      { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
+      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+      { id: 'btn_video_ads', title: '🎬 వీడియో రీల్స్' },
+      { id: 'btn_home', title: '🏠 హోమ్' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
     territoryId: ctx.territory?.id || 'territory_choutuppal',
@@ -739,6 +739,110 @@ export async function sendSocialMediaCard(ctx: FlowCatalogContext) {
       { id: 'btn_open_directory', title: '📋 మెనూ తెరవండి' },
       { id: 'btn_view_offers', title: '🔥 నేటి ఆఫర్లు' },
       { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 10: My Services & On-Demand Emergency Hub
+ * Dedicated for Services, Technicians, Plumbers, Electricians, Taxis & Autos
+ */
+export async function sendServiceCatalogCard(ctx: FlowCatalogContext) {
+  const serviceText =
+    `🔧 *చౌటుప్పల్ ఎమర్జెన్సీ & డైలీ సర్వీసెస్ (My Services)* ⚡\n` +
+    `*24/7 వెరిఫైడ్ ఆన్-డిమాండ్ సేవలు* 🚀\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `మన చౌటుప్పల్ పట్టణంలో ఎటువంటి బ్రోకర్ ఛార్జీలు లేకుండా నేరుగా టెక్నీషియన్లను సంప్రదించవచ్చు:\n\n` +
+    `🚕 *హైవే టాక్సీ & క్యాబ్స్:* హైదరాబాద్ ఎయిర్‌పోర్ట్ డ్రాప్స్, విజయవాడ హైవే ప్రయాణాలు\n` +
+    `🛺 *లోకల్ ఆటో స్టాండ్:* పట్టణంలోని అన్ని కాలనీలకు ప్రయాణం\n` +
+    `🔧 *ప్లంబర్ సర్వీస్:* పైపుల లీకేజీ, మోటార్ ఫిట్టింగ్ & శానిటరీ వర్క్స్\n` +
+    `⚡ *ఎలక్ట్రీషియన్:* హౌస్ వైరింగ్, ఇన్వర్టర్, ఫ్యాన్ & స్విచ్‌బోర్డ్ రిపేర్లు\n` +
+    `❄️ *ఏసీ & ఫ్రిజ్ రిపేర్:* గ్యాస్ ఫిల్లింగ్, సర్వీసింగ్ & మెకానిక్స్\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `🌐 *ఆన్‌లైన్ సర్వీసెస్ పోర్టల్:*\n` +
+    `👉 https://choutuppal-crm.vercel.app/services\n\n` +
+    `👇 క్రింది బటన్ నొక్కి మెనూ లేదా ఆఫర్లను ఎంచుకోండి:`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: serviceText,
+    imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80',
+    buttons: [
+      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+      { id: 'btn_view_offers', title: '🎟️ వోచర్లు & డీల్స్' },
+      { id: 'btn_home', title: '🏠 హోమ్' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 11: Video Ads, Stories & Reels Hub
+ * Dedicated for 24-hour shop video stories, promotions, and video ads
+ */
+export async function sendVideoAdsCard(ctx: FlowCatalogContext) {
+  const videoText =
+    `🎬 *చౌటుప్పల్ లోకల్ వీడియో ప్రకటనలు & రీల్స్ (Video Ads & Stories)* 🚀\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `మన చౌటుప్పల్ పట్టణ ప్రముఖ దుకాణాల తాజా వీడియో ఆఫర్లు మరియు 24 గంటల వీడియో స్టోరీస్ ఇక్కడ వీక్షించండి:\n\n` +
+    `📱 *లైవ్ వీడియో ప్లేయర్:*\n` +
+    `👉 https://choutuppal-crm.vercel.app/stories\n\n` +
+    `✨ *వీడియో ఫీచర్లు:*\n` +
+    `• 🎥 వర్టికల్ ఫుల్-స్క్రీన్ వీడియో రీల్స్\n` +
+    `• 🏷️ ప్రత్యేక వీడియో డిస్కౌంట్ వోచర్లు\n` +
+    `• 📞 వన్-ట్యాప్ డైరెక్ట్ ఆర్డర్ & కాల్\n` +
+    `• 📢 మీ షాప్ వీడియో యాడ్‌ను పబ్లిష్ చేయడానికి సపోర్ట్\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `💡 మీ షాప్ వీడియో ప్రమోషన్ లేదా తాజా వోచర్ల కోసం క్రింది బటన్ నొక్కండి:`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: videoText,
+    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80',
+    buttons: [
+      { id: 'btn_view_offers', title: '🎟️ నేటి వోచర్లు' },
+      { id: 'btn_add_listing', title: '🏪 నా షాప్ వీడియో' },
+      { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 12: Add / Manage Listing Hub for Merchants & Business Owners
+ */
+export async function sendAddManageListingCard(ctx: FlowCatalogContext) {
+  const addMsg =
+    `🏪 *చౌటుప్పల్ యాప్‌లో మీ వ్యాపారాన్ని చేర్చండి (Add / Manage Listing)* 🚀\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `మీ షాప్ లేదా వ్యాపారాన్ని చౌటుప్పల్ యాప్ మరియు వాట్సాప్ డైరెక్టరీలో నమోదు చేసి వేలాది మంది స్థానిక కస్టమర్లను పొందండి!\n\n` +
+    `📝 *నమోదు చేసుకునే విధానం:*\n` +
+    `1️⃣ *ఆన్‌లైన్ ఫారమ్:* క్రింది లింక్ ద్వారా 2 నిమిషాల్లో వివరాలు సబ్మిట్ చేయండి:\n` +
+    `👉 https://choutuppal-crm.vercel.app/register\n\n` +
+    `2️⃣ *వాట్సాప్ ద్వారా నేరుగా:* ఈ క్రింది వివరాలను ఇక్కడే మెసేజ్ చేయండి:\n` +
+    `• షాప్ పేరు (Business Name)\n` +
+    `• కేటగిరీ (మొబైల్స్, కిరాణా, హోటల్, సర్వీస్ మొదలైనవి)\n` +
+    `• ఫోన్ & వాట్సాప్ నంబర్\n` +
+    `• షాప్ ఫోటోలు & పూర్తి చిరునామా\n\n` +
+    `⭐ *ప్రాధాన్యత ర్యాంకింగ్ & మేనేజ్:* నంబరింగ్ (1, 2, 3...) మరియు వివరాల సవరణ కోసం మా టీమ్ మీకు వెరిఫికేషన్ కాల్ చేస్తుంది.\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `💡 క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: addMsg,
+    imageUrl: CHOUTUPPAL_BANNER_URL,
+    buttons: [
+      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+      { id: 'btn_social_media', title: '🌐 సోషల్ మీడియా' },
+      { id: 'btn_home', title: '🏠 హోమ్' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
     territoryId: ctx.territory?.id || 'territory_choutuppal',

@@ -13,6 +13,9 @@ import {
   sendOffersCard,
   sendEmergencyCard,
   sendSocialMediaCard,
+  sendServiceCatalogCard,
+  sendVideoAdsCard,
+  sendAddManageListingCard,
   getCachedListings,
   type FlowCatalogContext,
 } from '@/lib/whatsapp-flow-catalog'
@@ -433,16 +436,53 @@ export async function POST(req: Request) {
         return NextResponse.json(withShadow({ status: 'app_vcard_dispatched' }))
       }
 
-      // Action 3: Today's Deals & Stories
+      // Action 3: Vouchers & Today's Deals
       if (
+        buttonPayload === 'row_vouchers_deals' ||
         buttonPayload === 'btn_view_offers' ||
+        buttonPayload === 'btn_vouchers_deals' ||
         buttonPayload === 'btn_menu_stories' ||
         lower === 'offers' ||
+        lower === 'vouchers' ||
         lower === 'ఆఫర్లు' ||
+        lower === 'వోచర్లు' ||
+        lower.includes('కూపన్') ||
+        lower.includes('voucher') ||
         lower === '2'
       ) {
         await sendOffersCard(flowCtx)
         return NextResponse.json(withShadow({ status: 'offers_dispatched' }))
+      }
+
+      // Action 3c: Video Ads, Stories & Reels
+      if (
+        buttonPayload === 'row_video_ads' ||
+        buttonPayload === 'btn_video_ads' ||
+        lower === 'videos' ||
+        lower === 'video' ||
+        lower.includes('వీడియో') ||
+        lower.includes('reels') ||
+        lower.includes('రీల్స్') ||
+        lower.includes('stories') ||
+        lower.includes('స్టోరీ') ||
+        lower.includes('ads')
+      ) {
+        await sendVideoAdsCard(flowCtx)
+        return NextResponse.json(withShadow({ status: 'video_ads_dispatched' }))
+      }
+
+      // Action 3d: Add / Manage Listing Hub
+      if (
+        buttonPayload === 'row_add_listing' ||
+        buttonPayload === 'btn_add_listing' ||
+        lower.includes('add listing') ||
+        lower.includes('manage') ||
+        lower.includes('నమోదు') ||
+        lower.includes('చేర్చండి') ||
+        lower.includes('register')
+      ) {
+        await sendAddManageListingCard(flowCtx)
+        return NextResponse.json(withShadow({ status: 'add_listing_dispatched' }))
       }
 
       // Action 3b: Official Social Media & Community Hub
@@ -572,13 +612,16 @@ export async function POST(req: Request) {
 
       if (
         buttonPayload === 'row_cat_services' ||
+        buttonPayload === 'btn_my_services' ||
         lower.includes('services') ||
+        lower.includes('service') ||
+        lower.includes('నా సేవలు') ||
         lower.includes('plumber') ||
         lower.includes('technician') ||
         lower.includes('ప్లంబర్') ||
         lower.includes('రిపేర్')
       ) {
-        await sendCategoryShopList(flowCtx, 'services')
+        await sendServiceCatalogCard(flowCtx)
         return NextResponse.json(withShadow({ status: 'category_services_dispatched' }))
       }
 
