@@ -215,9 +215,9 @@ export async function POST(req: Request) {
       } else if (authenticatedUser.role === 'FRANCHISE_ADMIN' || authenticatedUser.role === 'FRANCHISE_STAFF') {
         targetRedirect = '/admin/dashboard'
       } else if (authenticatedUser.role === 'MERCHANT') {
-        targetRedirect = '/admin/listings'
+        targetRedirect = '/dashboard'
       } else {
-        targetRedirect = '/'
+        targetRedirect = '/dashboard'
       }
     }
 

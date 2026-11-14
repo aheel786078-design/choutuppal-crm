@@ -142,7 +142,7 @@ export function ListingDetailView({
     const origin =
       typeof window !== 'undefined'
         ? window.location.origin
-        : 'https://choutuppal-crm.vercel.app'
+        : 'https://choutuppal.in'
     const cleanSlug = listing.slug || listing.id
     const pageUrl = `${origin}/business/${cleanSlug}`
     const text = `🏪 *${listing.title}*\n📍 ${listing.address || listing.villageName || 'చౌటుప్పల్, తెలంగాణ'}\n⭐ *${listing.categoryName || 'వ్యాపారం'}* · చౌటుప్పల్ అధికారిక వెరిఫైడ్ మినీ వెబ్‌సైట్\n📞 ఫోన్: ${displayPhone}\n💬 వాట్సాప్: +91 ${whatsappNum}\n\n👉 పూర్తి వివరాలు & ఫోటోల కోసం లింక్ చూడండి:\n${pageUrl}`
@@ -155,7 +155,7 @@ export function ListingDetailView({
     const origin =
       typeof window !== 'undefined'
         ? window.location.origin
-        : 'https://choutuppal-crm.vercel.app'
+        : 'https://choutuppal.in'
     const cleanSlug = listing.slug || listing.id
     const url = `${origin}/business/${cleanSlug}`
     if (typeof navigator !== 'undefined' && navigator.share) {

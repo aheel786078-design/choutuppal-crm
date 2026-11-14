@@ -288,7 +288,7 @@ export async function POST(req: Request) {
         territoryId,
         listingId: createdListingId,
       },
-      redirect: role === 'MERCHANT' ? '/admin/listings' : '/admin/dashboard',
+      redirect: role === 'MERCHANT' ? '/dashboard' : '/admin/dashboard',
       message: `Registration successful! Welcome to Choutuppal Platform, ${cleanName}.`,
     })
 

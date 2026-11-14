@@ -9,7 +9,7 @@ import type { Territory, Listing } from './types'
 import { getListingsDAO } from './supabase-dao'
 import { loadStore } from './store'
 
-export const CHOUTUPPAL_BANNER_URL = 'https://choutuppal-crm.vercel.app/assets/choutuppal-app-banner.jpg'
+export const CHOUTUPPAL_BANNER_URL = 'https://images.choutuppal.in/assets/choutuppal-app-banner.jpg'
 export const CHOUTUPPAL_LOGO_URL = 'https://images.choutuppal.in/assets/choutuppal-app-logo.jpg'
 export const CHOUTUPPAL_VCARD_DOWNLOAD_URL = 'https://images.choutuppal.in/downloads/choutuppal.vcf'
 
@@ -542,7 +542,7 @@ export async function sendSingleListingDetailsCard(
 export async function sendListingWebProfile(ctx: FlowCatalogContext, listing: Listing) {
   const rawSlug = (listing.slug || '').trim()
   const cleanSlug = rawSlug && rawSlug !== '-choutuppal' && !rawSlug.startsWith('-') ? rawSlug : listing.id
-  const profileUrl = `https://choutuppal-crm.vercel.app/business/${cleanSlug}`
+  const profileUrl = `https://choutuppal.in/business/${cleanSlug}`
 
   const profileText =
     `🌐 *${listing.title.trim()}*\n` +
@@ -584,7 +584,7 @@ export async function sendAppAndContactVCard(ctx: FlowCatalogContext) {
     `━━━━━━━━━━━━━━━━━━━━\n` +
     `మన చౌటుప్పల్ పట్టణ సేవలను మరింత వేగంగా పొందడానికి చౌటుప్పల్ మొబైల్ యాప్‌ను ఉపయోగించండి!\n\n` +
     `📥 *యాప్ డౌన్‌లోడ్ & వెబ్ పోర్టల్:*\n` +
-    `👉 https://choutuppal-crm.vercel.app\n\n` +
+    `👉 https://choutuppal.in\n\n` +
     `📇 *అధికారిక vCard ఫైల్ డౌన్‌లోడ్:*\n` +
     `👉 ${CHOUTUPPAL_VCARD_DOWNLOAD_URL}\n\n` +
     `🌐 *అధికారిక సోషల్ మీడియా & కమ్యూనిటీ:*\n` +
@@ -702,7 +702,7 @@ export async function sendOffersCard(ctx: FlowCatalogContext) {
     `━━━━━━━━━━━━━━━━━━━━\n` +
     highlights +
     `\n👉 లైవ్ వీడియో స్టోరీలు & వోచర్లు చూడటానికి:\n` +
-    `🌐 https://choutuppal-crm.vercel.app/stories\n` +
+    `🌐 https://choutuppal.in/stories\n` +
     `━━━━━━━━━━━━━━━━━━━━\n` +
     `💡 క్రింది బటన్ నొక్కి వీడియో అడ్స్ లేదా మెనూ చూడండి:`
 
@@ -1031,7 +1031,7 @@ export async function sendServiceCatalogCard(ctx: FlowCatalogContext) {
     `❄️ *ఏసీ & ఫ్రిజ్ రిపేర్:* గ్యాస్ ఫిల్లింగ్, సర్వీసింగ్ & మెకానిక్స్\n` +
     `━━━━━━━━━━━━━━━━━━━━\n` +
     `🌐 *ఆన్‌లైన్ సర్వీసెస్ పోర్టల్:*\n` +
-    `👉 https://choutuppal-crm.vercel.app/services\n\n` +
+    `👉 https://choutuppal.in/services\n\n` +
     `👇 క్రింది బటన్ నొక్కి మెనూ లేదా ఆఫర్లను ఎంచుకోండి:`
 
   return await sendWhatsAppFlowMessage({
@@ -1059,7 +1059,7 @@ export async function sendVideoAdsCard(ctx: FlowCatalogContext) {
     `━━━━━━━━━━━━━━━━━━━━\n` +
     `మన చౌటుప్పల్ పట్టణ ప్రముఖ దుకాణాల తాజా వీడియో ఆఫర్లు మరియు 24 గంటల వీడియో స్టోరీస్ ఇక్కడ వీక్షించండి:\n\n` +
     `📱 *లైవ్ వీడియో ప్లేయర్:*\n` +
-    `👉 https://choutuppal-crm.vercel.app/stories\n\n` +
+    `👉 https://choutuppal.in/stories\n\n` +
     `✨ *వీడియో ఫీచర్లు:*\n` +
     `• 🎥 వర్టికల్ ఫుల్-స్క్రీన్ వీడియో రీల్స్\n` +
     `• 🏷️ ప్రత్యేక వీడియో డిస్కౌంట్ వోచర్లు\n` +
@@ -1093,7 +1093,7 @@ export async function sendAddManageListingCard(ctx: FlowCatalogContext) {
     `మీ షాప్ లేదా వ్యాపారాన్ని చౌటుప్పల్ యాప్ మరియు వాట్సాప్ డైరెక్టరీలో నమోదు చేసి వేలాది మంది స్థానిక కస్టమర్లను పొందండి!\n\n` +
     `📝 *నమోదు చేసుకునే విధానం:*\n` +
     `1️⃣ *ఆన్‌లైన్ ఫారమ్:* క్రింది లింక్ ద్వారా 2 నిమిషాల్లో వివరాలు సబ్మిట్ చేయండి:\n` +
-    `👉 https://choutuppal-crm.vercel.app/register\n\n` +
+    `👉 https://choutuppal.in/register\n\n` +
     `2️⃣ *వాట్సాప్ ద్వారా నేరుగా:* ఈ క్రింది వివరాలను ఇక్కడే మెసేజ్ చేయండి:\n` +
     `• షాప్ పేరు (Business Name)\n` +
     `• కేటగిరీ (మొబైల్స్, కిరాణా, హోటల్, సర్వీస్ మొదలైనవి)\n` +

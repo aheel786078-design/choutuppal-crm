@@ -36,10 +36,11 @@ export function sanitizeImageUrl(url: string | null | undefined): string {
  * Resolves the active base URL of the deployment (Vercel, custom domain, or localhost)
  */
 export function getBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL.replace(/\/+$/, '')
   if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, '')
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`
-  return 'https://choutuppal-crm.vercel.app'
+  return 'https://choutuppal.in'
 }
 
 /**

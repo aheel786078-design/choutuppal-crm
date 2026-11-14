@@ -251,7 +251,7 @@ export default function SettingsAdminPage() {
     }
   }
 
-  const liveWebhook = webhookUrl || (typeof window !== 'undefined' ? `${window.location.origin}/api/whatsapp/webhook` : 'https://choutuppal-crm.vercel.app/api/whatsapp/webhook')
+  const liveWebhook = webhookUrl || (typeof window !== 'undefined' ? `${window.location.origin}/api/whatsapp/webhook` : 'https://choutuppal.in/api/whatsapp/webhook')
 
   return (
     <div className="flex-1 flex flex-col min-h-screen bg-slate-50 text-slate-900 pb-12">
