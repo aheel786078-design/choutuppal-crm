@@ -515,6 +515,8 @@ export async function sendSingleListingDetailsCard(
   }
 
   cardText +=
+    `\n📢 *తాజా లోకల్ ఆఫర్లు & అప్‌డేట్స్ కోసం వాట్సాప్ ఛానల్:*\n` +
+    `👉 https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a\n\n` +
     `━━━━━━━━━━━━━━━━━━━━\n` +
     `💡 షాప్ ఫోటోలు, లొకేషన్ రూట్ & పూర్తి సమాచారం కోసం క్రింది *'పూర్తి ప్రొఫైల్'* బటన్ నొక్కండి:`
 
@@ -783,6 +785,16 @@ export async function sendEmergencyMenuCard(ctx: FlowCatalogContext) {
             title: '👥 ప్రజాప్రతినిధులు & నేతలు',
             description: 'ఎంపీ, ఎమ్మెల్సీ తీన్మార్ మల్లన్న & నియోజకవర్గ నేతలు',
           },
+          {
+            id: 'row_govt_add_contact',
+            title: '📝 కొత్త కాంటాక్ట్ నమోదు',
+            description: 'అధికారులు, నాయకులు మీ వివరాలు నమోదు చేసుకోండి',
+          },
+          {
+            id: 'row_govt_terms',
+            title: '⚖️ నిబంధనలు & డిస్క్లైమర్',
+            description: 'చట్టపరమైన మార్గదర్శకాలు, భద్రతా నిబంధనలు & ప్రైవసీ',
+          },
         ],
       },
     ],
@@ -807,17 +819,19 @@ export async function sendEmergencyTopHotlines(ctx: FlowCatalogContext) {
     `🏥 *ఆరోగ్యశ్రీ మెడికల్ హెల్ప్‌లైన్:* 104\n` +
     `👩 *మహిళల భద్రత (Sakhi Helpline):* 181\n` +
     `👶 *చైల్డ్‌లైన్ ఎమర్జెన్సీ సపోర్ట్:* 1098\n` +
-    `🚓 *పోలీస్ షీ టీమ్ (She Team):* +91 94906 17111\n` +
-    `━━━━━━━━━━━━━━━━━━━━\n` +
-    `💡 పోలీస్ SI, తహశీల్దార్, విద్యుత్ AE & మున్సిపల్ అధికారుల వివరాల కోసం క్రింది బటన్ నొక్కండి:`
+    `🚓 *పోలీస్ షీ టీమ్ (She Team):* 9490617111\n\n` +
+    `📢 *తాజా పట్టణ సమాచారం & అత్యవసర అప్‌డేట్స్ కోసం వాట్సాప్ ఛానల్:*\n` +
+    `👉 https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a\n\n` +
+    `⚠️ *ముఖ్య గమనిక:* అధికారుల బదిలీల వల్ల నంబర్లు మారే అవకాశం ఉన్నందున సంప్రదించే ముందు ఒకటికి రెండు సార్లు సరిచూసుకోండి.\n\n` +
+    `⚖️ *డిస్క్లైమర్ & T&C:* ఈ సంప్రదింపు వివరాలు అత్యవసర విచారణ కొరకు మాత్రమే. వేధింపులు లేదా దుర్వినియోగం చట్టరీత్యా నేరం.`
 
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
     messageText: hotlinesText,
     buttons: [
-      { id: 'btn_govt_directory', title: '📋 ప్రభుత్వ విభాగాలు' },
-      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
-      { id: 'btn_home', title: '🏠 హోమ్' },
+      { id: 'btn_govt_directory', title: '📋 విభాగాలు' },
+      { id: 'btn_submit_govt_contact', title: '📝 వివరాలు చేర్చండి' },
+      { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
     territoryId: ctx.territory?.id || 'territory_choutuppal',
@@ -827,6 +841,8 @@ export async function sendEmergencyTopHotlines(ctx: FlowCatalogContext) {
 
 /**
  * Sends verified contacts for a specific government/public category
+ * Strictly shows plain-text phone numbers without WhatsApp chat buttons for officials
+ * Includes anti-misuse disclaimer, verification note, and WhatsApp Channel invite link
  */
 export async function sendGovtCategoryContacts(ctx: FlowCatalogContext, categoryKey: string) {
   const store = ctx.store || loadStore()
@@ -852,7 +868,7 @@ export async function sendGovtCategoryContacts(ctx: FlowCatalogContext, category
 
   const matched = allContacts
     .filter((c) => c.status === 'published' && c.isPublicContact && c.category === categoryKey)
-    .slice(0, 10)
+    .slice(0, 8)
 
   let body = `${meta.icon} *చౌటుప్పల్ ${meta.title}* 📋\n━━━━━━━━━━━━━━━━━━━━\n`
 
@@ -862,23 +878,91 @@ export async function sendGovtCategoryContacts(ctx: FlowCatalogContext, category
     matched.forEach((c, idx) => {
       const name = c.name || 'అధికారి'
       const desig = c.designation ? ` (${c.designation})` : ''
-      const phone = c.phoneNumber || ''
-      body += `${idx + 1}. *${name}*${desig}\n   📞 ${phone}\n`
+      // Strictly show plain-text phone number only — NO direct whatsapp button or wa.me chat link
+      const phone = (c.phoneNumber || '').trim()
+      body += `${idx + 1}. *${name}*${desig}\n   📞 ఫోన్: ${phone}\n`
     })
   }
 
-  body += `━━━━━━━━━━━━━━━━━━━━\n`
-  body += `🌐 వెబ్‌సైట్‌లో పూర్తి 120+ నంబర్లు:\n👉 https://choutuppal.in/government-contacts?cat=${meta.webParam}`
+  body +=
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `📢 *తాజా సమాచారం కోసం వాట్సాప్ ఛానల్‌లో చేరండి:*\n` +
+    `👉 https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a\n\n` +
+    `⚠️ *ముఖ్య గమనిక:* అధికారుల బదిలీలు లేదా నంబర్ మార్పులు జరిగే అవకాశం ఉన్నందున, సంప్రదించే ముందు ఒకటికి రెండు సార్లు సరిచూసుకోండి.\n\n` +
+    `⚖️ *డిస్క్లైమర్ & నిబంధనలు (T&C):* ఈ నంబర్లు కేవలం అత్యవసర మరియు అధికారిక సేవల విచారణ కొరకు మాత్రమే. వేధింపులకు లేదా అవాంఛిత సందేశాలకు (Spam) ఉపయోగించడం చట్టరీత్యా నేరం. దుర్వినియోగానికి పాల్పడితే సైబర్ చట్టాల ప్రకారం కఠిన చర్యలు ఉంటాయి.\n\n` +
+    `🌐 వెబ్‌సైట్ పూర్తి డైరెక్టరీ: https://choutuppal.in/government-contacts?cat=${meta.webParam}`
 
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
     messageText: body,
     buttons: [
+      { id: 'btn_submit_govt_contact', title: '📝 వివరాలు చేర్చండి' },
       { id: 'btn_govt_directory', title: '📋 ఇతర విభాగాలు' },
+      { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 8c: Government & Local Leader Self-Add / Update Submission Guidance
+ */
+export async function sendGovtContactSubmissionFlow(ctx: FlowCatalogContext) {
+  const submitText =
+    `🏛️ *అధికారులు & ప్రజాప్రతినిధుల వివరాల నమోదు / సవరణ* 📝\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `మీరు చౌటుప్పల్ పరిధిలోని ప్రజాప్రతినిధి లేదా ప్రభుత్వ అధికారి అయితే, మీ అధికారిక వివరాలను డైరెక్టరీలో చేర్చడానికి లేదా పాత నంబర్ మార్పును తెలపడానికి:\n\n` +
+    `🌐 *1. వెబ్‌సైట్ ద్వారా డైరెక్ట్‌గా సమర్పించండి (సిఫార్సు చేయబడింది):*\n` +
+    `👉 https://choutuppal.in/government-contacts#submit\n\n` +
+    `💬 *2. లేదా ఇక్కడే వాట్సాప్‌లో ఈ క్రింది వివరాలను టైప్ చేసి పంపండి:*\n` +
+    `• మీ పేరు:\n` +
+    `• అధికారిక హోదా (Designation):\n` +
+    `• శాఖ / విభాగం (Department):\n` +
+    `• అధికారిక ఫోన్ నంబర్:\n` +
+    `• ఆఫీస్ చిరునామా / గ్రామం / వార్డు:\n\n` +
+    `⚠️ *భద్రతా గమనిక:* పౌరుల భద్రత కొరకు, మా అడ్మిన్ బృందం అధికారిక వివరాలను ధృవీకరించిన తర్వాత మాత్రమే డైరెక్టరీలో ప్రచురించబడుతుంది.\n\n` +
+    `📢 *అధికారిక వాట్సాప్ ఛానల్:*\n` +
+    `👉 https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: submitText,
+    buttons: [
+      { id: 'btn_govt_directory', title: '📋 విభాగాలు' },
       { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
       { id: 'btn_home', title: '🏠 హోమ్' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 8d: Legal Terms, Anti-Misuse & Disclaimer Guidelines
+ */
+export async function sendGovtTermsAndDisclaimer(ctx: FlowCatalogContext) {
+  const termsText =
+    `⚖️ *అధికారిక నిబంధనలు, డిస్క్లైమర్ & భద్రతా మార్గదర్శకాలు (T&C)* 🛡️\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `1. 🚨 *అత్యవసర ప్రాధాన్యత:* అత్యవసర సమయాల్లో 100 (పోలీస్), 108 (అంబులెన్స్), 101 (ఫైర్), 1912 (విద్యుత్) హెల్ప్‌లైన్లను ప్రాధాన్యతగా సంప్రదించండి.\n\n` +
+    `2. 🏛️ *అధికారిక విచారణ మాత్రమే:* డైరెక్టరీలోని నంబర్లు కేవలం ప్రభుత్వ విధులు, ప్రజా సమస్యలు మరియు అధికారిక సేవల విచారణ కొరకు మాత్రమే ప్రజల సౌకర్యార్థం అందించబడుతున్నాయి.\n\n` +
+    `3. 🚫 *దుర్వినియోగం చట్టరీత్యా నేరం (Anti-Misuse):* ప్రభుత్వ అధికారులకు లేదా ప్రజాప్రతినిధులకు అనవసర సందేశాలు, వ్యక్తిగత కాల్స్, వేధింపులు లేదా ప్రకటనలు పంపడం భారతీయ న్యాయ సంహిత (BNS) మరియు IT Act ప్రకారం నేరం. దుర్వినియోగానికి పాల్పడితే చట్టపరమైన కఠిన చర్యలు ఉంటాయి.\n\n` +
+    `4. 🔍 *నంబర్ల వెరిఫికేషన్:* బదిలీలు లేదా సాంకేతిక కారణాల వల్ల నంబర్లు మారే అవకాశం ఉంది. దయచేసి సంప్రదించే ముందు ఒకటికి రెండు సార్లు సరిచూసుకోండి.\n\n` +
+    `5. 📢 *వాట్సాప్ ఛానల్:* తాజా అధికారిక అప్‌డేట్స్ కోసం మా ఛానల్‌లో చేరండి:\n` +
+    `👉 https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: termsText,
+    buttons: [
+      { id: 'btn_govt_directory', title: '📋 విభాగాలు' },
+      { id: 'btn_submit_govt_contact', title: '📝 వివరాలు చేర్చండి' },
+      { id: 'btn_home', title: '🏠 హోమ్' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in/terms',
     territoryId: ctx.territory?.id || 'territory_choutuppal',
     contactName: ctx.senderName,
   }, ctx.store)

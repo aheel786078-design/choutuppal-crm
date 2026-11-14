@@ -19,6 +19,9 @@ import {
   Home,
   FileText,
   UserCheck,
+  MessageCircle,
+  ShieldAlert,
+  AlertOctagon,
 } from 'lucide-react'
 import { loadStore, FLAGSHIP_TERRITORY_ID } from '@/lib/store'
 import {
@@ -26,6 +29,7 @@ import {
   sanitizeGovtContactForPublic,
 } from '@/lib/government-contacts'
 import { GOVT_CONTACT_CATEGORIES, CHOUTUPPAL_MANDAL_VILLAGES } from '@/lib/constants'
+import { SubmitContactModal } from '@/components/government-contacts/submit-contact-modal'
 
 export const dynamic = 'force-dynamic'
 
@@ -118,11 +122,17 @@ export default async function GovernmentContactsPage({ searchParams }: GovtDirec
                 చౌటుప్పల్ మండలం, యాదాద్రి భువనగిరి జిల్లా — అధికారికంగా ధృవీకరించబడిన అత్యవసర హెల్ప్‌లైన్లు, ప్రభుత్వ కార్యాలయాలు మరియు ప్రజాప్రతినిధుల సంప్రదింపు వివరాలు.
               </p>
             </div>
-            <div className="flex items-center gap-2 self-start sm:self-auto bg-white/5 border border-white/10 rounded-2xl px-4 py-2.5 backdrop-blur-md">
-              <ShieldCheck className="h-6 w-6 text-emerald-400 shrink-0" />
-              <div>
-                <p className="text-xs font-bold text-white">100% Verified Contacts</p>
-                <p className="text-[11px] text-slate-300">Official Government Sources</p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 self-start sm:self-auto">
+              <SubmitContactModal
+                categories={GOVT_CONTACT_CATEGORIES}
+                villages={CHOUTUPPAL_MANDAL_VILLAGES}
+              />
+              <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-2xl px-4 py-2.5 backdrop-blur-md">
+                <ShieldCheck className="h-6 w-6 text-emerald-400 shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-white">100% Verified Contacts</p>
+                  <p className="text-[11px] text-slate-300">Official Government Sources</p>
+                </div>
               </div>
             </div>
           </div>
@@ -181,7 +191,62 @@ export default async function GovernmentContactsPage({ searchParams }: GovtDirec
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 space-y-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+        {/* OFFICIAL WHATSAPP CHANNEL JOIN BANNER */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 p-4 sm:p-5 text-white shadow-md border border-emerald-500/30">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 border border-white/20 text-emerald-300">
+              <MessageCircle className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-sm sm:text-base font-bold text-white">
+                అధికారిక చౌటుప్పల్ వాట్సాప్ ఛానల్‌లో జాయిన్ అవ్వండి! 📢
+              </h3>
+              <p className="text-xs text-emerald-100/90 mt-0.5">
+                తాజా పట్టణ సమాచారం, అత్యవసర హెచ్చరికలు, అధికారుల బదిలీల సమాచారం మరియు ప్రభుత్వ పథకాల వివరాలు వెంటనే పొందండి.
+              </p>
+            </div>
+          </div>
+          <a
+            href="https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-xl bg-white text-emerald-900 hover:bg-emerald-50 px-4 py-2 text-xs font-bold transition shadow-sm shrink-0 active:scale-95"
+          >
+            <MessageCircle className="h-4 w-4 text-emerald-600" />
+            <span>ఛానల్‌లో చేరండి</span>
+          </a>
+        </div>
+
+        {/* LEGAL DISCLAIMER, ANTI-MISUSE & VERIFICATION WARNING BANNER */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          {/* Disclaimer & Anti-Misuse */}
+          <div className="rounded-2xl bg-amber-50/80 border border-amber-300/70 p-4 text-xs text-amber-950 flex items-start gap-3 shadow-xs">
+            <ShieldAlert className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <p className="font-bold text-amber-900">
+                ⚖️ చట్టపరమైన హెచ్చరిక &amp; నిబంధనలు (Legal Terms &amp; Anti-Misuse):
+              </p>
+              <p className="text-amber-800/90 leading-relaxed text-[11px] sm:text-xs">
+                ఈ సంప్రదింపు వివరాలు కేవలం అత్యవసర సహాయం మరియు అధికారిక సేవల విచారణ కోసం మాత్రమే ప్రజల సౌకర్యార్థం అందించబడుతున్నాయి. వ్యక్తిగత అవసరాలు, అవాంఛిత సందేశాలు (Spam) లేదా వేధింపులకు వీటిని ఉపయోగించడం చట్టరీత్యా నేరం. దుర్వినియోగానికి పాల్పడితే సైబర్ క్రైమ్ మరియు ఐటీ చట్టాల ప్రకారం కఠిన చర్యలు ఉంటాయి.
+              </p>
+            </div>
+          </div>
+
+          {/* Verification Warning & Number Update Option */}
+          <div className="rounded-2xl bg-blue-50/80 border border-blue-300/70 p-4 text-xs text-blue-950 flex items-start gap-3 shadow-xs">
+            <AlertOctagon className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <p className="font-bold text-blue-900">
+                ⚠️ నంబర్ల మార్పు &amp; వెరిఫికేషన్ గమనిక (Verify Before Calling):
+              </p>
+              <p className="text-blue-800/90 leading-relaxed text-[11px] sm:text-xs">
+                ప్రభుత్వ అధికారుల బదిలీలు లేదా సాంకేతిక కారణాల వల్ల నంబర్లు మారే అవకాశం ఉంది. దయచేసి సంప్రదించే ముందు ఒకటికి రెండు సార్లు సరిచూసుకోండి. ఏదైనా నంబర్ మారినట్లు గమనిస్తే లేదా అప్‌డేట్ చేయాలనుకుంటే &quot;వివరాలు చేర్చండి / అప్‌డేట్&quot; బటన్ ద్వారా తెలియజేయగలరు.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* EMERGENCY HELPLINES CAROUSEL / GRID (ALWAYS PROMINENT) */}
         {!q && !cat && (
           <section>

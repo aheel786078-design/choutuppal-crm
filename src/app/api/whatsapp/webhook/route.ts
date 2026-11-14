@@ -15,6 +15,8 @@ import {
   sendEmergencyMenuCard,
   sendEmergencyTopHotlines,
   sendGovtCategoryContacts,
+  sendGovtContactSubmissionFlow,
+  sendGovtTermsAndDisclaimer,
   sendSocialMediaCard,
   sendServiceCatalogCard,
   sendVideoAdsCard,
@@ -752,6 +754,30 @@ export async function POST(req: Request) {
       ) {
         await sendGovtCategoryContacts(flowCtx, 'elected_representatives')
         return NextResponse.json(withShadow({ status: 'govt_leaders_dispatched' }))
+      }
+
+      if (
+        buttonPayload === 'row_govt_add_contact' ||
+        buttonPayload === 'btn_submit_govt_contact' ||
+        lower.includes('add govt') ||
+        lower.includes('చేర్చండి') ||
+        lower.includes('నమోదు') ||
+        lower.includes('update number') ||
+        lower.includes('నంబర్ మార్పు')
+      ) {
+        await sendGovtContactSubmissionFlow(flowCtx)
+        return NextResponse.json(withShadow({ status: 'govt_submission_dispatched' }))
+      }
+
+      if (
+        buttonPayload === 'row_govt_terms' ||
+        lower === 'terms' ||
+        lower === 'disclaimer' ||
+        lower.includes('నిబంధనలు') ||
+        lower.includes('డిస్క్లైమర్')
+      ) {
+        await sendGovtTermsAndDisclaimer(flowCtx)
+        return NextResponse.json(withShadow({ status: 'govt_terms_dispatched' }))
       }
 
       if (
