@@ -22,6 +22,16 @@ export interface WhatsAppSendOptions {
     phones?: Array<{ phone: string; type: string; wa_id?: string }>
     urls?: Array<{ url: string; type: string }>
     org?: { company?: string }
+    emails?: Array<{ email: string; type: string }>
+    addresses?: Array<{
+      city?: string
+      state?: string
+      zip?: string
+      country?: string
+      country_code?: string
+      street?: string
+      type?: string
+    }>
   }>
 }
 

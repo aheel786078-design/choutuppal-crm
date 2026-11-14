@@ -9,7 +9,8 @@ import type { Territory, Listing } from './types'
 import { getListingsDAO } from './supabase-dao'
 
 export const CHOUTUPPAL_BANNER_URL = 'https://choutuppal-crm.vercel.app/assets/choutuppal-app-banner.jpg'
-export const CHOUTUPPAL_LOGO_URL = 'https://choutuppal-crm.vercel.app/assets/choutuppal-app-logo.jpg'
+export const CHOUTUPPAL_LOGO_URL = 'https://images.choutuppal.in/assets/choutuppal-app-logo.jpg'
+export const CHOUTUPPAL_VCARD_DOWNLOAD_URL = 'https://images.choutuppal.in/downloads/choutuppal.vcf'
 
 export interface FlowCatalogContext {
   toPhone: string
@@ -581,15 +582,20 @@ export async function sendAppAndContactVCard(ctx: FlowCatalogContext) {
     `మన చౌటుప్పల్ పట్టణ సేవలను మరింత వేగంగా పొందడానికి చౌటుప్పల్ మొబైల్ యాప్‌ను ఉపయోగించండి!\n\n` +
     `📥 *యాప్ డౌన్‌లోడ్ & వెబ్ పోర్టల్:*\n` +
     `👉 https://choutuppal-crm.vercel.app\n\n` +
+    `📇 *అధికారిక vCard ఫైల్ డౌన్‌లోడ్:*\n` +
+    `👉 ${CHOUTUPPAL_VCARD_DOWNLOAD_URL}\n\n` +
     `🌐 *అధికారిక సోషల్ మీడియా & కమ్యూనిటీ:*\n` +
     `• 📸 Instagram: https://www.instagram.com/choutuppalapp/\n` +
     `• 📺 YouTube: https://www.youtube.com/@choutuppalapp\n` +
     `• 📘 Facebook: https://www.facebook.com/Choutuppalapp/\n` +
     `• 📢 WhatsApp Channel: https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a\n` +
     `• 👥 WhatsApp Group: https://chat.whatsapp.com/ItRGBPJJQSZF6x40IozSJe\n\n` +
-    `📇 *హెల్ప్‌లైన్ నంబర్:* +91 94943 48175\n` +
+    `📞 *హెల్ప్‌లైన్ & సపోర్ట్ నంబర్లు:*\n` +
+    `• బిజినెస్ బాట్: +91 94943 48175\n` +
+    `• సపోర్ట్ & అప్‌డేట్స్: +91 94413 48175\n` +
+    `• ఈమెయిల్: info@choutuppal.in\n` +
     `━━━━━━━━━━━━━━━━━━━━\n` +
-    `💡 క్రింద పంపిన కాంటాక్ట్ కార్డుపై క్లిక్ చేసి 'Add to Contacts' లేదా 'Save' ఎంచుకోండి.`
+    `💡 క్రింద పంపిన అధికారిక కాంటాక్ట్ కార్డుపై క్లిక్ చేసి 'Add to Contacts' లేదా 'Save' ఎంచుకోండి.`
 
   // 1. Send Logo Image Card with action buttons
   await sendWhatsAppFlowMessage({
@@ -597,16 +603,16 @@ export async function sendAppAndContactVCard(ctx: FlowCatalogContext) {
     messageText: appMsg,
     imageUrl: CHOUTUPPAL_LOGO_URL,
     buttons: [
-      { id: 'btn_open_directory', title: '📋 మెనూ తెరవండి' },
+      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
       { id: 'btn_social_media', title: '🌐 సోషల్ మీడియా' },
-      { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
+      { id: 'btn_home', title: '🏠 హోమ్' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
     territoryId: ctx.territory?.id || 'territory_choutuppal',
     contactName: ctx.senderName,
   }, ctx.store)
 
-  // 2. Immediately send native WhatsApp Contact vCard with CELL type and wa_id
+  // 2. Immediately send native WhatsApp Contact vCard matching vcard (1).vcf
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
     messageText: 'చౌటుప్పల్ యాప్ అధికారిక కాంటాక్ట్ కార్డ్',
@@ -617,15 +623,49 @@ export async function sendAppAndContactVCard(ctx: FlowCatalogContext) {
           first_name: 'Choutuppal',
           last_name: 'App',
         },
+        org: {
+          company: 'Choutuppal Digital Services',
+        },
         phones: [
           {
             phone: '+91 94943 48175',
-            type: 'CELL',
+            type: 'WORK',
             wa_id: '919494348175',
           },
+          {
+            phone: '+91 94413 48175',
+            type: 'HOME',
+          },
         ],
-        urls: [{ url: 'https://choutuppal-crm.vercel.app', type: 'WORK' }],
-        org: { company: 'Choutuppal Local Services Hub' },
+        emails: [
+          {
+            email: 'info@choutuppal.in',
+            type: 'WORK',
+          },
+        ],
+        urls: [
+          {
+            url: 'https://www.choutuppal.in/',
+            type: 'WORK',
+          },
+          {
+            url: CHOUTUPPAL_VCARD_DOWNLOAD_URL,
+            type: 'OTHER',
+          },
+          {
+            url: 'https://www.instagram.com/choutuppalapp/',
+            type: 'OTHER',
+          },
+        ],
+        addresses: [
+          {
+            city: 'Choutuppal',
+            state: 'Telangana',
+            zip: '508252',
+            country: 'India',
+            type: 'WORK',
+          },
+        ],
       },
     ],
     territoryId: ctx.territory?.id || 'territory_choutuppal',

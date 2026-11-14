@@ -85,8 +85,45 @@ export function getElectricianWhatsAppUrl(): string {
   return getWhatsAppUrl(`Hi Choutuppal, I need an Electrician service`)
 }
 
-export function getCommunityGroupWhatsAppUrl(wardNumber: number): string {
-  return getWhatsAppUrl(`Hi Choutuppal, please add me to Ward ${wardNumber} Community WhatsApp Group`)
+export const CHOUTUPPAL_OFFICIAL_LINKS = {
+  website: 'https://choutuppal.in',
+  whatsappChannel: 'https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a',
+  youtube: 'https://www.youtube.com/@choutuppalapp',
+  instagram: 'https://www.instagram.com/choutuppalapp/',
+  facebook: 'https://www.facebook.com/Choutuppalapp/',
+  vcardDownload: 'https://images.choutuppal.in/downloads/choutuppal.vcf',
+}
+
+export const CHOUTUPPAL_WARD_GROUPS: Record<string, string> = {
+  '1': 'https://chat.whatsapp.com/HStUDfXHVbMKb19O2aByDV',
+  '2': 'https://chat.whatsapp.com/IKg0EbjUhVZHQJfUnzft4X',
+  '3': 'https://chat.whatsapp.com/EwJbyPpQ45CLAGuER7NFt0',
+  '4': 'https://chat.whatsapp.com/DWk9proIu0gAsAYWXBlge2',
+  '5': 'https://chat.whatsapp.com/B89rm8X9Ssf6iaQfh95olE',
+  '6': 'https://chat.whatsapp.com/Ee2iCLCLgIaDsMXvUIEcX0',
+  '7': 'https://chat.whatsapp.com/Jym0qtMpqYnEnIDCbNcI7l',
+  '8': 'https://chat.whatsapp.com/CKItQRgkMphBsmnBCnkf4o',
+  '9': 'https://chat.whatsapp.com/Dc8kCytmxrCCcRf3VRn2BT',
+  '10': 'https://chat.whatsapp.com/BtEoPXyiQVpEA9paYrlyKo',
+  '11': 'https://chat.whatsapp.com/DNNQHuXTIjq3TMZkM4v3ul',
+  '12': 'https://chat.whatsapp.com/IuWiQXMkQb31RUBgUmOpzv',
+  '13': 'https://chat.whatsapp.com/CUxPwsq7DzR7Wy9znsIwRA',
+  '14': 'https://chat.whatsapp.com/I8Wd8TWV0ZU5xoENmOboBC',
+  '15': 'https://chat.whatsapp.com/FY58lONugbMG2z9q1NLCQB',
+  '16': 'https://chat.whatsapp.com/ItNWfjiv52z2oAOaVP1RnH',
+  '17': 'https://chat.whatsapp.com/BcYLy2lIFacChbv6CUmRNG',
+  '18': 'https://chat.whatsapp.com/GtiBFgWay6b2xzbMrL2x7b',
+  '19': 'https://chat.whatsapp.com/Fmh4a8g7UhuCh9TNtKpD0p',
+  '20': 'https://chat.whatsapp.com/Ga7M0wmhLGY0iywNHABcbL',
+  'others': 'https://chat.whatsapp.com/H2Qq1k4dDNgK9xKbHpbE7G',
+}
+
+export function getCommunityGroupWhatsAppUrl(wardNumber: number | string): string {
+  const key = String(wardNumber)
+  if (CHOUTUPPAL_WARD_GROUPS[key]) {
+    return CHOUTUPPAL_WARD_GROUPS[key]
+  }
+  return CHOUTUPPAL_WARD_GROUPS['others'] || getWhatsAppUrl(`Hi Choutuppal, please add me to Ward ${wardNumber} Community WhatsApp Group`)
 }
 
 export const CHOUTUPPAL_MANDAL_VILLAGES = [

@@ -14,21 +14,21 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: 'portrait',
     icons: [
       {
-        src: 'https://i.ibb.co/rGwMGrby/logo-pwa-20260922-131108-0000.png',
+        src: 'https://images.choutuppal.in/assets/choutuppal-app-logo.jpg',
         sizes: '192x192',
-        type: 'image/png',
+        type: 'image/jpeg',
         purpose: 'any',
       },
       {
-        src: 'https://i.ibb.co/rGwMGrby/logo-pwa-20260922-131108-0000.png',
+        src: 'https://images.choutuppal.in/assets/choutuppal-app-logo.jpg',
         sizes: '512x512',
-        type: 'image/png',
+        type: 'image/jpeg',
         purpose: 'any',
       },
       {
-        src: 'https://i.ibb.co/rGwMGrby/logo-pwa-20260922-131108-0000.png',
+        src: 'https://images.choutuppal.in/assets/choutuppal-app-logo.jpg',
         sizes: '512x512',
-        type: 'image/png',
+        type: 'image/jpeg',
         purpose: 'maskable',
       },
     ],
