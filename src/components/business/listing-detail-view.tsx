@@ -47,6 +47,7 @@ export interface ListingDetailViewProps {
   listing: Listing
   entitlements: ListingEntitlements
   relatedListings?: Listing[]
+  showOfficialGuarantee?: boolean
 }
 
 interface CustomerReview {
@@ -62,6 +63,7 @@ export function ListingDetailView({
   listing,
   entitlements,
   relatedListings = [],
+  showOfficialGuarantee = false,
 }: ListingDetailViewProps) {
   const [coverError, setCoverError] = useState(false)
   const [logoError, setLogoError] = useState(false)
@@ -470,22 +472,29 @@ END:VCARD`
               </span>
             </div>
 
-            {/* Live Status & Rating Badges */}
-            <div className="mt-3.5 flex flex-wrap items-center justify-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200 shadow-2xs">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>ప్రస్తుతం తెరిచి ఉంది (Open Now)</span>
-              </span>
+            {/* Business Description in place of cluttered badges */}
+            {listing.description ? (
+              <p className="mt-3 text-xs sm:text-sm text-slate-700 max-w-2xl mx-auto leading-relaxed font-normal bg-slate-50/90 p-3 sm:p-3.5 rounded-2xl border border-slate-200/80 text-left sm:text-center shadow-2xs">
+                {listing.description}
+              </p>
+            ) : null}
 
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-50 text-amber-900 font-bold text-xs border border-amber-200 shadow-2xs">
-                <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
-                <span>4.9 / 5.0 (58+ వెరిఫైడ్ రివ్యూలు)</span>
-              </span>
+            {/* Quick Status, Rating & Timings Info Bar */}
+            <div className="mt-3.5 pt-3 border-t border-slate-100/90 grid grid-cols-3 gap-1.5 sm:gap-2.5 max-w-xl mx-auto">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 py-1.5 px-2 rounded-xl bg-emerald-50/80 border border-emerald-200/80 text-center">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="text-[11px] font-bold text-emerald-900 leading-tight">తెరిచి ఉంది</span>
+              </div>
 
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-50 text-blue-900 font-bold text-xs border border-blue-200 shadow-2xs">
-                <Clock className="h-3.5 w-3.5 text-blue-600" />
-                <span>ఉదయం 9 AM – రాత్రి 10 PM</span>
-              </span>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 py-1.5 px-2 rounded-xl bg-amber-50/80 border border-amber-200/80 text-center">
+                <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-amber-500 text-amber-500 shrink-0" />
+                <span className="text-[11px] font-bold text-amber-950 leading-tight">4.9 / 5.0</span>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 py-1.5 px-2 rounded-xl bg-blue-50/80 border border-blue-200/80 text-center">
+                <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-blue-600 shrink-0" />
+                <span className="text-[11px] font-bold text-blue-950 leading-tight">9 AM – 10 PM</span>
+              </div>
             </div>
           </div>
 
@@ -552,48 +561,6 @@ END:VCARD`
                 </span>
                 <span className="mt-1.5 text-[11px] font-bold text-slate-800">షేర్</span>
               </button>
-            </div>
-          </div>
-
-          {/* COMMUNITY & SOCIAL MEDIA CONNECT BAR */}
-          <div className="px-3 sm:px-6 py-2.5 bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <span className="font-bold text-slate-700 flex items-center gap-1.5">
-              <span>🌐</span>
-              <span>చౌటుప్పల్ యాప్ సోషల్ మీడియా:</span>
-            </span>
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <a
-                href="https://www.instagram.com/choutuppalapp/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-2.5 py-1 rounded-lg bg-pink-600 text-white font-bold text-[11px] hover:bg-pink-700 transition shadow-2xs"
-              >
-                Instagram
-              </a>
-              <a
-                href="https://www.youtube.com/@choutuppalapp"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-2.5 py-1 rounded-lg bg-red-600 text-white font-bold text-[11px] hover:bg-red-700 transition shadow-2xs"
-              >
-                YouTube
-              </a>
-              <a
-                href="https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] hover:bg-emerald-700 transition shadow-2xs"
-              >
-                WhatsApp ఛానల్
-              </a>
-              <a
-                href="https://chat.whatsapp.com/ItRGBPJJQSZF6x40IozSJe"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-2.5 py-1 rounded-lg bg-blue-600 text-white font-bold text-[11px] hover:bg-blue-700 transition shadow-2xs"
-              >
-                కమ్యూనిటీ
-              </a>
             </div>
           </div>
         </div>
@@ -1151,16 +1118,18 @@ END:VCARD`
               </div>
             </div>
 
-            {/* VERIFIED PLATFORM BADGE */}
-            <div className="bg-emerald-50/60 rounded-3xl p-5 border border-emerald-200 text-xs text-slate-700 space-y-2">
-              <div className="flex items-center gap-2 font-black text-emerald-950">
-                <BadgeCheck className="h-5 w-5 text-emerald-600" />
-                <span>చౌటుప్పల్ అధికారిక గ్యారంటీ</span>
+            {/* VERIFIED PLATFORM BADGE (Controlled by Admin Settings - Defaults to OFF) */}
+            {showOfficialGuarantee && (
+              <div className="bg-emerald-50/60 rounded-3xl p-5 border border-emerald-200 text-xs text-slate-700 space-y-2">
+                <div className="flex items-center gap-2 font-black text-emerald-950">
+                  <BadgeCheck className="h-5 w-5 text-emerald-600" />
+                  <span>చౌటుప్పల్ అధికారిక గ్యారంటీ</span>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  ఈ వ్యాపార వివరాలు చౌటుప్పల్ యాప్ డైరెక్టరీలో ధృవీకరించబడ్డాయి. నేరుగా కాల్ లేదా వాట్సాప్ ద్వారా సంప్రదించవచ్చు.
+                </p>
               </div>
-              <p className="text-[11px] text-slate-600 leading-relaxed">
-                ఈ వ్యాపార వివరాలు చౌటుప్పల్ యాప్ డైరెక్టరీలో ధృవీకరించబడ్డాయి. నేరుగా కాల్ లేదా వాట్సాప్ ద్వారా సంప్రదించవచ్చు.
-              </p>
-            </div>
+            )}
           </div>
         </div>
 
@@ -1248,6 +1217,58 @@ END:VCARD`
             </div>
           </div>
         )}
+
+        {/* 5b. CHOUTUPPAL APP OFFICIAL SOCIAL MEDIA & COMMUNITY (Listings End) */}
+        <div className="mt-8 rounded-3xl bg-gradient-to-br from-slate-900 via-emerald-950 to-teal-950 text-white p-6 sm:p-8 shadow-md border border-emerald-800/40 relative overflow-hidden">
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-1.5 max-w-xl">
+              <span className="inline-flex items-center gap-1.5 text-emerald-400 text-xs font-bold uppercase tracking-wider bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30">
+                <span>🌐</span> చౌటుప్పల్ యాప్ అధికారిక సోషల్ మీడియా &amp; కమ్యూనిటీ
+              </span>
+              <h3 className="text-lg sm:text-xl font-black text-white">
+                చౌటుప్పల్ యాప్‌తో కనెక్ట్ అవ్వండి (Stay Connected)
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                మన చౌటుప్పల్ పట్టణ తాజా వార్తలు, ప్రముఖ వ్యాపార ఆఫర్లు, ఉద్యోగ అవకాశాలు &amp; అత్యవసర సమాచారం కోసం మా అధికారిక సోషల్ మీడియా ఛానల్స్‌ను ఫాలో అవ్వండి.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 shrink-0">
+              <a
+                href="https://www.instagram.com/choutuppalapp/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white font-bold text-xs hover:opacity-95 transition shadow-sm active:scale-95 cursor-pointer"
+              >
+                <span>Instagram</span>
+              </a>
+              <a
+                href="https://www.youtube.com/@choutuppalapp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition shadow-sm active:scale-95 cursor-pointer"
+              >
+                <span>YouTube</span>
+              </a>
+              <a
+                href="https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition shadow-sm active:scale-95 cursor-pointer"
+              >
+                <span>WhatsApp ఛానల్</span>
+              </a>
+              <a
+                href="https://chat.whatsapp.com/ItRGBPJJQSZF6x40IozSJe"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition shadow-sm active:scale-95 cursor-pointer"
+              >
+                <span>కమ్యూనిటీ గ్రూప్</span>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* 6. PERSISTENT STICKY BOTTOM QUICK-ACTION DOCK (Mobile & Desktop) */}

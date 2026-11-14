@@ -49,6 +49,7 @@ export default function SettingsAdminPage() {
   const [verifyToken, setVerifyToken] = useState('choutuppal_verify_token')
   const [syncListings, setSyncListings] = useState(true)
   const [autoSendPhoto, setAutoSendPhoto] = useState(true)
+  const [showOfficialGuarantee, setShowOfficialGuarantee] = useState(false)
   const [webhookUrl, setWebhookUrl] = useState('')
   const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([])
 
@@ -113,6 +114,7 @@ export default function SettingsAdminPage() {
         setToken(data.settings.maskedToken || '')
         setSyncListings(data.settings.syncListingsToCrmFlow !== false)
         setAutoSendPhoto(data.settings.autoSendListingPhotoInChat !== false)
+        setShowOfficialGuarantee(Boolean(data.settings.showOfficialGuarantee))
         if (data.webhookCallbackUrl) {
           setWebhookUrl(data.webhookCallbackUrl)
         }
@@ -149,6 +151,7 @@ export default function SettingsAdminPage() {
           whatsappToken: token,
           syncListingsToCrmFlow: syncListings,
           autoSendListingPhotoInChat: autoSendPhoto,
+          showOfficialGuarantee: showOfficialGuarantee,
         }),
       })
 
@@ -427,6 +430,18 @@ export default function SettingsAdminPage() {
                 type="checkbox"
                 checked={autoSendPhoto}
                 onChange={(e) => setAutoSendPhoto(e.target.checked)}
+                className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+              />
+            </div>
+            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
+              <div>
+                <span className="text-xs font-semibold text-slate-900 block">చౌటుప్పల్ అధికారిక గ్యారంటీ బ్యాడ్జ్ (Official Directory Guarantee)</span>
+                <span className="text-[11px] text-slate-500">లిస్టింగ్ పేజీల్లో 'చౌటుప్పల్ అధికారిక గ్యారంటీ' బాక్స్‌ను ప్రదర్శించు (డిఫాల్ట్‌గా ఆఫ్‌లో ఉంటుంది)</span>
+              </div>
+              <input
+                type="checkbox"
+                checked={showOfficialGuarantee}
+                onChange={(e) => setShowOfficialGuarantee(e.target.checked)}
                 className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
               />
             </div>

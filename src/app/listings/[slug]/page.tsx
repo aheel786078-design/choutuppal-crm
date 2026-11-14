@@ -102,6 +102,7 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
   }
 
   const entitlements = resolveListingEntitlements(listing.id, store)
+  const showOfficialGuarantee = Boolean(store.settings?.showOfficialGuarantee)
   const relatedListings = (store.listings || [])
     .filter(
       (l) =>
@@ -116,6 +117,7 @@ export default async function ListingDetailPage({ params }: ListingPageProps) {
       listing={listing}
       entitlements={entitlements}
       relatedListings={relatedListings}
+      showOfficialGuarantee={showOfficialGuarantee}
     />
   )
 }

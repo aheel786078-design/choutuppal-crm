@@ -113,6 +113,7 @@ export async function GET(req: Request) {
         whatsappVerifyToken: settings.whatsappVerifyToken || 'choutuppal_verify_token',
         syncListingsToCrmFlow: settings.syncListingsToCrmFlow !== false,
         autoSendListingPhotoInChat: settings.autoSendListingPhotoInChat !== false,
+        showOfficialGuarantee: Boolean(settings.showOfficialGuarantee),
         hasCustomToken: Boolean(token),
         maskedToken,
       },
@@ -166,6 +167,10 @@ export async function POST(req: Request) {
 
     if (typeof body.autoSendListingPhotoInChat === 'boolean') {
       store.settings.autoSendListingPhotoInChat = body.autoSendListingPhotoInChat
+    }
+
+    if (typeof body.showOfficialGuarantee === 'boolean') {
+      store.settings.showOfficialGuarantee = body.showOfficialGuarantee
     }
 
     saveStore(store)

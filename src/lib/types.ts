@@ -822,6 +822,7 @@ export interface AdminDataStore {
     whatsappVerifyToken: string
     syncListingsToCrmFlow: boolean
     autoSendListingPhotoInChat: boolean
+    showOfficialGuarantee?: boolean
   }
 }
 
