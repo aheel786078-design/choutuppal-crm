@@ -6,11 +6,35 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'images.choutuppal.in',
+      },
+      {
+        protocol: 'https',
+        hostname: 'choutuppal.in',
+      },
+      {
+        protocol: 'https',
+        hostname: 'media.choutuppal.in',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.choutuppal.in',
+      },
+      {
+        protocol: 'https',
         hostname: 'images.unsplash.com',
       },
       {
         protocol: 'https',
+        hostname: 'plus.unsplash.com',
+      },
+      {
+        protocol: 'https',
         hostname: '**.r2.cloudflarestorage.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.r2.dev',
       },
       {
         protocol: 'https',
@@ -31,10 +55,6 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: '**.cdninstagram.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'media.choutuppal.in',
       },
     ],
   },
