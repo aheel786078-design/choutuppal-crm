@@ -5,7 +5,7 @@ const accountId = process.env.R2_ACCOUNT_ID || ''
 const accessKeyId = process.env.R2_ACCESS_KEY_ID || ''
 const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY || ''
 const bucketName = process.env.R2_BUCKET_NAME || 'choutuppal-media'
-const publicDomain = process.env.R2_PUBLIC_DOMAIN || 'https://media.choutuppal.in'
+const publicDomain = process.env.R2_PUBLIC_DOMAIN || 'https://images.choutuppal.in'
 
 export const isR2Configured = Boolean(
   accountId && accessKeyId && secretAccessKey && !accountId.includes('your-cloudflare')
