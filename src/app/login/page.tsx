@@ -10,13 +10,7 @@ import {
   Phone,
   MessageCircle,
   ArrowLeft,
-  LayoutDashboard,
-  MessageSquare,
-  Sparkles,
-  ShieldCheck,
   Loader2,
-  Building2,
-  Store,
   CheckCircle2,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -127,12 +121,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  function fillPreset(pEmail: string, pPass: string) {
-    setEmail(pEmail)
-    setPassword(pPass)
-    setTab('email')
   }
 
   return (
@@ -313,38 +301,6 @@ export default function LoginPage() {
               )}
             </form>
           )}
-
-          {/* QUICK CREDENTIAL SELECTOR */}
-          <div className="mt-6 pt-5 border-t border-slate-100">
-            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center mb-2.5">
-              Quick Login Presets (1-Click Selector)
-            </p>
-            <div className="grid grid-cols-2 gap-2 text-[11px]">
-              <button
-                type="button"
-                onClick={() => fillPreset('admin@choutuppal.in', 'Choutuppal@2026')}
-                className="p-2.5 rounded-xl border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-100/70 text-left transition flex flex-col justify-between cursor-pointer"
-              >
-                <div className="flex items-center gap-1 font-bold text-emerald-900">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                  <span>Super Admin</span>
-                </div>
-                <span className="text-[10px] text-slate-600 font-mono mt-0.5">admin@choutuppal.in</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillPreset('operator@choutuppal.in', 'Choutuppal@2026')}
-                className="p-2.5 rounded-xl border border-blue-200 bg-blue-50/60 hover:bg-blue-100/70 text-left transition flex flex-col justify-between cursor-pointer"
-              >
-                <div className="flex items-center gap-1 font-bold text-blue-900">
-                  <Store className="h-3.5 w-3.5 text-blue-600" />
-                  <span>Platform Operator</span>
-                </div>
-                <span className="text-[10px] text-slate-600 font-mono mt-0.5">operator@choutuppal.in</span>
-              </button>
-            </div>
-          </div>
 
           {/* BOTTOM REGISTRATION LINK */}
           <div className="mt-6 pt-4 border-t border-slate-100 text-center">
