@@ -1,6 +1,7 @@
 import { getHomePageData } from '@/lib/home-data'
 import { Ticker } from '@/components/home/ticker'
 import { StickySocials } from '@/components/home/sticky-socials'
+import { EmergencyQuickRail } from '@/components/home/emergency-quick-rail'
 import {
   StoriesRail,
   BannerCarousel,
@@ -142,6 +143,9 @@ export default async function Home() {
 
           {/* 3. Browse Categories */}
           <CategoriesGrid />
+
+          {/* 3b. 24/7 Emergency & Govt Quick Rail */}
+          <EmergencyQuickRail />
 
           {/* 4. Top Local Businesses Grid */}
           <FeaturedRail listings={formattedFeatured} />

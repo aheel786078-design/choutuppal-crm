@@ -7,6 +7,7 @@
 import { sendWhatsAppFlowMessage } from './whatsapp-cloud-api'
 import type { Territory, Listing } from './types'
 import { getListingsDAO } from './supabase-dao'
+import { loadStore } from './store'
 
 export const CHOUTUPPAL_BANNER_URL = 'https://choutuppal-crm.vercel.app/assets/choutuppal-app-banner.jpg'
 export const CHOUTUPPAL_LOGO_URL = 'https://images.choutuppal.in/assets/choutuppal-app-logo.jpg'
@@ -719,32 +720,175 @@ export async function sendOffersCard(ctx: FlowCatalogContext) {
 }
 
 /**
- * Screen 8: Emergency Helpline Hub
+ * Screen 8: Emergency & Government Directory Interactive Hub
+ * Delivers full interactive category routing across 120+ verified contacts
  */
-export async function sendEmergencyCard(ctx: FlowCatalogContext) {
-  const emergencyText =
-    `🚨 *చౌటుప్పల్ అత్యవసర & హెల్ప్‌లైన్ నంబర్లు (Emergency 24/7)*\n\n` +
-    `అత్యవసర సమయాల్లో ఈ క్రింది నంబర్లకు నేరుగా కాల్ చేయవచ్చు:\n\n` +
-    `👮 *పోలీస్ స్టేషన్ చౌటుప్పల్:* 100 లేదా 08694-272233\n` +
-    `🚑 *ప్రభుత్వ అంబులెన్స్ సర్వీస్:* 108\n` +
-    `🚒 *అగ్నిమాపక కేంద్రం (ఫైర్):* 101 లేదా 08694-272101\n` +
-    `🏥 *ప్రభుత్వ ఏరియా ఆస్పత్రి:* 08694-272045\n` +
-    `⚡ *విద్యుత్ సహాయ కేంద్రం (TSSPDCL):* 1912\n` +
-    `🚰 *మున్సిపల్ కార్యాలయం:* 08694-272022\n\n` +
-    `💡 ఈ మెసేజ్‌ను మీ కుటుంబ సభ్యులకు ఫార్వర్డ్ చేసి భద్రపరుచుకోండి.`
+export async function sendEmergencyMenuCard(ctx: FlowCatalogContext) {
+  const menuText =
+    `🚨 *చౌటుప్పల్ అధికారిక ప్రభుత్వ & అత్యవసర డైరెక్టరీ* 🏛️\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `చౌటుప్పల్ మండలం, యాదాద్రి భువనగిరి జిల్లా — అధికారికంగా ధృవీకరించబడిన 120+ అత్యవసర హెల్ప్‌లైన్లు, అధికారులు మరియు ప్రజాప్రతినిధుల సంప్రదింపు వివరాలు.\n\n` +
+    `👇 మీకు కావలసిన విభాగాన్ని క్రింది *'విభాగాలు చూడండి'* జాబితా నుండి ఎంచుకోండి:`
 
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
-    messageText: emergencyText,
+    messageText: menuText,
+    listButtonText: '🚨 విభాగాలు చూడండి',
+    listSections: [
+      {
+        title: '🚨 అత్యవసర & రక్షణ సేవలు',
+        rows: [
+          {
+            id: 'row_govt_emergency_top',
+            title: '🚨 అత్యవసర నంబర్లు',
+            description: '100, 108, 101, 104, 1912 & ఉమెన్స్ హెల్ప్‌లైన్',
+          },
+          {
+            id: 'row_govt_police',
+            title: '👮 పోలీస్ శాఖ అధికారులు',
+            description: 'చౌటుప్పల్ SI, భువనగిరి CI, షీ టీమ్ & కంట్రోల్ రూమ్',
+          },
+          {
+            id: 'row_govt_health',
+            title: '🏥 ఆసుపత్రులు & వైద్యులు',
+            description: 'ప్రభుత్వ ఏరియా హాస్పిటల్, మెడికల్ ఆఫీసర్ & అంబులెన్స్',
+          },
+          {
+            id: 'row_govt_electricity',
+            title: '⚡ విద్యుత్ శాఖ (TSSPDCL)',
+            description: 'సబ్‌స్టేషన్ ఎమర్జెన్సీ, ట్రాన్స్‌కో AE, DE & లైన్‌మెన్',
+          },
+        ],
+      },
+      {
+        title: '🏛️ పరిపాలన & ప్రజాప్రతినిధులు',
+        rows: [
+          {
+            id: 'row_govt_revenue',
+            title: '🌾 రెవెన్యూ & తహశీల్దార్',
+            description: 'కలెక్టరేట్, MRO వీరబాయి, RDO & రెవెన్యూ అధికారులు',
+          },
+          {
+            id: 'row_govt_municipal',
+            title: '🏛️ మున్సిపల్ కార్యాలయం',
+            description: 'మున్సిపల్ కమిషనర్ వేణుగోపాల్ రెడ్డి, చైర్‌పర్సన్ & ఆఫీస్',
+          },
+          {
+            id: 'row_govt_villages',
+            title: '🏡 గ్రామ పంచాయతీ సెక్రటరీలు',
+            description: 'మండల గ్రామాల సర్పంచులు & పంచాయతీ కార్యదర్శులు',
+          },
+          {
+            id: 'row_govt_leaders',
+            title: '👥 ప్రజాప్రతినిధులు & నేతలు',
+            description: 'ఎంపీ, ఎమ్మెల్సీ తీన్మార్ మల్లన్న & నియోజకవర్గ నేతలు',
+          },
+        ],
+      },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in/government-contacts',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Top 24/7 Immediate Emergency Hotlines
+ */
+export async function sendEmergencyTopHotlines(ctx: FlowCatalogContext) {
+  const hotlinesText =
+    `🚨 *చౌటుప్పల్ 24/7 అత్యవసర హెల్ప్‌లైన్లు* 🚨\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `అత్యవసర సమయాల్లో ఈ క్రింది నంబర్లకు నేరుగా కాల్ చేయవచ్చు:\n\n` +
+    `👮 *పోలీస్ కంట్రోల్ రూమ్:* 100\n` +
+    `🚑 *ప్రభుత్వ అంబులెన్స్ సర్వీస్:* 108\n` +
+    `🚒 *అగ్నిమాపక కేంద్రం (ఫైర్):* 101\n` +
+    `⚡ *విద్యుత్ ఫిర్యాదులు (TSSPDCL):* 1912\n` +
+    `🏥 *ఆరోగ్యశ్రీ మెడికల్ హెల్ప్‌లైన్:* 104\n` +
+    `👩 *మహిళల భద్రత (Sakhi Helpline):* 181\n` +
+    `👶 *చైల్డ్‌లైన్ ఎమర్జెన్సీ సపోర్ట్:* 1098\n` +
+    `🚓 *పోలీస్ షీ టీమ్ (She Team):* +91 94906 17111\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `💡 పోలీస్ SI, తహశీల్దార్, విద్యుత్ AE & మున్సిపల్ అధికారుల వివరాల కోసం క్రింది బటన్ నొక్కండి:`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: hotlinesText,
     buttons: [
-      { id: 'btn_open_directory', title: '📋 మెనూ తెరవండి' },
-      { id: 'btn_social_media', title: '🌐 సోషల్ మీడియా' },
-      { id: 'btn_home', title: '🏠 ప్రధాన మెనూ' },
+      { id: 'btn_govt_directory', title: '📋 ప్రభుత్వ విభాగాలు' },
+      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+      { id: 'btn_home', title: '🏠 హోమ్' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
     territoryId: ctx.territory?.id || 'territory_choutuppal',
     contactName: ctx.senderName,
   }, ctx.store)
+}
+
+/**
+ * Sends verified contacts for a specific government/public category
+ */
+export async function sendGovtCategoryContacts(ctx: FlowCatalogContext, categoryKey: string) {
+  const store = ctx.store || loadStore()
+  const allContacts: any[] = store.governmentContacts || []
+
+  const CATEGORY_TITLES: Record<string, { title: string; icon: string; webParam: string }> = {
+    police: { title: 'పోలీస్ శాఖ & రక్షణ అధికారులు', icon: '👮', webParam: 'police' },
+    revenue_tahsildar: { title: 'రెవెన్యూ, తహశీల్దార్ (MRO) & కలెక్టరేట్', icon: '🌾', webParam: 'revenue_tahsildar' },
+    electricity_utilities: { title: 'విద్యుత్ శాఖ (TSSPDCL) & హెల్ప్‌లైన్', icon: '⚡', webParam: 'electricity_utilities' },
+    ambulance_health: { title: 'ఆసుపత్రులు, వైద్యులు & ఆరోగ్య కేంద్రాలు', icon: '🏥', webParam: 'ambulance_health' },
+    municipal_panchayat: { title: 'మున్సిపల్ కార్యాలయం & అధికారులు', icon: '🏛️', webParam: 'municipal_panchayat' },
+    village_public_offices: { title: 'గ్రామ పంచాయతీ కార్యదర్శులు & సర్పంచులు', icon: '🏡', webParam: 'village_public_offices' },
+    elected_representatives: { title: 'ప్రజాప్రతినిధులు & నాయకులు', icon: '👥', webParam: 'elected_representatives' },
+    fire_rescue: { title: 'అగ్నిమాపక & డిజాస్టర్ రెస్క్యూ', icon: '🚒', webParam: 'fire_rescue' },
+    other_public_services: { title: 'బ్యాంకులు & ఇతర ప్రభుత్వ సేవలు', icon: '🏦', webParam: 'other_public_services' },
+  }
+
+  const meta = CATEGORY_TITLES[categoryKey] || {
+    title: 'అధికారిక ప్రభుత్వ సేవలు',
+    icon: '🏛️',
+    webParam: categoryKey,
+  }
+
+  const matched = allContacts
+    .filter((c) => c.status === 'published' && c.isPublicContact && c.category === categoryKey)
+    .slice(0, 10)
+
+  let body = `${meta.icon} *చౌటుప్పల్ ${meta.title}* 📋\n━━━━━━━━━━━━━━━━━━━━\n`
+
+  if (matched.length === 0) {
+    body += `ఈ విభాగంలో వివరాలు సేకరించబడుతున్నాయి.\n`
+  } else {
+    matched.forEach((c, idx) => {
+      const name = c.name || 'అధికారి'
+      const desig = c.designation ? ` (${c.designation})` : ''
+      const phone = c.phoneNumber || ''
+      body += `${idx + 1}. *${name}*${desig}\n   📞 ${phone}\n`
+    })
+  }
+
+  body += `━━━━━━━━━━━━━━━━━━━━\n`
+  body += `🌐 వెబ్‌సైట్‌లో పూర్తి 120+ నంబర్లు:\n👉 https://choutuppal.in/government-contacts?cat=${meta.webParam}`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: body,
+    buttons: [
+      { id: 'btn_govt_directory', title: '📋 ఇతర విభాగాలు' },
+      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+      { id: 'btn_home', title: '🏠 హోమ్' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Backwards compatibility alias for sendEmergencyCard
+ */
+export async function sendEmergencyCard(ctx: FlowCatalogContext) {
+  return await sendEmergencyMenuCard(ctx)
 }
 
 /**

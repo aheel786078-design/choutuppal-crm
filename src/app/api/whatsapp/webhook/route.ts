@@ -12,6 +12,9 @@ import {
   sendListingWebProfile,
   sendOffersCard,
   sendEmergencyCard,
+  sendEmergencyMenuCard,
+  sendEmergencyTopHotlines,
+  sendGovtCategoryContacts,
   sendSocialMediaCard,
   sendServiceCatalogCard,
   sendVideoAdsCard,
@@ -645,16 +648,128 @@ export async function POST(req: Request) {
         return NextResponse.json(withShadow({ status: 'category_furniture_dispatched' }))
       }
 
+      // Action 6b: Government & Emergency Directory Interactive Handlers
+      if (
+        buttonPayload === 'row_govt_emergency_top' ||
+        lower === '100' ||
+        lower === '108' ||
+        lower === '101' ||
+        lower === '1912' ||
+        lower === '104' ||
+        lower === 'hotline'
+      ) {
+        await sendEmergencyTopHotlines(flowCtx)
+        return NextResponse.json(withShadow({ status: 'emergency_top_hotlines_dispatched' }))
+      }
+
+      if (
+        buttonPayload === 'row_govt_police' ||
+        lower === 'police' ||
+        lower === 'పోలీస్' ||
+        lower.includes('పోలీస్') ||
+        lower.includes('si ') ||
+        lower.includes('ci ') ||
+        lower.includes('she team')
+      ) {
+        await sendGovtCategoryContacts(flowCtx, 'police')
+        return NextResponse.json(withShadow({ status: 'govt_police_dispatched' }))
+      }
+
+      if (
+        buttonPayload === 'row_govt_revenue' ||
+        lower === 'mro' ||
+        lower === 'tahsildar' ||
+        lower === 'revenue' ||
+        lower.includes('తహశీల్దార్') ||
+        lower.includes('రెవెన్యూ') ||
+        lower.includes('collector') ||
+        lower.includes('కలెక్టర్') ||
+        lower.includes('rdo')
+      ) {
+        await sendGovtCategoryContacts(flowCtx, 'revenue_tahsildar')
+        return NextResponse.json(withShadow({ status: 'govt_revenue_dispatched' }))
+      }
+
+      if (
+        buttonPayload === 'row_govt_electricity' ||
+        lower === 'current' ||
+        lower === 'electricity' ||
+        lower === 'tsspdcl' ||
+        lower.includes('కరెంట్') ||
+        lower.includes('విద్యుత్') ||
+        lower.includes('substation') ||
+        lower.includes('ట్రాన్స్‌కో')
+      ) {
+        await sendGovtCategoryContacts(flowCtx, 'electricity_utilities')
+        return NextResponse.json(withShadow({ status: 'govt_electricity_dispatched' }))
+      }
+
+      if (
+        buttonPayload === 'row_govt_health' ||
+        lower === 'hospital' ||
+        lower === 'doctor' ||
+        lower === 'clinic' ||
+        lower.includes('హాస్పిటల్') ||
+        lower.includes('డాక్టర్') ||
+        lower.includes('ఆరోగ్యశ్రీ') ||
+        lower.includes('వైద్యుడు')
+      ) {
+        await sendGovtCategoryContacts(flowCtx, 'ambulance_health')
+        return NextResponse.json(withShadow({ status: 'govt_health_dispatched' }))
+      }
+
+      if (
+        buttonPayload === 'row_govt_municipal' ||
+        lower === 'municipal' ||
+        lower === 'municipality' ||
+        lower.includes('మున్సిపల్') ||
+        lower.includes('కమిషనర్') ||
+        lower.includes('commissioner') ||
+        lower.includes('కౌన్సిలర్')
+      ) {
+        await sendGovtCategoryContacts(flowCtx, 'municipal_panchayat')
+        return NextResponse.json(withShadow({ status: 'govt_municipal_dispatched' }))
+      }
+
+      if (
+        buttonPayload === 'row_govt_villages' ||
+        lower === 'sarpanch' ||
+        lower === 'panchayat' ||
+        lower.includes('సర్పంచ్') ||
+        lower.includes('పంచాయతీ')
+      ) {
+        await sendGovtCategoryContacts(flowCtx, 'village_public_offices')
+        return NextResponse.json(withShadow({ status: 'govt_villages_dispatched' }))
+      }
+
+      if (
+        buttonPayload === 'row_govt_leaders' ||
+        lower === 'mla' ||
+        lower === 'mp' ||
+        lower === 'mlc' ||
+        lower.includes('నాయకులు') ||
+        lower.includes('ప్రజాప్రతినిధి')
+      ) {
+        await sendGovtCategoryContacts(flowCtx, 'elected_representatives')
+        return NextResponse.json(withShadow({ status: 'govt_leaders_dispatched' }))
+      }
+
       if (
         buttonPayload === 'row_cat_emergency' ||
+        buttonPayload === 'btn_govt_directory' ||
+        buttonPayload === 'btn_cat_govt' ||
+        buttonPayload === 'row_cat_govt' ||
+        lower === 'emergency' ||
+        lower === 'govt' ||
+        lower === 'అత్యవసర' ||
+        lower === 'ప్రభుత్వ' ||
+        lower === 'హెల్ప్‌లైన్' ||
         lower.includes('emergency') ||
-        lower.includes('police') ||
-        lower.includes('పోలీస్') ||
-        lower.includes('100') ||
-        lower.includes('108')
+        lower.includes('అత్యవసర') ||
+        lower.includes('ప్రభుత్వ')
       ) {
-        await sendEmergencyCard(flowCtx)
-        return NextResponse.json(withShadow({ status: 'emergency_dispatched' }))
+        await sendEmergencyMenuCard(flowCtx)
+        return NextResponse.json(withShadow({ status: 'emergency_menu_dispatched' }))
       }
 
       // Action 7: Welcome Card (Home, Start, Greetings)
@@ -1084,37 +1199,7 @@ export async function POST(req: Request) {
           existingContact.termsAcceptedAt = new Date().toISOString()
         }
 
-        const govtContactsMsg =
-          `🏛️ *చౌటుప్పల్ అధికారిక ప్రభుత్వ & అత్యవసర నంబర్లు:* 🚨\n\n` +
-          `👮 *పోలీస్ స్టేషన్ (Choutuppal PS):* 08694-273233 / 8712686100\n` +
-          `🏥 *ప్రభుత్వ ఆసుపత్రి (CH Choutuppal):* 9849902345\n` +
-          `🚒 *ఫైర్ స్టేషన్ (Fire Control):* 101 / 9490612101\n` +
-          `⚡ *విద్యుత్ శాఖ ఫిర్యాదులు (TSSPDCL):* 9440813456\n` +
-          `🏛️ *మున్సిపల్ కార్యాలయం (Commissioner):* 9849907654\n` +
-          `🌾 *తహశీల్దార్ కార్యాలయం (MRO):* 9491036852\n` +
-          `🚑 *అంబులెన్స్ సర్వీస్:* 108 / 102\n\n` +
-          `🌐 వెబ్‌సైట్‌లో పూర్తి వెరిఫైడ్ జాబితా: ${townUrl}/government-contacts`
-
-        store.messages.unshift({
-          id: `msg_out_${Date.now()}`,
-          territoryId: territory.id,
-          phone: senderPhone,
-          direction: 'outbound',
-          messageText: govtContactsMsg,
-          status: 'sent',
-          createdAt: new Date().toISOString(),
-        })
-
-        await sendWhatsAppFlowMessage({
-          toPhone: senderPhone,
-          messageText: govtContactsMsg,
-          buttons: [
-            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
-          ],
-          territoryId: territory.id,
-          contactName: senderName,
-        }, store)
-
+        await sendEmergencyMenuCard(flowCtx)
         return NextResponse.json(withShadow({ status: 'govt_contacts_dispatched' }))
       }
 
