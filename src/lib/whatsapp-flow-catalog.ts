@@ -42,7 +42,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-electronics'],
     icon: '📱',
     fallbackCount: 1,
-    imageUrl: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.choutuppal.in/categories/cat-electronics.jpg',
   },
   automobile: {
     key: 'automobile',
@@ -53,7 +53,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-automobile'],
     icon: '🚗',
     fallbackCount: 25,
-    imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=800&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.choutuppal.in/categories/cat-automobile.jpg',
   },
   kirana: {
     key: 'kirana',
@@ -64,7 +64,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-retail'],
     icon: '🛒',
     fallbackCount: 10,
-    imageUrl: 'https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=800&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.choutuppal.in/categories/cat-retail.jpg',
   },
   food: {
     key: 'food',
@@ -75,7 +75,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-food'],
     icon: '🍽️',
     fallbackCount: 8,
-    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.choutuppal.in/categories/cat-food.jpg',
   },
   health: {
     key: 'health',
@@ -86,7 +86,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-health'],
     icon: '🏥',
     fallbackCount: 6,
-    imageUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=800&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.choutuppal.in/categories/cat-health.jpg',
   },
   electrical: {
     key: 'electrical',
@@ -97,7 +97,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-electrical'],
     icon: '⚡',
     fallbackCount: 17,
-    imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.choutuppal.in/categories/cat-electrical.jpg',
   },
   services: {
     key: 'services',
@@ -108,7 +108,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-services'],
     icon: '🔧',
     fallbackCount: 16,
-    imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.choutuppal.in/categories/cat-services.jpg',
   },
   internet: {
     key: 'internet',
@@ -119,7 +119,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-internet'],
     icon: '💻',
     fallbackCount: 27,
-    imageUrl: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.choutuppal.in/categories/cat-internet.jpg',
   },
   furniture: {
     key: 'furniture',
@@ -130,7 +130,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: ['cat-furniture'],
     icon: '🪑',
     fallbackCount: 20,
-    imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.choutuppal.in/categories/cat-furniture.jpg',
   },
   emergency: {
     key: 'emergency',
@@ -141,7 +141,7 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     categoryIds: [],
     icon: '🚨',
     fallbackCount: 6,
-    imageUrl: CHOUTUPPAL_BANNER_URL,
+    imageUrl: 'https://images.choutuppal.in/assets/choutuppal-app-logo.jpg',
   },
 }
 
