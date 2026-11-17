@@ -132,6 +132,39 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     fallbackCount: 20,
     imageUrl: 'https://images.choutuppal.in/categories/cat-furniture.jpg',
   },
+  realestate: {
+    key: 'realestate',
+    rowId: 'row_cat_realestate',
+    title: '🏡 రియల్ ఎస్టేట్ & ప్లాట్లు',
+    teluguName: 'రియల్ ఎస్టేట్ & ప్లాట్లు',
+    descriptionTemplate: '{count} ప్రాపర్టీలు • ఓపెన్ ప్లాట్లు, ఇళ్ళు & పొలాలు',
+    categoryIds: ['cat-realestate'],
+    icon: '🏡',
+    fallbackCount: 2,
+    imageUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=80',
+  },
+  jobs: {
+    key: 'jobs',
+    rowId: 'row_cat_jobs',
+    title: '💼 స్థానిక ఉద్యోగాలు (Jobs)',
+    teluguName: 'స్థానిక ఉద్యోగాలు & జాబ్స్',
+    descriptionTemplate: 'ఉద్యోగ ఖాళీలు, రిక్రూట్‌మెంట్ & అభ్యర్థుల నమోదు',
+    categoryIds: ['cat-jobs'],
+    icon: '💼',
+    fallbackCount: 0,
+    imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=80',
+  },
+  news: {
+    key: 'news',
+    rowId: 'row_cat_news',
+    title: '📰 స్థానిక వార్తలు (News)',
+    teluguName: 'స్థానిక వార్తలు & విశేషాలు',
+    descriptionTemplate: 'చౌటుప్పల్ తాజా విశేషాలు, అప్‌డేట్స్ & వార్త పంపండి',
+    categoryIds: [],
+    icon: '📰',
+    fallbackCount: 1,
+    imageUrl: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop&q=80',
+  },
   emergency: {
     key: 'emergency',
     rowId: 'row_cat_emergency',
@@ -222,6 +255,13 @@ export function filterListingsByCategory(listings: Listing[], categoryKey: strin
              title.includes('ఫర్నిచర్') || title.includes('వుడ్') || title.includes('కార్పెంటర్') ||
              title.includes('సోఫా')
     }
+    if (key === 'realestate' || key === 'plots' || key === 'property' || key === 'land') {
+      return catId === 'cat-realestate' || catName.includes('real estate') || catName.includes('land') ||
+             title.includes('రియల్ ఎస్టేట్') || title.includes('ప్లాట్') || l.type === 'REAL_ESTATE'
+    }
+    if (key === 'jobs' || key === 'job') {
+      return catId === 'cat-jobs' || catName.includes('job') || title.includes('జాబ్') || title.includes('ఉద్యోగ')
+    }
     return false
   })
 }
@@ -279,13 +319,10 @@ export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
 
   const mobilesCount = filterListingsByCategory(allListings, 'mobiles').length || CATEGORY_CONFIGS.mobiles.fallbackCount
   const autoCount = filterListingsByCategory(allListings, 'automobile').length || CATEGORY_CONFIGS.automobile.fallbackCount
-  const kiranaCount = filterListingsByCategory(allListings, 'kirana').length || CATEGORY_CONFIGS.kirana.fallbackCount
-  const foodCount = filterListingsByCategory(allListings, 'food').length || CATEGORY_CONFIGS.food.fallbackCount
-  const healthCount = filterListingsByCategory(allListings, 'health').length || CATEGORY_CONFIGS.health.fallbackCount
 
   const listBody =
     `🔍 *చౌటుప్పల్ లోకల్ సూపర్ మెనూ* 🏢\n` +
-    `షాపులు, నా సేవలు, వోచర్లు, వీడియో అడ్స్ & బిజినెస్ నమోదు వివరాలు క్రింద ఉన్నాయి. కావలసిన ఆప్షన్‌ను క్రింది జాబితా నుండి ఎంచుకోండి:`
+    `రియల్ ఎస్టేట్, ఉద్యోగాలు, స్థానిక వార్తలు, దుకాణాలు & అత్యవసర సేవలు క్రింద ఉన్నాయి. కావలసిన ఆప్షన్‌ను క్రింది జాబితా నుండి ఎంచుకోండి:`
 
   return await sendWhatsAppFlowMessage({
     toPhone: ctx.toPhone,
@@ -293,7 +330,27 @@ export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
     listButtonText: '📋 ఆప్షన్ ఎంచుకోండి',
     listSections: [
       {
-        title: '🛍️ ప్రముఖ వ్యాపారాలు',
+        title: '🌟 ప్రాపర్టీ, జాబ్స్ & న్యూస్',
+        rows: [
+          {
+            id: 'row_cat_realestate',
+            title: '🏡 రియల్ ఎస్టేట్ & ప్లాట్లు',
+            description: 'ఓపెన్ ప్లాట్లు, ఇళ్ళు, పొలాలు & ఉచిత ప్రకటన',
+          },
+          {
+            id: 'row_cat_jobs',
+            title: '💼 స్థానిక ఉద్యోగాలు',
+            description: 'ఉద్యోగ ఖాళీలు, రిక్రూట్‌మెంట్ & అభ్యర్థుల నమోదు',
+          },
+          {
+            id: 'row_cat_news',
+            title: '📰 స్థానిక వార్తలు (News)',
+            description: 'చౌటుప్పల్ తాజా విశేషాలు & వార్త పంపండి',
+          },
+        ],
+      },
+      {
+        title: '🛍️ దుకాణాలు & స్థానిక సేవలు',
         rows: [
           {
             id: 'row_cat_mobiles',
@@ -305,26 +362,6 @@ export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
             title: '🚗 ఆటోమొబైల్ & గ్యారేజ్',
             description: `${autoCount} షాపులు • గ్యారేజ్ & బైక్/కార్ సర్వీసింగ్`,
           },
-          {
-            id: 'row_cat_kirana',
-            title: '🛒 కిరాణా & సూపర్ మార్కెట్',
-            description: `${kiranaCount} షాపులు • నిత్యావసరాలు & జనరల్ స్టోర్స్`,
-          },
-          {
-            id: 'row_cat_food',
-            title: '🍽️ హోటల్స్ & రెస్టారెంట్లు',
-            description: `${foodCount} షాపులు • టిఫిన్స్, బిర్యానీ & భోజనం`,
-          },
-          {
-            id: 'row_cat_health',
-            title: '🏥 ఆస్పత్రులు & మెడికల్స్',
-            description: `${healthCount} షాపులు • క్లినిక్స్, మందులు & టెస్టులు`,
-          },
-        ],
-      },
-      {
-        title: '🔧 నా సేవలు & ఎమర్జెన్సీ',
-        rows: [
           {
             id: 'row_cat_services',
             title: '🔧 నా సేవలు (Services)',
@@ -338,7 +375,7 @@ export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
         ],
       },
       {
-        title: '🎟️ వోచర్లు, వీడియోలు & యాడ్',
+        title: '🎟️ ఆఫర్లు & ప్రకటనలు',
         rows: [
           {
             id: 'row_vouchers_deals',
@@ -352,8 +389,8 @@ export async function sendDirectoryListMenu(ctx: FlowCatalogContext) {
           },
           {
             id: 'row_add_listing',
-            title: '🏪 వ్యాపారాన్ని చేర్చండి',
-            description: 'మీ షాపును యాడ్ చేయండి లేదా వివరాలు అప్‌డేట్ చేయండి',
+            title: '📝 ఉచిత ప్రకటన ఇవ్వండి',
+            description: 'షాప్, ప్రాపర్టీ, జాబ్ లేదా సర్వీస్ యాడ్ ఇవ్వండి',
           },
         ],
       },
@@ -1088,18 +1125,19 @@ export async function sendVideoAdsCard(ctx: FlowCatalogContext) {
  */
 export async function sendAddManageListingCard(ctx: FlowCatalogContext) {
   const addMsg =
-    `🏪 *చౌటుప్పల్ యాప్‌లో మీ వ్యాపారాన్ని చేర్చండి (Add / Manage Listing)* 🚀\n` +
+    `🏪 *చౌటుప్పల్ యాప్‌లో ఉచిత ప్రకటన ఇవ్వండి (Post Free Ad / Listing)* 🚀\n` +
     `━━━━━━━━━━━━━━━━━━━━\n` +
-    `మీ షాప్ లేదా వ్యాపారాన్ని చౌటుప్పల్ యాప్ మరియు వాట్సాప్ డైరెక్టరీలో నమోదు చేసి వేలాది మంది స్థానిక కస్టమర్లను పొందండి!\n\n` +
-    `📝 *నమోదు చేసుకునే విధానం:*\n` +
-    `1️⃣ *ఆన్‌లైన్ ఫారమ్:* క్రింది లింక్ ద్వారా 2 నిమిషాల్లో వివరాలు సబ్మిట్ చేయండి:\n` +
+    `మీ షాప్, రియల్ ఎస్టేట్ ప్రాపర్టీ, ఉద్యోగ ఖాళీ లేదా స్థానిక వార్తను చౌటుప్పల్ యాప్ మరియు వాట్సాప్ డైరెక్టరీలో నమోదు చేయండి!\n\n` +
+    `📢 *మీరు ఏమి పోస్ట్ చేయాలనుకుంటున్నారు?*\n` +
+    `1️⃣ *దుకాణం / వ్యాపారం:* షాప్ పేరు, కేటగిరీ, ఫోన్ & చిరునామా\n` +
+    `2️⃣ *రియల్ ఎస్టేట్:* ప్లాట్ / ఇల్లు / భూమి, విస్తీర్ణం, లొకేషన్ & ధర\n` +
+    `3️⃣ *ఉద్యోగ ఖాళీ:* పోస్ట్ పేరు, అర్హత, జీతం & షాప్/కంపెనీ పేరు\n` +
+    `4️⃣ *స్థానిక వార్త:* వార్త సమాచారం, ప్రదేశం & ఫోటో/వీడియో\n\n` +
+    `🌐 *ఆన్‌లైన్ రిజిస్ట్రేషన్ పోర్టల్:*\n` +
     `👉 https://choutuppal.in/register\n\n` +
-    `2️⃣ *వాట్సాప్ ద్వారా నేరుగా:* ఈ క్రింది వివరాలను ఇక్కడే మెసేజ్ చేయండి:\n` +
-    `• షాప్ పేరు (Business Name)\n` +
-    `• కేటగిరీ (మొబైల్స్, కిరాణా, హోటల్, సర్వీస్ మొదలైనవి)\n` +
-    `• ఫోన్ & వాట్సాప్ నంబర్\n` +
-    `• షాప్ ఫోటోలు & పూర్తి చిరునామా\n\n` +
-    `⭐ *ప్రాధాన్యత ర్యాంకింగ్ & మేనేజ్:* నంబరింగ్ (1, 2, 3...) మరియు వివరాల సవరణ కోసం మా టీమ్ మీకు వెరిఫికేషన్ కాల్ చేస్తుంది.\n` +
+    `💬 *లేదా ఇక్కడే వివరాలను టైప్ చేసి పంపండి!*\n` +
+    `మా అడ్మిన్ టీమ్ వివరాలను పరిశీలించి ఉచితంగా లైవ్ చేస్తుంది.\n\n` +
+    `📞 అడ్మిన్ డెస్క్: 9494348175 / 9441348175\n` +
     `━━━━━━━━━━━━━━━━━━━━\n` +
     `💡 క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:`
 
@@ -1108,11 +1146,267 @@ export async function sendAddManageListingCard(ctx: FlowCatalogContext) {
     messageText: addMsg,
     imageUrl: CHOUTUPPAL_BANNER_URL,
     buttons: [
+      { id: 'btn_post_real_estate', title: '🏡 ప్రాపర్టీ అడ్' },
+      { id: 'btn_post_job_ad', title: '💼 జాబ్ ప్రకటన' },
+      { id: 'btn_submit_news', title: '📰 వార్త పంపండి' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in/register',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 13: Real Estate & Open Plots Hub
+ * Zero dummy data, shows real verified listings from store, gives direct ad submission.
+ */
+export async function sendRealEstateHubCard(ctx: FlowCatalogContext) {
+  const store = ctx.store || loadStore()
+  const allListings = await getCachedListings(ctx.territory?.id, store)
+  const reListings = filterListingsByCategory(allListings, 'realestate')
+    .filter((l) => l.id !== 'lst_2') // Exclude initial dummy mock listing
+
+  let body =
+    `🏡 *చౌటుప్పల్ రియల్ ఎస్టేట్ & ఓపెన్ ప్లాట్లు (Real Estate)* 📍\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `మన చౌటుప్పల్ టౌన్, NH-65 హైదరాబాద్-విజయవాడ హైవే పరిసరాల్లోని DTCP/HMDA ఓపెన్ ప్లాట్లు, విల్లాలు, వ్యవసాయ భూములు మరియు ఇళ్ల సమాచారం.\n\n` +
+    `🚫 *నో డమ్మీ డేటా (100% Genuine & Verified):*\n` +
+    `మేము ఎటువంటి కల్పిత లేదా డమ్మీ ప్రకటనలను ఉంచము. కేవలం స్థానిక యజమానులు మరియు ధృవీకరించిన కన్సల్టెంట్ల వివరాలు మాత్రమే ఇక్కడ లభిస్తాయి.\n\n`
+
+  if (reListings.length > 0) {
+    body += `📊 *ధృవీకరించబడిన స్థానిక ఏజెంట్లు & ఆఫీసులు:*\n`
+    reListings.slice(0, 3).forEach((l, i) => {
+      const cleanPhone = (l.phone || '').replace(/\D/g, '')
+      body += `${i + 1}. *${l.title.trim()}*\n   📍 ${l.address || 'చౌటుప్పల్'}\n   📞 ${cleanPhone}\n`
+    })
+    body += `\n`
+  }
+
+  body +=
+    `📢 *మీ ప్లాట్ లేదా ఇల్లు అమ్మాలనుకుంటున్నారా?*\n` +
+    `మీ ప్రాపర్టీ వివరాలను ఇక్కడే వాట్సాప్‌లో పంపించండి. మా టీమ్ పరిశీలించి చౌటుప్పల్ యాప్ మరియు వాట్సాప్ ఛానల్ లో ఉచితంగా ప్రచురిస్తుంది!\n\n` +
+    `🌐 వెబ్‌సైట్ రియల్ ఎస్టేట్ పోర్టల్:\n` +
+    `👉 https://choutuppal.in/real-estate\n\n` +
+    `👇 ప్రాపర్టీ ప్రకటన ఇవ్వడానికి క్రింది బటన్ నొక్కండి:`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: body,
+    imageUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=80',
+    buttons: [
+      { id: 'btn_post_real_estate', title: '📝 ప్రాపర్టీ అడ్ ఇవ్వండి' },
       { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
-      { id: 'btn_social_media', title: '🌐 సోషల్ మీడియా' },
+      { id: 'btn_home', title: '🏠 హోమ్' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in/real-estate',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, store)
+}
+
+/**
+ * Screen 13b: Real Estate Ad Submission Flow (Details Collection)
+ */
+export async function sendRealEstateAdSubmissionFlow(ctx: FlowCatalogContext) {
+  const submitText =
+    `📝 *రియల్ ఎస్టేట్ ఉచిత ప్రకటన నమోదు (Post Property Ad)* 🏡\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `మీ ప్లాట్, ఇల్లు లేదా వ్యవసాయ భూమిని ఉచితంగా పోస్ట్ చేయడానికి ఈ క్రింది వివరాలను ఇక్కడే టైప్ చేసి పంపండి:\n\n` +
+    `1️⃣ *ప్రాపర్టీ రకం:* (ఓపెన్ ప్లాట్ / ఇల్లు / వ్యవసాయ భూమి / కమర్షియల్)\n` +
+    `2️⃣ *లొకేషన్ / ప్రాంతం:* (కాలనీ / గ్రామం / NH-65 దగ్గర)\n` +
+    `3️⃣ *విస్తీర్ణం:* (గజాలు / గుంటలు / ఎకరాలు)\n` +
+    `4️⃣ *ఆశించే ధర:* (గజానికి లేదా మొత్తం ధర)\n` +
+    `5️⃣ *ఫేసింగ్ & రోడ్డు:* (ఉదా: తూర్పు ఫేసింగ్, 33 అడుగుల రోడ్డు)\n` +
+    `6️⃣ *యజమాని పేరు:*\n` +
+    `7️⃣ *సంప్రదించాల్సిన ఫోన్ నంబర్:*\n` +
+    `8️⃣ *ఫోటోలు:* (ప్రాపర్టీ ఫోటోలు ఉంటే ఇక్కడే వాట్సాప్‌లో పంపండి)\n\n` +
+    `⚠️ *గమనిక:* వివరాలు పంపిన వెంటనే మా అడ్మిన్ టీమ్ పరిశీలించి చౌటుప్పల్ యాప్ & వాట్సాప్ ఛానల్ లో లైవ్ చేస్తుంది.\n\n` +
+    `📢 అధికారిక వాట్సాప్ ఛానల్:\n` +
+    `👉 https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: submitText,
+    buttons: [
+      { id: 'row_cat_realestate', title: '🏡 రియల్ ఎస్టేట్' },
+      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+      { id: 'btn_home', title: '🏠 హోమ్' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in/real-estate',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 14: Jobs & Vacancies Hub
+ * Zero fake vacancies, 100% genuine local recruitment & candidate registration.
+ */
+export async function sendJobsHubCard(ctx: FlowCatalogContext) {
+  const store = ctx.store || loadStore()
+
+  const body =
+    `💼 *చౌటుప్పల్ స్థానిక ఉద్యోగాలు & జాబ్స్ (Local Jobs & Hiring)* 🚀\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `మన చౌటుప్పల్ టౌన్, ఇండస్ట్రియల్ ఏరియా (ఫార్మా, రసాయన పరిశ్రమలు), వాణిజ్య దుకాణాలు మరియు ఆఫీసులలో స్థానిక ఉద్యోగ ఖాళీల వేదిక.\n\n` +
+    `🚫 *నో డమ్మీ డేటా (100% Genuine Jobs):*\n` +
+    `మేము ఎటువంటి నకిలీ లేదా కల్పిత ఉద్యోగాలను ఉంచము. స్థానిక యజమానులు మరియు రిక్రూటర్లు నేరుగా నమోదు చేసిన అసలైన ఖాళీలను మాత్రమే అందిస్తాము.\n\n` +
+    `📢 *మీ షాప్ లేదా కంపెనీలో స్టాఫ్ కావాలా?*\n` +
+    `మీ ఉద్యోగ ప్రకటనను ఇక్కడ ఉచితంగా నమోదు చేయండి, వేలాది మంది స్థానిక యువతకు క్షణాల్లో చేరుతుంది!\n\n` +
+    `👨‍💼 *మీకు ఉద్యోగం కావాలా?*\n` +
+    `మీ విద్యార్హత మరియు అనుభవాన్ని నమోదు చేసుకోండి. సరిపడే ఉద్యోగం రాగానే మా టీమ్ మీకు సమాచారం అందిస్తుంది.\n\n` +
+    `👇 మీ ఆప్షన్‌ను క్రింది బటన్లలో ఎంచుకోండి:`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: body,
+    imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=80',
+    buttons: [
+      { id: 'btn_post_job_ad', title: '📢 జాబ్ ప్రకటన ఇవ్వండి' },
+      { id: 'btn_job_seeker', title: '👨‍💼 ఉద్యోగం కావాలి' },
+      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in/jobs',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, store)
+}
+
+/**
+ * Screen 14b: Employer Job Vacancy Ad Submission Flow
+ */
+export async function sendJobAdSubmissionFlow(ctx: FlowCatalogContext) {
+  const jobPostText =
+    `📢 *ఉద్యోగ ఖాళీ ప్రకటన నమోదు (Post Job Vacancy)* 💼\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `మీ దుకాణం, ఫ్యాక్టరీ లేదా ఆఫీసులో పనివారు కావాలంటే క్రింది వివరాలను ఇక్కడే టైప్ చేసి పంపండి:\n\n` +
+    `1️⃣ *ఉద్యోగం పేరు / పోస్ట్:* (సేల్స్ బాయ్/గర్ల్, క్యాషియర్, డ్రైవర్, ఆఫీస్ బాయ్, హెల్పర్, టెక్నీషియన్ మొదలైనవి)\n` +
+    `2️⃣ *కంపెనీ / షాప్ పేరు:*\n` +
+    `3️⃣ *పని చేయాల్సిన ప్రదేశం:* (చౌటుప్పల్ టౌన్ / ఇండస్ట్రియల్ ఏరియా / పరిసర గ్రామాలు)\n` +
+    `4️⃣ *అర్హత & అనుభవం:* (10వ తరగతి / ఇంటర్ / డిగ్రీ / అనుభవం లేదా ఫ్రెషర్)\n` +
+    `5️⃣ *నెల జీతం (Salary):* (ఉదా: ₹10,000 – ₹20,000)\n` +
+    `6️⃣ *డ్యూటీ వేళలు:* (ఉదా: ఉదయం 9:00 AM – రాత్రి 8:00 PM)\n` +
+    `7️⃣ *సంప్రదించాల్సిన వ్యక్తి పేరు & ఫోన్ నంబర్:*\n\n` +
+    `💡 వివరాలు అందిన వెంటనే మా అడ్మిన్ టీమ్ పరిశీలించి ఉచితంగా చౌటుప్పల్ యాప్ మరియు వాట్సాప్ ఛానల్ లో ప్రకటిస్తుంది.\n` +
+    `📞 రిక్రూట్‌మెంట్ డెస్క్: 9441348175`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: jobPostText,
+    buttons: [
+      { id: 'btn_job_seeker', title: '👨‍💼 ఉద్యోగం కావాలి' },
+      { id: 'row_cat_jobs', title: '💼 జాబ్స్ మెనూ' },
       { id: 'btn_home', title: '🏠 హోమ్' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 14c: Job Seeker Profile Submission Flow
+ */
+export async function sendJobSeekerSubmissionFlow(ctx: FlowCatalogContext) {
+  const candidateText =
+    `👨‍💼 *ఉద్యోగం కోసం అభ్యర్థి నమోదు (Job Seeker Profile)* 📝\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `చౌటుప్పల్ మరియు పరిసర ప్రాంతాలలో ఉద్యోగం కోసం ఎదురుచూస్తున్నట్లయితే మీ వివరాలు పంపండి:\n\n` +
+    `1️⃣ *మీ పూర్తి పేరు:*\n` +
+    `2️⃣ *చదువు / విద్యార్హత:*\n` +
+    `3️⃣ *మీరు చేయగల పని / విభాగం:* (షాప్ సేల్స్, డ్రైవింగ్, కంప్యూటర్ ఆపరేటర్, పరిశ్రమల్లో వర్క్, సెక్యూరిటీ మొదలైనవి)\n` +
+    `4️⃣ *గత పని అనుభవం (ఉంటే):*\n` +
+    `5️⃣ *మీ నివాస ప్రాంతం / గ్రామం:*\n` +
+    `6️⃣ *మీ మొబైల్ నంబర్:*\n\n` +
+    `💡 స్థానిక దుకాణాలు లేదా కంపెనీల్లో సరిపడే ఉద్యోగ ఖాళీ ఏర్పడగానే మా టీమ్ మీకు నేరుగా కాల్ చేసి తెలియజేస్తుంది.\n` +
+    `📞 హెల్ప్‌లైన్: 9441348175`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: candidateText,
+    buttons: [
+      { id: 'btn_post_job_ad', title: '📢 జాబ్ ప్రకటన ఇవ్వండి' },
+      { id: 'row_cat_jobs', title: '💼 జాబ్స్ మెనూ' },
+      { id: 'btn_home', title: '🏠 హోమ్' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, ctx.store)
+}
+
+/**
+ * Screen 15: Local News & Updates Hub
+ * Displays real published news from store.news, zero fake news, enables citizen reporting.
+ */
+export async function sendNewsHubCard(ctx: FlowCatalogContext) {
+  const store = ctx.store || loadStore()
+  const publishedNews: any[] = (store.news || []).filter((n: any) => n.isPublished !== false)
+
+  let body =
+    `📰 *చౌటుప్పల్ స్థానిక వార్తలు (Choutuppal Local News)* 📢\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `మన చౌటుప్పల్ పట్టణం మరియు మండల గ్రామాల తాజా సమాచారం, ప్రభుత్వ ప్రకటనలు, అభివృద్ధి పనులు మరియు ప్రజా సమస్యల వేదిక.\n\n`
+
+  if (publishedNews.length > 0) {
+    body += `📌 *తాజా వార్తా ముఖ్యాంశాలు:*\n`
+    publishedNews.slice(0, 3).forEach((n, idx) => {
+      const title = n.teluguTitle || n.title
+      const summary = (n.summary || '').slice(0, 80)
+      body += `${idx + 1}️⃣ *${title}*\n   ${summary ? summary + '...' : ''}\n`
+    })
+    body += `\n`
+  }
+
+  body +=
+    `🚫 *నో ఫేక్ న్యూస్ (100% Ground Verified):*\n` +
+    `మేము పుకార్లను ప్రచురించము. క్షేత్రస్థాయిలో ధృవీకరించిన వార్తలను మాత్రమే అందిస్తాము.\n\n` +
+    `📢 *మీ గ్రామంలో ఏదైనా వార్త లేదా సమస్య ఉందా?*\n` +
+    `ఈవెంట్స్, రోడ్ల సమస్యలు లేదా ముఖ్యమైన విశేషాలను ఫోటో/వీడియోతో పంపించండి. మేము చౌటుప్పల్ యాప్‌లో ప్రచురిస్తాము!\n\n` +
+    `🌐 వెబ్‌సైట్ పూర్తి వార్తలు: https://choutuppal.in/news\n\n` +
+    `👇 వార్త పంపడానికి క్రింది బటన్ నొక్కండి:`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: body,
+    imageUrl: publishedNews[0]?.coverImage || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop&q=80',
+    buttons: [
+      { id: 'btn_submit_news', title: '📢 వార్త పంపండి' },
+      { id: 'btn_social_media', title: '🌐 సోషల్ మీడియా' },
+      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in/news',
+    territoryId: ctx.territory?.id || 'territory_choutuppal',
+    contactName: ctx.senderName,
+  }, store)
+}
+
+/**
+ * Screen 15b: Citizen Local News / Public Incident Submission Flow
+ */
+export async function sendNewsSubmissionFlow(ctx: FlowCatalogContext) {
+  const newsSubmitText =
+    `📢 *స్థానిక వార్త / సమస్య నమోదు ఫారం (Send Local News)* 📰\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `మీ గ్రామం లేదా కాలనీలోని వార్త, ప్రజా సమస్య లేదా ఈవెంట్ వివరాలను ఇక్కడ మెసేజ్ చేయండి:\n\n` +
+    `1️⃣ *వార్త ముఖ్యాంశం (Headline):*\n` +
+    `2️⃣ *గ్రామం / కాలనీ / ప్రదేశం:*\n` +
+    `3️⃣ *పూర్తి వివరాలు (సమస్య ఏమిటి / ఎప్పుడు జరిగింది):*\n` +
+    `4️⃣ *ఫోటో లేదా వీడియో:* (ఫోటో లేదా చిన్న వీడియోను ఇక్కడే వాట్సాప్‌లో పంపండి)\n` +
+    `5️⃣ *వార్త పంపిన వారి పేరు & ఊరు:*\n\n` +
+    `⚖️ *నిబంధనలు:* దయచేసి బాధ్యతాయుతమైన నిజమైన సమాచారాన్ని మాత్రమే పంపండి. మా ఎడిటోరియల్ డెస్క్ పరిశీలించి చౌటుప్పల్ యాప్ మరియు వాట్సాప్ ఛానల్ లో ప్రచురిస్తుంది.\n\n` +
+    `📢 అధికారిక వాట్సాప్ ఛానల్:\n` +
+    `👉 https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a`
+
+  return await sendWhatsAppFlowMessage({
+    toPhone: ctx.toPhone,
+    messageText: newsSubmitText,
+    buttons: [
+      { id: 'row_cat_news', title: '📰 వార్తలు చూడండి' },
+      { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+      { id: 'btn_home', title: '🏠 హోమ్' },
+    ],
+    footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in/news',
     territoryId: ctx.territory?.id || 'territory_choutuppal',
     contactName: ctx.senderName,
   }, ctx.store)

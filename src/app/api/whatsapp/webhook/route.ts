@@ -21,6 +21,13 @@ import {
   sendServiceCatalogCard,
   sendVideoAdsCard,
   sendAddManageListingCard,
+  sendRealEstateHubCard,
+  sendRealEstateAdSubmissionFlow,
+  sendJobsHubCard,
+  sendJobAdSubmissionFlow,
+  sendJobSeekerSubmissionFlow,
+  sendNewsHubCard,
+  sendNewsSubmissionFlow,
   getCachedListings,
   type FlowCatalogContext,
 } from '@/lib/whatsapp-flow-catalog'
@@ -204,8 +211,17 @@ export async function POST(req: Request) {
         message.text?.body ||
         message.interactive?.button_reply?.title ||
         message.interactive?.list_reply?.title ||
+        message.image?.caption ||
+        message.video?.caption ||
         ''
       ).trim()
+
+      const incomingMediaUrl =
+        message.image?.link ||
+        message.video?.link ||
+        (message.image?.id ? `whatsapp_media_${message.image.id}` : '') ||
+        (message.video?.id ? `whatsapp_media_${message.video.id}` : '') ||
+        ''
 
       const buttonPayload = message.interactive?.button_reply?.id || message.interactive?.list_reply?.id || undefined
       const buttonTitle = message.interactive?.button_reply?.title || message.interactive?.list_reply?.title || undefined
@@ -488,6 +504,99 @@ export async function POST(req: Request) {
       ) {
         await sendAddManageListingCard(flowCtx)
         return NextResponse.json(withShadow({ status: 'add_listing_dispatched' }))
+      }
+
+      // Action 3e: Real Estate & Open Plots Hub
+      if (
+        buttonPayload === 'row_cat_realestate' ||
+        buttonPayload === 'btn_cat_realestate' ||
+        buttonPayload === 'btn_real_estate' ||
+        lower === 'real estate' ||
+        lower === 'plots' ||
+        lower === 'plot' ||
+        lower === 'రియల్ ఎస్టేట్' ||
+        lower === 'ప్లాట్లు' ||
+        lower === 'ప్లాట్'
+      ) {
+        await sendRealEstateHubCard(flowCtx)
+        return NextResponse.json(withShadow({ status: 'real_estate_hub_dispatched' }))
+      }
+
+      // Action 3f: Real Estate Ad Submission Flow
+      if (
+        buttonPayload === 'btn_post_real_estate' ||
+        buttonPayload === 'row_post_real_estate' ||
+        lower === 'post property' ||
+        lower === 'sell plot' ||
+        lower === 'ప్లాట్ అడ్' ||
+        lower === 'ప్రాపర్టీ అడ్'
+      ) {
+        await sendRealEstateAdSubmissionFlow(flowCtx)
+        return NextResponse.json(withShadow({ status: 'real_estate_ad_flow_dispatched' }))
+      }
+
+      // Action 3g: Local Jobs & Vacancies Hub
+      if (
+        buttonPayload === 'row_cat_jobs' ||
+        buttonPayload === 'btn_cat_jobs' ||
+        buttonPayload === 'btn_jobs' ||
+        lower === 'jobs' ||
+        lower === 'job' ||
+        lower === 'ఉద్యోగాలు' ||
+        lower === 'ఉద్యోగం' ||
+        lower === 'vacancy' ||
+        lower === 'recruitment'
+      ) {
+        await sendJobsHubCard(flowCtx)
+        return NextResponse.json(withShadow({ status: 'jobs_hub_dispatched' }))
+      }
+
+      // Action 3h: Job Ad Submission Flow (Recruiter)
+      if (
+        buttonPayload === 'btn_post_job_ad' ||
+        buttonPayload === 'row_post_job' ||
+        lower === 'post job' ||
+        lower === 'జాబ్ అడ్' ||
+        lower === 'ఉద్యోగ ప్రకటన'
+      ) {
+        await sendJobAdSubmissionFlow(flowCtx)
+        return NextResponse.json(withShadow({ status: 'job_ad_flow_dispatched' }))
+      }
+
+      // Action 3i: Job Seeker Profile Submission Flow
+      if (
+        buttonPayload === 'btn_job_seeker' ||
+        lower === 'job seeker' ||
+        lower === 'ఉద్యోగం కావాలి' ||
+        lower === 'job kavali'
+      ) {
+        await sendJobSeekerSubmissionFlow(flowCtx)
+        return NextResponse.json(withShadow({ status: 'job_seeker_flow_dispatched' }))
+      }
+
+      // Action 3j: Local News & Updates Hub
+      if (
+        buttonPayload === 'row_cat_news' ||
+        buttonPayload === 'btn_cat_news' ||
+        buttonPayload === 'btn_news_hub' ||
+        lower === 'news' ||
+        lower === 'వార్తలు' ||
+        lower === 'వార్త'
+      ) {
+        await sendNewsHubCard(flowCtx)
+        return NextResponse.json(withShadow({ status: 'news_hub_dispatched' }))
+      }
+
+      // Action 3k: News Submission Flow
+      if (
+        buttonPayload === 'btn_submit_news' ||
+        buttonPayload === 'row_submit_news' ||
+        lower === 'send news' ||
+        lower === 'వార్త పంపండి' ||
+        lower === 'రిపోర్ట్ వార్త'
+      ) {
+        await sendNewsSubmissionFlow(flowCtx)
+        return NextResponse.json(withShadow({ status: 'news_submission_flow_dispatched' }))
       }
 
       // Action 3b: Official Social Media & Community Hub
@@ -2032,6 +2141,266 @@ export async function POST(req: Request) {
         return NextResponse.json(withShadow({ status: 'listing_queued_for_approval', approvalId: newApprovalId, territoryId: territory.id }))
       }
 
+      // 4.1. REAL ESTATE AD SUBMISSION VIA WHATSAPP -> INSERTS INTO APPROVAL QUEUE
+      const isRealEstateAdSubmission =
+        lower.includes('ప్రాపర్టీ అడ్') ||
+        lower.includes('ప్లాట్ అడ్') ||
+        lower.includes('post property') ||
+        lower.includes('sell plot') ||
+        lower.includes('property ad') ||
+        (
+          (lower.includes('ప్లాట్') || lower.includes('plot') || lower.includes('భూమి') || lower.includes('ఎకరం') || lower.includes('acres') || lower.includes('గజాలు') || lower.includes('sq.yd') || lower.includes('sq yds') || lower.includes('గుంటలు')) &&
+          (lower.includes('అమ్మకం') || lower.includes('sale') || lower.includes('ధర') || lower.includes('price') || lower.includes('లొకేషన్') || lower.includes('ఫేసింగ్') || lower.includes('యజమాని') || incomingText.length > 35)
+        )
+
+      if (isRealEstateAdSubmission) {
+        const newApprovalId = `appr_re_${Date.now()}`
+        store.approvals.unshift({
+          id: newApprovalId,
+          territoryId: territory.id,
+          type: 'REAL_ESTATE_AD',
+          title: `Real Estate Ad from ${senderName} (${senderPhone})`,
+          submitterName: senderName,
+          submitterPhone: senderPhone,
+          status: 'pending',
+          mediaUrl: incomingMediaUrl || '',
+          data: {
+            title: `Real Estate Submission from ${senderName}`,
+            category: 'Real Estate & Plots',
+            address: `${territoryName} Mandal`,
+            phone: senderPhone,
+            whatsapp: senderPhone,
+            description: incomingText,
+            rawText: incomingText,
+          },
+          submittedAt: new Date().toISOString(),
+        })
+
+        const reAckMsg =
+          `🏡 *ధన్యవాదాలు ${senderName} గారు!* 🙏\n\n` +
+          `మీ రియల్ ఎస్టేట్ ప్రాపర్టీ ప్రకటన వివరాలు మా అడ్మిన్ టీమ్‌కు అందాయి. మా రియల్ ఎస్టేట్ డెస్క్ ఈ వివరాలను పరిశీలించి (24 గంటలలోపు) చౌటుప్పల్ యాప్ మరియు వాట్సాప్ బాట్‌లో ఉచితంగా లైవ్ చేస్తుంది.\n\n` +
+          `📞 ప్రాపర్టీ డెస్క్: 9494348175\n` +
+          `🌐 రియల్ ఎస్టేట్ పోర్టల్: https://choutuppal.in/real-estate`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: reAckMsg,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: reAckMsg,
+          contactName: senderName,
+          territoryId: territory.id,
+          buttons: [
+            { id: 'row_cat_realestate', title: '🏡 రియల్ ఎస్టేట్' },
+            { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+            { id: 'btn_home', title: '🏠 హోమ్' },
+          ],
+        }, store)
+
+        return NextResponse.json(withShadow({ status: 'real_estate_ad_queued_for_approval', approvalId: newApprovalId }))
+      }
+
+      // 4.2. JOB VACANCY AD SUBMISSION VIA WHATSAPP -> INSERTS INTO APPROVAL QUEUE
+      const isJobAdSubmission =
+        (lower.includes('జీతం') ||
+          lower.includes('salary') ||
+          lower.includes('వేతనం') ||
+          lower.includes('స్టాఫ్ కావాలి') ||
+          lower.includes('పనివారు కావాలి') ||
+          lower.includes('ఉద్యోగులు కావాలి') ||
+          lower.includes('job vacancy') ||
+          lower.includes('post job') ||
+          lower.includes('జాబ్ అడ్') ||
+          lower.includes('ఉద్యోగ ప్రకటన')) &&
+        (lower.includes('కంపెనీ') || lower.includes('షాప్') || lower.includes('అర్హత') || lower.includes('డ్యూటీ') || lower.includes('contact') || lower.includes('నంబర్') || incomingText.length > 25)
+
+      if (isJobAdSubmission) {
+        const newApprovalId = `appr_job_${Date.now()}`
+        store.approvals.unshift({
+          id: newApprovalId,
+          territoryId: territory.id,
+          type: 'JOB_AD',
+          title: `Job Vacancy Ad from ${senderName} (${senderPhone})`,
+          submitterName: senderName,
+          submitterPhone: senderPhone,
+          status: 'pending',
+          mediaUrl: incomingMediaUrl || '',
+          data: {
+            title: `Job Vacancy from ${senderName}`,
+            category: 'Jobs & Vacancies',
+            address: `${territoryName} Mandal`,
+            phone: senderPhone,
+            whatsapp: senderPhone,
+            description: incomingText,
+            rawText: incomingText,
+          },
+          submittedAt: new Date().toISOString(),
+        })
+
+        const jobAckMsg =
+          `💼 *ధన్యవాదాలు ${senderName} గారు!* 🙏\n\n` +
+          `మీ ఉద్యోగ ఖాళీ ప్రకటన వివరాలు మా రిక్రూట్‌మెంట్ డెస్క్‌కు అందాయి. మా అడ్మిన్ టీమ్ వివరాలను పరిశీలించి వెంటనే చౌటుప్పల్ యాప్ మరియు వాట్సాప్ ఛానల్‌లో స్థానిక అభ్యర్థులకు ఉచితంగా ప్రచురిస్తుంది.\n\n` +
+          `📞 రిక్రూట్‌మెంట్ డెస్క్: 9441348175\n` +
+          `🌐 జాబ్స్ పోర్టల్: https://choutuppal.in`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: jobAckMsg,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: jobAckMsg,
+          contactName: senderName,
+          territoryId: territory.id,
+          buttons: [
+            { id: 'row_cat_jobs', title: '💼 జాబ్స్ మెనూ' },
+            { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+            { id: 'btn_home', title: '🏠 హోమ్' },
+          ],
+        }, store)
+
+        return NextResponse.json(withShadow({ status: 'job_ad_queued_for_approval', approvalId: newApprovalId }))
+      }
+
+      // 4.3. JOB SEEKER PROFILE REGISTRATION VIA WHATSAPP -> INSERTS INTO APPROVAL QUEUE
+      const isJobSeekerSubmission =
+        lower.includes('ఉద్యోగం కావాలి') ||
+        lower.includes('job kavali') ||
+        lower.includes('looking for job') ||
+        lower.includes('job seeker') ||
+        (lower.includes('చదువు') && lower.includes('అనుభవం') && incomingText.length > 20)
+
+      if (isJobSeekerSubmission) {
+        const newApprovalId = `appr_seeker_${Date.now()}`
+        store.approvals.unshift({
+          id: newApprovalId,
+          territoryId: territory.id,
+          type: 'JOB_SEEKER',
+          title: `Job Seeker Profile: ${senderName} (${senderPhone})`,
+          submitterName: senderName,
+          submitterPhone: senderPhone,
+          status: 'pending',
+          data: {
+            title: `Job Seeker Profile: ${senderName}`,
+            category: 'Job Seeker',
+            phone: senderPhone,
+            whatsapp: senderPhone,
+            description: incomingText,
+            rawText: incomingText,
+          },
+          submittedAt: new Date().toISOString(),
+        })
+
+        const seekerAckMsg =
+          `👨‍💼 *ధన్యవాదాలు ${senderName} గారు!* 🙏\n\n` +
+          `మీ వివరాలు చౌటుప్పల్ జాబ్ సీకర్ డేటాబేస్‌లో విజయవంతంగా నమోదు చేయబడ్డాయి. స్థానిక షాపులు, పరిశ్రమలు లేదా ఆఫీసులలో మీ అర్హతకు సరిపడే ఉద్యోగ ఖాళీ రాగానే మా టీమ్ మీకు నేరుగా కాల్ చేసి తెలియజేస్తుంది.\n\n` +
+          `📞 హెల్ప్‌లైన్: 9441348175\n` +
+          `🌐 జాబ్స్ పోర్టల్: https://choutuppal.in`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: seekerAckMsg,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: seekerAckMsg,
+          contactName: senderName,
+          territoryId: territory.id,
+          buttons: [
+            { id: 'row_cat_jobs', title: '💼 జాబ్స్ మెనూ' },
+            { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+            { id: 'btn_home', title: '🏠 హోమ్' },
+          ],
+        }, store)
+
+        return NextResponse.json(withShadow({ status: 'job_seeker_queued', approvalId: newApprovalId }))
+      }
+
+      // 4.4. LOCAL NEWS SUBMISSION VIA WHATSAPP -> INSERTS INTO APPROVAL QUEUE
+      const isNewsSubmission =
+        lower.includes('మా ఊరిలో ఒక ముఖ్యమైన వార్త') ||
+        lower.includes('వార్త పంపండి') ||
+        lower.includes('send news') ||
+        lower.includes('report news') ||
+        lower.includes('న్యూస్ అప్డేట్') ||
+        (
+          (lower.includes('వార్త') || lower.includes('న్యూస్') || lower.includes('సమస్య') || lower.includes('ప్రమాదం') || lower.includes('ఘటన')) &&
+          (lower.includes('గ్రామం') || lower.includes('కాలనీ') || lower.includes('జరిగింది') || incomingText.length > 25)
+        )
+
+      if (isNewsSubmission) {
+        const newApprovalId = `appr_news_${Date.now()}`
+        store.approvals.unshift({
+          id: newApprovalId,
+          territoryId: territory.id,
+          type: 'LOCAL_NEWS',
+          title: `Local News Submission from ${senderName} (${senderPhone})`,
+          submitterName: senderName,
+          submitterPhone: senderPhone,
+          status: 'pending',
+          mediaUrl: incomingMediaUrl || '',
+          data: {
+            title: `News submission from ${senderName}`,
+            category: 'Local News',
+            address: `${territoryName} Mandal`,
+            phone: senderPhone,
+            whatsapp: senderPhone,
+            description: incomingText,
+            rawText: incomingText,
+          },
+          submittedAt: new Date().toISOString(),
+        })
+
+        const newsAckMsg =
+          `📰 *ధన్యవాదాలు ${senderName} గారు!* 🙏\n\n` +
+          `మీరు పంపిన స్థానిక వార్త/సమాచారం మా ఎడిటోరియల్ డెస్క్‌కు చేరింది. మా టీమ్ ఈ వివరాలను ధృవీకరించి చౌటుప్పల్ యాప్ మరియు వాట్సాప్ ఛానల్‌లో ప్రచురిస్తుంది.\n\n` +
+          `🌐 లైవ్ వార్తలు: https://choutuppal.in/news\n` +
+          `📢 అధికారిక వాట్సాప్ ఛానల్: https://whatsapp.com/channel/0029VbD28mkGpLHOk8wrLE1a`
+
+        store.messages.unshift({
+          id: `msg_out_${Date.now()}`,
+          territoryId: territory.id,
+          phone: senderPhone,
+          direction: 'outbound',
+          messageText: newsAckMsg,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: newsAckMsg,
+          contactName: senderName,
+          territoryId: territory.id,
+          buttons: [
+            { id: 'row_cat_news', title: '📰 వార్తలు చూడండి' },
+            { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+            { id: 'btn_home', title: '🏠 హోమ్' },
+          ],
+        }, store)
+
+        return NextResponse.json(withShadow({ status: 'local_news_queued_for_approval', approvalId: newApprovalId }))
+      }
+
       // 5. FRANCHISE APPLICATION VIA WHATSAPP
       if (lower.includes('franchise') || lower.includes('ఫ్రాంచైజీ')) {
         store.approvals.unshift({
@@ -2196,21 +2565,7 @@ export async function POST(req: Request) {
 
       // E. Real Estate Inquiry
       if (lower.includes('real estate') || lower.includes('plot') || lower.includes('ప్లాట్')) {
-        const realEstateReply =
-          `🏡 *${territoryName} రియల్ ఎస్టేట్ & ఓపెన్ ప్లాట్లు*\n\n` +
-          `నమస్కారం! ${territoryName} ప్రాంతంలో DTCP/HMDA వెంచర్లు మరియు అగ్రికల్చర్ ల్యాండ్స్ వివరాలు:\n` +
-          `• 100% క్లియర్ టైటిల్\n` +
-          `• స్పాట్ రిజిస్ట్రేషన్ & బ్యాంక్ లోన్ సదుపాయం\n\n` +
-          `మా రియల్ ఎస్టేట్ అడ్వైజర్ మిమ్మల్ని వెంటనే సంప్రదిస్తారు.\n` +
-          `🌐 అన్ని ప్లాట్లు చూడండి: ${townUrl}/real-estate`
-
-        await sendWhatsAppFlowMessage({
-          toPhone: senderPhone,
-          messageText: realEstateReply,
-          contactName: senderName,
-          territoryId: territory.id,
-        }, store)
-
+        await sendRealEstateHubCard(flowCtx)
         return NextResponse.json(withShadow({ status: 'real_estate_automation_dispatched', territoryId: territory.id }))
       }
 

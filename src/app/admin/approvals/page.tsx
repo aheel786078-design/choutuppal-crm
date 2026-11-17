@@ -236,6 +236,10 @@ export default function ApprovalQueuePage() {
             >
               <option value="ALL">All Submission Types</option>
               <option value="NEW_LISTING">New Listings</option>
+              <option value="REAL_ESTATE_AD">Real Estate Ads</option>
+              <option value="JOB_AD">Job Vacancies</option>
+              <option value="JOB_SEEKER">Job Seekers</option>
+              <option value="LOCAL_NEWS">Local News</option>
               <option value="STORY">Stories</option>
               <option value="OFFER">Offers</option>
               <option value="FRANCHISE_APP">Franchise Applications</option>
@@ -286,8 +290,8 @@ export default function ApprovalQueuePage() {
                         )}
                       </div>
 
-                      <p className="text-xs text-slate-600 break-all">
-                        {item.data?.description || item.data?.caption || item.data?.proposedArea || item.data?.url}
+                      <p className="text-xs text-slate-600 break-all whitespace-pre-line">
+                        {item.data?.rawText || item.data?.description || item.data?.caption || item.data?.proposedArea || item.data?.url}
                       </p>
 
                       <div className="flex items-center gap-4 text-[11px] text-slate-400 pt-1">

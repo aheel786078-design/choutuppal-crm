@@ -207,6 +207,130 @@ export async function POST(req: Request) {
           status: 'sent',
           createdAt: new Date().toISOString(),
         })
+      } else if (item.type === 'REAL_ESTATE_AD') {
+        const d = item.data || {}
+        const townSuffix = itemTerritoryId.replace('territory_', '')
+        const cleanSlug = `property-${Date.now()}-${townSuffix}`
+        const newListing: Listing = {
+          id: `lst_re_${Date.now()}`,
+          territoryId: itemTerritoryId,
+          slug: cleanSlug,
+          title: item.title,
+          description: d.description || d.rawText || '',
+          status: 'published',
+          type: 'REAL_ESTATE',
+          isFeatured: true,
+          isPremium: false,
+          coverImage: item.mediaUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=80',
+          gallery: [item.mediaUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=80'],
+          phone: d.phone || item.submitterPhone,
+          whatsapp: d.whatsapp || item.submitterPhone,
+          address: d.address || `${townSuffix.toUpperCase()} Mandal`,
+          price: d.price || 'Available',
+          categoryId: 'cat-realestate',
+          categoryName: 'Real Estate & Lands',
+          villageId: `v-${townSuffix}`,
+          villageName: `${townSuffix.toUpperCase()} Region`,
+          views: 0,
+          clicks: 0,
+          whatsappClicks: 0,
+          syncedToCrm: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+
+        syncListingToCrm(newListing, {
+          inStore: store,
+          callerTerritoryId: itemTerritoryId,
+          callerRole: auth.user.role,
+        })
+
+        store.messages.unshift({
+          id: `msg_${Date.now()}`,
+          phone: item.submitterPhone,
+          contactName: item.submitterName,
+          direction: 'outbound',
+          messageText: `🎉 అభినందనలు ${item.submitterName} గారు! మీ రియల్ ఎస్టేట్ ప్రాపర్టీ ప్రకటన ఆమోదం పొంది చౌటుప్పల్ యాప్ మరియు వాట్సాప్ బాట్‌లో లైవ్ చేయబడింది!\n\n🌐 లైవ్ పోర్టల్: https://choutuppal.in/real-estate`,
+          territoryId: itemTerritoryId,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+      } else if (item.type === 'JOB_AD') {
+        const d = item.data || {}
+        const townSuffix = itemTerritoryId.replace('territory_', '')
+        const cleanSlug = `job-${Date.now()}-${townSuffix}`
+        const newListing: Listing = {
+          id: `lst_job_${Date.now()}`,
+          territoryId: itemTerritoryId,
+          slug: cleanSlug,
+          title: item.title,
+          description: d.description || d.rawText || '',
+          status: 'published',
+          type: 'BUSINESS',
+          isFeatured: true,
+          isPremium: false,
+          coverImage: item.mediaUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=80',
+          gallery: [item.mediaUrl || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=80'],
+          phone: d.phone || item.submitterPhone,
+          whatsapp: d.whatsapp || item.submitterPhone,
+          address: d.address || `${townSuffix.toUpperCase()} Mandal`,
+          price: d.price || 'Salary Negotiable',
+          categoryId: 'cat-jobs',
+          categoryName: 'Jobs & Vacancies',
+          villageId: `v-${townSuffix}`,
+          villageName: `${townSuffix.toUpperCase()} Region`,
+          views: 0,
+          clicks: 0,
+          whatsappClicks: 0,
+          syncedToCrm: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+
+        syncListingToCrm(newListing, {
+          inStore: store,
+          callerTerritoryId: itemTerritoryId,
+          callerRole: auth.user.role,
+        })
+
+        store.messages.unshift({
+          id: `msg_${Date.now()}`,
+          phone: item.submitterPhone,
+          contactName: item.submitterName,
+          direction: 'outbound',
+          messageText: `🎉 అభినందనలు ${item.submitterName} గారు! మీ ఉద్యోగ ప్రకటన ఆమోదం పొంది చౌటుప్పల్ యాప్ మరియు వాట్సాప్ బాట్‌లో లైవ్ చేయబడింది!`,
+          territoryId: itemTerritoryId,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
+      } else if (item.type === 'LOCAL_NEWS') {
+        const d = item.data || {}
+        if (!store.news) store.news = []
+        store.news.unshift({
+          id: `news_${Date.now()}`,
+          slug: `news-${Date.now()}`,
+          title: item.title,
+          teluguTitle: item.title,
+          summary: (d.rawText || d.description || item.title).slice(0, 140),
+          content: d.rawText || d.description || item.title,
+          coverImage: item.mediaUrl || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop&q=80',
+          category: 'Local Updates',
+          territoryId: itemTerritoryId,
+          isPublished: true,
+          views: 0,
+          createdAt: new Date().toISOString(),
+        })
+
+        store.messages.unshift({
+          id: `msg_${Date.now()}`,
+          phone: item.submitterPhone,
+          contactName: item.submitterName,
+          direction: 'outbound',
+          messageText: `🎉 అభినందనలు ${item.submitterName} గారు! మీరు పంపిన వార్త ఆమోదం పొంది చౌటుప్పల్ యాప్‌లో ప్రచురించబడింది!\n\n🌐 లైవ్ వార్తలు: https://choutuppal.in/news`,
+          territoryId: itemTerritoryId,
+          status: 'sent',
+          createdAt: new Date().toISOString(),
+        })
       } else if (item.type === 'FRANCHISE_APP') {
         const proposedTown = item.data.proposedArea || 'New Town'
         const slug = proposedTown.toLowerCase().replace(/[^a-z0-9]/g, '-')

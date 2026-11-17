@@ -126,6 +126,7 @@ export async function getRealEstateListings(): Promise<Listing[]> {
   const store = loadStore()
   return (store.listings || []).filter(
     (l) =>
+      l.id !== 'lst_2' &&
       isListingPublished(l) &&
       (l.territoryId || FLAGSHIP_TERRITORY_ID) === FLAGSHIP_TERRITORY_ID &&
       (l.type === 'REAL_ESTATE' ||

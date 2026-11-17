@@ -23,6 +23,7 @@ export default async function RealEstatePage() {
   const store = loadStore()
   const properties = (store.listings || []).filter(
     (l) =>
+      l.id !== 'lst_2' &&
       (l.status === 'published' || l.status === 'approved' || l.status === 'APPROVED') &&
       (l.type === 'REAL_ESTATE' ||
         l.categoryId === 'cat-realestate' ||

@@ -398,7 +398,7 @@ export type CRMFlowConfig = WhatsAppFlow
 
 export interface ApprovalItem {
   id: string
-  type: 'NEW_LISTING' | 'LISTING_EDIT' | 'STORY' | 'OFFER' | 'FRANCHISE_APP' | 'CITIZEN_REPORT'
+  type: 'NEW_LISTING' | 'LISTING_EDIT' | 'STORY' | 'OFFER' | 'FRANCHISE_APP' | 'CITIZEN_REPORT' | 'REAL_ESTATE_AD' | 'JOB_AD' | 'JOB_SEEKER' | 'LOCAL_NEWS'
   title: string
   submitterName: string
   submitterPhone: string

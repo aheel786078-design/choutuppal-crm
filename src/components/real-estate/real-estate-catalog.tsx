@@ -49,140 +49,7 @@ export interface PropertyItem {
   isVerifiedVenture?: boolean
 }
 
-const DEFAULT_VERIFIED_VENTURES: PropertyItem[] = [
-  {
-    id: 'prop_nh65_plots',
-    title: 'Sri Balaji Mega DTCP Approved Township (NH-65 Highway)',
-    teluguTitle: 'శ్రీ బాలాజీ మెగా DTCP టౌన్‌షిప్ - నేషనల్ హైవే ఫేసింగ్',
-    slug: 'sri-balaji-dtcp-township',
-    propertyType: 'plots',
-    propertyTypeLabel: 'DTCP Open Plots',
-    price: '₹12,500 / Sq. Yd',
-    pricePerUnit: 'Starting from ₹18.75 Lakhs',
-    area: '150 - 300 Sq. Yds',
-    facing: 'East & North Facing',
-    roadWidth: '40 ft & 60 ft BT Roads',
-    approvalType: 'DTCP & RERA Approved',
-    location: 'Near Choutuppal Tollgate, Hyderabad-Vijayawada Highway',
-    village: 'Choutuppal Town',
-    phone: '9441348175',
-    whatsapp: '9494348175',
-    coverImage: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80',
-    description: 'Prime highway facing residential open plots with 100% clear title, spot registration, underground drainage, electricity, avenue plantation, and park.',
-    highlights: ['100% Vaastu', 'Underground Drainage', 'Electricity & Water Lines', 'Bank Loan Available'],
-    isVerifiedVenture: true,
-  },
-  {
-    id: 'prop_panthangi_farms',
-    title: 'Green Valley Organic Farmland & Weekend Villa Plots',
-    teluguTitle: 'గ్రీన్ వ్యాలీ ఆర్గానిక్ ఫామ్‌ల్యాండ్ & వీకెండ్ విల్లా ప్లాట్లు',
-    slug: 'green-valley-farmlands',
-    propertyType: 'farmland',
-    propertyTypeLabel: 'Agricultural Farmland',
-    price: '₹5,500 / Sq. Yd',
-    pricePerUnit: '₹28 Lakhs / Gunta (Half Acre available)',
-    area: '500 Sq. Yds - 2 Acres',
-    facing: 'All Facings Available',
-    roadWidth: '33 ft Gravel Road',
-    approvalType: 'Clear Title (Patta Passbook)',
-    location: 'Panthangi Village Road, 4km from Choutuppal Junction',
-    village: 'Panthangi',
-    phone: '9494348175',
-    whatsapp: '9494348175',
-    coverImage: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
-    description: 'Drip-irrigated sandalwood, mango & mahogany plantation farmland with 24/7 borewell water, solar fencing, and ready cottage foundation.',
-    highlights: ['Red Soil Farmland', 'Drip Irrigation', 'Borewell Water', 'Immediate Dharani Passbook'],
-    isVerifiedVenture: true,
-  },
-  {
-    id: 'prop_town_commercial',
-    title: 'Choutuppal Main Road 3-Floor Commercial Building for Sale',
-    teluguTitle: 'చౌటుప్పల్ మెయిన్ రోడ్డు 3 అంతస్తుల కమర్షియల్ కాంప్లెక్స్',
-    slug: 'choutuppal-main-commercial-building',
-    propertyType: 'commercial',
-    propertyTypeLabel: 'Commercial Building',
-    price: '₹1.85 Crores',
-    pricePerUnit: 'Rental Yield ₹85,000/month',
-    area: '240 Sq. Yds (4,200 Sq. Ft Builtup)',
-    facing: 'North-East Corner',
-    roadWidth: '80 ft Main Road',
-    approvalType: 'Municipality Approved G+2',
-    location: 'Opposite RTC Bus Stand, Choutuppal Market Road',
-    village: 'Choutuppal Town',
-    phone: '9848012345',
-    whatsapp: '9494348175',
-    coverImage: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
-    description: 'High footfall commercial building with 6 running shops on ground floor, 2 office floors rented to diagnostic center & finance bank.',
-    highlights: ['Running Rental Income', 'Commercial Meter', 'Heavy Footfall', 'Prime Bus Stand Road'],
-    isVerifiedVenture: true,
-  },
-  {
-    id: 'prop_malkapur_house',
-    title: 'Brand New 3BHK Independent Luxury Villa House',
-    teluguTitle: 'నూతన 3BHK ఇండిపెండెంట్ లగ్జరీ హౌస్ - మల్కాపూర్',
-    slug: 'malkapur-independent-villa',
-    propertyType: 'residential',
-    propertyTypeLabel: 'Independent House',
-    price: '₹58 Lakhs',
-    pricePerUnit: 'Negotiable for spot payment',
-    area: '167 Sq. Yds (1,450 Sq. Ft Slab)',
-    facing: 'East Facing',
-    roadWidth: '30 ft CC Road',
-    approvalType: 'Gram Panchayat & Bank Loan Approved',
-    location: 'Malkapur Main Village Road, 2km from Highway',
-    village: 'Malkapur',
-    phone: '9441348175',
-    whatsapp: '9494348175',
-    coverImage: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80',
-    description: 'Modern 3BHK elevation with teakwood main door, premium vitrified tiles, modular kitchen, car parking portico, and municipal drinking water connection.',
-    highlights: ['Car Parking Portico', 'Teak Wood Finishing', 'Municipal Water', 'SBI Loan Eligible'],
-    isVerifiedVenture: true,
-  },
-  {
-    id: 'prop_lingoji_plots',
-    title: 'Lakshmi Narasimha HMDA Residential Layout',
-    teluguTitle: 'లక్ష్మీ నరసింహ HMDA రెసిడెన్షియల్ లేఅవుట్ - లింగోజిగూడ',
-    slug: 'lakshmi-narasimha-hmda-layout',
-    propertyType: 'plots',
-    propertyTypeLabel: 'HMDA Open Plots',
-    price: '₹14,000 / Sq. Yd',
-    pricePerUnit: '₹28 Lakhs for 200 Sq. Yd',
-    area: '200, 267 & 400 Sq. Yds',
-    facing: 'East & West Facings',
-    roadWidth: '40 ft Blacktop Roads',
-    approvalType: 'HMDA & RERA Approved',
-    location: 'Lingoji Guda Ring Road, Choutuppal Mandal',
-    village: 'Lingoji Guda',
-    phone: '9494348175',
-    whatsapp: '9494348175',
-    coverImage: 'https://images.unsplash.com/photo-1524813686514-a57563d77d66?auto=format&fit=crop&w=800&q=80',
-    description: 'Fully compound walled gated community layout with overhead water tank, children play park, LED street lights, and fast appreciation potential.',
-    highlights: ['Gated Community', 'Compound Wall', 'Overhead Water Tank', 'Children Play Area'],
-    isVerifiedVenture: true,
-  },
-  {
-    id: 'prop_peddakondur_farm',
-    title: '1.25 Acres Highway Adjacent Commercial Agricultural Land',
-    teluguTitle: '1.25 ఎకరాల హైవే ఆనుకుని ఉన్న కమర్షియల్ ల్యాండ్',
-    slug: 'peddakondur-commercial-land',
-    propertyType: 'farmland',
-    propertyTypeLabel: 'Highway Land',
-    price: '₹95 Lakhs / Acre',
-    pricePerUnit: 'Total ₹1.18 Crores',
-    area: '1 Acre 10 Guntas',
-    facing: 'South-East 120 ft Highway Frontage',
-    roadWidth: 'NH-65 Highway Frontage',
-    approvalType: 'Dharani Clear Title Patta',
-    location: 'Peddakondur Stage, Beside Petrol Pump',
-    village: 'Peddakondur',
-    phone: '9848012345',
-    whatsapp: '9494348175',
-    coverImage: 'https://images.unsplash.com/photo-1500076656116-558758c991c1?auto=format&fit=crop&w=800&q=80',
-    description: 'Excellent frontage for petrol pump, highway restaurant dhaba, warehousing godown, or heavy vehicle transport parking.',
-    highlights: ['120 ft Frontage', 'Single Owner Patta', 'Commercial Potential', 'Zero Litigation'],
-    isVerifiedVenture: true,
-  },
-]
+const DEFAULT_VERIFIED_VENTURES: PropertyItem[] = []
 
 interface RealEstateCatalogProps {
   initialStoreListings: Listing[]
@@ -195,44 +62,41 @@ export function RealEstateCatalog({ initialStoreListings }: RealEstateCatalogPro
 
   // Map store listings into uniform PropertyItem structure
   const storePropertyItems: PropertyItem[] = useMemo(() => {
-    return initialStoreListings.map((l) => {
-      let propType: PropertyItem['propertyType'] = 'plots'
-      const titleLower = (l.title || '').toLowerCase()
-      if (titleLower.includes('farm') || titleLower.includes('land') || titleLower.includes('acre')) propType = 'farmland'
-      else if (titleLower.includes('commercial') || titleLower.includes('shop') || titleLower.includes('building')) propType = 'commercial'
-      else if (titleLower.includes('house') || titleLower.includes('villa') || titleLower.includes('flat')) propType = 'residential'
+    return initialStoreListings
+      .filter((l) => l.id !== 'lst_2') // Exclude initial dummy mock listing
+      .map((l) => {
+        let propType: PropertyItem['propertyType'] = 'plots'
+        const titleLower = (l.title || '').toLowerCase()
+        if (titleLower.includes('farm') || titleLower.includes('land') || titleLower.includes('acre')) propType = 'farmland'
+        else if (titleLower.includes('commercial') || titleLower.includes('shop') || titleLower.includes('building')) propType = 'commercial'
+        else if (titleLower.includes('house') || titleLower.includes('villa') || titleLower.includes('flat')) propType = 'residential'
 
-      return {
-        id: l.id,
-        title: l.title,
-        slug: l.slug || l.id,
-        propertyType: propType,
-        propertyTypeLabel: propType === 'plots' ? 'Open Plots' : propType === 'farmland' ? 'Farmland' : propType === 'commercial' ? 'Commercial' : 'House / Villa',
-        price: l.price || 'Price on Request',
-        area: 'Standard Layout Area',
-        facing: 'East / North',
-        roadWidth: '33 ft CC Road',
-        approvalType: 'Verified Layout',
-        location: l.address || 'Choutuppal Mandal',
-        village: l.villageName || 'Choutuppal Town',
-        phone: l.phone || '9441348175',
-        whatsapp: l.whatsapp || l.phone || '9494348175',
-        coverImage: sanitizeImageUrl(l.coverImage),
-        description: l.description || 'Verified property in Choutuppal Mandal.',
-        highlights: ['Verified Title', 'Direct Contact', 'Fast Growing Area'],
-        isVerifiedVenture: true,
-      }
-    })
+        return {
+          id: l.id,
+          title: l.title,
+          slug: l.slug || l.id,
+          propertyType: propType,
+          propertyTypeLabel: propType === 'plots' ? 'Open Plots' : propType === 'farmland' ? 'Farmland' : propType === 'commercial' ? 'Commercial' : 'House / Villa',
+          price: l.price || 'Price on Request',
+          area: 'Standard Layout Area',
+          facing: 'East / North',
+          roadWidth: '33 ft CC Road',
+          approvalType: 'Verified Layout',
+          location: l.address || 'Choutuppal Mandal',
+          village: l.villageName || 'Choutuppal Town',
+          phone: l.phone || '9441348175',
+          whatsapp: l.whatsapp || l.phone || '9494348175',
+          coverImage: sanitizeImageUrl(l.coverImage),
+          description: l.description || 'Verified property in Choutuppal Mandal.',
+          highlights: ['Verified Title', 'Direct Contact', 'Fast Growing Area'],
+          isVerifiedVenture: true,
+        }
+      })
   }, [initialStoreListings])
 
-  // Combine and deduplicate
+  // Pure verified properties without any dummy data
   const allProperties: PropertyItem[] = useMemo(() => {
-    const map = new Map<string, PropertyItem>()
-    DEFAULT_VERIFIED_VENTURES.forEach((p) => map.set(p.id, p))
-    storePropertyItems.forEach((p) => {
-      if (!map.has(p.id)) map.set(p.id, p)
-    })
-    return Array.from(map.values())
+    return storePropertyItems
   }, [storePropertyItems])
 
   // Filter based on active filters
