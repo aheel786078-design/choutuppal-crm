@@ -116,7 +116,7 @@ export default function SettingsAdminPage() {
         setAutoSendPhoto(data.settings.autoSendListingPhotoInChat !== false)
         setShowOfficialGuarantee(Boolean(data.settings.showOfficialGuarantee))
         if (data.webhookCallbackUrl) {
-          setWebhookUrl(data.webhookCallbackUrl)
+          setWebhookUrl(data.webhookCallbackUrl.replace(/\s+/g, ''))
         }
         if (data.recentActivity) {
           setRecentActivity(data.recentActivity)
@@ -254,7 +254,8 @@ export default function SettingsAdminPage() {
     }
   }
 
-  const liveWebhook = webhookUrl || (typeof window !== 'undefined' ? `${window.location.origin}/api/whatsapp/webhook` : 'https://choutuppal.in/api/whatsapp/webhook')
+  const rawWebhook = webhookUrl || (typeof window !== 'undefined' ? `${window.location.origin}/api/whatsapp/webhook` : 'https://choutuppal.in/api/whatsapp/webhook')
+  const liveWebhook = rawWebhook.replace(/\s+/g, '')
 
   return (
     <div className="flex-1 flex flex-col min-h-screen bg-slate-50 text-slate-900 pb-12">
