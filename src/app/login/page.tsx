@@ -92,10 +92,13 @@ export default function LoginPage() {
 
     setLoading(true)
     try {
+      const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
+      const redirectParam = searchParams?.get('redirect') || '/dashboard'
+
       const res = await fetch('/api/auth/magic-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: clean }),
+        body: JSON.stringify({ phone: clean, redirect: redirectParam }),
       })
 
       const data = await res.json()
@@ -104,17 +107,24 @@ export default function LoginPage() {
       }
 
       setMagicSent(true)
-      toast.success('WhatsApp Magic Link ready!')
 
-      if (data.verifyUrl) {
-        const verifyRes = await fetch(data.verifyUrl)
-        const verifyData = await verifyRes.json()
-        if (verifyData.success) {
-          toast.success('Verified automatically! Redirecting...')
-          const dest = verifyData.role === 'SUPER_ADMIN' || verifyData.role === 'FRANCHISE_ADMIN' ? '/admin/dashboard' : '/dashboard'
-          router.push(verifyData.redirect || dest)
-          return
-        }
+      const verifyEndpoint =
+        data.verifyUrl ||
+        `/api/auth/magic-link?token=${encodeURIComponent(data.token)}&redirect=${encodeURIComponent(redirectParam)}`
+
+      const verifyRes = await fetch(verifyEndpoint)
+      const verifyData = await verifyRes.json()
+
+      if (verifyData.success) {
+        toast.success('Successfully authenticated! Redirecting...')
+        const dest =
+          verifyData.role === 'SUPER_ADMIN' || verifyData.role === 'FRANCHISE_ADMIN'
+            ? '/admin/dashboard'
+            : '/dashboard'
+        router.push(verifyData.redirect || dest)
+        return
+      } else {
+        toast.success('WhatsApp Magic Link sent! Please check your WhatsApp.')
       }
     } catch (err: any) {
       toast.error(err.message || 'Failed to send WhatsApp login')

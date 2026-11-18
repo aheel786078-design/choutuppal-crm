@@ -1110,18 +1110,36 @@ export function hashToken(rawToken: string): string {
   return crypto.createHash('sha256').update(rawToken).digest('hex')
 }
 
+const MAGIC_HMAC_SECRET =
+  process.env.SESSION_SECRET ||
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.WHATSAPP_VERIFY_TOKEN ||
+  'choutuppal_stateless_magic_hmac_secret_2026'
+
 export function generateMagicToken(
   phoneOrParams: string | { phone: string; territoryId?: string; role?: string }
 ): string {
   const store = loadStore()
-  const phone = typeof phoneOrParams === 'string' ? phoneOrParams : phoneOrParams.phone
-  const territoryId = typeof phoneOrParams === 'object' ? phoneOrParams.territoryId : undefined
-  const role = typeof phoneOrParams === 'object' ? phoneOrParams.role : undefined
-
-  // Cryptographically secure random token (256-bit entropy via crypto.randomBytes)
-  const rawToken = `mlk_${crypto.randomBytes(32).toString('hex')}`
-  const tokenHash = hashToken(rawToken)
+  const phone = (typeof phoneOrParams === 'string' ? phoneOrParams : phoneOrParams.phone).replace(/\D/g, '')
+  const territoryId = (typeof phoneOrParams === 'object' ? phoneOrParams.territoryId : undefined) || FLAGSHIP_TERRITORY_ID
+  const role =
+    (typeof phoneOrParams === 'object' ? phoneOrParams.role : undefined) ||
+    (phone === '9441348175' || phone === '9494348175' ? 'SUPER_ADMIN' : 'FRANCHISE_ADMIN')
   const expiresAt = Date.now() + 15 * 60 * 1000 // 15 mins
+  const nonce = crypto.randomBytes(8).toString('hex')
+
+  const payload = {
+    p: phone,
+    t: territoryId,
+    r: role,
+    exp: expiresAt,
+    n: nonce,
+  }
+
+  const payloadB64 = Buffer.from(JSON.stringify(payload)).toString('base64url')
+  const signature = crypto.createHmac('sha256', MAGIC_HMAC_SECRET).update(payloadB64).digest('base64url')
+  const rawToken = `mlk_${payloadB64}.${signature}`
+  const tokenHash = hashToken(rawToken)
 
   if (!store.magicTokens) store.magicTokens = []
 
@@ -1131,8 +1149,8 @@ export function generateMagicToken(
   store.magicTokens.push({
     tokenHash,
     phone,
-    territoryId: territoryId || (phone === '9441348175' ? FLAGSHIP_TERRITORY_ID : undefined),
-    role: role || (phone === '9441348175' ? 'SUPER_ADMIN' : 'FRANCHISE_ADMIN'),
+    territoryId,
+    role,
     expiresAt,
     used: false,
     createdAt: new Date().toISOString(),
@@ -1149,11 +1167,40 @@ export function verifyMagicToken(rawToken: string): {
   role?: string
   error?: string
 } {
-  const store = loadStore()
   if (!rawToken || typeof rawToken !== 'string') {
     return { valid: false, error: 'Token is required' }
   }
 
+  // 1. Stateless signed HMAC token validation (works across independent serverless lambdas)
+  if (rawToken.startsWith('mlk_') && rawToken.includes('.')) {
+    try {
+      const stripped = rawToken.slice(4) // Strip 'mlk_' prefix
+      const [payloadB64, signature] = stripped.split('.')
+      if (payloadB64 && signature) {
+        const expectedSig = crypto.createHmac('sha256', MAGIC_HMAC_SECRET).update(payloadB64).digest('base64url')
+        const sigBuf = Buffer.from(signature)
+        const expBuf = Buffer.from(expectedSig)
+
+        if (sigBuf.length === expBuf.length && crypto.timingSafeEqual(sigBuf, expBuf)) {
+          const payload = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf-8'))
+          if (payload.exp && payload.exp < Date.now()) {
+            return { valid: false, error: 'Magic login link has expired (15-minute validity)' }
+          }
+          return {
+            valid: true,
+            phone: payload.p,
+            territoryId: payload.t || FLAGSHIP_TERRITORY_ID,
+            role: payload.r || 'USER',
+          }
+        }
+      }
+    } catch (parseErr) {
+      console.warn('[Magic Token] Stateless parse failed, trying legacy hash lookup:', parseErr)
+    }
+  }
+
+  // 2. Legacy fallback to store.magicTokens lookup
+  const store = loadStore()
   const incomingHash = hashToken(rawToken)
 
   // Find strictly by cryptographically hashed token

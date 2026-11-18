@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { generateMagicToken, verifyMagicToken, FLAGSHIP_TERRITORY_ID } from '@/lib/store'
 import { createSignedSessionToken, SESSION_COOKIE_NAME } from '@/lib/auth-server'
+import { sendWhatsAppFlowMessage } from '@/lib/whatsapp-cloud-api'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,18 +46,44 @@ export async function POST(req: Request) {
     }
 
     const cleanPhone = phone.replace(/\D/g, '')
+    const userRole = role || (cleanPhone === '9441348175' || cleanPhone === '9494348175' ? 'SUPER_ADMIN' : 'FRANCHISE_ADMIN')
     const token = generateMagicToken({
       phone: cleanPhone,
       territoryId: territoryId || (cleanPhone === '9441348175' ? FLAGSHIP_TERRITORY_ID : undefined),
-      role: role || (cleanPhone === '9441348175' || cleanPhone === '9494348175' ? 'SUPER_ADMIN' : 'FRANCHISE_ADMIN'),
+      role: userRole,
     })
 
-    const magicLink = `https://choutuppal.in/login?magic=${token}`
+    const targetRedirect = body.redirect || (userRole === 'SUPER_ADMIN' || userRole === 'FRANCHISE_ADMIN' ? '/admin/dashboard' : '/dashboard')
+    const magicLink = `https://choutuppal.in/login?magic=${encodeURIComponent(token)}`
+    const verifyUrl = `/api/auth/magic-link?token=${encodeURIComponent(token)}&redirect=${encodeURIComponent(targetRedirect)}`
+
+    // Also dispatch WhatsApp message via Meta Cloud API
+    try {
+      const waText =
+        `🔑 *చౌటుప్పల్ యాప్ సురక్షిత లాగిన్ లింక్*\n\n` +
+        `మీ డ్యాష్‌బోర్డ్‌ను పాస్‌వర్డ్ లేకుండా తెరవడానికి క్రింది లింక్‌ను నొక్కండి (15 నిమిషాల వ్యవధి):\n\n` +
+        `👉 ${magicLink}\n\n` +
+        `🌐 Website: https://choutuppal.in`
+
+      await sendWhatsAppFlowMessage({
+        toPhone: cleanPhone,
+        messageText: waText,
+        buttons: [
+          { id: 'btn_open_dashboard', title: '🚀 డ్యాష్‌బోర్డ్' },
+          { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+        ],
+        territoryId: territoryId || FLAGSHIP_TERRITORY_ID,
+      })
+    } catch (waErr) {
+      console.warn('[Magic Link] Outbound WhatsApp notification error:', waErr)
+    }
 
     return NextResponse.json({
       success: true,
       token,
       magicLink,
+      verifyUrl,
+      redirect: targetRedirect,
       message: 'Cryptographically secure single-use magic login link generated (valid 15 minutes).',
     })
   } catch (err: any) {
@@ -85,6 +112,10 @@ export async function GET(req: Request) {
 
     const result = verifyMagicToken(token)
     if (!result.valid) {
+      const acceptHeader = req.headers.get('accept') || ''
+      if (acceptHeader.includes('text/html')) {
+        return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(result.error || 'Invalid or expired token')}`, req.url))
+      }
       return NextResponse.json({ success: false, error: result.error || 'Invalid or expired token.' }, { status: 401 })
     }
 
@@ -100,38 +131,37 @@ export async function GET(req: Request) {
     })
 
     // Validate safe redirect target to prevent Open Redirects (CWE-601)
-    let safeRedirect = '/admin'
+    let defaultDest = userRole === 'SUPER_ADMIN' || userRole === 'FRANCHISE_ADMIN' ? '/admin/dashboard' : '/dashboard'
+    let safeRedirect = defaultDest
     if (redirectUrl && redirectUrl.startsWith('/') && !redirectUrl.startsWith('//') && !redirectUrl.includes('://')) {
       safeRedirect = redirectUrl
     }
 
-    const response = NextResponse.json({
-      success: true,
-      authenticated: true,
-      phone: userPhone,
-      role: userRole,
-      territoryId,
-      redirect: safeRedirect,
-      message: 'Successfully authenticated! Secure session established.',
-    })
+    const acceptHeader = req.headers.get('accept') || ''
+    const isDirectBrowserNav = acceptHeader.includes('text/html')
+
+    const response = isDirectBrowserNav
+      ? NextResponse.redirect(new URL(safeRedirect, req.url))
+      : NextResponse.json({
+          success: true,
+          authenticated: true,
+          phone: userPhone,
+          role: userRole,
+          territoryId,
+          redirect: safeRedirect,
+          message: 'Successfully authenticated! Secure session established.',
+        })
 
     // Set secure HTTP-only session cookie
-    if (response.cookies?.set) {
-      response.cookies.set({
-        name: SESSION_COOKIE_NAME,
-        value: sessionToken,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 24 * 60 * 60, // 24 hours
-      })
-    } else {
-      response.headers.append(
-        'set-cookie',
-        `${SESSION_COOKIE_NAME}=${sessionToken}; Path=/; Max-Age=${24 * 60 * 60}; HttpOnly; SameSite=lax`
-      )
-    }
+    response.cookies.set({
+      name: SESSION_COOKIE_NAME,
+      value: sessionToken,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 24 * 60 * 60, // 24 hours
+    })
 
     return response
   } catch (err: any) {

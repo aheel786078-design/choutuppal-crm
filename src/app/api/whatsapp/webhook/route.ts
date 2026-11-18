@@ -1470,6 +1470,18 @@ export async function POST(req: Request) {
             createdAt: new Date().toISOString(),
           })
 
+          await sendWhatsAppFlowMessage({
+            toPhone: senderPhone,
+            messageText: listingReply,
+            imageUrl: listingCover,
+            territoryId: territory.id,
+            contactName: targetListing.title,
+            buttons: [
+              { id: `btn_call_${targetListing.id}`, title: `📞 కాల్ చేయండి` },
+              { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+            ],
+          }, store)
+
           if (existingContact) {
             existingContact.listingId = targetListing.id
             existingContact.listingTitle = targetListing.title
@@ -1524,6 +1536,18 @@ export async function POST(req: Request) {
             status: 'sent',
             createdAt: new Date().toISOString(),
           })
+
+          await sendWhatsAppFlowMessage({
+            toPhone: senderPhone,
+            messageText: serviceReply,
+            imageUrl: targetListing.coverImage,
+            territoryId: territory.id,
+            contactName: targetListing.title,
+            buttons: [
+              { id: `btn_call_${targetListing.id}`, title: '📞 ఓనర్‌కు కాల్' },
+              { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+            ],
+          }, store)
 
           return NextResponse.json(
             withShadow({
@@ -1616,6 +1640,18 @@ export async function POST(req: Request) {
           createdAt: new Date().toISOString(),
         })
 
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: bannerReply,
+          imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+          territoryId: territory.id,
+          contactName: senderName,
+          buttons: [
+            { id: 'btn_ad_book', title: '🎯 యాడ్ బుక్ చేయండి' },
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+        }, store)
+
         return NextResponse.json(withShadow({ status: 'ad_promotion_dispatched', package: promoTitle }))
       }
 
@@ -1647,6 +1683,17 @@ export async function POST(req: Request) {
           status: 'sent',
           createdAt: new Date().toISOString(),
         })
+
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: upgradeReply,
+          territoryId: territory.id,
+          contactName: senderName,
+          buttons: [
+            { id: 'btn_upgrade_confirm', title: '⭐ ఫీచర్డ్ చేయండి' },
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+        }, store)
 
         return NextResponse.json(withShadow({ status: 'featured_upgrade_info_dispatched' }))
       }
@@ -1681,6 +1728,18 @@ export async function POST(req: Request) {
           createdAt: new Date().toISOString(),
         })
 
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: supportReply,
+          territoryId: territory.id,
+          contactName: senderName,
+          buttons: [
+            { id: 'btn_add_business', title: '🏢 వ్యాపారాన్ని చేర్చండి' },
+            { id: 'btn_my_qr', title: '🖨️ కౌంటర్ QR' },
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+        }, store)
+
         return NextResponse.json(withShadow({ status: 'support_menu_dispatched' }))
       }
 
@@ -1705,6 +1764,17 @@ export async function POST(req: Request) {
           status: 'sent',
           createdAt: new Date().toISOString(),
         })
+
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: wardReply,
+          territoryId: territory.id,
+          contactName: senderName,
+          buttons: [
+            { id: 'btn_community', title: '👥 కమ్యూనిటీ' },
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+        }, store)
 
         return NextResponse.json(withShadow({ status: 'ward_group_dispatched', ward: wardNum }))
       }
@@ -1750,6 +1820,17 @@ export async function POST(req: Request) {
           createdAt: new Date().toISOString(),
         })
 
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: newsAckMsg,
+          imageUrl: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80',
+          territoryId: territory.id,
+          contactName: senderName,
+          buttons: [
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+        }, store)
+
         return NextResponse.json(withShadow({ status: 'news_submission_queued', approvalId: newApprovalId }))
       }
 
@@ -1780,6 +1861,17 @@ export async function POST(req: Request) {
           status: 'sent',
           createdAt: new Date().toISOString(),
         })
+
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: spinClaimMsg,
+          territoryId: territory.id,
+          contactName: senderName,
+          buttons: [
+            { id: 'btn_open_dashboard', title: '🚀 డ్యాష్‌బోర్డ్' },
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+        }, store)
 
         return NextResponse.json(withShadow({ status: 'spin_reward_claim_dispatched', prize: prizeName }))
       }
@@ -1824,6 +1916,18 @@ export async function POST(req: Request) {
           createdAt: new Date().toISOString(),
         })
 
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: reReply,
+          imageUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
+          territoryId: territory.id,
+          contactName: senderName,
+          buttons: [
+            { id: 'row_cat_realestate', title: '🏡 రియల్ ఎస్టేట్' },
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+        }, store)
+
         return NextResponse.json(withShadow({ status: 'real_estate_inquiry_dispatched', property: propTitle || 'general' }))
       }
 
@@ -1850,6 +1954,17 @@ export async function POST(req: Request) {
             createdAt: new Date().toISOString(),
           })
 
+          await sendWhatsAppFlowMessage({
+            toPhone: senderPhone,
+            messageText: listSrvMsg,
+            territoryId: territory.id,
+            contactName: senderName,
+            buttons: [
+              { id: 'btn_register_service', title: '🛠️ సర్వీస్ నమోదు' },
+              { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+            ],
+          }, store)
+
           return NextResponse.json(withShadow({ status: 'service_registration_prompt_sent' }))
         } else {
           const srvMatch = incomingText.match(/i need (.+?) service in choutuppal/i)
@@ -1872,6 +1987,17 @@ export async function POST(req: Request) {
             status: 'sent',
             createdAt: new Date().toISOString(),
           })
+
+          await sendWhatsAppFlowMessage({
+            toPhone: senderPhone,
+            messageText: srvBookingMsg,
+            territoryId: territory.id,
+            contactName: senderName,
+            buttons: [
+              { id: 'btn_contact_support', title: '📞 హెల్ప్‌లైన్' },
+              { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+            ],
+          }, store)
 
           return NextResponse.json(withShadow({ status: 'on_demand_service_requested', service: requestedService }))
         }
@@ -1901,6 +2027,17 @@ export async function POST(req: Request) {
           status: 'sent',
           createdAt: new Date().toISOString(),
         })
+
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: claimReply,
+          territoryId: territory.id,
+          contactName: senderName,
+          buttons: [
+            { id: 'btn_stories', title: '🔥 స్టోరీలు & ఆఫర్లు' },
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+        }, store)
 
         return NextResponse.json(withShadow({ status: 'story_offer_inquiry_dispatched' }))
       }
@@ -1948,6 +2085,18 @@ export async function POST(req: Request) {
             createdAt: new Date().toISOString(),
           })
 
+          await sendWhatsAppFlowMessage({
+            toPhone: senderPhone,
+            messageText: qrMsg,
+            imageUrl: qrImageUrl,
+            contactName: matchedListing.title,
+            territoryId: territory.id,
+            buttons: [
+              { id: 'btn_print_qr', title: '🖨️ కలర్ ప్రింట్ A4' },
+              { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+            ],
+          }, store)
+
           return NextResponse.json(
             withShadow({
               status: 'shop_qr_standee_dispatched',
@@ -1978,17 +2127,29 @@ export async function POST(req: Request) {
             createdAt: new Date().toISOString(),
           })
 
+          await sendWhatsAppFlowMessage({
+            toPhone: senderPhone,
+            messageText: noListingMsg,
+            imageUrl: generalQrUrl,
+            contactName: senderName,
+            territoryId: territory.id,
+            buttons: [
+              { id: 'btn_add_business', title: '🏢 వ్యాపారాన్ని చేర్చండి' },
+              { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+            ],
+          }, store)
+
           return NextResponse.json(withShadow({ status: 'qr_registration_prompt_sent' }))
         }
       }
 
       // 3. MAGIC LOGIN LINK REQUEST
       if (lower.includes('dashboard') || lower.includes('డ్యాష్‌బోర్డ్') || lower.includes('login') || lower.includes('magic')) {
-        const token = generateMagicToken(senderPhone)
+        const token = generateMagicToken({ phone: senderPhone, territoryId: territory.id })
         const magicMsg =
           `🔑 *${territoryName} సురక్షిత డ్యాష్‌బోర్డ్ లాగిన్ లింక్*\n\n` +
           `నమస్కారం ${senderName} గారు, మీ డ్యాష్‌బోర్డ్‌ను పాస్‌వర్డ్ లేకుండా తెరవడానికి క్రింది సురక్షిత లింక్‌ను నొక్కండి (15 నిమిషాల వ్యవధి మాత్రమే):\n\n` +
-          `👉 ${townUrl}/login?magic=${token}&territory=${territory.slug}\n\n` +
+          `👉 ${townUrl}/login?magic=${encodeURIComponent(token)}&territory=${territory.slug}\n\n` +
           `మీ వ్యాపార లిస్టింగ్‌లు, ఫోటోలు, లీడ్స్ మరియు ఎంక్వైరీలను ఇక్కడి నుండి నిర్వహించుకోవచ్చు.\n` +
           `🌐 Website: ${townUrl}`
 
@@ -2001,6 +2162,17 @@ export async function POST(req: Request) {
           status: 'sent',
           createdAt: new Date().toISOString(),
         })
+
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: magicMsg,
+          buttons: [
+            { id: 'btn_open_dashboard', title: '🚀 డ్యాష్‌బోర్డ్' },
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+          territoryId: territory.id,
+          contactName: senderName,
+        }, store)
 
         return NextResponse.json(withShadow({ status: 'magic_link_dispatched' }))
       }
@@ -2053,6 +2225,18 @@ export async function POST(req: Request) {
           createdAt: new Date().toISOString(),
         })
 
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: storiesMsg,
+          imageUrl: topMedia,
+          buttons: [
+            { id: 'btn_stories', title: '🔥 స్టోరీస్ పోర్టల్' },
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+          territoryId: territory.id,
+          contactName: senderName,
+        }, store)
+
         return NextResponse.json(
           withShadow({
             status: 'stories_dispatched',
@@ -2096,6 +2280,17 @@ export async function POST(req: Request) {
           createdAt: new Date().toISOString(),
         })
 
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: postAckMsg,
+          buttons: [
+            { id: 'btn_stories', title: '🔥 స్టోరీలు' },
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+          territoryId: territory.id,
+          contactName: senderName,
+        }, store)
+
         return NextResponse.json(withShadow({ status: 'story_queued_for_approval', approvalId: newApprovalId }))
       }
 
@@ -2137,6 +2332,17 @@ export async function POST(req: Request) {
           status: 'sent',
           createdAt: new Date().toISOString(),
         })
+
+        await sendWhatsAppFlowMessage({
+          toPhone: senderPhone,
+          messageText: ackMsg,
+          buttons: [
+            { id: 'btn_status_check', title: '📊 స్టేటస్ చెక్' },
+            { id: 'btn_back_to_menu', title: '📋 ప్రధాన మెనూ' },
+          ],
+          territoryId: territory.id,
+          contactName: senderName,
+        }, store)
 
         return NextResponse.json(withShadow({ status: 'listing_queued_for_approval', approvalId: newApprovalId, territoryId: territory.id }))
       }

@@ -44,6 +44,40 @@ export interface WhatsAppDispatchResult {
 }
 
 /**
+ * Helper to validate if a Meta token is real and not a dummy placeholder.
+ */
+export function isRealMetaToken(t?: string | null): boolean {
+  if (!t) return false
+  const s = t.trim()
+  if (s.length < 25) return false
+  if (s.includes('your-meta-') || s.includes('placeholder') || s.includes('example') || s.includes('system-user-token')) return false
+  return true
+}
+
+/**
+ * Helper to validate if a WhatsApp Phone Number ID is numeric and real.
+ */
+export function isRealPhoneNumberId(id?: string | null): boolean {
+  if (!id) return false
+  const s = id.trim()
+  if (s.length < 5) return false
+  if (s.includes('your-meta-') || s.includes('placeholder') || s.includes('example')) return false
+  return /^\d+$/.test(s)
+}
+
+/**
+ * Normalizes phone number to E.164 digits for Meta WhatsApp Cloud API (e.g. 919494348175).
+ */
+export function normalizeWhatsAppRecipientPhone(rawPhone: string): string {
+  let digits = (rawPhone || '').replace(/\D/g, '')
+  if (digits.startsWith('0')) digits = digits.slice(1)
+  if (digits.length === 10) {
+    digits = `91${digits}`
+  }
+  return digits
+}
+
+/**
  * Format and dispatch listing as a Rich WhatsApp Media Card with Photo & Call Action
  */
 export async function sendListingWhatsAppCard(
@@ -64,7 +98,7 @@ export async function sendListingWhatsAppCard(
     `🌐 https://choutuppal.in/business/${listing.slug}`
 
   return sendWhatsAppFlowMessage({
-    toPhone,
+    toPhone: normalizeWhatsAppRecipientPhone(toPhone),
     messageText: caption,
     imageUrl: listing.coverImage || listing.gallery?.[0] || undefined,
     contactName: listing.title,
@@ -191,7 +225,7 @@ export function buildWhatsAppCloudApiPayload(params: {
   listButtonText?: string
   footerText?: string
 }): any {
-  const cleanPhone = (params.to || params.toPhone || '').replace(/\D/g, '')
+  const cleanPhone = normalizeWhatsAppRecipientPhone(params.to || params.toPhone || '')
   const opts: WhatsAppSendOptions = {
     toPhone: cleanPhone,
     messageText: params.text || params.messageText || '',
@@ -216,21 +250,53 @@ export async function sendWhatsAppFlowMessage(
   existingStore?: any
 ): Promise<WhatsAppDispatchResult> {
   const store = existingStore || loadStore()
-  const cleanPhone = options.toPhone.replace(/\D/g, '')
+  const cleanPhone = normalizeWhatsAppRecipientPhone(options.toPhone)
   const territoryId = options.territoryId || FLAGSHIP_TERRITORY_ID
 
-  let token = store.settings?.whatsappToken || process.env.WHATSAPP_TOKEN
-  let phoneId = store.settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID
+  let token = isRealMetaToken(store.settings?.whatsappToken)
+    ? store.settings.whatsappToken
+    : isRealMetaToken(process.env.WHATSAPP_TOKEN)
+    ? process.env.WHATSAPP_TOKEN
+    : undefined
+
+  let phoneId = isRealPhoneNumberId(store.settings?.whatsappPhoneNumberId)
+    ? store.settings.whatsappPhoneNumberId
+    : isRealPhoneNumberId(process.env.WHATSAPP_PHONE_NUMBER_ID)
+    ? process.env.WHATSAPP_PHONE_NUMBER_ID
+    : undefined
 
   const supabase = getSupabaseAdminClient()
 
-  // Fallback to Supabase persistent branding if local container settings are uninitialized
+  // Fallback to Supabase persistent branding if credentials are not valid Meta credentials
   if ((!token || !phoneId) && supabase) {
     try {
-      const { data: t } = await supabase.from('territories').select('branding').eq('id', FLAGSHIP_TERRITORY_ID).single()
+      const targetId = territoryId || FLAGSHIP_TERRITORY_ID
+      const { data: t } = await supabase.from('territories').select('branding').eq('id', targetId).single()
       if (t?.branding?.whatsappSettings) {
-        token = token || t.branding.whatsappSettings.whatsappToken
-        phoneId = phoneId || t.branding.whatsappSettings.whatsappPhoneNumberId
+        const ws = t.branding.whatsappSettings
+        if (!token && isRealMetaToken(ws.whatsappToken)) {
+          token = ws.whatsappToken
+          if (store.settings) store.settings.whatsappToken = token
+        }
+        if (!phoneId && isRealPhoneNumberId(ws.whatsappPhoneNumberId)) {
+          phoneId = ws.whatsappPhoneNumberId
+          if (store.settings) store.settings.whatsappPhoneNumberId = phoneId
+        }
+      }
+
+      if ((!token || !phoneId) && targetId !== FLAGSHIP_TERRITORY_ID) {
+        const { data: flagT } = await supabase.from('territories').select('branding').eq('id', FLAGSHIP_TERRITORY_ID).single()
+        if (flagT?.branding?.whatsappSettings) {
+          const ws = flagT.branding.whatsappSettings
+          if (!token && isRealMetaToken(ws.whatsappToken)) {
+            token = ws.whatsappToken
+            if (store.settings) store.settings.whatsappToken = token
+          }
+          if (!phoneId && isRealPhoneNumberId(ws.whatsappPhoneNumberId)) {
+            phoneId = ws.whatsappPhoneNumberId
+            if (store.settings) store.settings.whatsappPhoneNumberId = phoneId
+          }
+        }
       }
     } catch (syncErr) {
       console.warn('[WhatsApp Cloud API] Supabase credentials sync error:', syncErr)
@@ -258,6 +324,8 @@ export async function sendWhatsAppFlowMessage(
       if (res.ok) {
         providerDelivered = true
         msgStatus = 'sent'
+        const resData = await res.json().catch(() => ({}))
+        console.log(`[WhatsApp Meta API] Successfully delivered to ${cleanPhone}, msgId: ${resData?.messages?.[0]?.id}`)
       } else {
         const errData = await res.json().catch(() => ({}))
         providerDelivered = false
@@ -340,16 +408,29 @@ export async function sendWhatsAppFlowMessage(
 export async function markWhatsAppMessageAsRead(messageId: string): Promise<boolean> {
   if (!messageId || !messageId.startsWith('wamid.')) return false
   const store = loadStore()
-  let token = store.settings?.whatsappToken || process.env.WHATSAPP_TOKEN
-  let phoneId = store.settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID
+  let token = isRealMetaToken(store.settings?.whatsappToken)
+    ? store.settings.whatsappToken
+    : isRealMetaToken(process.env.WHATSAPP_TOKEN)
+    ? process.env.WHATSAPP_TOKEN
+    : undefined
+
+  let phoneId = isRealPhoneNumberId(store.settings?.whatsappPhoneNumberId)
+    ? store.settings.whatsappPhoneNumberId
+    : isRealPhoneNumberId(process.env.WHATSAPP_PHONE_NUMBER_ID)
+    ? process.env.WHATSAPP_PHONE_NUMBER_ID
+    : undefined
 
   const supabase = getSupabaseAdminClient()
   if ((!token || !phoneId) && supabase) {
     try {
       const { data: t } = await supabase.from('territories').select('branding').eq('id', FLAGSHIP_TERRITORY_ID).single()
       if (t?.branding?.whatsappSettings) {
-        token = token || t.branding.whatsappSettings.whatsappToken
-        phoneId = phoneId || t.branding.whatsappSettings.whatsappPhoneNumberId
+        if (!token && isRealMetaToken(t.branding.whatsappSettings.whatsappToken)) {
+          token = t.branding.whatsappSettings.whatsappToken
+        }
+        if (!phoneId && isRealPhoneNumberId(t.branding.whatsappSettings.whatsappPhoneNumberId)) {
+          phoneId = t.branding.whatsappSettings.whatsappPhoneNumberId
+        }
       }
     } catch {}
   }
