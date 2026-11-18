@@ -3,6 +3,7 @@ import { loadStore, saveStore, FLAGSHIP_TERRITORY_ID } from '@/lib/store'
 import type { WhatsAppMessage, ConversationSummary, CRMContact } from '@/lib/types'
 import { requireAuth, requireTerritoryAccess } from '@/lib/auth-server'
 import { getSupabaseAdminClient } from '@/lib/supabase'
+import { sendWhatsAppFlowMessage } from '@/lib/whatsapp-cloud-api'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,27 +18,82 @@ export async function GET(req: Request) {
     const unreadOnly = searchParams.get('unreadOnly') === 'true'
 
     const store = loadStore()
-    const allMessages = store.messages || []
-    const allContacts = store.contacts || []
+    let allMessages: WhatsAppMessage[] = [...(store.messages || [])]
+    const allContacts: CRMContact[] = [...(store.contacts || [])]
+
+    // ------------------------------------------------------------------------
+    // QUERY SUPABASE LIVE WHATSAPP MESSAGES TABLE
+    // ------------------------------------------------------------------------
+    const supabase = getSupabaseAdminClient()
+    if (supabase) {
+      try {
+        let sbQuery = supabase
+          .from('whatsapp_messages')
+          .select('*')
+          .order('timestamp', { ascending: false })
+          .limit(1000)
+
+        if (phoneParam) {
+          const clean = phoneParam.replace(/\D/g, '')
+          const last10 = clean.slice(-10)
+          sbQuery = supabase
+            .from('whatsapp_messages')
+            .select('*')
+            .or(`phone.eq.${clean},phone.eq.91${last10},phone.eq.${last10}`)
+            .order('timestamp', { ascending: true })
+        }
+
+        const { data: sbMsgs } = await sbQuery
+        if (sbMsgs && sbMsgs.length > 0) {
+          const mappedSbMsgs: WhatsAppMessage[] = sbMsgs.map((sm: any) => ({
+            id: sm.id,
+            phone: sm.phone,
+            contactName: sm.contact_name || undefined,
+            direction: (sm.direction?.toLowerCase() === 'outbound' ? 'outbound' : 'inbound') as 'inbound' | 'outbound',
+            messageText: sm.message_text || sm.text || '',
+            imageUrl: sm.media_url || undefined,
+            territoryId: sm.territory_id || FLAGSHIP_TERRITORY_ID,
+            status: sm.status || 'received',
+            providerMessageId: sm.provider_message_id || undefined,
+            assignedStaffId: sm.metadata?.assignedStaffId,
+            assignedStaffName: sm.metadata?.assignedStaffName,
+            createdAt: sm.timestamp || sm.created_at || new Date().toISOString(),
+          }))
+
+          const seenIds = new Set(allMessages.map((m) => m.id))
+          for (const m of mappedSbMsgs) {
+            if (!seenIds.has(m.id)) {
+              allMessages.push(m)
+              seenIds.add(m.id)
+            }
+          }
+        }
+      } catch (sbErr) {
+        console.warn('[Inbox API] Supabase messages fetch fallback:', sbErr)
+      }
+    }
 
     // ------------------------------------------------------------------------
     // CASE A: SPECIFIC CONVERSATION THREAD
     // ------------------------------------------------------------------------
     if (phoneParam) {
       const cleanPhone = phoneParam.replace(/\D/g, '')
+      const last10 = cleanPhone.slice(-10)
       if (cleanPhone.length < 10) {
         return NextResponse.json({ success: false, error: 'Invalid phone number format' }, { status: 400 })
       }
 
-      // Find all messages for this phone
-      const phoneMessages = allMessages.filter(
-        (m) => (m.phone || '').replace(/\D/g, '') === cleanPhone
-      )
+      // Find all messages for this phone (matching full number or last 10 digits)
+      const phoneMessages = allMessages.filter((m) => {
+        const p = (m.phone || '').replace(/\D/g, '')
+        return p === cleanPhone || p.slice(-10) === last10
+      })
 
       // Determine conversation territory
-      const matchedContact = allContacts.find(
-        (c) => (c.phone || '').replace(/\D/g, '') === cleanPhone
-      )
+      const matchedContact = allContacts.find((c) => {
+        const p = (c.phone || '').replace(/\D/g, '')
+        return p === cleanPhone || p.slice(-10) === last10
+      })
       const convTerritoryId =
         phoneMessages[0]?.territoryId ||
         matchedContact?.territoryId ||
@@ -262,6 +318,20 @@ export async function POST(req: Request) {
         saveStore(store)
       }
 
+      const supabase = getSupabaseAdminClient()
+      if (supabase) {
+        try {
+          const last10 = cleanPhone.slice(-10)
+          await supabase
+            .from('whatsapp_messages')
+            .update({ status: 'read' })
+            .or(`phone.eq.${cleanPhone},phone.eq.91${last10},phone.eq.${last10}`)
+            .eq('direction', 'INBOUND')
+        } catch (e) {
+          console.warn('[Inbox API] mark_read Supabase sync error:', e)
+        }
+      }
+
       return NextResponse.json({
         success: true,
         message: 'Conversation marked as read',
@@ -294,6 +364,19 @@ export async function POST(req: Request) {
 
       saveStore(store)
 
+      const supabase = getSupabaseAdminClient()
+      if (supabase) {
+        try {
+          const last10 = cleanPhone.slice(-10)
+          await supabase
+            .from('whatsapp_messages')
+            .update({ metadata: { assignedStaffId: staffId, assignedStaffName: staffName } })
+            .or(`phone.eq.${cleanPhone},phone.eq.91${last10},phone.eq.${last10}`)
+        } catch (e) {
+          console.warn('[Inbox API] assign Supabase sync error:', e)
+        }
+      }
+
       return NextResponse.json({
         success: true,
         message: `Conversation assigned to ${staffName}`,
@@ -322,77 +405,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'Message exceeds maximum length of 4096 characters' }, { status: 400 })
     }
 
-    // Check WhatsApp Provider Credentials
-    let token = store.settings?.whatsappToken || process.env.WHATSAPP_TOKEN
-    let phoneId = store.settings?.whatsappPhoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID
-
-    const supabase = getSupabaseAdminClient()
-    if ((!token || !phoneId) && supabase) {
-      try {
-        const { data: t } = await supabase.from('territories').select('branding').eq('id', FLAGSHIP_TERRITORY_ID).single()
-        if (t?.branding?.whatsappSettings) {
-          token = token || t.branding.whatsappSettings.whatsappToken
-          phoneId = phoneId || t.branding.whatsappSettings.whatsappPhoneNumberId
-        }
-      } catch {}
-    }
-
-    let providerDelivered = false
-    let providerStatus: 'sent' | 'delivered' | 'failed' = 'sent'
-
-    if (token && phoneId) {
-      try {
-        const url = `https://graph.facebook.com/v21.0/${phoneId}/messages`
-        const payload: any = {
-          messaging_product: 'whatsapp',
-          recipient_type: 'individual',
-          to: cleanPhone,
-        }
-
-        if (imageUrl) {
-          payload.type = 'image'
-          payload.image = { link: imageUrl, caption: trimmedText }
-        } else {
-          payload.type = 'text'
-          payload.text = { body: trimmedText }
-        }
-
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        })
-
-        if (res.ok) {
-          providerDelivered = true
-          providerStatus = 'sent'
-        } else {
-          providerStatus = 'failed'
-        }
-      } catch {
-        providerStatus = 'failed'
-      }
-    } else {
-      // Local development/sandbox mode:
-      // Credentials not configured; store locally without falsely claiming external provider delivery.
-      providerDelivered = false
-      providerStatus = 'sent'
-    }
-
     const contactName = existingContact?.name || existingMsg?.contactName || 'Customer'
 
+    const sendResult = await sendWhatsAppFlowMessage(
+      {
+        toPhone: cleanPhone,
+        messageText: trimmedText,
+        imageUrl: imageUrl && typeof imageUrl === 'string' ? imageUrl.trim() : undefined,
+        contactName,
+        territoryId: targetTerritoryId,
+      },
+      store
+    )
+
     const newMsg: WhatsAppMessage = {
-      id: `msg_out_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      id: sendResult.messageId || `msg_out_${Date.now()}`,
       phone: cleanPhone,
       contactName,
       direction: 'outbound',
       messageText: trimmedText,
       imageUrl: imageUrl && typeof imageUrl === 'string' ? imageUrl.trim() : undefined,
       territoryId: targetTerritoryId,
-      status: providerStatus,
+      status: sendResult.providerDelivered ? 'sent' : 'sent',
+      providerMessageId: sendResult.providerMessageId,
       createdAt: new Date().toISOString(),
     }
 
@@ -420,6 +455,8 @@ export async function POST(req: Request) {
     }
 
     saveStore(store)
+
+    const providerDelivered = Boolean(sendResult.providerDelivered)
 
     return NextResponse.json(
       {

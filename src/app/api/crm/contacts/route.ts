@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { loadStore, saveStore, FLAGSHIP_TERRITORY_ID, logAuditEvent } from '@/lib/store'
 import type { CRMContact } from '@/lib/types'
 import { requireAuth, requireTerritoryAccess } from '@/lib/auth-server'
+import { getSupabaseAdminClient } from '@/lib/supabase'
 import {
   normalizeIndianPhoneNumber,
   findDuplicateContacts,
@@ -9,6 +10,47 @@ import {
 } from '@/lib/crm-duplicates'
 
 export const dynamic = 'force-dynamic'
+
+function mapRowToContact(row: any): CRMContact {
+  return {
+    id: row.id,
+    name: row.name || 'Unknown Contact',
+    businessName: row.business_name || undefined,
+    phone: row.phone,
+    email: row.email || undefined,
+    tags: Array.isArray(row.tags) ? row.tags : [],
+    stage: row.stage || 'NEW_LEAD',
+    territoryId: row.territory_id || FLAGSHIP_TERRITORY_ID,
+    franchiseId: row.franchise_id || undefined,
+    listingId: row.listing_id || undefined,
+    listingTitle: row.listing_title || undefined,
+    notes: row.notes || '',
+    messageCount: typeof row.message_count === 'number' ? row.message_count : 1,
+    lastMessage: row.last_message || undefined,
+    lastContactAt: row.last_contact_at || row.created_at || new Date().toISOString(),
+    createdAt: row.created_at || new Date().toISOString(),
+  }
+}
+
+function mapContactToRow(contact: CRMContact): any {
+  return {
+    id: contact.id,
+    territory_id: contact.territoryId || FLAGSHIP_TERRITORY_ID,
+    franchise_id: contact.franchiseId || null,
+    name: contact.name,
+    phone: contact.phone,
+    email: contact.email || null,
+    tags: contact.tags || [],
+    stage: contact.stage || 'NEW_LEAD',
+    listing_id: contact.listingId || null,
+    listing_title: contact.listingTitle || null,
+    notes: contact.notes || null,
+    message_count: contact.messageCount || 1,
+    last_message: contact.lastMessage || null,
+    last_contact_at: contact.lastContactAt || new Date().toISOString(),
+    created_at: contact.createdAt || new Date().toISOString(),
+  }
+}
 
 export async function GET(req: Request) {
   try {
@@ -27,13 +69,48 @@ export async function GET(req: Request) {
       ? (territoryQuery && territoryQuery !== 'all' ? territoryQuery : undefined)
       : auth.user.territoryId
 
-    let contacts = store.contacts || []
+    let contacts: CRMContact[] = []
+    const supabase = getSupabaseAdminClient()
+    if (supabase) {
+      try {
+        let query = supabase.from('contacts').select('*')
+        if (!isSuperAdmin) {
+          query = query.eq('territory_id', auth.user.territoryId)
+        } else if (callerTerritory && callerTerritory !== 'all') {
+          query = query.eq('territory_id', callerTerritory)
+        }
+        const { data: supaContacts, error: supaErr } = await query.order('last_contact_at', { ascending: false })
+        if (!supaErr && Array.isArray(supaContacts) && supaContacts.length > 0) {
+          contacts = supaContacts.map(mapRowToContact)
+        }
+      } catch (e) {
+        console.warn('[Contacts GET] Supabase fetch error, fallback to store:', e)
+      }
+    }
 
-    // Tenant Scoping Guard: Franchise Admin can only see their territory's private customer leads
+    // Fallback or merge with store contacts if Supabase returned 0 or fewer than store
+    let storeContacts = store.contacts || []
     if (!isSuperAdmin) {
-      contacts = contacts.filter((c) => (c.territoryId || FLAGSHIP_TERRITORY_ID) === auth.user.territoryId)
+      storeContacts = storeContacts.filter((c) => (c.territoryId || FLAGSHIP_TERRITORY_ID) === auth.user.territoryId)
     } else if (callerTerritory && callerTerritory !== 'all') {
-      contacts = contacts.filter((c) => (c.territoryId || FLAGSHIP_TERRITORY_ID) === callerTerritory)
+      storeContacts = storeContacts.filter((c) => (c.territoryId || FLAGSHIP_TERRITORY_ID) === callerTerritory)
+    }
+
+    if (contacts.length === 0) {
+      contacts = storeContacts
+      // Auto-seed Supabase in background if Supabase was empty but store had contacts
+      if (supabase && storeContacts.length > 0) {
+        const rowsToSeed = storeContacts.map(mapContactToRow)
+        supabase.from('contacts').upsert(rowsToSeed, { onConflict: 'id' }).then(() => {})
+      }
+    } else {
+      // Merge any store contacts missing from Supabase by phone
+      const supaPhones = new Set(contacts.map((c) => c.phone.slice(-10)))
+      for (const sc of storeContacts) {
+        if (!supaPhones.has(sc.phone.slice(-10))) {
+          contacts.push(sc)
+        }
+      }
     }
 
     // Fast-path: Duplicate check query
@@ -73,6 +150,7 @@ export async function POST(req: Request) {
 
     const body = await req.json()
     const store = loadStore()
+    const supabase = getSupabaseAdminClient()
 
     const name = (body.name || '').trim()
     const rawPhone = (body.phone || '').trim()
@@ -146,6 +224,15 @@ export async function POST(req: Request) {
 
     store.contacts.unshift(newContact)
     saveStore(store)
+
+    // Persist to Supabase
+    if (supabase) {
+      try {
+        await supabase.from('contacts').upsert(mapContactToRow(newContact))
+      } catch (supaErr) {
+        console.warn('[Contacts POST] Supabase insert warning:', supaErr)
+      }
+    }
 
     logAuditEvent({
       actorId: auth.user.userId,
@@ -272,6 +359,27 @@ export async function PUT(req: Request) {
     store.contacts[idx] = updated
     saveStore(store)
 
+    // Persist to Supabase
+    const supabase = getSupabaseAdminClient()
+    if (supabase) {
+      try {
+        const rowUpdates: any = {}
+        if ('name' in safeUpdates) rowUpdates.name = safeUpdates.name
+        if ('phone' in safeUpdates) rowUpdates.phone = safeUpdates.phone
+        if ('email' in safeUpdates) rowUpdates.email = safeUpdates.email
+        if ('tags' in safeUpdates) rowUpdates.tags = safeUpdates.tags
+        if ('stage' in safeUpdates) rowUpdates.stage = safeUpdates.stage
+        if ('listingId' in safeUpdates) rowUpdates.listing_id = safeUpdates.listingId
+        if ('listingTitle' in safeUpdates) rowUpdates.listing_title = safeUpdates.listingTitle
+        if ('notes' in safeUpdates) rowUpdates.notes = safeUpdates.notes
+        if ('territoryId' in safeUpdates) rowUpdates.territory_id = safeUpdates.territoryId
+        rowUpdates.last_contact_at = new Date().toISOString()
+        await supabase.from('contacts').update(rowUpdates).eq('id', id)
+      } catch (supaErr) {
+        console.warn('[Contacts PUT] Supabase update warning:', supaErr)
+      }
+    }
+
     logAuditEvent({
       actorId: auth.user.userId,
       actorName: auth.user.phone,
@@ -319,6 +427,16 @@ export async function DELETE(req: Request) {
 
     store.contacts = store.contacts.filter((c) => c.id !== id)
     saveStore(store)
+
+    // Persist to Supabase
+    const supabase = getSupabaseAdminClient()
+    if (supabase) {
+      try {
+        await supabase.from('contacts').delete().eq('id', id)
+      } catch (supaErr) {
+        console.warn('[Contacts DELETE] Supabase delete warning:', supaErr)
+      }
+    }
 
     logAuditEvent({
       actorId: auth.user.userId,

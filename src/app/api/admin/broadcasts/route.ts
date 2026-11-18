@@ -2,8 +2,42 @@ import { NextResponse } from 'next/server'
 import { loadStore, saveStore, FLAGSHIP_TERRITORY_ID, logAuditEvent } from '@/lib/store'
 import type { BroadcastCampaign } from '@/lib/types'
 import { requireAuth, requireTerritoryAccess } from '@/lib/auth-server'
+import { getSupabaseAdminClient } from '@/lib/supabase'
+import { sendWhatsAppFlowMessage } from '@/lib/whatsapp-cloud-api'
 
 export const dynamic = 'force-dynamic'
+
+function mapRowToCampaign(row: any): BroadcastCampaign {
+  return {
+    id: row.id,
+    title: row.name || 'Untitled Campaign',
+    message: row.message_text || '',
+    imageUrl: row.media_url || undefined,
+    targetAudience: Array.isArray(row.target_tags) && row.target_tags.length > 0 ? row.target_tags[0] : 'ALL',
+    territoryId: row.territory_id || FLAGSHIP_TERRITORY_ID,
+    status: (row.status?.toLowerCase() === 'completed' ? 'completed' : row.status?.toLowerCase() === 'in_progress' ? 'sending' : 'staged') as any,
+    matchedRecipients: row.total_recipients || row.sent_count || 0,
+    createdAt: row.created_at || new Date().toISOString(),
+    stagedBy: row.created_by || undefined,
+  }
+}
+
+function mapCampaignToRow(c: BroadcastCampaign): any {
+  return {
+    id: c.id,
+    territory_id: c.territoryId || FLAGSHIP_TERRITORY_ID,
+    name: c.title,
+    message_text: c.message,
+    media_url: c.imageUrl || null,
+    target_tags: [c.targetAudience],
+    status: c.status === 'completed' ? 'COMPLETED' : c.status === 'sending' ? 'IN_PROGRESS' : 'DRAFT',
+    total_recipients: c.matchedRecipients || 0,
+    sent_count: c.status === 'completed' ? c.matchedRecipients : 0,
+    created_by: c.stagedBy || null,
+    created_at: c.createdAt || new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+}
 
 export async function GET(req: Request) {
   try {
@@ -14,12 +48,44 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const territoryQuery = searchParams.get('territoryId')
 
-    let broadcasts: BroadcastCampaign[] = store.broadcasts || []
+    let broadcasts: BroadcastCampaign[] = []
+    const supabase = getSupabaseAdminClient()
+    if (supabase) {
+      try {
+        let query = supabase.from('broadcast_campaigns').select('*')
+        if (auth.user.role !== 'SUPER_ADMIN') {
+          query = query.eq('territory_id', auth.user.territoryId)
+        } else if (territoryQuery && territoryQuery !== 'all') {
+          query = query.eq('territory_id', territoryQuery)
+        }
+        const { data: supaBcasts, error: supaErr } = await query.order('created_at', { ascending: false })
+        if (!supaErr && Array.isArray(supaBcasts) && supaBcasts.length > 0) {
+          broadcasts = supaBcasts.map(mapRowToCampaign)
+        }
+      } catch (err) {
+        console.warn('[Broadcasts GET] Supabase fetch error, fallback to store:', err)
+      }
+    }
 
+    let storeBroadcasts = store.broadcasts || []
     if (auth.user.role !== 'SUPER_ADMIN') {
-      broadcasts = broadcasts.filter((b) => (b.territoryId || FLAGSHIP_TERRITORY_ID) === auth.user.territoryId)
+      storeBroadcasts = storeBroadcasts.filter((b) => (b.territoryId || FLAGSHIP_TERRITORY_ID) === auth.user.territoryId)
     } else if (territoryQuery && territoryQuery !== 'all') {
-      broadcasts = broadcasts.filter((b) => (b.territoryId || FLAGSHIP_TERRITORY_ID) === territoryQuery)
+      storeBroadcasts = storeBroadcasts.filter((b) => (b.territoryId || FLAGSHIP_TERRITORY_ID) === territoryQuery)
+    }
+
+    if (broadcasts.length === 0) {
+      broadcasts = storeBroadcasts
+      if (supabase && storeBroadcasts.length > 0) {
+        supabase.from('broadcast_campaigns').upsert(storeBroadcasts.map(mapCampaignToRow), { onConflict: 'id' }).then(() => {})
+      }
+    } else {
+      const supaIds = new Set(broadcasts.map((b) => b.id))
+      for (const sb of storeBroadcasts) {
+        if (!supaIds.has(sb.id)) {
+          broadcasts.push(sb)
+        }
+      }
     }
 
     // Sort newest first
@@ -127,6 +193,10 @@ export async function POST(req: Request) {
       ).length
     }
 
+    const sendNow = Boolean(body.sendNow || body.dispatch)
+    let dispatchedCount = 0
+    let failedCount = 0
+
     const newCampaign: BroadcastCampaign = {
       id: `bcast_${Date.now()}`,
       title: title.trim(),
@@ -134,36 +204,72 @@ export async function POST(req: Request) {
       imageUrl: imageUrl?.trim() || undefined,
       targetAudience,
       territoryId: targetTerritoryId,
-      status: 'staged',
+      status: sendNow ? 'sending' : 'staged',
       matchedRecipients: matchedCount,
       createdAt: new Date().toISOString(),
       stagedBy: auth.user.userId,
     }
 
+    if (sendNow) {
+      const targetContacts = (store.contacts || []).filter(
+        (c) => (c.territoryId || FLAGSHIP_TERRITORY_ID) === targetTerritoryId
+      )
+      const recipientsToDispatch = targetContacts.slice(0, 50)
+      for (const contact of recipientsToDispatch) {
+        try {
+          const res = await sendWhatsAppFlowMessage({
+            toPhone: contact.phone,
+            messageText: message.trim(),
+            mediaUrl: imageUrl?.trim() || undefined,
+            territoryId: targetTerritoryId,
+            contactName: contact.name,
+          })
+          if (res.ok) {
+            dispatchedCount++
+          } else {
+            failedCount++
+          }
+        } catch {
+          failedCount++
+        }
+      }
+      newCampaign.status = 'completed'
+    }
+
     store.broadcasts.unshift(newCampaign)
     saveStore(store)
+
+    // Persist to Supabase
+    const supabase = getSupabaseAdminClient()
+    if (supabase) {
+      try {
+        await supabase.from('broadcast_campaigns').upsert(mapCampaignToRow(newCampaign))
+      } catch (err) {
+        console.warn('[Broadcasts POST] Supabase insert warning:', err)
+      }
+    }
 
     logAuditEvent({
       actorId: auth.user.userId,
       actorName: auth.user.phone || 'Admin',
       actorRole: auth.user.role,
       territoryId: targetTerritoryId,
-      action: 'BROADCAST_STAGED',
-      details: `Staged broadcast "${newCampaign.title}" for audience ${targetAudience} (${matchedCount} recipients)`,
+      action: sendNow ? 'BROADCAST_DISPATCHED' : 'BROADCAST_STAGED',
+      details: sendNow
+        ? `Dispatched broadcast "${newCampaign.title}" to ${dispatchedCount} contacts (${failedCount} failed)`
+        : `Staged broadcast "${newCampaign.title}" for audience ${targetAudience} (${matchedCount} recipients)`,
     })
 
     return NextResponse.json(
       {
         success: true,
-        staged: true,
-        dispatched: false,
+        staged: !sendNow,
+        dispatched: sendNow,
+        dispatchedCount,
+        failedCount,
         recipientCount: matchedCount,
         campaign: newCampaign,
         broadcast: newCampaign,
-        notice:
-          'Campaign staged in sandbox. Zero external WhatsApp dispatches occurred.',
-        sandboxNotice:
-          'Campaign staged locally. External WhatsApp broadcast dispatch requires verified Meta Cloud API message templates.',
       },
       { status: 201 }
     )
@@ -200,6 +306,16 @@ export async function DELETE(req: Request) {
 
     store.broadcasts = broadcasts.filter((b) => b.id !== id)
     saveStore(store)
+
+    // Persist to Supabase
+    const supabase = getSupabaseAdminClient()
+    if (supabase) {
+      try {
+        await supabase.from('broadcast_campaigns').delete().eq('id', id)
+      } catch (err) {
+        console.warn('[Broadcasts DELETE] Supabase delete warning:', err)
+      }
+    }
 
     return NextResponse.json({ success: true, message: 'Broadcast campaign deleted successfully' })
   } catch (err: any) {

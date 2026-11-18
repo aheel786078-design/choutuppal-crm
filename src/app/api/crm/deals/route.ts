@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { loadStore, saveStore, FLAGSHIP_TERRITORY_ID } from '@/lib/store'
 import { CRMDeal, DealStage } from '@/lib/types'
 import { requireAuth, requireTerritoryAccess } from '@/lib/auth-server'
+import { getSupabaseAdminClient } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +14,47 @@ const VALID_STAGES: DealStage[] = [
   'WON',
   'LOST',
 ]
+
+function mapRowToDeal(row: any): CRMDeal {
+  return {
+    id: row.id,
+    title: row.title || 'Untitled Deal',
+    description: row.description || undefined,
+    value: Number(row.value) || 0,
+    currency: row.currency || 'INR',
+    stage: (row.stage as DealStage) || 'NEW_LEAD',
+    status: (row.status?.toUpperCase() === 'WON' ? 'WON' : row.status?.toUpperCase() === 'LOST' ? 'LOST' : 'OPEN') as 'OPEN' | 'WON' | 'LOST',
+    phone: row.phone || undefined,
+    contactId: row.contact_id || undefined,
+    contactName: row.contact_name || undefined,
+    territoryId: row.territory_id || FLAGSHIP_TERRITORY_ID,
+    expectedCloseDate: row.expected_close_date || undefined,
+    tag: row.tag || undefined,
+    notes: row.notes || undefined,
+    createdAt: row.created_at || new Date().toISOString(),
+    updatedAt: row.updated_at || row.created_at || new Date().toISOString(),
+  }
+}
+
+function mapDealToRow(deal: CRMDeal): any {
+  return {
+    id: deal.id,
+    territory_id: deal.territoryId || FLAGSHIP_TERRITORY_ID,
+    contact_id: deal.contactId || null,
+    title: deal.title,
+    description: deal.description || null,
+    phone: deal.phone || null,
+    tag: deal.tag || null,
+    value: deal.value || 0,
+    currency: deal.currency || 'INR',
+    stage: deal.stage || 'NEW_LEAD',
+    status: deal.status || 'OPEN',
+    expected_close_date: deal.expectedCloseDate ? deal.expectedCloseDate.split('T')[0] : null,
+    notes: deal.notes || null,
+    created_at: deal.createdAt || new Date().toISOString(),
+    updated_at: deal.updatedAt || new Date().toISOString(),
+  }
+}
 
 /**
  * GET /api/crm/deals
@@ -31,24 +73,51 @@ export async function GET(req: Request) {
     const territoryIdParam = searchParams.get('territoryId')
 
     const store = loadStore()
-    const allDeals = store.deals || []
+    let allDeals: CRMDeal[] = []
 
-    // 1. Enforce territory isolation
-    let authorizedDeals: CRMDeal[]
-    if (auth.user.role === 'SUPER_ADMIN') {
-      if (territoryIdParam) {
-        authorizedDeals = allDeals.filter(
-          (d) => (d.territoryId || FLAGSHIP_TERRITORY_ID) === territoryIdParam
-        )
-      } else {
-        authorizedDeals = allDeals
+    const supabase = getSupabaseAdminClient()
+    if (supabase) {
+      try {
+        let query = supabase.from('crm_deals').select('*')
+        if (auth.user.role !== 'SUPER_ADMIN') {
+          query = query.eq('territory_id', auth.user.territoryId)
+        } else if (territoryIdParam && territoryIdParam !== 'all') {
+          query = query.eq('territory_id', territoryIdParam)
+        }
+        const { data: supaDeals, error: supaErr } = await query.order('updated_at', { ascending: false })
+        if (!supaErr && Array.isArray(supaDeals) && supaDeals.length > 0) {
+          allDeals = supaDeals.map(mapRowToDeal)
+        }
+      } catch (err) {
+        console.warn('[Deals GET] Supabase fetch error, fallback to store:', err)
+      }
+    }
+
+    // Merge or fallback to store deals
+    let storeDeals = store.deals || []
+    if (auth.user.role !== 'SUPER_ADMIN') {
+      storeDeals = storeDeals.filter((d) => (d.territoryId || FLAGSHIP_TERRITORY_ID) === auth.user.territoryId)
+    } else if (territoryIdParam && territoryIdParam !== 'all') {
+      storeDeals = storeDeals.filter((d) => (d.territoryId || FLAGSHIP_TERRITORY_ID) === territoryIdParam)
+    }
+
+    if (allDeals.length === 0) {
+      allDeals = storeDeals
+      // Auto-seed to Supabase if store has deals
+      if (supabase && storeDeals.length > 0) {
+        supabase.from('crm_deals').upsert(storeDeals.map(mapDealToRow), { onConflict: 'id' }).then(() => {})
       }
     } else {
-      // Franchise user strictly scoped to assigned territory
-      authorizedDeals = allDeals.filter(
-        (d) => (d.territoryId || FLAGSHIP_TERRITORY_ID) === auth.user.territoryId
-      )
+      const supaDealIds = new Set(allDeals.map((d) => d.id))
+      for (const sd of storeDeals) {
+        if (!supaDealIds.has(sd.id)) {
+          allDeals.push(sd)
+        }
+      }
     }
+
+    // 1. Enforce territory isolation
+    let authorizedDeals: CRMDeal[] = allDeals
 
     // 2. Filter by stage
     if (stageParam && VALID_STAGES.includes(stageParam)) {
@@ -244,6 +313,16 @@ export async function POST(req: Request) {
     store.deals.push(newDeal)
     saveStore(store)
 
+    // Persist to Supabase
+    const supabase = getSupabaseAdminClient()
+    if (supabase) {
+      try {
+        await supabase.from('crm_deals').upsert(mapDealToRow(newDeal))
+      } catch (err) {
+        console.warn('[Deals POST] Supabase insert warning:', err)
+      }
+    }
+
     return NextResponse.json(
       {
         success: true,
@@ -384,6 +463,16 @@ export async function PUT(req: Request) {
     store.deals[dealIndex] = currentDeal
     saveStore(store)
 
+    // Persist to Supabase
+    const supabase = getSupabaseAdminClient()
+    if (supabase) {
+      try {
+        await supabase.from('crm_deals').upsert(mapDealToRow(currentDeal))
+      } catch (err) {
+        console.warn('[Deals PUT] Supabase update warning:', err)
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Deal updated successfully',
@@ -439,6 +528,16 @@ export async function DELETE(req: Request) {
 
     store.deals = store.deals.filter((d) => d.id !== dealId)
     saveStore(store)
+
+    // Persist to Supabase
+    const supabase = getSupabaseAdminClient()
+    if (supabase) {
+      try {
+        await supabase.from('crm_deals').delete().eq('id', dealId)
+      } catch (err) {
+        console.warn('[Deals DELETE] Supabase delete warning:', err)
+      }
+    }
 
     return NextResponse.json({
       success: true,

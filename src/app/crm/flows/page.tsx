@@ -31,9 +31,23 @@ import {
   ChevronUp,
   ChevronDown,
   ListOrdered,
+  List,
+  Eye,
+  Settings2,
+  AlignLeft,
 } from 'lucide-react'
 import { FlowImportModal } from '@/components/crm/flow-import-modal'
-import type { WhatsAppFlow, FlowStatus, FlowNode, FlowNodeType, FlowButton, FlowListSection, ListingSortMode } from '@/lib/types'
+import type {
+  WhatsAppFlow,
+  FlowStatus,
+  FlowNode,
+  FlowNodeType,
+  FlowButton,
+  FlowListSection,
+  FlowListRow,
+  FlowNodeConfig,
+  ListingSortMode,
+} from '@/lib/types'
 
 interface ListingSummary {
   id: string
@@ -70,6 +84,11 @@ export default function CRMFlowsPage() {
   const [selectedCatToAddToPriority, setSelectedCatToAddToPriority] = useState<string>('')
   const [isSaving, setIsSaving] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
+
+  // Granular Step & Multi-message Editor State
+  const [editorNodes, setEditorNodes] = useState<FlowNode[]>([])
+  const [activeNodeId, setActiveNodeId] = useState<string>('entry_message')
+  const [activeStepTab, setActiveStepTab] = useState<'message' | 'buttons' | 'list' | 'listings'>('message')
 
   // Simulator State
   interface SimMessage {
@@ -208,10 +227,10 @@ export default function CRMFlowsPage() {
       territoryId: 'territory_choutuppal',
     })
     setEditorButtons([
-      { id: 'btn_1', title: 'Option 1', nextNodeId: 'action_node_1' },
-      { id: 'btn_2', title: 'Option 2', nextNodeId: 'action_node_2' },
+      { id: 'btn_1', title: 'సేవలు', nextNodeId: 'action_node_1' },
+      { id: 'btn_2', title: 'రియల్ ఎస్టేట్', nextNodeId: 'action_node_2' },
     ])
-    setEditorKeywords('hi, menu')
+    setEditorKeywords('hi, menu, నమస్కారం')
     setSelectedListingId('')
     setListingSortMode('manual')
     setListingSortOrder([])
@@ -220,6 +239,69 @@ export default function CRMFlowsPage() {
     setListingCategory('')
     setSelectedListingToAddToOrder('')
     setSelectedCatToAddToPriority('')
+
+    const initialEntryNode: FlowNode = {
+      id: 'entry_message',
+      type: 'send_buttons',
+      name: 'Step 1: స్వాగతం (Entry)',
+      config: {
+        text: 'నమస్కారం! చౌటుప్పల్ యాప్ కి స్వాగతం. మీకు ఏ సేవ కావాలి?\n\n🌐 అధికారిక పోర్టల్: https://choutuppal.in',
+        buttons: [
+          { id: 'btn_1', title: 'సేవలు', nextNodeId: 'action_node_1', action: 'BUTTON_REPLY' },
+          { id: 'btn_2', title: 'రియల్ ఎస్టేట్', nextNodeId: 'action_node_2', action: 'BUTTON_REPLY' },
+        ],
+        listSections: [
+          {
+            title: 'ప్రధాన సేవలు',
+            rows: [
+              { id: 'row_1', title: 'రియల్ ఎస్టేట్ & ప్లాట్లు', description: 'స్థలాలు & వెంచర్లు', nextNodeId: 'action_node_2' },
+              { id: 'row_2', title: 'వ్యాపారాలు & దుకాణాలు', description: 'షాపులు మరియు కాంట్రాక్టర్లు', nextNodeId: 'action_node_1' },
+            ],
+          },
+        ],
+        listButtonText: 'మెనూ చూడండి',
+        footerText: 'చౌటుప్పల్ యాప్ 24/7 బాట్',
+      },
+      positionX: 100,
+      positionY: 220,
+    }
+
+    const defaultNodes: FlowNode[] = [
+      { id: 'start', type: 'start', name: 'Start', config: { nextNodeId: 'entry_message' }, positionX: 100, positionY: 100 },
+      initialEntryNode,
+      {
+        id: 'action_node_1',
+        type: 'send_message',
+        name: 'Step 2: సేవలు',
+        config: {
+          text: 'చౌటుప్పల్ లో అందుబాటులో ఉన్న అన్ని సేవల సమాచారం:\n\n1. ఎలక్ట్రికల్ & ప్లంబింగ్\n2. కార్పెంటర్ & పెయింటింగ్\n3. ట్రాన్స్పోర్ట్ సర్వీసెస్\n\n🌐 https://choutuppal.in',
+          footerText: 'చౌటుప్పల్ యాప్ 24/7 బాట్',
+          buttons: [],
+          listSections: [],
+          listButtonText: 'ఎంపికలు',
+        },
+        positionX: 100,
+        positionY: 340,
+      },
+      {
+        id: 'action_node_2',
+        type: 'send_message',
+        name: 'Step 3: రియల్ ఎస్టేట్',
+        config: {
+          text: 'చౌటుప్పల్ మరియు పరిసర ప్రాంతాల్లో ఓపెన్ ప్లాట్లు & భూముల వివరాలు:\n\n🌐 https://choutuppal.in/listings?category=real-estate',
+          footerText: 'చౌటుప్పల్ యాప్ 24/7 బాట్',
+          buttons: [],
+          listSections: [],
+          listButtonText: 'ఎంపికలు',
+        },
+        positionX: 360,
+        positionY: 340,
+      },
+      { id: 'end_terminal', type: 'end', name: 'End', config: {}, positionX: 100, positionY: 480 },
+    ]
+    setEditorNodes(defaultNodes)
+    setActiveNodeId('entry_message')
+    setActiveStepTab('message')
     setIsEditorOpen(true)
   }
 
@@ -229,10 +311,16 @@ export default function CRMFlowsPage() {
     const entryNode = flow.nodes?.find((n) => n.id === 'entry_message' || n.id === flow.entryNodeId)
     const boundListingId =
       entryNode?.config?.listingId || flow.listingId || ''
-    const detectedMediaType =
-      entryNode?.config?.mediaType ||
-      flow.mediaType ||
-      (flow.imageUrl && /\.(mp4|mov|avi|webm)(\?.*)?$/i.test(flow.imageUrl) ? 'video' : 'image')
+    const detectedMediaType: 'image' | 'video' | 'document' =
+      entryNode?.config?.mediaType === 'video' ||
+      flow.mediaType === 'video' ||
+      (flow.imageUrl && /\.(mp4|mov|avi|webm)(\?.*)?$/i.test(flow.imageUrl))
+        ? 'video'
+        : entryNode?.config?.mediaType === 'document' ||
+          flow.mediaType === 'document' ||
+          (flow.imageUrl && /\.(pdf|doc|docx)(\?.*)?$/i.test(flow.imageUrl))
+        ? 'document'
+        : 'image'
 
     const detectedSortMode: ListingSortMode =
       entryNode?.config?.listingSortMode ||
@@ -278,7 +366,255 @@ export default function CRMFlowsPage() {
     setListingCategory(detectedCat)
     setSelectedListingToAddToOrder('')
     setSelectedCatToAddToPriority('')
+
+    // Initialize multi-node editor structures
+    let nodesToEdit: FlowNode[] = []
+    if (Array.isArray(flow.nodes) && flow.nodes.length > 0) {
+      nodesToEdit = flow.nodes.map((n) => ({
+        ...n,
+        config: {
+          ...n.config,
+          buttons: n.config?.buttons ? [...n.config.buttons] : [],
+          listSections: n.config?.listSections ? n.config.listSections.map((s) => ({ ...s, rows: [...(s.rows || [])] })) : [],
+          listButtonText: n.config?.listButtonText || 'మెనూ చూడండి',
+        },
+      }))
+    }
+
+    const entryId = flow.entryNodeId || 'entry_message'
+    let resolvedEntry = nodesToEdit.find((n) => n.id === entryId || n.id === 'entry_message')
+    if (!resolvedEntry) {
+      resolvedEntry = {
+        id: 'entry_message',
+        type: flow.button_options && flow.button_options.length > 0 ? 'send_buttons' : 'send_message',
+        name: 'Step 1: స్వాగతం (Entry)',
+        config: {
+          text: flow.initial_message || 'నమస్కారం! చౌటుప్పల్ యాప్ కి స్వాగతం...',
+          buttons: existingButtons.map((b) => ({ id: b.id, title: b.title, nextNodeId: b.nextNodeId })),
+          listSections: [],
+          listButtonText: 'మెనూ చూడండి',
+          mediaUrl: flow.imageUrl || flow.mediaUrl || '',
+          mediaType: detectedMediaType,
+          footerText: 'చౌటుప్పల్ యాప్ 24/7 బాట్',
+        },
+        positionX: 100,
+        positionY: 220,
+      }
+      nodesToEdit.push(resolvedEntry)
+    }
+
+    // Ensure start node
+    if (!nodesToEdit.some((n) => n.id === 'start')) {
+      nodesToEdit.unshift({
+        id: 'start',
+        type: 'start',
+        name: 'Start',
+        config: { nextNodeId: resolvedEntry.id },
+        positionX: 100,
+        positionY: 100,
+      })
+    }
+
+    // Ensure terminal node
+    if (!nodesToEdit.some((n) => n.id === 'end_terminal' || n.type === 'end')) {
+      nodesToEdit.push({
+        id: 'end_terminal',
+        type: 'end',
+        name: 'End',
+        config: {},
+        positionX: 100,
+        positionY: 600,
+      })
+    }
+
+    setEditorNodes(nodesToEdit)
+    setActiveNodeId(resolvedEntry.id)
+    setActiveStepTab('message')
     setIsEditorOpen(true)
+  }
+
+  // Active Node derived reference & helpers
+  const activeNode = editorNodes.find((n) => n.id === activeNodeId) || editorNodes.find((n) => n.type !== 'start' && n.type !== 'end') || editorNodes[0]
+  const messageSteps = editorNodes.filter((n) => n.type !== 'start' && n.type !== 'end')
+
+  const updateActiveNode = (updates: Partial<FlowNodeConfig>, nodeName?: string) => {
+    if (!activeNode) return
+    setEditorNodes((prev) =>
+      prev.map((n) => {
+        if (n.id === activeNode.id) {
+          return {
+            ...n,
+            name: nodeName !== undefined ? nodeName : n.name,
+            config: {
+              ...n.config,
+              ...updates,
+            },
+          }
+        }
+        return n
+      })
+    )
+
+    const isEntry = activeNode.id === 'entry_message' || activeNode.id === editingFlow?.entryNodeId
+    if (isEntry && editingFlow) {
+      setEditingFlow((prev) => {
+        if (!prev) return null
+        const sync: Partial<WhatsAppFlow> = { ...prev }
+        if (updates.text !== undefined) sync.initial_message = updates.text
+        if (updates.mediaUrl !== undefined) sync.imageUrl = updates.mediaUrl
+        if (updates.mediaType !== undefined) sync.mediaType = updates.mediaType
+        return sync
+      })
+    }
+  }
+
+  const handleAddStep = () => {
+    const stepNum = messageSteps.length + 1
+    const newId = `step_node_${Date.now()}`
+    const newNode: FlowNode = {
+      id: newId,
+      type: 'send_message',
+      name: `Step ${stepNum}: సందేశం`,
+      config: {
+        text: `దశ ${stepNum} వివరాలు:\n\nధన్యవాదాలు! మరింత సమాచారం కోసం సందర్శించండి:\n🌐 https://choutuppal.in`,
+        footerText: 'చౌటుప్పల్ యాప్ 24/7 బాట్',
+        buttons: [],
+        listSections: [],
+        listButtonText: 'ఎంపికలు',
+      },
+      positionX: 100 + (stepNum - 1) * 200,
+      positionY: 340,
+    }
+    setEditorNodes([...editorNodes, newNode])
+    setActiveNodeId(newId)
+    setActiveStepTab('message')
+  }
+
+  const handleDeleteStep = (nodeId: string) => {
+    const isEntry = nodeId === 'entry_message' || nodeId === editingFlow?.entryNodeId
+    if (isEntry) {
+      alert('ప్రధాన స్వాగత సందేశం (Entry Step) ని తొలగించలేరు.')
+      return
+    }
+    if (confirm('ఈ సందేశ దశను ఖచ్చితంగా తొలగించాలనుకుంటున్నారా?')) {
+      const remaining = editorNodes.filter((n) => n.id !== nodeId)
+      setEditorNodes(remaining)
+      const nextActive = remaining.find((n) => n.type !== 'start' && n.type !== 'end')
+      if (nextActive) setActiveNodeId(nextActive.id)
+    }
+  }
+
+  // Button handlers for active node
+  const handleAddButton = () => {
+    if (!activeNode) return
+    const curButtons = activeNode.config?.buttons || []
+    if (curButtons.length >= 3) {
+      alert('WhatsApp allows a maximum of 3 quick-reply buttons per message.')
+      return
+    }
+    const nextBtnId = `btn_${Date.now()}_${curButtons.length + 1}`
+    const updated = [
+      ...curButtons,
+      { id: nextBtnId, title: `Option ${curButtons.length + 1}`, nextNodeId: 'end_terminal', action: 'BUTTON_REPLY' },
+    ]
+    updateActiveNode({ buttons: updated })
+  }
+
+  const handleUpdateButton = (idx: number, patch: Partial<FlowButton>) => {
+    if (!activeNode) return
+    const curButtons = [...(activeNode.config?.buttons || [])]
+    if (!curButtons[idx]) return
+    curButtons[idx] = { ...curButtons[idx], ...patch }
+    updateActiveNode({ buttons: curButtons })
+  }
+
+  const handleRemoveButton = (idx: number) => {
+    if (!activeNode) return
+    const curButtons = (activeNode.config?.buttons || []).filter((_, i) => i !== idx)
+    updateActiveNode({ buttons: curButtons })
+  }
+
+  // List Menu Section & Row handlers for active node
+  const handleAddListSection = () => {
+    if (!activeNode) return
+    const curSections = activeNode.config?.listSections || []
+    const newSection: FlowListSection = {
+      title: `విభాగం ${curSections.length + 1}`,
+      rows: [
+        {
+          id: `row_${Date.now()}_1`,
+          title: 'సేవ లేదా ఎంపిక',
+          description: 'చిన్న వివరణ ఇక్కడ ఇవ్వండి',
+          nextNodeId: 'end_terminal',
+        },
+      ],
+    }
+    updateActiveNode({ listSections: [...curSections, newSection] })
+  }
+
+  const handleUpdateListSectionTitle = (secIdx: number, title: string) => {
+    if (!activeNode) return
+    const curSections = [...(activeNode.config?.listSections || [])]
+    if (!curSections[secIdx]) return
+    curSections[secIdx] = { ...curSections[secIdx], title }
+    updateActiveNode({ listSections: curSections })
+  }
+
+  const handleRemoveListSection = (secIdx: number) => {
+    if (!activeNode) return
+    const curSections = (activeNode.config?.listSections || []).filter((_, i) => i !== secIdx)
+    updateActiveNode({ listSections: curSections })
+  }
+
+  const handleAddListRow = (secIdx: number) => {
+    if (!activeNode) return
+    const curSections = [...(activeNode.config?.listSections || [])]
+    if (!curSections[secIdx]) return
+    const rows = curSections[secIdx].rows || []
+    const totalRows = curSections.reduce((acc, s) => acc + (s.rows?.length || 0), 0)
+    if (totalRows >= 10) {
+      alert('WhatsApp interactive lists allow a maximum of 10 rows across all sections.')
+      return
+    }
+    const newRow: FlowListRow = {
+      id: `row_${Date.now()}_${rows.length + 1}`,
+      title: `ఎంపిక ${rows.length + 1}`,
+      description: 'వివరాలు',
+      nextNodeId: 'end_terminal',
+    }
+    curSections[secIdx] = {
+      ...curSections[secIdx],
+      rows: [...rows, newRow],
+    }
+    updateActiveNode({ listSections: curSections })
+  }
+
+  const handleUpdateListRow = (secIdx: number, rowIdx: number, patch: Partial<FlowListRow>) => {
+    if (!activeNode) return
+    const curSections = [...(activeNode.config?.listSections || [])]
+    if (!curSections[secIdx] || !curSections[secIdx].rows[rowIdx]) return
+    const rows = [...curSections[secIdx].rows]
+    rows[rowIdx] = { ...rows[rowIdx], ...patch }
+    curSections[secIdx] = { ...curSections[secIdx], rows }
+    updateActiveNode({ listSections: curSections })
+  }
+
+  const handleRemoveListRow = (secIdx: number, rowIdx: number) => {
+    if (!activeNode) return
+    const curSections = [...(activeNode.config?.listSections || [])]
+    if (!curSections[secIdx]) return
+    curSections[secIdx] = {
+      ...curSections[secIdx],
+      rows: curSections[secIdx].rows.filter((_, i) => i !== rowIdx),
+    }
+    updateActiveNode({ listSections: curSections })
+  }
+
+  // Insert Variable Token into Editor
+  const handleInsertVariable = (token: string) => {
+    if (!activeNode) return
+    const cur = activeNode.config?.text || ''
+    updateActiveNode({ text: `${cur} ${token}`.trim() })
   }
 
   // Save Flow from Editor
@@ -307,213 +643,149 @@ export default function CRMFlowsPage() {
         territoryId: editingFlow.territoryId || 'territory_choutuppal',
       }))
 
-      const buttons: FlowButton[] = editorButtons
-        .filter((b) => b.title.trim().length > 0)
-        .slice(0, 3)
-        .map((b, i) => ({
-          id: b.id || `btn_${i + 1}`,
-          title: b.title.trim().slice(0, 20),
-          action: 'BUTTON_REPLY',
-          payload: b.title.trim(),
-          nextNodeId: b.nextNodeId || `action_node_${i + 1}`,
-        }))
-
-      const mediaUrl = editingFlow.imageUrl?.trim() || undefined
-      if (mediaUrl && !/^https?:\/\//i.test(mediaUrl)) {
-        setValidationError(`Media URL must be a valid absolute URL starting with http:// or https:// (received: "${mediaUrl}").`)
-        return
-      }
-
-      for (const b of buttons) {
-        if (b.title.length > 20) {
-          setValidationError(`Button title "${b.title}" exceeds Meta 20-character limit (${b.title.length} characters).`)
-          return
-        }
-      }
-
-      const isVideo =
-        editingFlow.mediaType === 'video' ||
-        (mediaUrl && /\.(mp4|mov|avi|webm)(\?.*)?$/i.test(mediaUrl))
-      const isDocument =
-        editingFlow.mediaType === 'document' ||
-        (mediaUrl && /\.(pdf|doc|docx|csv|xlsx)(\?.*)?$/i.test(mediaUrl))
-      const mediaType: 'image' | 'video' | 'document' = isVideo ? 'video' : isDocument ? 'document' : 'image'
-
-      let entryNodeType: FlowNodeType = 'send_message'
-      if (buttons.length > 0) {
-        entryNodeType = 'send_buttons'
-      } else if (selectedListingId) {
-        entryNodeType = 'send_listing'
-      } else if (mediaUrl) {
-        entryNodeType = 'send_media'
-      }
-
-      // Preserve complete multi-node graph if flow already has nodes
-      let nodes: FlowNode[] = []
-      if (Array.isArray(editingFlow.nodes) && editingFlow.nodes.length > 0) {
-        // Deep clone existing nodes to preserve complete multi-node graph
-        nodes = editingFlow.nodes.map((n) => ({ ...n, config: { ...n.config } }))
-
-        const entryIdx = nodes.findIndex((n) => n.id === 'entry_message' || n.id === editingFlow.entryNodeId)
-        if (entryIdx >= 0) {
-          nodes[entryIdx] = {
-            ...nodes[entryIdx],
-            type: entryNodeType,
-            config: {
-              ...nodes[entryIdx].config,
-              text: editingFlow.initial_message || 'Welcome to Choutuppal App!',
-              buttons: buttons.length > 0 ? buttons : undefined,
-              mediaUrl,
-              mediaType: mediaUrl ? mediaType : undefined,
-              listingId: selectedListingId || undefined,
-              listingCategory: listingCategory || undefined,
-              listingSortMode,
-              listingSortOrder: listingSortOrder.length > 0 ? listingSortOrder : undefined,
-              categoryPriority: categoryPriority.length > 0 ? categoryPriority : undefined,
-              listingPageSize,
-              footerText: nodes[entryIdx].config.footerText || 'చౌటుప్పల్ యాప్ 24/7 బాట్',
-            },
-          }
+      // Prepare final nodes from editorNodes
+      let finalNodes: FlowNode[] = editorNodes.map((n) => {
+        const cfg = { ...n.config }
+        // Clean up buttons
+        if (cfg.buttons && cfg.buttons.length > 0) {
+          cfg.buttons = cfg.buttons
+            .filter((b) => b.title && b.title.trim().length > 0)
+            .slice(0, 3)
+            .map((b, i) => ({
+              id: b.id || `btn_${i + 1}`,
+              title: b.title.trim().slice(0, 20),
+              action: 'BUTTON_REPLY',
+              payload: b.payload || b.title.trim(),
+              nextNodeId: b.nextNodeId || 'end_terminal',
+            }))
         } else {
-          nodes.push({
-            id: 'entry_message',
-            type: entryNodeType,
-            name: 'Interactive Message',
-            config: {
-              text: editingFlow.initial_message || 'Welcome to Choutuppal App!',
-              buttons: buttons.length > 0 ? buttons : undefined,
-              mediaUrl,
-              mediaType: mediaUrl ? mediaType : undefined,
-              listingId: selectedListingId || undefined,
-              listingCategory: listingCategory || undefined,
-              listingSortMode,
-              listingSortOrder: listingSortOrder.length > 0 ? listingSortOrder : undefined,
-              categoryPriority: categoryPriority.length > 0 ? categoryPriority : undefined,
-              listingPageSize,
-              footerText: 'చౌటుప్పల్ యాప్ 24/7 బాట్',
-            },
-            positionX: 100,
-            positionY: 220,
-          })
+          delete cfg.buttons
         }
 
-        // Add action nodes for newly created buttons if their nextNodeId doesn't exist
-        buttons.forEach((b, i) => {
-          if (b.nextNodeId && !nodes.some((n) => n.id === b.nextNodeId)) {
-            nodes.push({
-              id: b.nextNodeId,
-              type: 'send_message',
-              name: `Action for ${b.title}`,
-              config: {
-                text: `ధన్యవాదాలు! మీరు "${b.title}" ఎంచుకున్నారు. వివరాలు త్వరలో రానున్నాయి.\n\n🌐 https://choutuppal.in`,
-                nextNodeId: 'end_terminal',
-              },
-              positionX: 100 + (i - 1) * 260,
-              positionY: 380,
-            })
-          }
+        // Clean up listSections
+        if (cfg.listSections && cfg.listSections.length > 0) {
+          cfg.listSections = cfg.listSections
+            .map((s) => ({
+              title: s.title?.trim().slice(0, 24) || 'Section',
+              rows: (s.rows || [])
+                .filter((r) => r.title && r.title.trim().length > 0)
+                .map((r, ri) => ({
+                  id: r.id || `row_${ri + 1}`,
+                  title: r.title.trim().slice(0, 24),
+                  description: r.description ? r.description.trim().slice(0, 72) : undefined,
+                  nextNodeId: r.nextNodeId || 'end_terminal',
+                })),
+            }))
+            .filter((s) => s.rows.length > 0)
+        } else {
+          delete cfg.listSections
+        }
+
+        let nodeType: FlowNodeType = n.type || 'send_message'
+        if (cfg.buttons && cfg.buttons.length > 0) {
+          nodeType = 'send_buttons'
+        } else if (cfg.listSections && cfg.listSections.length > 0) {
+          nodeType = 'send_list'
+        } else if (cfg.listingId) {
+          nodeType = 'send_listing'
+        } else if (cfg.mediaUrl) {
+          nodeType = 'send_media'
+        } else {
+          nodeType = 'send_message'
+        }
+
+        return {
+          ...n,
+          type: nodeType,
+          config: cfg,
+        }
+      })
+
+      // Ensure start node points to entry node
+      const entryId = editingFlow.entryNodeId || 'entry_message'
+      if (!finalNodes.some((n) => n.id === 'start')) {
+        finalNodes.unshift({
+          id: 'start',
+          type: 'start',
+          name: 'Entry Trigger',
+          config: { nextNodeId: entryId },
+          positionX: 100,
+          positionY: 100,
         })
-
-        // Ensure start node exists
-        if (!nodes.some((n) => n.id === 'start')) {
-          nodes.unshift({
-            id: 'start',
-            type: 'start',
-            name: 'Entry Trigger',
-            config: { nextNodeId: 'entry_message' },
-            positionX: 100,
-            positionY: 100,
-          })
-        }
-
-        // Ensure terminal node exists
-        if (!nodes.some((n) => n.id === 'end_terminal' || n.type === 'end')) {
-          nodes.push({
-            id: 'end_terminal',
-            type: 'end',
-            name: 'Flow Terminal',
-            config: {},
-            positionX: 100,
-            positionY: 520,
-          })
-        }
       } else {
-        const actionNodes: FlowNode[] = buttons.map((b, i) => ({
-          id: b.nextNodeId || `action_node_${i + 1}`,
-          type: 'send_message',
-          name: `Action ${b.title}`,
-          config: {
-            text: `ధన్యవాదాలు! మీరు "${b.title}" ఎంచుకున్నారు. వివరాలు త్వరలో రానున్నాయి.\n\n🌐 https://choutuppal.in`,
-            nextNodeId: 'end_terminal',
-          },
-          positionX: 100 + (i - 1) * 260,
-          positionY: 380,
-        }))
-
-        nodes = [
-          {
-            id: 'start',
-            type: 'start',
-            name: 'Entry Trigger',
-            config: { nextNodeId: 'entry_message' },
-            positionX: 100,
-            positionY: 100,
-          },
-          {
-            id: 'entry_message',
-            type: entryNodeType,
-            name: 'Interactive Message',
-            config: {
-              text: editingFlow.initial_message || 'Welcome to Choutuppal App!',
-              buttons: buttons.length > 0 ? buttons : undefined,
-              mediaUrl,
-              mediaType: mediaUrl ? mediaType : undefined,
-              listingId: selectedListingId || undefined,
-              listingCategory: listingCategory || undefined,
-              listingSortMode,
-              listingSortOrder: listingSortOrder.length > 0 ? listingSortOrder : undefined,
-              categoryPriority: categoryPriority.length > 0 ? categoryPriority : undefined,
-              listingPageSize,
-              footerText: 'చౌటుప్పల్ యాప్ 24/7 బాట్',
-            },
-            positionX: 100,
-            positionY: 220,
-          },
-          ...actionNodes,
-          {
-            id: 'end_terminal',
-            type: 'end',
-            name: 'Flow Terminal',
-            config: {},
-            positionX: 100,
-            positionY: 520,
-          },
-        ]
+        const startIdx = finalNodes.findIndex((n) => n.id === 'start')
+        finalNodes[startIdx].config = { ...finalNodes[startIdx].config, nextNodeId: entryId }
       }
 
-      // Graph node ID uniqueness validation
-      const nodeIds = nodes.map((n) => n.id)
-      const duplicateIds = nodeIds.filter((id, idx) => nodeIds.indexOf(id) !== idx)
-      if (duplicateIds.length > 0) {
-        setValidationError(`Duplicate node ID(s) detected: ${Array.from(new Set(duplicateIds)).join(', ')}. Node IDs must be unique.`)
-        return
+      // Ensure terminal node exists
+      if (!finalNodes.some((n) => n.id === 'end_terminal' || n.type === 'end')) {
+        finalNodes.push({
+          id: 'end_terminal',
+          type: 'end',
+          name: 'Flow Terminal',
+          config: {},
+          positionX: 100,
+          positionY: 600,
+        })
+      }
+
+      // Find entry node config for backwards-compatible fields
+      const entryNode = finalNodes.find((n) => n.id === entryId || n.id === 'entry_message') || finalNodes[1]
+      const initial_message = entryNode?.config?.text || editingFlow.initial_message || 'Welcome to Choutuppal App!'
+      const button_options = entryNode?.config?.buttons ? entryNode.config.buttons.map((b) => b.title) : []
+      const imageUrl = entryNode?.config?.mediaUrl || editingFlow.imageUrl
+
+      // Validate button titles and list rows limits
+      for (const node of finalNodes) {
+        if (node.config?.buttons) {
+          for (const b of node.config.buttons) {
+            if (b.title.length > 20) {
+              setValidationError(`Button title "${b.title}" exceeds Meta 20-character limit (${b.title.length} characters).`)
+              setIsSaving(false)
+              return
+            }
+          }
+        }
+        if (node.config?.listSections) {
+          const totalRows = node.config.listSections.reduce((acc, s) => acc + (s.rows?.length || 0), 0)
+          if (totalRows > 10) {
+            setValidationError(`Interactive list in "${node.name || node.id}" exceeds WhatsApp maximum of 10 rows (${totalRows} rows).`)
+            setIsSaving(false)
+            return
+          }
+          for (const s of node.config.listSections) {
+            if (s.title.length > 24) {
+              setValidationError(`List section title "${s.title}" exceeds 24 characters.`)
+              setIsSaving(false)
+              return
+            }
+            for (const r of s.rows) {
+              if (r.title.length > 24) {
+                setValidationError(`List row title "${r.title}" exceeds 24 characters.`)
+                setIsSaving(false)
+                return
+              }
+              if (r.description && r.description.length > 72) {
+                setValidationError(`List row description for "${r.title}" exceeds 72 characters.`)
+                setIsSaving(false)
+                return
+              }
+            }
+          }
+        }
       }
 
       const isUpdate = flows.some((f) => f.id === editingFlow.id)
       const payload = {
         ...editingFlow,
-        mediaUrl,
-        mediaType: mediaUrl ? mediaType : undefined,
-        listingId: selectedListingId || undefined,
-        listingCategory: listingCategory || undefined,
-        listingSortMode,
-        listingSortOrder: listingSortOrder.length > 0 ? listingSortOrder : undefined,
-        categoryPriority: categoryPriority.length > 0 ? categoryPriority : undefined,
-        listingPageSize,
+        initial_message,
+        button_options,
+        imageUrl,
+        mediaUrl: imageUrl,
         triggers,
         trigger_keywords: keywords,
-        button_options: buttons.map((b) => b.title),
-        nodes,
+        nodes: finalNodes,
+        entryNodeId: entryId,
         isActive: editingFlow.status === 'published',
       }
 
@@ -535,16 +807,6 @@ export default function CRMFlowsPage() {
     } finally {
       setIsSaving(false)
     }
-  }
-
-  // Insert Variable Token into Editor
-  const handleInsertVariable = (token: string) => {
-    if (!editingFlow) return
-    const cur = editingFlow.initial_message || ''
-    setEditingFlow({
-      ...editingFlow,
-      initial_message: `${cur} ${token}`.trim(),
-    })
   }
 
   // Open Simulator
@@ -938,588 +1200,867 @@ export default function CRMFlowsPage() {
 
       {/* Visual Flow Editor Modal */}
       {isEditorOpen && editingFlow && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden text-slate-900">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-6xl max-h-[94vh] flex flex-col shadow-2xl overflow-hidden text-slate-900">
             {/* Modal Header */}
-            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-200">
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/90">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-200 shadow-2xs">
                   <Edit3 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-sm">
-                    {flows.some((f) => f.id === editingFlow.id) ? 'Edit Flow' : 'Create New Flow'}
+                  <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                    <span>{flows.some((f) => f.id === editingFlow.id) ? 'Edit Flow & Messages' : 'Create New Flow & Messages'}</span>
+                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-mono rounded-full font-semibold">
+                      {messageSteps.length} Steps Active
+                    </span>
                   </h3>
                   <p className="text-[11px] text-slate-500">
-                    Configure triggers, interactive buttons, dynamic directory listings &amp; response text.
+                    ప్రతి మెసేజ్, క్విక్ బటన్స్, మరియు ఇంటరాక్టివ్ లిస్ట్ మెనూని దశలవారీగా సులభంగా ఎడిట్ చేయండి.
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsEditorOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors"
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200/60 transition-colors cursor-pointer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 space-y-4 overflow-y-auto flex-1 text-xs">
-              {/* Row 1: Name and Status */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-2 space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-700">Flow Name</label>
-                  <input
-                    type="text"
-                    value={editingFlow.name || ''}
-                    onChange={(e) => setEditingFlow({ ...editingFlow, name: e.target.value })}
-                    placeholder="e.g. Welcome Step 2 or ఆస్పత్రులు సమాచారం"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-700">Status</label>
-                  <select
-                    value={editingFlow.status || 'draft'}
-                    onChange={(e) =>
-                      setEditingFlow({
-                        ...editingFlow,
-                        status: e.target.value as FlowStatus,
-                        isActive: e.target.value === 'published',
-                      })
-                    }
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
-                  >
-                    <option value="draft">Draft (Safe)</option>
-                    <option value="published">Published (Live)</option>
-                    <option value="paused">Paused</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Trigger Keywords */}
-              <div className="space-y-1">
-                <label className="text-[11px] font-semibold text-slate-700">
-                  Trigger Keywords (Comma separated)
-                </label>
-                <input
-                  type="text"
-                  value={editorKeywords}
-                  onChange={(e) => setEditorKeywords(e.target.value)}
-                  placeholder="e.g. hi, hello, నమస్కారం, సేవలు, menu"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-              {/* Message Body with Variable Chips */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-semibold text-slate-700">
-                    Message Body (Telugu / English)
-                  </label>
-                  <span className="text-[10px] text-slate-400">Insert dynamic variables:</span>
-                </div>
-
-                <div className="flex flex-wrap gap-1.5 pb-1">
-                  {[
-                    '{{contact.name}}',
-                    '{{listing.title}}',
-                    '{{listing.phone}}',
-                    '{{listing.address}}',
-                    '{{listing.url}}',
-                    '{{town.name}}',
-                    '{{town.url}}',
-                  ].map((tok) => (
-                    <button
-                      key={tok}
-                      type="button"
-                      onClick={() => handleInsertVariable(tok)}
-                      className="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-[10px] font-mono border border-slate-200 transition-colors cursor-pointer shadow-2xs"
-                    >
-                      + {tok}
-                    </button>
-                  ))}
-                </div>
-
-                <textarea
-                  rows={5}
-                  value={editingFlow.initial_message || ''}
-                  onChange={(e) =>
-                    setEditingFlow({ ...editingFlow, initial_message: e.target.value })
-                  }
-                  placeholder="నమస్కారం! చౌటుప్పల్ యాప్ కి స్వాగతం..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-emerald-500 font-sans text-xs leading-relaxed"
-                />
-              </div>
-
-              {/* Directory Listing Binding */}
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                <div className="flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-amber-400" />
-                  <span className="font-semibold text-white">Attach Single Directory Listing (Optional)</span>
-                </div>
-                <p className="text-[11px] text-slate-400">
-                  Select a live business listing to dynamically inject its name, contact phone, address, and cover image.
-                </p>
-                <select
-                  value={selectedListingId}
-                  onChange={(e) => setSelectedListingId(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
-                >
-                  <option value="">-- No single listing attached --</option>
-                  {listings.map((l) => (
-                    <option key={l.id} value={l.id}>
-                      {l.title} ({l.categoryName} • {l.phone})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Business Listing Order & Pagination Section */}
-              <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-200 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/20">
-                      <ArrowUpDown className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-white text-xs">Business Listing Order</h4>
-                      <p className="text-[10px] text-slate-400">
-                        Admin-controlled sequence for businesses and categories presented to customers.
-                      </p>
-                    </div>
-                  </div>
-                  <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded text-[10px] font-mono">
-                    Phase 9 Verified
-                  </span>
-                </div>
-
-                {/* Mode Selector & Category Scoping */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-semibold text-slate-700">Sorting Mode</label>
-                    <select
-                      value={listingSortMode}
-                      onChange={(e) => setListingSortMode(e.target.value as ListingSortMode)}
-                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
-                    >
-                      <option value="manual">Manual Order (Default)</option>
-                      <option value="category_priority">Category Priority</option>
-                      <option value="newest">Newest First</option>
-                      <option value="alphabetical">Alphabetical (A-Z)</option>
-                      <option value="featured">Featured Listings First</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-semibold text-slate-700">Category Filter (Optional)</label>
-                    <select
-                      value={listingCategory}
-                      onChange={(e) => setListingCategory(e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
-                    >
-                      <option value="">-- All Categories (Full Directory) --</option>
-                      <option value="automobile">Automobiles &amp; Multi-Brand</option>
-                      <option value="services">Services &amp; Contractors</option>
-                      <option value="electrical-hardware">Electrical &amp; Hardware</option>
-                      <option value="health-medical">Health &amp; Medical</option>
-                      <option value="food-dining">Food &amp; Dining</option>
-                      <option value="internet-cyber-cafe">Internet &amp; Cyber Cafe</option>
-                      <option value="building-materials">Building Materials</option>
-                      <option value="real-estate">Real Estate &amp; Properties</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-semibold text-slate-700">
-                      Batch Page Size <span className="text-slate-500 font-normal">(Max 10)</span>
-                    </label>
+            <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 text-xs">
+              {/* Row 1: Flow Name, Status, Trigger Keywords (Flow-level settings) */}
+              <div className="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                  <div className="md:col-span-2 space-y-1">
+                    <label className="text-[11px] font-semibold text-slate-700">Flow Name (ఫ్లో పేరు)</label>
                     <input
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={listingPageSize}
-                      onChange={(e) => setListingPageSize(Math.min(Math.max(parseInt(e.target.value) || 8, 1), 10))}
-                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs font-mono focus:outline-none focus:border-emerald-500"
+                      type="text"
+                      value={editingFlow.name || ''}
+                      onChange={(e) => setEditingFlow({ ...editingFlow, name: e.target.value })}
+                      placeholder="e.g. Welcome & Directory Bot / స్వాగతం & డైరెక్టరీ బాట్"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-medium"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-semibold text-slate-700">Status (స్థితి)</label>
+                    <select
+                      value={editingFlow.status || 'draft'}
+                      onChange={(e) =>
+                        setEditingFlow({
+                          ...editingFlow,
+                          status: e.target.value as FlowStatus,
+                          isActive: e.target.value === 'published',
+                        })
+                      }
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                    >
+                      <option value="draft">Draft (డ్రాఫ్ట్ - టెస్ట్)</option>
+                      <option value="published">Published (లైవ్ WhatsApp)</option>
+                      <option value="paused">Paused (పాజ్)</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-semibold text-slate-700">Trigger Keywords</label>
+                    <input
+                      type="text"
+                      value={editorKeywords}
+                      onChange={(e) => setEditorKeywords(e.target.value)}
+                      placeholder="e.g. hi, hello, సేవలు, menu"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
+              </div>
 
-                <div className="flex items-center gap-2 text-[10px] text-slate-600 bg-slate-100 p-2 rounded-lg border border-slate-200">
-                  <span className="font-semibold text-amber-400">WhatsApp Limit:</span>
-                  <span>Interactive lists allow max 10 rows per message. Sequences exceeding page size auto-generate &quot;Next ➡️&quot; and &quot;Previous ⬅️&quot; navigation.</span>
+              {/* Step Navigation Pill Selector */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold text-slate-800 flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>సందేశాల దశలు (Message Steps): ఏ సందేశాన్ని ఎడిట్ చేయాలో ఎంచుకోండి</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleAddStep}
+                    className="flex items-center gap-1 px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded-lg border border-emerald-200 text-[11px] transition-colors cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ కొత్త దశ (Add Step)</span>
+                  </button>
                 </div>
 
-                {/* MANUAL MODE: Explicit Reordering List */}
-                {listingSortMode === 'manual' && (
-                  <div className="space-y-2.5 pt-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-semibold text-slate-300">
-                        Configured Business Sequence ({listingSortOrder.length} Selected)
-                      </span>
-                      <span className="text-[10px] text-slate-500">
-                        Top business appears #1 to customer. Remaining businesses append afterwards.
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-0.5">
+                  {messageSteps.map((step, idx) => {
+                    const isSelected = step.id === activeNode?.id
+                    const isEntry = step.id === 'entry_message' || step.id === editingFlow.entryNodeId
+                    return (
+                      <div
+                        key={step.id}
+                        className={`group shrink-0 flex items-center rounded-xl border text-xs transition-all ${
+                          isSelected
+                            ? 'bg-emerald-600 border-emerald-700 text-white shadow-md'
+                            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                        }`}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setActiveNodeId(step.id)}
+                          className="px-3 py-1.5 flex items-center gap-1.5 font-medium cursor-pointer"
+                        >
+                          <span className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold ${
+                            isSelected ? 'bg-white text-emerald-700' : 'bg-slate-100 text-slate-600'
+                          }`}>
+                            {idx + 1}
+                          </span>
+                          <span>{step.name || `Step ${idx + 1}`}</span>
+                          {isEntry && (
+                            <span className={`text-[9px] px-1 rounded uppercase font-bold tracking-wider ${
+                              isSelected ? 'bg-emerald-700 text-emerald-100' : 'bg-emerald-50 text-emerald-700'
+                            }`}>
+                              Entry
+                            </span>
+                          )}
+                        </button>
+                        {!isEntry && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteStep(step.id)}
+                            className={`p-1.5 rounded-r-xl transition-colors ${
+                              isSelected ? 'hover:bg-emerald-700 text-emerald-200 hover:text-white' : 'hover:bg-red-50 text-slate-400 hover:text-red-500'
+                            }`}
+                            title="Delete this step"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Step Editor & Live Preview Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-1">
+                {/* Left Column: Step Configuration Form (7 cols) */}
+                <div className="lg:col-span-7 space-y-3.5">
+                  {/* Step Title & Subtabs bar */}
+                  <div className="p-3 bg-white border border-slate-200 rounded-2xl shadow-2xs space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className="text-[11px] font-semibold text-slate-500 shrink-0">Step Name:</span>
+                        <input
+                          type="text"
+                          value={activeNode?.name || ''}
+                          onChange={(e) => updateActiveNode({}, e.target.value)}
+                          placeholder="e.g. Step 1: స్వాగతం"
+                          className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-slate-900 font-bold text-xs focus:outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 bg-slate-50 rounded border border-slate-100 shrink-0">
+                        ID: {activeNode?.id}
                       </span>
                     </div>
 
-                    {/* Add Listing to Sequence */}
-                    <div className="flex gap-2">
-                      <select
-                        value={selectedListingToAddToOrder}
-                        onChange={(e) => setSelectedListingToAddToOrder(e.target.value)}
-                        className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
+                    {/* Sub-tabs for the active step */}
+                    <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-[11px] overflow-x-auto">
+                      <button
+                        type="button"
+                        onClick={() => setActiveStepTab('message')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer shrink-0 ${
+                          activeStepTab === 'message'
+                            ? 'bg-white text-emerald-700 shadow-2xs font-bold'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
                       >
-                        <option value="">-- Choose business to add to sequence --</option>
-                        {listings
-                          .filter((l) => !listingSortOrder.includes(l.id))
-                          .map((l) => (
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        <span>సందేశం &amp; మీడియా</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveStepTab('buttons')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer shrink-0 ${
+                          activeStepTab === 'buttons'
+                            ? 'bg-white text-emerald-700 shadow-2xs font-bold'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <span>🔘 క్విక్ బటన్స్ ({activeNode?.config?.buttons?.length || 0}/3)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveStepTab('list')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer shrink-0 ${
+                          activeStepTab === 'list'
+                            ? 'bg-white text-emerald-700 shadow-2xs font-bold'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <ListOrdered className="w-3.5 h-3.5" />
+                        <span>
+                          లిస్ట్ మెనూ ({activeNode?.config?.listSections?.reduce((acc, s) => acc + (s.rows?.length || 0), 0) || 0}/10)
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveStepTab('listings')}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer shrink-0 ${
+                          activeStepTab === 'listings'
+                            ? 'bg-white text-emerald-700 shadow-2xs font-bold'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <Building2 className="w-3.5 h-3.5" />
+                        <span>లిస్టింగ్స్ &amp; క్రమం</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* TAB 1: Message Content & Media */}
+                  {activeStepTab === 'message' && (
+                    <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3.5 shadow-2xs">
+                      {/* Variables helper */}
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[11px] font-semibold text-slate-700">
+                            సందేశ పాఠ్యం (Message Body - Telugu / English)
+                          </label>
+                          <span className="text-[10px] text-slate-400">వేరియబుల్స్ జోడించండి:</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            '{{contact.name}}',
+                            '{{listing.title}}',
+                            '{{listing.phone}}',
+                            '{{town.name}}',
+                            '{{town.url}}',
+                          ].map((tok) => (
+                            <button
+                              key={tok}
+                              type="button"
+                              onClick={() => handleInsertVariable(tok)}
+                              className="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-[10px] font-mono border border-slate-200 transition-colors cursor-pointer"
+                            >
+                              + {tok}
+                            </button>
+                          ))}
+                        </div>
+                        <textarea
+                          rows={6}
+                          value={activeNode?.config?.text || ''}
+                          onChange={(e) => updateActiveNode({ text: e.target.value })}
+                          placeholder="నమస్కారం! చౌటుప్పల్ యాప్ కి స్వాగతం..."
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-emerald-500 font-sans text-xs leading-relaxed"
+                        />
+                      </div>
+
+                      {/* Media Header (Image / Video) */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 border-t border-slate-100">
+                        <div className="md:col-span-2 space-y-1">
+                          <label className="text-[11px] font-semibold text-slate-700">
+                            Hero Media URL (Image or Video)
+                          </label>
+                          <input
+                            type="text"
+                            value={activeNode?.config?.mediaUrl || ''}
+                            onChange={(e) => updateActiveNode({ mediaUrl: e.target.value })}
+                            placeholder="https://images.unsplash.com/... or https://example.com/banner.mp4"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs focus:outline-none focus:border-emerald-500"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[11px] font-semibold text-slate-700">Media Type</label>
+                          <select
+                            value={activeNode?.config?.mediaType || 'image'}
+                            onChange={(e) =>
+                              updateActiveNode({
+                                mediaType: e.target.value as 'image' | 'video' | 'document',
+                              })
+                            }
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
+                          >
+                            <option value="image">Image (JPG/PNG/WebP)</option>
+                            <option value="video">Video (MP4)</option>
+                            <option value="document">Document (PDF)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Footer Text */}
+                      <div className="space-y-1 pt-1">
+                        <label className="text-[11px] font-semibold text-slate-700">
+                          Footer Text (బాట్ ఫుటర్ క్యాప్షన్)
+                        </label>
+                        <input
+                          type="text"
+                          value={activeNode?.config?.footerText || ''}
+                          onChange={(e) => updateActiveNode({ footerText: e.target.value })}
+                          placeholder="చౌటుప్పల్ యాప్ 24/7 బాట్"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 2: Quick-Reply Buttons */}
+                  {activeStepTab === 'buttons' && (
+                    <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3.5 shadow-2xs">
+                      <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <div>
+                          <h4 className="font-bold text-slate-900 text-xs">Quick-Reply Buttons</h4>
+                          <p className="text-[10px] text-slate-500">
+                            WhatsApp మెసేజ్ క్రింద గరిష్టంగా 3 బటన్స్ ఇవ్వవచ్చు. ప్రతి బటన్ క్లిక్ చేస్తే ఏ దశకు వెళ్లాలో ఎంచుకోండి.
+                          </p>
+                        </div>
+                        {(activeNode?.config?.buttons?.length || 0) < 3 && (
+                          <button
+                            type="button"
+                            onClick={handleAddButton}
+                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>+ బటన్ జోడించు</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {(!activeNode?.config?.buttons || activeNode.config.buttons.length === 0) ? (
+                        <div className="p-6 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-center space-y-2">
+                          <p className="text-slate-500 text-xs">ఈ సందేశానికి ప్రస్తుతం బటన్స్ ఏవీ లేవు.</p>
+                          <button
+                            type="button"
+                            onClick={handleAddButton}
+                            className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold cursor-pointer inline-flex items-center gap-1"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>మొదటి బటన్ జోడించు</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-2.5">
+                          {activeNode.config.buttons.map((btn, bi) => (
+                            <div key={btn.id || bi} className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="font-bold text-slate-700 text-xs flex items-center gap-1">
+                                  <span>బటన్ #{bi + 1}</span>
+                                  <span className={`text-[10px] px-1.5 rounded font-mono ${
+                                    btn.title.length > 20 ? 'bg-red-100 text-red-700' : 'bg-slate-200 text-slate-600'
+                                  }`}>
+                                    {btn.title.length}/20 chars
+                                  </span>
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveButton(bi)}
+                                  className="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-slate-200/60 transition-colors cursor-pointer"
+                                  title="Remove button"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div className="space-y-1">
+                                  <label className="text-[10px] text-slate-500 font-medium">Button Title (శీర్షిక)</label>
+                                  <input
+                                    type="text"
+                                    maxLength={20}
+                                    value={btn.title}
+                                    onChange={(e) => handleUpdateButton(bi, { title: e.target.value })}
+                                    placeholder="e.g. సేవలు / వివరాలు"
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[10px] text-slate-500 font-medium">Target Next Step (తదుపరి దశ)</label>
+                                  <select
+                                    value={btn.nextNodeId || 'end_terminal'}
+                                    onChange={(e) => handleUpdateButton(bi, { nextNodeId: e.target.value })}
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
+                                  >
+                                    <option value="end_terminal">-- పూర్తి (End Conversation) --</option>
+                                    {messageSteps
+                                      .filter((s) => s.id !== activeNode.id)
+                                      .map((s, si) => (
+                                        <option key={s.id} value={s.id}>
+                                          {s.name || `Step ${si + 1}`} ({s.id})
+                                        </option>
+                                      ))}
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* TAB 3: Interactive List Menu */}
+                  {activeStepTab === 'list' && (
+                    <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-4 shadow-2xs">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                        <div>
+                          <h4 className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                            <ListOrdered className="w-4 h-4 text-emerald-600" />
+                            <span>WhatsApp Interactive List Menu</span>
+                          </h4>
+                          <p className="text-[10px] text-slate-500">
+                            యూజర్ &quot;మెనూ చూడండి&quot; క్లిక్ చేసినప్పుడు డ్రావర్‌లో 10 ఆప్షన్స్ వరకు కేటగిరీలుగా కనిపిస్తాయి.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleAddListSection}
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 shrink-0 shadow-2xs"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          <span>+ కొత్త విభాగం (Add Section)</span>
+                        </button>
+                      </div>
+
+                      {/* Main List Button Text */}
+                      <div className="p-3 bg-emerald-50/60 rounded-xl border border-emerald-200 space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[11px] font-bold text-emerald-900">
+                            List Menu Button Title (బటన్ పై కనిపించే పేరు)
+                          </label>
+                          <span className={`text-[10px] px-1.5 rounded font-mono ${
+                            (activeNode?.config?.listButtonText?.length || 0) > 20
+                              ? 'bg-red-100 text-red-700 font-bold'
+                              : 'text-emerald-700'
+                          }`}>
+                            {activeNode?.config?.listButtonText?.length || 0}/20 chars
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          maxLength={20}
+                          value={activeNode?.config?.listButtonText || ''}
+                          onChange={(e) => updateActiveNode({ listButtonText: e.target.value })}
+                          placeholder="e.g. మెనూ చూడండి / View Menu"
+                          className="w-full bg-white border border-emerald-200 rounded-lg px-3 py-2 text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500 shadow-2xs"
+                        />
+                      </div>
+
+                      {/* Sections and Rows */}
+                      {(!activeNode?.config?.listSections || activeNode.config.listSections.length === 0) ? (
+                        <div className="p-6 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-center space-y-2">
+                          <p className="text-slate-500 text-xs">ఈ సందేశానికి ఇంటరాక్టివ్ లిస్ట్ మెనూ ఇంకా లేదు.</p>
+                          <button
+                            type="button"
+                            onClick={handleAddListSection}
+                            className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold cursor-pointer inline-flex items-center gap-1"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>లిస్ట్ విభాగం జోడించు</span>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {activeNode.config.listSections.map((sec, si) => (
+                            <div key={si} className="p-3.5 bg-slate-50/90 rounded-2xl border border-slate-200 space-y-3">
+                              {/* Section Header */}
+                              <div className="flex items-center justify-between gap-2 border-b border-slate-200 pb-2">
+                                <div className="flex items-center gap-2 flex-1">
+                                  <span className="font-bold text-slate-700 text-xs shrink-0">
+                                    విభాగం #{si + 1}:
+                                  </span>
+                                  <input
+                                    type="text"
+                                    maxLength={24}
+                                    value={sec.title}
+                                    onChange={(e) => handleUpdateListSectionTitle(si, e.target.value)}
+                                    placeholder="Section Title (e.g. ప్రధాన సేవలు)"
+                                    className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-900 focus:outline-none focus:border-emerald-500"
+                                  />
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveListSection(si)}
+                                  className="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-slate-200 transition-colors cursor-pointer"
+                                  title="Delete Section"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+
+                              {/* Rows in Section */}
+                              <div className="space-y-2 pl-2 border-l-2 border-emerald-300">
+                                {sec.rows?.map((row, ri) => (
+                                  <div key={row.id || ri} className="p-2.5 bg-white rounded-xl border border-slate-200 space-y-1.5 shadow-2xs">
+                                    <div className="flex items-center justify-between gap-2">
+                                      <span className="text-[10px] font-bold text-emerald-700">Row #{ri + 1}</span>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemoveListRow(si, ri)}
+                                        className="text-slate-400 hover:text-red-500 p-0.5 rounded cursor-pointer"
+                                      >
+                                        <X className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                      <div className="space-y-0.5">
+                                        <label className="text-[9px] text-slate-500 font-medium">Row Title (max 24)</label>
+                                        <input
+                                          type="text"
+                                          maxLength={24}
+                                          value={row.title}
+                                          onChange={(e) => handleUpdateListRow(si, ri, { title: e.target.value })}
+                                          placeholder="e.g. రియల్ ఎస్టేట్ & ప్లాట్లు"
+                                          className="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1 text-[11px] text-slate-900 focus:outline-none focus:border-emerald-500"
+                                        />
+                                      </div>
+                                      <div className="space-y-0.5">
+                                        <label className="text-[9px] text-slate-500 font-medium">Description (max 72)</label>
+                                        <input
+                                          type="text"
+                                          maxLength={72}
+                                          value={row.description || ''}
+                                          onChange={(e) => handleUpdateListRow(si, ri, { description: e.target.value })}
+                                          placeholder="e.g. చౌటుప్పల్ పరిసరాల్లో వెంచర్లు"
+                                          className="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1 text-[11px] text-slate-900 focus:outline-none focus:border-emerald-500"
+                                        />
+                                      </div>
+                                      <div className="space-y-0.5">
+                                        <label className="text-[9px] text-slate-500 font-medium">Next Step (తదుపరి దశ)</label>
+                                        <select
+                                          value={row.nextNodeId || 'end_terminal'}
+                                          onChange={(e) => handleUpdateListRow(si, ri, { nextNodeId: e.target.value })}
+                                          className="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1 text-[11px] text-slate-900 focus:outline-none focus:border-emerald-500"
+                                        >
+                                          <option value="end_terminal">-- పూర్తి (End) --</option>
+                                          {messageSteps
+                                            .filter((s) => s.id !== activeNode.id)
+                                            .map((s, si) => (
+                                              <option key={s.id} value={s.id}>
+                                                {s.name || `Step ${si + 1}`}
+                                              </option>
+                                            ))}
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleAddListRow(si)}
+                                  className="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-[11px] transition-colors border border-dashed border-slate-300 flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                  <span>+ ఈ విభాగానికి ఆప్షన్ జోడించు (Add Row)</span>
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* TAB 4: Directory Listings & Sort Order */}
+                  {activeStepTab === 'listings' && (
+                    <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-4 shadow-2xs">
+                      {/* Directory Listing Binding */}
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Building2 className="w-4 h-4 text-amber-500" />
+                          <span className="font-semibold text-slate-800">Attach Single Directory Listing (Optional)</span>
+                        </div>
+                        <p className="text-[11px] text-slate-500">
+                          Select a live business listing to dynamically inject its name, contact phone, address, and cover image.
+                        </p>
+                        <select
+                          value={selectedListingId}
+                          onChange={(e) => setSelectedListingId(e.target.value)}
+                          className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
+                        >
+                          <option value="">-- No single listing attached --</option>
+                          {listings.map((l) => (
                             <option key={l.id} value={l.id}>
                               {l.title} ({l.categoryName} • {l.phone})
                             </option>
                           ))}
-                      </select>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (selectedListingToAddToOrder && !listingSortOrder.includes(selectedListingToAddToOrder)) {
-                            setListingSortOrder([...listingSortOrder, selectedListingToAddToOrder])
-                            setSelectedListingToAddToOrder('')
-                          }
-                        }}
-                        disabled={!selectedListingToAddToOrder}
-                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-lg text-xs font-bold transition-colors"
-                      >
-                        + Add to Order
-                      </button>
-                    </div>
+                        </select>
+                      </div>
 
-                    {/* Ordered List Items */}
-                    {listingSortOrder.length > 0 ? (
-                      <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                        {listingSortOrder.map((lId, idx) => {
-                          const item = listings.find((l) => l.id === lId)
-                          return (
-                            <div
-                              key={lId}
-                              className="flex items-center justify-between gap-2 p-2 bg-white rounded-lg border border-slate-200 text-xs text-slate-900"
-                            >
-                              <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <span className="w-6 h-6 flex items-center justify-center bg-emerald-500/20 text-emerald-300 font-bold font-mono rounded text-[11px] shrink-0">
-                                  #{idx + 1}
-                                </span>
-                                <div className="truncate">
-                                  <span className="text-white font-medium truncate block">
-                                    {item?.title || lId}
-                                  </span>
-                                  <span className="text-[10px] text-slate-400">
-                                    {item?.categoryName || 'Directory Item'} {item?.phone ? `• ${item.phone}` : ''}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div className="flex items-center gap-1 shrink-0">
-                                <button
-                                  type="button"
-                                  disabled={idx === 0}
-                                  onClick={() => {
-                                    if (idx === 0) return
-                                    const next = [...listingSortOrder]
-                                    const temp = next[idx - 1]
-                                    next[idx - 1] = next[idx]
-                                    next[idx] = temp
-                                    setListingSortOrder(next)
-                                  }}
-                                  className="p-1 hover:bg-slate-100 text-slate-500 hover:text-slate-900 rounded disabled:opacity-30 cursor-pointer"
-                                  title="Move Up"
-                                >
-                                  <ChevronUp className="w-4 h-4" />
-                                </button>
-                                <button
-                                  type="button"
-                                  disabled={idx === listingSortOrder.length - 1}
-                                  onClick={() => {
-                                    if (idx === listingSortOrder.length - 1) return
-                                    const next = [...listingSortOrder]
-                                    const temp = next[idx + 1]
-                                    next[idx + 1] = next[idx]
-                                    next[idx] = temp
-                                    setListingSortOrder(next)
-                                  }}
-                                  className="p-1 hover:bg-slate-100 text-slate-500 hover:text-slate-900 rounded disabled:opacity-30 cursor-pointer"
-                                  title="Move Down"
-                                >
-                                  <ChevronDown className="w-4 h-4" />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setListingSortOrder(listingSortOrder.filter((id) => id !== lId))}
-                                  className="p-1 text-slate-500 hover:text-red-400 rounded"
-                                  title="Remove"
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
-                              </div>
+                      {/* Business Listing Order & Pagination Section */}
+                      <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-200 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="p-1.5 bg-emerald-500/10 text-emerald-600 rounded-lg border border-emerald-500/20">
+                              <ArrowUpDown className="w-4 h-4" />
                             </div>
-                          )
-                        })}
-                      </div>
-                    ) : (
-                      <div className="text-[11px] text-slate-500 italic p-2 bg-slate-100 rounded-lg text-center">
-                        No manual order configured. When no specific IDs are set, all eligible directory listings will be presented alphabetically.
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* CATEGORY PRIORITY MODE */}
-                {listingSortMode === 'category_priority' && (
-                  <div className="space-y-2.5 pt-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-semibold text-slate-300">
-                        Category Precedence Sequence ({categoryPriority.length} Prioritized)
-                      </span>
-                      <span className="text-[10px] text-slate-500">
-                        Listings in #1 category display first, then #2, then #3.
-                      </span>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <select
-                        value={selectedCatToAddToPriority}
-                        onChange={(e) => setSelectedCatToAddToPriority(e.target.value)}
-                        className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
-                      >
-                        <option value="">-- Select category to prioritize --</option>
-                        {[
-                          'automobile',
-                          'services',
-                          'electrical-hardware',
-                          'health-medical',
-                          'food-dining',
-                          'internet-cyber-cafe',
-                          'building-materials',
-                          'real-estate',
-                        ]
-                          .filter((c) => !categoryPriority.includes(c))
-                          .map((slug) => (
-                            <option key={slug} value={slug}>
-                              {slug}
-                            </option>
-                          ))}
-                      </select>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (selectedCatToAddToPriority && !categoryPriority.includes(selectedCatToAddToPriority)) {
-                            setCategoryPriority([...categoryPriority, selectedCatToAddToPriority])
-                            setSelectedCatToAddToPriority('')
-                          }
-                        }}
-                        disabled={!selectedCatToAddToPriority}
-                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-lg text-xs font-bold transition-colors"
-                      >
-                        + Add Category
-                      </button>
-                    </div>
-
-                    {categoryPriority.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {categoryPriority.map((cat, ci) => (
-                          <div
-                            key={cat}
-                            className="flex items-center gap-1.5 px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-900"
-                          >
-                            <span className="text-emerald-400 font-bold font-mono">#{ci + 1}</span>
-                            <span className="font-medium">{cat}</span>
-                            <div className="flex items-center ml-1">
-                              <button
-                                type="button"
-                                disabled={ci === 0}
-                                onClick={() => {
-                                  if (ci === 0) return
-                                  const next = [...categoryPriority]
-                                  const temp = next[ci - 1]
-                                  next[ci - 1] = next[ci]
-                                  next[ci] = temp
-                                  setCategoryPriority(next)
-                                }}
-                                className="p-0.5 text-slate-400 hover:text-white disabled:opacity-30"
-                              >
-                                <ChevronUp className="w-3 h-3" />
-                              </button>
-                              <button
-                                type="button"
-                                disabled={ci === categoryPriority.length - 1}
-                                onClick={() => {
-                                  if (ci === categoryPriority.length - 1) return
-                                  const next = [...categoryPriority]
-                                  const temp = next[ci + 1]
-                                  next[ci + 1] = next[ci]
-                                  next[ci] = temp
-                                  setCategoryPriority(next)
-                                }}
-                                className="p-0.5 text-slate-400 hover:text-white disabled:opacity-30"
-                              >
-                                <ChevronDown className="w-3 h-3" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setCategoryPriority(categoryPriority.filter((c) => c !== cat))}
-                                className="p-0.5 text-slate-500 hover:text-red-400 ml-1"
-                              >
-                                <X className="w-3 h-3" />
-                              </button>
+                            <div>
+                              <h4 className="font-bold text-slate-900 text-xs">Business Listing Order</h4>
+                              <p className="text-[10px] text-slate-500">
+                                Admin-controlled sequence for businesses and categories presented to customers.
+                              </p>
                             </div>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-[11px] text-slate-500 italic p-2 bg-slate-100 rounded-lg text-center">
-                        No categories prioritized yet. All categories will be presented using standard town order.
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+                        </div>
 
-              {/* Interactive Reply Buttons (Up to 3) */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-semibold text-slate-700">
-                    Quick-Reply Buttons (Max 3 on WhatsApp)
-                  </label>
-                  {editorButtons.length < 3 && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setEditorButtons([
-                          ...editorButtons,
-                          { id: `btn_${editorButtons.length + 1}`, title: '' },
-                        ])
-                      }
-                      className="text-[10px] text-blue-400 hover:text-blue-300 font-bold"
-                    >
-                      + Add Button
-                    </button>
+                        {/* Mode Selector & Category Scoping */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-slate-700">Sorting Mode</label>
+                            <select
+                              value={listingSortMode}
+                              onChange={(e) => setListingSortMode(e.target.value as ListingSortMode)}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
+                            >
+                              <option value="manual">Manual Order (Default)</option>
+                              <option value="category_priority">Category Priority</option>
+                              <option value="newest">Newest First</option>
+                              <option value="alphabetical">Alphabetical (A-Z)</option>
+                              <option value="featured">Featured Listings First</option>
+                            </select>
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-slate-700">Category Filter (Optional)</label>
+                            <select
+                              value={listingCategory}
+                              onChange={(e) => setListingCategory(e.target.value)}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
+                            >
+                              <option value="">-- All Categories (Full Directory) --</option>
+                              <option value="automobile">Automobiles &amp; Multi-Brand</option>
+                              <option value="services">Services &amp; Contractors</option>
+                              <option value="electrical-hardware">Electrical &amp; Hardware</option>
+                              <option value="health-medical">Health &amp; Medical</option>
+                              <option value="food-dining">Food &amp; Dining</option>
+                              <option value="internet-cyber-cafe">Internet &amp; Cyber Cafe</option>
+                              <option value="building-materials">Building Materials</option>
+                              <option value="real-estate">Real Estate &amp; Properties</option>
+                            </select>
+                          </div>
+
+                          <div className="space-y-1">
+                            <label className="text-[11px] font-semibold text-slate-700">
+                              Batch Page Size <span className="text-slate-500 font-normal">(Max 10)</span>
+                            </label>
+                            <input
+                              type="number"
+                              min={1}
+                              max={10}
+                              value={listingPageSize}
+                              onChange={(e) => setListingPageSize(Math.min(Math.max(parseInt(e.target.value) || 8, 1), 10))}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs font-mono focus:outline-none focus:border-emerald-500"
+                            />
+                          </div>
+                        </div>
+
+                        {/* MANUAL MODE: Explicit Reordering List */}
+                        {listingSortMode === 'manual' && (
+                          <div className="space-y-2.5 pt-1">
+                            <div className="flex gap-2">
+                              <select
+                                value={selectedListingToAddToOrder}
+                                onChange={(e) => setSelectedListingToAddToOrder(e.target.value)}
+                                className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
+                              >
+                                <option value="">-- Choose business to add to sequence --</option>
+                                {listings
+                                  .filter((l) => !listingSortOrder.includes(l.id))
+                                  .map((l) => (
+                                    <option key={l.id} value={l.id}>
+                                      {l.title} ({l.categoryName} • {l.phone})
+                                    </option>
+                                  ))}
+                              </select>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (selectedListingToAddToOrder && !listingSortOrder.includes(selectedListingToAddToOrder)) {
+                                    setListingSortOrder([...listingSortOrder, selectedListingToAddToOrder])
+                                    setSelectedListingToAddToOrder('')
+                                  }
+                                }}
+                                disabled={!selectedListingToAddToOrder}
+                                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                              >
+                                + Add to Order
+                              </button>
+                            </div>
+
+                            {listingSortOrder.length > 0 && (
+                              <div className="space-y-1 max-h-36 overflow-y-auto">
+                                {listingSortOrder.map((lId, idx) => {
+                                  const item = listings.find((l) => l.id === lId)
+                                  return (
+                                    <div
+                                      key={lId}
+                                      className="flex items-center justify-between gap-2 p-1.5 bg-white rounded-lg border border-slate-200 text-xs text-slate-900"
+                                    >
+                                      <span className="font-bold font-mono text-emerald-600 text-[10px]">#{idx + 1}</span>
+                                      <span className="truncate flex-1 font-medium">{item?.title || lId}</span>
+                                      <button
+                                        type="button"
+                                        onClick={() => setListingSortOrder(listingSortOrder.filter((id) => id !== lId))}
+                                        className="text-slate-400 hover:text-red-500 p-0.5"
+                                      >
+                                        <X className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  {editorButtons.map((btn, bi) => (
-                    <div key={bi} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 bg-slate-50 rounded-xl border border-slate-200">
-                      <span className="text-[11px] font-mono text-slate-500 w-12">
-                        Btn #{bi + 1}:
-                      </span>
-                      <input
-                        type="text"
-                        value={btn.title}
-                        maxLength={20}
-                        onChange={(e) => {
-                          const updated = [...editorButtons]
-                          updated[bi].title = e.target.value
-                          setEditorButtons(updated)
-                        }}
-                        placeholder="Button Title (e.g. సేవలు)"
-                        className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
-                      />
-                      <input
-                        type="text"
-                        value={btn.nextNodeId || ''}
-                        onChange={(e) => {
-                          const updated = [...editorButtons]
-                          updated[bi].nextNodeId = e.target.value
-                          setEditorButtons(updated)
-                        }}
-                        placeholder="Next Node ID or goto_flow (Optional)"
-                        className="w-full sm:w-48 bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 font-mono text-[11px] focus:outline-none focus:border-emerald-500"
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setEditorButtons(editorButtons.filter((_, idx) => idx !== bi))
-                        }
-                        className="p-1.5 text-slate-500 hover:text-red-400 self-end sm:self-auto"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Image / Video Media URL & Media Type */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="md:col-span-2 space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-700">
-                    Hero Media URL (Image or Video)
-                  </label>
-                  <input
-                    type="text"
-                    value={editingFlow.imageUrl || ''}
-                    onChange={(e) => setEditingFlow({ ...editingFlow, imageUrl: e.target.value })}
-                    placeholder="https://images.unsplash.com/... or https://example.com/tour.mp4"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-slate-700">Media Type</label>
-                  <select
-                    value={editingFlow.mediaType || 'image'}
-                    onChange={(e) =>
-                      setEditingFlow({
-                        ...editingFlow,
-                        mediaType: e.target.value as 'image' | 'video' | 'document',
-                      })
-                    }
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-blue-500"
-                  >
-                    <option value="image">Image (JPG/PNG/WebP)</option>
-                    <option value="video">Video (MP4/H.264)</option>
-                    <option value="document">Document (PDF/DOCX/CSV)</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Connected Graph Nodes Inspector */}
-              {editingFlow.nodes && editingFlow.nodes.length > 0 && (
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 font-semibold text-slate-300 text-[11px]">
-                      <Layers className="w-3.5 h-3.5 text-blue-400" />
-                      <span>Connected Graph Nodes ({editingFlow.nodes.length})</span>
-                    </div>
-                    <span className="text-[10px] text-emerald-400 font-mono">100% Graph Preserved</span>
+                {/* Right Column: Live WhatsApp Phone Preview (5 cols) */}
+                <div className="lg:col-span-5 space-y-2">
+                  <div className="flex items-center justify-between px-1">
+                    <span className="text-[11px] font-bold text-slate-800 flex items-center gap-1.5">
+                      <Smartphone className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>WhatsApp Live Phone Preview</span>
+                    </span>
+                    <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-mono font-semibold">
+                      {activeNode?.name || 'Active Step'}
+                    </span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto">
-                    {editingFlow.nodes.map((node) => (
-                      <div
-                        key={node.id}
-                        className="p-2 bg-white border border-slate-200 rounded-lg text-[10px] space-y-0.5 text-slate-900"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-white font-mono">{node.id}</span>
-                          <span className="text-blue-400 uppercase font-semibold">{node.type}</span>
+
+                  {/* Phone Screen Mockup */}
+                  <div className="bg-[#0b141a] rounded-3xl border-4 border-slate-800 shadow-xl overflow-hidden flex flex-col">
+                    {/* WhatsApp Top Header Bar */}
+                    <div className="bg-[#1f2c34] text-white px-3.5 py-2.5 flex items-center justify-between border-b border-slate-700/60">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-xs text-white shadow-2xs">
+                          CP
                         </div>
-                        {node.config?.nextNodeId && (
-                          <div className="text-slate-400 truncate flex items-center gap-1">
-                            <span>➔ Next:</span>
-                            <span className="text-emerald-400 font-mono">{node.config.nextNodeId}</span>
+                        <div className="leading-tight">
+                          <div className="font-bold text-xs flex items-center gap-1">
+                            <span>చౌటుప్పల్ యాప్</span>
+                            <span className="w-3 h-3 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[8px] font-black">✓</span>
                           </div>
-                        )}
-                        {node.config?.targetFlowId && (
-                          <div className="text-purple-400 truncate font-mono">
-                            ➔ Goto: {node.config.targetFlowId}
-                          </div>
-                        )}
+                          <div className="text-[9px] text-slate-300">Official Business Account • online</div>
+                        </div>
                       </div>
-                    ))}
+                      <span className="text-[10px] text-emerald-400 font-mono bg-emerald-950/60 border border-emerald-800/40 px-1.5 py-0.5 rounded">
+                        24/7
+                      </span>
+                    </div>
+
+                    {/* Chat Bubble Canvas */}
+                    <div className="p-3 space-y-3 min-h-[380px] max-h-[500px] overflow-y-auto bg-[#0b141a]">
+                      {/* Outgoing User Trigger Simulation */}
+                      <div className="flex justify-end">
+                        <div className="bg-[#005c4b] text-white px-3 py-1.5 rounded-l-xl rounded-tr-xl text-xs max-w-[80%] shadow">
+                          <span>{editorKeywords.split(/[,;]/)[0]?.trim() || 'నమస్కారం'}</span>
+                          <div className="text-[9px] text-emerald-200 text-right mt-0.5">10:30 AM ✓✓</div>
+                        </div>
+                      </div>
+
+                      {/* Incoming Bot Message */}
+                      <div className="flex justify-start">
+                        <div className="bg-[#202c33] text-slate-100 rounded-r-xl rounded-tl-xl text-xs max-w-[92%] shadow-md border border-slate-700/40 overflow-hidden">
+                          {/* Media Preview if provided */}
+                          {activeNode?.config?.mediaUrl && (
+                            <div className="w-full bg-black/40 max-h-40 overflow-hidden flex items-center justify-center border-b border-slate-700/50">
+                              {activeNode.config.mediaType === 'video' ? (
+                                <div className="p-4 text-center text-slate-400 text-xs flex items-center gap-2">
+                                  <span>📹 Video:</span>
+                                  <span className="text-[10px] truncate max-w-[150px]">{activeNode.config.mediaUrl}</span>
+                                </div>
+                              ) : (
+                                <img
+                                  src={activeNode.config.mediaUrl}
+                                  alt="Media"
+                                  className="w-full h-auto max-h-40 object-cover"
+                                  onError={(e) => {
+                                    ;(e.target as any).style.display = 'none'
+                                  }}
+                                />
+                              )}
+                            </div>
+                          )}
+
+                          {/* Message Body */}
+                          <div className="p-3 space-y-1.5">
+                            <div className="whitespace-pre-wrap leading-relaxed text-[11px] text-slate-100 font-sans">
+                              {(activeNode?.config?.text || editingFlow?.initial_message || 'సందేశం ఇక్కడ కనిపిస్తుంది...')
+                                .replace(/{{contact\.name}}/g, 'రాకేష్ గారు')
+                                .replace(/{{listing\.title}}/g, 'శ్రీ లక్ష్మి నిలయం')
+                                .replace(/{{town\.name}}/g, 'చౌటుప్పల్')
+                                .replace(/{{town\.url}}/g, 'https://choutuppal.in')}
+                            </div>
+
+                            {/* Footer Text */}
+                            <div className="text-[9px] text-slate-400 italic pt-1">
+                              {activeNode?.config?.footerText || 'చౌటుప్పల్ యాప్ 24/7 బాట్'}
+                            </div>
+
+                            <div className="text-[9px] text-slate-400 text-right">
+                              10:30 AM
+                            </div>
+                          </div>
+
+                          {/* Interactive List Menu Button Preview */}
+                          {activeNode?.config?.listSections && activeNode.config.listSections.length > 0 && (
+                            <div className="border-t border-slate-700/60 bg-[#111b21] p-2 space-y-1.5">
+                              <div className="w-full py-2 bg-[#2a3942] hover:bg-[#32424b] text-emerald-400 font-bold text-center rounded-lg text-xs flex items-center justify-center gap-1.5 border border-emerald-500/30 shadow-xs cursor-default">
+                                <ListOrdered className="w-3.5 h-3.5" />
+                                <span>{activeNode.config.listButtonText || 'మెనూ చూడండి'}</span>
+                              </div>
+
+                              {/* Interactive List Drawer Preview */}
+                              <div className="bg-[#1f2c34] p-2 rounded-lg border border-slate-700/50 space-y-2 mt-1">
+                                {activeNode.config.listSections.map((sec, si) => (
+                                  <div key={si} className="space-y-1">
+                                    <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider px-1">
+                                      {sec.title || `విభాగం ${si + 1}`}
+                                    </div>
+                                    <div className="space-y-1">
+                                      {sec.rows?.map((row, ri) => (
+                                        <div key={ri} className="p-1.5 bg-[#2a3942] rounded text-slate-200 border border-slate-700/40 text-[10px]">
+                                          <div className="font-semibold text-white">{row.title || `Row ${ri + 1}`}</div>
+                                          {row.description && <div className="text-slate-400 text-[9px]">{row.description}</div>}
+                                          {row.nextNodeId && (
+                                            <div className="text-emerald-300 text-[8px] font-mono mt-0.5">➔ {row.nextNodeId}</div>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Quick-Reply Buttons Preview */}
+                          {activeNode?.config?.buttons && activeNode.config.buttons.length > 0 && (
+                            <div className="border-t border-slate-700/60 bg-[#111b21] p-1.5 space-y-1">
+                              {activeNode.config.buttons.map((btn, bi) => (
+                                <div
+                                  key={bi}
+                                  className="w-full py-2 bg-[#2a3942] hover:bg-[#32424b] text-emerald-400 font-medium text-center rounded-lg text-xs border border-slate-700 flex items-center justify-center gap-1.5 shadow-2xs"
+                                >
+                                  <span>💬 {btn.title || `Button ${bi + 1}`}</span>
+                                  {btn.nextNodeId && (
+                                    <span className="text-[9px] text-slate-400 font-mono">({btn.nextNodeId})</span>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
 
               {/* Validation Error Banner */}
               {validationError && (
-                <div className="p-3 bg-red-950/60 border border-red-500/40 rounded-xl text-red-300 text-xs flex items-center gap-2">
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-center gap-2">
                   <span className="font-bold">⚠️ Error:</span>
                   <span>{validationError}</span>
                 </div>
@@ -1527,23 +2068,28 @@ export default function CRMFlowsPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t border-slate-200 flex items-center justify-end gap-2 bg-slate-50/80">
-              <button
-                type="button"
-                onClick={() => setIsEditorOpen(false)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-xs transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleSaveFlow}
-                disabled={isSaving}
-                className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>{isSaving ? 'Saving...' : 'Save Flow'}</span>
-              </button>
+            <div className="p-4 border-t border-slate-200 flex items-center justify-between bg-slate-50/90">
+              <div className="text-[11px] text-slate-500 font-mono">
+                {messageSteps.length} Steps configured • Status: {editingFlow.status || 'draft'}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsEditorOpen(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium text-xs transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveFlow}
+                  disabled={isSaving}
+                  className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 transition-all disabled:opacity-50 cursor-pointer"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>{isSaving ? 'Saving...' : 'Save Flow (ఫ్లో భద్రపరచు)'}</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
