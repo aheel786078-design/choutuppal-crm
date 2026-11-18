@@ -123,21 +123,39 @@ export async function POST(req: Request) {
             (m) => m.providerMessageId === statusId || m.id === statusId
           )
 
-          if (!targetMsg) {
-            continue
-          }
+          if (targetMsg) {
+            const currentRank = STATUS_RANK[targetMsg.status] ?? 0
+            const targetRank = STATUS_RANK[newStatus] ?? 0
 
-          const currentRank = STATUS_RANK[targetMsg.status] ?? 0
-          const targetRank = STATUS_RANK[newStatus] ?? 0
-
-          if (newStatus === 'failed') {
-            if (targetMsg.status !== 'read' && targetMsg.status !== 'delivered') {
-              targetMsg.status = 'failed'
+            if (newStatus === 'failed') {
+              if (targetMsg.status !== 'read' && targetMsg.status !== 'delivered') {
+                targetMsg.status = 'failed'
+                if (statusObj.errors) {
+                  targetMsg.errorDetails = JSON.stringify(statusObj.errors)
+                }
+                updatedStatusList.push({ messageId: targetMsg.id, providerMessageId: statusId, status: targetMsg.status })
+              }
+            } else if (targetRank > currentRank) {
+              targetMsg.status = newStatus
               updatedStatusList.push({ messageId: targetMsg.id, providerMessageId: statusId, status: targetMsg.status })
             }
-          } else if (targetRank > currentRank) {
-            targetMsg.status = newStatus
-            updatedStatusList.push({ messageId: targetMsg.id, providerMessageId: statusId, status: targetMsg.status })
+          }
+
+          // Sync status and any error metadata to Supabase whatsapp_messages
+          const supabase = getSupabaseAdminClient()
+          if (supabase) {
+            try {
+              const sbUpdatePayload: any = { status: newStatus }
+              if (statusObj.errors) {
+                sbUpdatePayload.metadata = { errors: statusObj.errors }
+              }
+              await supabase
+                .from('whatsapp_messages')
+                .update(sbUpdatePayload)
+                .or(`provider_message_id.eq.${statusId},id.eq.${statusId}`)
+            } catch (sbErr) {
+              console.warn('[Webhook] Supabase status sync error:', sbErr)
+            }
           }
         }
 

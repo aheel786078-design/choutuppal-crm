@@ -41,6 +41,16 @@ export interface WhatsAppDispatchResult {
   providerDelivered?: boolean
   notice?: string
   messageId?: string
+  providerMessageId?: string
+}
+
+/**
+ * Safely slices a string by Unicode characters (code points) up to maxChars,
+ * avoiding truncation mid-surrogate pair or mid-character sequence.
+ */
+export function safeSliceChars(str: string | undefined | null, maxChars: number): string {
+  if (!str) return ''
+  return Array.from(str).slice(0, maxChars).join('')
 }
 
 /**
@@ -129,13 +139,13 @@ export function buildWhatsAppPayload(options: WhatsAppSendOptions, cleanPhone: s
     payload.type = 'interactive'
     payload.interactive = {
       type: 'button',
-      body: { text: (options.messageText || '').slice(0, 1024) },
+      body: { text: safeSliceChars(options.messageText, 1024) },
       action: {
         buttons: options.buttons.slice(0, 3).map((b) => ({
           type: 'reply',
           reply: {
             id: b.id,
-            title: b.title.slice(0, 20),
+            title: safeSliceChars(b.title, 20),
           },
         })),
       },
@@ -148,7 +158,7 @@ export function buildWhatsAppPayload(options: WhatsAppSendOptions, cleanPhone: s
       }
     }
     if (options.footerText) {
-      payload.interactive.footer = { text: options.footerText.slice(0, 60) }
+      payload.interactive.footer = { text: safeSliceChars(options.footerText, 60) }
     }
   }
   // 2. Interactive List (4 to 10 rows)
@@ -156,21 +166,21 @@ export function buildWhatsAppPayload(options: WhatsAppSendOptions, cleanPhone: s
     payload.type = 'interactive'
     payload.interactive = {
       type: 'list',
-      body: { text: (options.messageText || '').slice(0, 1024) },
+      body: { text: safeSliceChars(options.messageText, 1024) },
       action: {
-        button: (options.listButtonText || 'Select Option').slice(0, 20),
+        button: safeSliceChars(options.listButtonText || 'Select Option', 20),
         sections: options.listSections.map((s) => ({
-          title: s.title.slice(0, 24),
+          title: safeSliceChars(s.title, 24),
           rows: s.rows.map((r) => ({
             id: r.id,
-            title: r.title.slice(0, 24),
-            description: r.description ? r.description.slice(0, 72) : undefined,
+            title: safeSliceChars(r.title, 24),
+            description: r.description ? safeSliceChars(r.description, 72) : undefined,
           })),
         })),
       },
     }
     if (options.footerText) {
-      payload.interactive.footer = { text: options.footerText.slice(0, 60) }
+      payload.interactive.footer = { text: safeSliceChars(options.footerText, 60) }
     }
   }
   // 3. Media Message with Image, Video, or Document
@@ -182,31 +192,31 @@ export function buildWhatsAppPayload(options: WhatsAppSendOptions, cleanPhone: s
         payload.type = 'video'
         payload.video = {
           link: mediaUrl,
-          caption: (options.messageText || '').slice(0, 1024),
+          caption: safeSliceChars(options.messageText, 1024),
         }
       } else if (options.mediaType === 'document' || /\.(pdf|doc|docx|csv|xlsx)(\?.*)?$/i.test(mediaUrl)) {
         payload.type = 'document'
         payload.document = {
           link: mediaUrl,
-          caption: (options.messageText || '').slice(0, 1024),
+          caption: safeSliceChars(options.messageText, 1024),
           filename: mediaUrl.split('/').pop()?.split('?')[0] || 'document.pdf',
         }
       } else {
         payload.type = 'image'
         payload.image = {
           link: mediaUrl,
-          caption: (options.messageText || '').slice(0, 1024),
+          caption: safeSliceChars(options.messageText, 1024),
         }
       }
     } else {
       payload.type = 'text'
-      payload.text = { body: (options.messageText || '').slice(0, 4096) }
+      payload.text = { body: safeSliceChars(options.messageText, 4096) }
     }
   }
   // 4. Plain Text Message
   else {
     payload.type = 'text'
-    payload.text = { body: (options.messageText || '').slice(0, 4096) }
+    payload.text = { body: safeSliceChars(options.messageText, 4096) }
   }
 
   return payload
@@ -306,13 +316,14 @@ export async function sendWhatsAppFlowMessage(
   let providerDelivered = false
   let msgStatus: 'sent' | 'delivered' | 'failed' = 'sent'
   let dispatchError: string | undefined
+  let metaMessageId: string | undefined
 
   if (token && phoneId) {
     try {
       const url = `https://graph.facebook.com/v21.0/${phoneId}/messages`
-      const payload = buildWhatsAppPayload(options, cleanPhone)
+      let payload = buildWhatsAppPayload(options, cleanPhone)
 
-      const res = await fetch(url, {
+      let res = await fetch(url, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -321,11 +332,30 @@ export async function sendWhatsAppFlowMessage(
         body: JSON.stringify(payload),
       })
 
+      // If dispatch failed and options.imageUrl was provided, retry without image as pure interactive / text fallback
+      if (!res.ok && options.imageUrl) {
+        console.warn(`[WhatsApp Meta API] Dispatch failed with imageUrl (${res.status}), retrying without image header...`)
+        const fallbackOptions = { ...options, imageUrl: undefined, mediaUrl: undefined }
+        const fallbackPayload = buildWhatsAppPayload(fallbackOptions, cleanPhone)
+        const fallbackRes = await fetch(url, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(fallbackPayload),
+        })
+        if (fallbackRes.ok) {
+          res = fallbackRes
+        }
+      }
+
       if (res.ok) {
         providerDelivered = true
         msgStatus = 'sent'
         const resData = await res.json().catch(() => ({}))
-        console.log(`[WhatsApp Meta API] Successfully delivered to ${cleanPhone}, msgId: ${resData?.messages?.[0]?.id}`)
+        metaMessageId = resData?.messages?.[0]?.id
+        console.log(`[WhatsApp Meta API] Successfully delivered to ${cleanPhone}, msgId: ${metaMessageId}`)
       } else {
         const errData = await res.json().catch(() => ({}))
         providerDelivered = false
@@ -350,6 +380,7 @@ export async function sendWhatsAppFlowMessage(
   // Log message to admin store with honest delivery status
   store.messages.unshift({
     id: generatedMsgId,
+    providerMessageId: metaMessageId,
     phone: cleanPhone,
     contactName: options.contactName,
     direction: 'outbound',
@@ -370,6 +401,7 @@ export async function sendWhatsAppFlowMessage(
     try {
       await supabase.from('whatsapp_messages').insert({
         id: generatedMsgId,
+        provider_message_id: metaMessageId || null,
         territory_id: territoryId,
         contact_name: options.contactName || null,
         phone: cleanPhone,
@@ -389,13 +421,14 @@ export async function sendWhatsAppFlowMessage(
   }
 
   if (dispatchError) {
-    return { ok: false, error: dispatchError, providerDelivered: false, messageId: generatedMsgId }
+    return { ok: false, error: dispatchError, providerDelivered: false, messageId: generatedMsgId, providerMessageId: metaMessageId }
   }
 
   return {
     ok: true,
     providerDelivered,
     messageId: generatedMsgId,
+    providerMessageId: metaMessageId,
     notice: providerDelivered
       ? 'Delivered via Meta WhatsApp Cloud API'
       : 'Saved locally in CRM inbox (WhatsApp provider credentials not configured)',

@@ -9,8 +9,8 @@ import type { Territory, Listing } from './types'
 import { getListingsDAO } from './supabase-dao'
 import { loadStore } from './store'
 
-export const CHOUTUPPAL_BANNER_URL = 'https://images.choutuppal.in/assets/choutuppal-app-banner.jpg'
-export const CHOUTUPPAL_LOGO_URL = 'https://images.choutuppal.in/assets/choutuppal-app-logo.jpg'
+export const CHOUTUPPAL_BANNER_URL = 'https://choutuppal.in/assets/choutuppal-app-banner.jpg'
+export const CHOUTUPPAL_LOGO_URL = 'https://choutuppal.in/assets/choutuppal-app-logo.jpg'
 export const CHOUTUPPAL_VCARD_DOWNLOAD_URL = 'https://images.choutuppal.in/downloads/choutuppal.vcf'
 
 export interface FlowCatalogContext {
@@ -300,7 +300,7 @@ export async function sendWelcomeCard(ctx: FlowCatalogContext) {
     imageUrl: CHOUTUPPAL_BANNER_URL,
     buttons: [
       { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
-      { id: 'btn_view_offers', title: '🎟️ వోచర్లు & డీల్స్' },
+      { id: 'btn_view_offers', title: '🎟️ ఆఫర్లు & డీల్స్' },
       { id: 'btn_app_vcard', title: '📲 యాప్ & కాంటాక్ట్' },
     ],
     footerText: 'చౌటుప్పల్ యాప్ • choutuppal.in',
