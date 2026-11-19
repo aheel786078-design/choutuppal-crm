@@ -35,6 +35,9 @@ import {
   Eye,
   Settings2,
   AlignLeft,
+  Bold,
+  Italic,
+  Wand2,
 } from 'lucide-react'
 import { FlowImportModal } from '@/components/crm/flow-import-modal'
 import { MediaPickerModal } from '@/components/common/media-picker-modal'
@@ -62,6 +65,154 @@ interface ListingSummary {
   territoryId: string
 }
 
+interface SmartFlowTemplate {
+  id: string
+  name: string
+  nameTe: string
+  badge: string
+  icon: string
+  description: string
+  stepName: string
+  text: string
+  mediaUrl?: string
+  mediaType?: 'image' | 'video' | 'document'
+  footerText?: string
+  buttons?: FlowButton[]
+  listButtonText?: string
+  listSections?: FlowListSection[]
+}
+
+const SMART_TEMPLATES: SmartFlowTemplate[] = [
+  {
+    id: 'welcome_3buttons',
+    name: 'Welcome + 3 Buttons',
+    nameTe: 'స్వాగతం & 3 బటన్లు',
+    badge: 'అత్యంత ప్రజాదరణ',
+    icon: '👋',
+    description: 'ఫోటో బ్యానర్, స్వాగత సందేశం మరియు 3 డైరెక్ట్ బటన్స్ (వ్యాపారాలు, ఆఫర్లు, ఎమర్జెన్సీ).',
+    stepName: 'Step 1: స్వాగతం (Welcome)',
+    mediaUrl: '/assets/branding/choutuppal-banner.jpg',
+    mediaType: 'image',
+    footerText: 'చౌటుప్పల్ యాప్ 24/7 అధికారిక బాట్',
+    text: `*నమస్కారం! చౌటుప్పల్ సూపర్ యాప్‌కు స్వాగతం* 🙏✨\n\nచౌటుప్పల్ మరియు పరిసర ప్రాంతాల సమగ్ర వ్యాపార సమాచారం, సేవలు, రియల్ ఎస్టేట్ మరియు అత్యవసర హెల్ప్‌లైన్ల కోసం మేము సిద్ధంగా ఉన్నాము.\n\nమీకు అవసరమైన సమాచారాన్ని వెంటనే తెలుసుకోవడానికి క్రింది బటన్ నొక్కండి:\n\n• స్థానిక వ్యాపారాలు & దుకాణాలు\n• తాజా ఆఫర్లు & డీల్స్\n• 24/7 అత్యవసర సేవలు\n\n🌐 అధికారిక పోర్టల్: https://choutuppal.in`,
+    buttons: [
+      { id: 'btn_t1_1', title: '🏢 వ్యాపారాలు', action: 'BUTTON_REPLY', nextNodeId: 'action_node_1' },
+      { id: 'btn_t1_2', title: '🏷️ ఆఫర్లు & డీల్స్', action: 'BUTTON_REPLY', nextNodeId: 'action_node_2' },
+      { id: 'btn_t1_3', title: '🚨 ఎమర్జెన్సీ', action: 'BUTTON_REPLY', nextNodeId: 'action_node_3' },
+    ],
+  },
+  {
+    id: 'services_interactive_list',
+    name: 'Interactive Services Menu',
+    nameTe: 'సర్వీసెస్ లిస్ట్ మెనూ (10 కేటగిరీలు)',
+    badge: 'డైరెక్టరీ మెనూ',
+    icon: '📋',
+    description: 'విస్తృత కేటగిరీల డ్రావర్ మెనూ. కస్టమర్ "మెనూ చూడండి" నొక్కితే 10 ఆప్షన్స్ కనిపిస్తాయి.',
+    stepName: 'Step 1: సేవల మెనూ',
+    mediaUrl: '',
+    footerText: 'చౌటుప్పల్ యాప్ సర్వీస్ డైరెక్టరీ',
+    text: `*చౌటుప్పల్ అధికారిక సర్వీస్ డైరెక్టరీ* 📋\n\nమా వద్ద నమోదు చేయబడిన ప్రముఖ వ్యాపారాలు మరియు ప్రొఫెషనల్ సేవల జాబితా.\n\nక్రింది *'మెనూ చూడండి'* బటన్ నొక్కి మీకు కావలసిన విభాగాన్ని ఎంచుకోండి:\n\n👉 ఎలక్ట్రికల్, ప్లంబింగ్, రియల్ ఎస్టేట్, హాస్పిటల్స్ మరియు మరెన్నో.`,
+    listButtonText: 'మెనూ చూడండి',
+    listSections: [
+      {
+        title: 'ప్రధాన సేవలు (Main Services)',
+        rows: [
+          { id: 'r_s1', title: 'రియల్ ఎస్టేట్ & ప్లాట్లు', description: 'ఓపెన్ ప్లాట్లు & వ్యవసాయ భూములు', nextNodeId: 'action_node_realestate' },
+          { id: 'r_s2', title: 'షాపులు & మార్కెట్', description: 'కిరాణా, బట్టలు, ఎలక్ట్రానిక్స్', nextNodeId: 'action_node_shops' },
+          { id: 'r_s3', title: 'ఎలక్ట్రికల్ & ప్లంబింగ్', description: 'ఇంటి మరమ్మత్తు నిపుణులు', nextNodeId: 'action_node_services' },
+        ],
+      },
+      {
+        title: 'సహాయం & రవాణా (Help & Transport)',
+        rows: [
+          { id: 'r_s4', title: '24/7 ఎమర్జెన్సీ హెల్ప్‌లైన్', description: 'పోలీస్, హాస్పిటల్, ఫైర్', nextNodeId: 'action_node_emergency' },
+          { id: 'r_s5', title: 'ఆర్టీసీ బస్సు వేళలు', description: 'హైదరాబాద్ & విజయవాడ రూట్ బస్సులు', nextNodeId: 'action_node_transport' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'offers_and_discounts',
+    name: 'Hot Offers & Deals',
+    nameTe: 'ఆఫర్లు & స్పెషల్ డీల్స్',
+    badge: 'ప్రమోషన్స్',
+    icon: '🏷️',
+    description: 'స్థానిక వ్యాపారాల బంపర్ ఆఫర్లు, డిస్కౌంట్ కోడ్లు మరియు డీల్స్ కోసం.',
+    stepName: 'Step: ప్రత్యేక ఆఫర్లు',
+    mediaUrl: '',
+    footerText: 'పరిమిత కాల ఆఫర్లు • చౌటుప్పల్ యాప్',
+    text: `*చౌటుప్పల్ సూపర్ ఆఫర్లు & డీల్స్!* 🏷️✨\n\nఈరోజు స్థానిక షాపులు & వ్యాపారాలలో లభించే ప్రత్యేక తగ్గింపులు:\n\n• షాపింగ్ & క్లాతింగ్ పై 20% వరకు తగ్గింపు\n• ఎలక్ట్రానిక్స్ & మొబైల్స్ పై క్యాష్‌బ్యాక్\n• రెస్టారెంట్ డిస్కౌంట్ కూపన్లు\n\nవివరాలు పొందడానికి క్రింది బటన్ నొక్కండి:`,
+    buttons: [
+      { id: 'btn_of_1', title: '🏷️ కూపన్ కోడ్ పొందండి', action: 'BUTTON_REPLY', nextNodeId: 'end_terminal' },
+      { id: 'btn_of_2', title: '🛍️ అన్ని ఆఫర్లు చూడండి', action: 'BUTTON_REPLY', nextNodeId: 'end_terminal' },
+      { id: 'btn_of_3', title: '🏠 మెయిన్ మెనూ', action: 'BUTTON_REPLY', nextNodeId: 'entry_message' },
+    ],
+  },
+  {
+    id: 'emergency_helpline',
+    name: '24/7 Emergency Directory',
+    nameTe: 'అత్యవసర హెల్ప్‌లైన్ నంబర్లు',
+    badge: 'అత్యవసరం',
+    icon: '🚨',
+    description: 'పోలీస్, హాస్పిటల్, అంబులెన్స్ మరియు మున్సిపల్ అత్యవసర ఫోన్ నంబర్లు.',
+    stepName: 'Step: ఎమర్జెన్సీ హెల్ప్‌లైన్',
+    mediaUrl: '',
+    footerText: '24/7 అత్యవసర సేవలు • డయల్ చేయండి',
+    text: `*చౌటుప్పల్ 24/7 అత్యవసర హెల్ప్‌లైన్ నంబర్లు* 🚨\n\nఏదైనా అత్యవసర సమయంలో క్రింది విభాగాలను వెంటనే సంప్రదించండి:\n\n• పోలీస్ స్టేషన్: 100 / 08694-222033\n• అంబులెన్స్ సర్వీస్: 108 / 102\n• అగ్నిమాపక కేంద్రం: 101\n• విద్యుత్ శాఖ హెల్ప్‌లైన్: 1912\n• ప్రభుత్వ ఆసుపత్రి: 08694-222045\n\nసహాయం కోసం ఎంపిక చేసుకోండి:`,
+    buttons: [
+      { id: 'btn_em_1', title: '🏥 ఆసుపత్రుల వివరాలు', action: 'BUTTON_REPLY', nextNodeId: 'end_terminal' },
+      { id: 'btn_em_2', title: '📞 పోలీస్ సంప్రదించండి', action: 'BUTTON_REPLY', nextNodeId: 'end_terminal' },
+      { id: 'btn_em_3', title: '🏠 మెయిన్ మెనూ', action: 'BUTTON_REPLY', nextNodeId: 'entry_message' },
+    ],
+  },
+  {
+    id: 'real_estate_showcase',
+    name: 'Real Estate & Properties',
+    nameTe: 'రియల్ ఎస్టేట్ & ప్లాట్లు',
+    badge: 'ప్రాపర్టీస్',
+    icon: '🏡',
+    description: 'ఓపెన్ ప్లాట్లు, వ్యవసాయ భూములు, వెంచర్ సమాచారం & ఏజెంట్ కాంటాక్ట్.',
+    stepName: 'Step: రియల్ ఎస్టేట్',
+    mediaUrl: '',
+    footerText: 'చౌటుప్పల్ రియల్ ఎస్టేట్ గైడ్',
+    text: `*చౌటుప్పల్ పరిసరాల్లో వెంచర్లు & ఓపెన్ ప్లాట్లు* 🏡✨\n\nహైదరాబాద్ - విజయవాడ హైవే (NH-65) సమీపంలో HMDA & DTCP అప్రూవ్డ్ లేఅవుట్లు అందుబాటులో ఉన్నాయి:\n\n• 100% క్లియర్ టైటిల్ & తక్షణ రిజిస్ట్రేషన్\n• బ్యాంక్ లోన్ సదుపాయం\n• 40/30 అడుగుల బిటి రోడ్లు & అండర్‌గ్రౌండ్ డ్రైనేజ్\n\nబ్రోచర్ లేదా సైట్ విజిట్ కోసం క్రింది బటన్ నొక్కండి:`,
+    buttons: [
+      { id: 'btn_re_1', title: '🗺️ వెంచర్ వివరాలు', action: 'BUTTON_REPLY', nextNodeId: 'end_terminal' },
+      { id: 'btn_re_2', title: '📞 ఏజెంట్‌ను కలవండి', action: 'BUTTON_REPLY', nextNodeId: 'end_terminal' },
+      { id: 'btn_re_3', title: '🏠 మెయిన్ మెనూ', action: 'BUTTON_REPLY', nextNodeId: 'entry_message' },
+    ],
+  },
+]
+
+function renderWhatsAppFormattedText(text: string) {
+  const clean = (text || '')
+    .replace(/{{contact\.name}}/g, 'రాకేష్ గారు')
+    .replace(/{{listing\.title}}/g, 'శ్రీ లక్ష్మి నిలయం')
+    .replace(/{{listing\.phone}}/g, '9848012345')
+    .replace(/{{town\.name}}/g, 'చౌటుప్పల్')
+    .replace(/{{town\.url}}/g, 'https://choutuppal.in')
+
+  const lines = clean.split('\n')
+  return lines.map((line, lineIdx, arr) => {
+    const parts = line.split(/(\*[^\*]+\*)/g)
+    return (
+      <React.Fragment key={lineIdx}>
+        {parts.map((part, pIdx) => {
+          if (part.startsWith('*') && part.endsWith('*') && part.length > 2) {
+            return (
+              <strong key={pIdx} className="font-bold text-white">
+                {part.slice(1, -1)}
+              </strong>
+            )
+          }
+          return part
+        })}
+        {lineIdx < arr.length - 1 && <br />}
+      </React.Fragment>
+    )
+  })
+}
+
 export default function CRMFlowsPage() {
   const [flows, setFlows] = useState<WhatsAppFlow[]>([])
   const [listings, setListings] = useState<ListingSummary[]>([])
@@ -86,6 +237,9 @@ export default function CRMFlowsPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false)
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+  const [isTemplatesModalOpen, setIsTemplatesModalOpen] = useState(false)
+  const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false)
 
   // Granular Step & Multi-message Editor State
   const [editorNodes, setEditorNodes] = useState<FlowNode[]>([])
@@ -617,6 +771,77 @@ export default function CRMFlowsPage() {
     if (!activeNode) return
     const cur = activeNode.config?.text || ''
     updateActiveNode({ text: `${cur} ${token}`.trim() })
+  }
+
+  // Quick Formatting insertion into textarea
+  const handleInsertFormatting = (prefix: string, suffix: string = '') => {
+    if (!activeNode) return
+    const cur = activeNode.config?.text || ''
+    if (!textareaRef.current) {
+      updateActiveNode({ text: `${cur}${prefix}${suffix}` })
+      return
+    }
+    const el = textareaRef.current
+    const start = el.selectionStart || 0
+    const end = el.selectionEnd || 0
+    const selected = cur.substring(start, end)
+    const replacement = selected ? `${prefix}${selected}${suffix}` : `${prefix}${suffix}`
+    const nextText = cur.substring(0, start) + replacement + cur.substring(end)
+    updateActiveNode({ text: nextText })
+    setTimeout(() => {
+      el.focus()
+      const cursor = selected ? start + prefix.length + selected.length + suffix.length : start + prefix.length
+      el.setSelectionRange(cursor, cursor)
+    }, 10)
+  }
+
+  // Segmented Action Switch handler
+  const handleSetResponseMode = (mode: 'buttons' | 'list' | 'none') => {
+    if (!activeNode) return
+    if (mode === 'buttons') {
+      const curButtons = activeNode.config?.buttons || []
+      const newButtons = curButtons.length > 0 ? curButtons : [
+        { id: `btn_${Date.now()}_1`, title: 'సేవలు', action: 'BUTTON_REPLY', nextNodeId: 'end_terminal' },
+        { id: `btn_${Date.now()}_2`, title: 'రియల్ ఎస్టేట్', action: 'BUTTON_REPLY', nextNodeId: 'end_terminal' },
+      ]
+      updateActiveNode({ buttons: newButtons, listSections: [] })
+    } else if (mode === 'list') {
+      const curSections = activeNode.config?.listSections || []
+      const newSections = curSections.length > 0 ? curSections : [
+        {
+          title: 'ప్రధాన సేవలు',
+          rows: [
+            { id: `row_${Date.now()}_1`, title: 'రియల్ ఎస్టేట్ & ప్లాట్లు', description: 'స్థలాలు & వెంచర్లు', nextNodeId: 'end_terminal' },
+            { id: `row_${Date.now()}_2`, title: 'వ్యాపారాలు & షాపులు', description: 'స్థానిక దుకాణాలు', nextNodeId: 'end_terminal' },
+          ],
+        },
+      ]
+      updateActiveNode({
+        listSections: newSections,
+        listButtonText: activeNode.config?.listButtonText || 'మెనూ చూడండి',
+        buttons: [],
+      })
+    } else {
+      updateActiveNode({ buttons: [], listSections: [] })
+    }
+  }
+
+  // Apply Smart Preset Template
+  const handleApplyTemplate = (template: (typeof SMART_TEMPLATES)[0]) => {
+    if (!activeNode) return
+    updateActiveNode(
+      {
+        text: template.text,
+        footerText: template.footerText || 'చౌటుప్పల్ యాప్ 24/7 బాట్',
+        mediaUrl: template.mediaUrl || '',
+        mediaType: template.mediaType || 'image',
+        buttons: template.buttons ? [...template.buttons] : [],
+        listSections: template.listSections ? JSON.parse(JSON.stringify(template.listSections)) : [],
+        listButtonText: template.listButtonText || 'మెనూ చూడండి',
+      },
+      template.stepName
+    )
+    setIsTemplatesModalOpen(false)
   }
 
   // Save Flow from Editor
@@ -1200,40 +1425,51 @@ export default function CRMFlowsPage() {
         </div>
       )}
 
-      {/* Visual Flow Editor Modal */}
+            {/* Visual Flow Editor Modal */}
       {isEditorOpen && editingFlow && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-6xl max-h-[94vh] flex flex-col shadow-2xl overflow-hidden text-slate-900">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-6xl max-h-[95vh] flex flex-col shadow-2xl overflow-hidden text-slate-900">
             {/* Modal Header */}
-            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/90">
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/90 shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-200 shadow-2xs">
                   <Edit3 className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-                    <span>{flows.some((f) => f.id === editingFlow.id) ? 'Edit Flow & Messages' : 'Create New Flow & Messages'}</span>
+                    <span>{flows.some((f) => f.id === editingFlow.id) ? 'Edit WhatsApp Flow & Messages' : 'Create New WhatsApp Flow'}</span>
                     <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-mono rounded-full font-semibold">
-                      {messageSteps.length} Steps Active
+                      {messageSteps.length} Steps
                     </span>
                   </h3>
                   <p className="text-[11px] text-slate-500">
-                    ప్రతి మెసేజ్, క్విక్ బటన్స్, మరియు ఇంటరాక్టివ్ లిస్ట్ మెనూని దశలవారీగా సులభంగా ఎడిట్ చేయండి.
+                    ప్రతి మెసేజ్, ఫోటో, మరియు క్విక్ బటన్స్ లేదా లిస్ట్ మెనూని ఒకే స్క్రీన్‌లో సులభంగా ఎడిట్ చేయండి.
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setIsEditorOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200/60 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsTemplatesModalOpen(true)}
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-xl border border-amber-300 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                  title="Load ready-made template"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                  <span>⚡ స్మార్ట్ టెంప్లేట్లు (Templates)</span>
+                </button>
+                <button
+                  onClick={() => setIsEditorOpen(false)}
+                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Modal Body */}
-            <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 text-xs">
-              {/* Row 1: Flow Name, Status, Trigger Keywords (Flow-level settings) */}
-              <div className="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
+            <div className="p-4 sm:p-5 space-y-4 overflow-y-auto flex-1 text-xs">
+              {/* Row 1: Flow-level settings (Flow Name, Status, Keywords) */}
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/90 space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                   <div className="md:col-span-2 space-y-1">
                     <label className="text-[11px] font-semibold text-slate-700">Flow Name (ఫ్లో పేరు)</label>
@@ -1242,7 +1478,7 @@ export default function CRMFlowsPage() {
                       value={editingFlow.name || ''}
                       onChange={(e) => setEditingFlow({ ...editingFlow, name: e.target.value })}
                       placeholder="e.g. Welcome & Directory Bot / స్వాగతం & డైరెక్టరీ బాట్"
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-medium"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 font-semibold text-xs shadow-2xs"
                     />
                   </div>
                   <div className="space-y-1">
@@ -1256,7 +1492,7 @@ export default function CRMFlowsPage() {
                           isActive: e.target.value === 'published',
                         })
                       }
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-emerald-500 text-xs shadow-2xs font-medium"
                     >
                       <option value="draft">Draft (డ్రాఫ్ట్ - టెస్ట్)</option>
                       <option value="published">Published (లైవ్ WhatsApp)</option>
@@ -1264,29 +1500,29 @@ export default function CRMFlowsPage() {
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[11px] font-semibold text-slate-700">Trigger Keywords</label>
+                    <label className="text-[11px] font-semibold text-slate-700">Trigger Keywords (ట్రిగ్గర్ పదాలు)</label>
                     <input
                       type="text"
                       value={editorKeywords}
                       onChange={(e) => setEditorKeywords(e.target.value)}
                       placeholder="e.g. hi, hello, సేవలు, menu"
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs focus:outline-none focus:border-emerald-500 shadow-2xs"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Step Navigation Pill Selector */}
+              {/* Step Navigation Bar */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label className="text-[11px] font-bold text-slate-800 flex items-center gap-1.5">
                     <Layers className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>సందేశాల దశలు (Message Steps): ఏ సందేశాన్ని ఎడిట్ చేయాలో ఎంచుకోండి</span>
+                    <span>సందేశాల దశలు (Steps): ఏ సందేశాన్ని ఎడిట్ చేయాలో ఎంచుకోండి</span>
                   </label>
                   <button
                     type="button"
                     onClick={handleAddStep}
-                    className="flex items-center gap-1 px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded-lg border border-emerald-200 text-[11px] transition-colors cursor-pointer"
+                    className="flex items-center gap-1 px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded-lg border border-emerald-200 text-[11px] transition-colors cursor-pointer shadow-2xs"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>+ కొత్త దశ (Add Step)</span>
@@ -1302,7 +1538,7 @@ export default function CRMFlowsPage() {
                         key={step.id}
                         className={`group shrink-0 flex items-center rounded-xl border text-xs transition-all ${
                           isSelected
-                            ? 'bg-emerald-600 border-emerald-700 text-white shadow-md'
+                            ? 'bg-emerald-600 border-emerald-700 text-white shadow-sm ring-2 ring-emerald-400/20'
                             : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                         }`}
                       >
@@ -1311,16 +1547,20 @@ export default function CRMFlowsPage() {
                           onClick={() => setActiveNodeId(step.id)}
                           className="px-3 py-1.5 flex items-center gap-1.5 font-medium cursor-pointer"
                         >
-                          <span className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold ${
-                            isSelected ? 'bg-white text-emerald-700' : 'bg-slate-100 text-slate-600'
-                          }`}>
+                          <span
+                            className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold ${
+                              isSelected ? 'bg-white text-emerald-700' : 'bg-slate-100 text-slate-600'
+                            }`}
+                          >
                             {idx + 1}
                           </span>
-                          <span>{step.name || `Step ${idx + 1}`}</span>
+                          <span className="font-semibold">{step.name || `Step ${idx + 1}`}</span>
                           {isEntry && (
-                            <span className={`text-[9px] px-1 rounded uppercase font-bold tracking-wider ${
-                              isSelected ? 'bg-emerald-700 text-emerald-100' : 'bg-emerald-50 text-emerald-700'
-                            }`}>
+                            <span
+                              className={`text-[9px] px-1 rounded uppercase font-bold tracking-wider ${
+                                isSelected ? 'bg-emerald-700 text-emerald-100' : 'bg-emerald-50 text-emerald-700'
+                              }`}
+                            >
                               Entry
                             </span>
                           )}
@@ -1343,293 +1583,344 @@ export default function CRMFlowsPage() {
                 </div>
               </div>
 
-              {/* Step Editor & Live Preview Grid */}
+              {/* Main 2-Column Workspace: Step Editor (7 cols) + Live Phone Preview (5 cols) */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 pt-1">
                 {/* Left Column: Step Configuration Form (7 cols) */}
-                <div className="lg:col-span-7 space-y-3.5">
-                  {/* Step Title & Subtabs bar */}
-                  <div className="p-3 bg-white border border-slate-200 rounded-2xl shadow-2xs space-y-3">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-                      <div className="flex items-center gap-2 flex-1">
-                        <span className="text-[11px] font-semibold text-slate-500 shrink-0">Step Name:</span>
-                        <input
-                          type="text"
-                          value={activeNode?.name || ''}
-                          onChange={(e) => updateActiveNode({}, e.target.value)}
-                          placeholder="e.g. Step 1: స్వాగతం"
-                          className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-slate-900 font-bold text-xs focus:outline-none focus:border-emerald-500"
-                        />
-                      </div>
-                      <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 bg-slate-50 rounded border border-slate-100 shrink-0">
+                <div className="lg:col-span-7 space-y-4">
+                  {/* Step Header & Title Bar */}
+                  <div className="p-3 bg-white border border-slate-200 rounded-2xl shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <span className="text-xs font-bold text-slate-700 shrink-0">దశ పేరు:</span>
+                      <input
+                        type="text"
+                        value={activeNode?.name || ''}
+                        onChange={(e) => updateActiveNode({}, e.target.value)}
+                        placeholder="e.g. Step 1: స్వాగతం"
+                        className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-slate-900 font-bold text-xs focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[10px] font-mono text-slate-400 px-2 py-0.5 bg-slate-50 rounded border border-slate-100">
                         ID: {activeNode?.id}
                       </span>
-                    </div>
-
-                    {/* Sub-tabs for the active step */}
-                    <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-[11px] overflow-x-auto">
                       <button
                         type="button"
-                        onClick={() => setActiveStepTab('message')}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer shrink-0 ${
-                          activeStepTab === 'message'
-                            ? 'bg-white text-emerald-700 shadow-2xs font-bold'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
+                        onClick={() => setIsTemplatesModalOpen(true)}
+                        className="flex items-center gap-1 px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-800 rounded-lg border border-amber-300 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                        title="Load pre-built template"
                       >
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        <span>సందేశం &amp; మీడియా</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveStepTab('buttons')}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer shrink-0 ${
-                          activeStepTab === 'buttons'
-                            ? 'bg-white text-emerald-700 shadow-2xs font-bold'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                      >
-                        <span>🔘 క్విక్ బటన్స్ ({activeNode?.config?.buttons?.length || 0}/3)</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveStepTab('list')}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer shrink-0 ${
-                          activeStepTab === 'list'
-                            ? 'bg-white text-emerald-700 shadow-2xs font-bold'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                      >
-                        <ListOrdered className="w-3.5 h-3.5" />
-                        <span>
-                          లిస్ట్ మెనూ ({activeNode?.config?.listSections?.reduce((acc, s) => acc + (s.rows?.length || 0), 0) || 0}/10)
-                        </span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveStepTab('listings')}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer shrink-0 ${
-                          activeStepTab === 'listings'
-                            ? 'bg-white text-emerald-700 shadow-2xs font-bold'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                      >
-                        <Building2 className="w-3.5 h-3.5" />
-                        <span>లిస్టింగ్స్ &amp; క్రమం</span>
+                        <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                        <span>⚡ టెంప్లేట్ వర్తింపజేయి</span>
                       </button>
                     </div>
                   </div>
 
-                  {/* TAB 1: Message Content & Media */}
-                  {activeStepTab === 'message' && (
-                    <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3.5 shadow-2xs">
-                      {/* Variables helper */}
-                      <div className="space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <label className="text-[11px] font-semibold text-slate-700">
-                            సందేశ పాఠ్యం (Message Body - Telugu / English)
-                          </label>
-                          <span className="text-[10px] text-slate-400">వేరియబుల్స్ జోడించండి:</span>
+                  {/* CARD 1: Message Text, Formatting Toolbar & Media */}
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3.5 shadow-2xs">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg border border-emerald-200">
+                          <MessageSquare className="w-4 h-4" />
                         </div>
-                        <div className="flex flex-wrap gap-1.5">
+                        <div>
+                          <h4 className="font-bold text-slate-900 text-xs">1. సందేశం &amp; ఫోటో (Message &amp; Media)</h4>
+                          <p className="text-[10px] text-slate-500">కస్టమర్‌కు వెళ్ళే సందేశ పాఠ్యం మరియు ఫోటోను ఇక్కడ సెట్ చేయండి.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Formatting & Dynamic Variable Toolbar */}
+                    <div className="space-y-1.5">
+                      <div className="flex flex-wrap items-center justify-between gap-1.5">
+                        <div className="flex items-center gap-1 flex-wrap">
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mr-0.5">ఫార్మాట్:</span>
+                          <button
+                            type="button"
+                            onClick={() => handleInsertFormatting('*', '*')}
+                            className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[11px] font-bold border border-slate-200 transition-colors cursor-pointer"
+                            title="బోల్డ్ టెక్స్ట్ (*text*)"
+                          >
+                            *B* బోల్డ్
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleInsertFormatting('_', '_')}
+                            className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[11px] italic border border-slate-200 transition-colors cursor-pointer"
+                            title="ఇటాలిక్ టెక్స్ట్ (_text_)"
+                          >
+                            _I_ ఇటాలిక్
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleInsertFormatting('\n• ')}
+                            className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[11px] font-medium border border-slate-200 transition-colors cursor-pointer"
+                            title="బుల్లెట్ పాయింట్ (• )"
+                          >
+                            • బుల్లెట్
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleInsertFormatting('\n👉 ')}
+                            className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[11px] font-medium border border-slate-200 transition-colors cursor-pointer"
+                            title="పాయింటర్ (👉 )"
+                          >
+                            👉 పాయింటర్
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleInsertFormatting('✨ ')}
+                            className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[11px] font-medium border border-slate-200 transition-colors cursor-pointer"
+                            title="హైలైట్ స్టార్ (✨ )"
+                          >
+                            ✨ స్టార్
+                          </button>
+                        </div>
+
+                        <div className="flex items-center gap-1 flex-wrap">
+                          <span className="text-[10px] font-bold text-slate-400 mr-0.5">ట్యాగ్స్:</span>
                           {[
-                            '{{contact.name}}',
-                            '{{listing.title}}',
-                            '{{listing.phone}}',
-                            '{{town.name}}',
-                            '{{town.url}}',
+                            { label: '+ పేరు', val: '{{contact.name}}' },
+                            { label: '+ వెబ్‌సైట్', val: '{{town.url}}' },
+                            { label: '+ ఫోన్', val: '{{listing.phone}}' },
+                            { label: '+ షాప్', val: '{{listing.title}}' },
                           ].map((tok) => (
                             <button
-                              key={tok}
+                              key={tok.val}
                               type="button"
-                              onClick={() => handleInsertVariable(tok)}
-                              className="px-2 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-[10px] font-mono border border-slate-200 transition-colors cursor-pointer"
+                              onClick={() => handleInsertFormatting(tok.val)}
+                              className="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded text-[10px] font-mono border border-emerald-200 transition-colors cursor-pointer font-semibold"
+                              title={`Insert ${tok.val}`}
                             >
-                              + {tok}
+                              {tok.label}
                             </button>
                           ))}
                         </div>
-                        <textarea
-                          rows={6}
-                          value={activeNode?.config?.text || ''}
-                          onChange={(e) => updateActiveNode({ text: e.target.value })}
-                          placeholder="నమస్కారం! చౌటుప్పల్ యాప్ కి స్వాగతం..."
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-emerald-500 font-sans text-xs leading-relaxed"
-                        />
                       </div>
 
-                      {/* Media Header (Image / Video) */}
-                      <div className="space-y-2 pt-2 border-t border-slate-100">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                          <label className="text-[11px] font-semibold text-slate-700">
-                            Hero Media (ఫోటో లేదా వీడియో)
-                          </label>
-                          <div className="flex items-center gap-2">
+                      {/* Textarea */}
+                      <textarea
+                        ref={textareaRef}
+                        rows={6}
+                        value={activeNode?.config?.text || ''}
+                        onChange={(e) => updateActiveNode({ text: e.target.value })}
+                        placeholder="నమస్కారం! చౌటుప్పల్ యాప్ కి స్వాగతం..."
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-emerald-500 font-sans text-xs leading-relaxed transition-all"
+                      />
+                    </div>
+
+                    {/* Hero Media Preview & Picker */}
+                    <div className="pt-2 border-t border-slate-100 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[11px] font-semibold text-slate-700 flex items-center gap-1.5">
+                          <ImageIcon className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Hero Photo / Banner (ఫోటో లేదా బ్యానర్)</span>
+                        </label>
+                      </div>
+
+                      {activeNode?.config?.mediaUrl ? (
+                        <div className="flex items-center gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                          <div className="w-16 h-12 rounded-lg bg-slate-200 overflow-hidden shrink-0 border border-slate-300">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={activeNode.config.mediaUrl}
+                              alt="Media preview"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0 text-xs">
+                            <span className="font-semibold text-slate-800 block truncate">
+                              {activeNode.config.mediaUrl}
+                            </span>
+                            <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1 mt-0.5">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              <span>WhatsApp మెసేజ్ పైభాగంలో ఈ ఫోటో కనిపిస్తుంది</span>
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0">
                             <button
                               type="button"
                               onClick={() => setIsMediaPickerOpen(true)}
-                              className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                              className="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-xs font-semibold transition-colors cursor-pointer shadow-2xs"
                             >
-                              <Upload className="w-3.5 h-3.5" />
-                              <span>ఫోటో ఎంచుకోండి లేదా అప్‌లోడ్ చేయండి (Choose / Upload)</span>
+                              మార్చండి
                             </button>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                          <div className="md:col-span-2 space-y-1">
-                            <input
-                              type="text"
-                              value={activeNode?.config?.mediaUrl || ''}
-                              onChange={(e) => updateActiveNode({ mediaUrl: e.target.value })}
-                              placeholder="https://images.unsplash.com/... or choose from gallery"
-                              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs focus:outline-none focus:border-emerald-500"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <select
-                              value={activeNode?.config?.mediaType || 'image'}
-                              onChange={(e) =>
-                                updateActiveNode({
-                                  mediaType: e.target.value as 'image' | 'video' | 'document',
-                                })
-                              }
-                              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
-                            >
-                              <option value="image">Image (JPG/PNG/WebP)</option>
-                              <option value="video">Video (MP4)</option>
-                              <option value="document">Document (PDF)</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        {activeNode?.config?.mediaUrl && (
-                          <div className="flex items-center gap-3 p-2 bg-slate-50 border border-slate-200 rounded-xl">
-                            <div className="w-16 h-12 rounded-lg bg-slate-200 overflow-hidden shrink-0 border border-slate-300">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={activeNode.config.mediaUrl}
-                                alt="Media preview"
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0 text-xs">
-                              <span className="font-semibold text-slate-700 block truncate">
-                                {activeNode.config.mediaUrl}
-                              </span>
-                              <span className="text-[10px] text-emerald-600 font-medium">
-                                ✓ WhatsApp మెసేజ్ పైభాగంలో ఈ ఫోటో కనిపిస్తుంది
-                              </span>
-                            </div>
                             <button
                               type="button"
                               onClick={() => updateActiveNode({ mediaUrl: '' })}
-                              className="text-slate-400 hover:text-rose-600 p-1"
+                              className="p-1 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
                               title="Remove photo"
                             >
                               <X className="w-4 h-4" />
                             </button>
                           </div>
-                        )}
-                      </div>
-
-                      {/* Footer Text */}
-                      <div className="space-y-1 pt-1">
-                        <label className="text-[11px] font-semibold text-slate-700">
-                          Footer Text (బాట్ ఫుటర్ క్యాప్షన్)
-                        </label>
-                        <input
-                          type="text"
-                          value={activeNode?.config?.footerText || ''}
-                          onChange={(e) => updateActiveNode({ footerText: e.target.value })}
-                          placeholder="చౌటుప్పల్ యాప్ 24/7 బాట్"
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* TAB 2: Quick-Reply Buttons */}
-                  {activeStepTab === 'buttons' && (
-                    <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-3.5 shadow-2xs">
-                      <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                        <div>
-                          <h4 className="font-bold text-slate-900 text-xs">Quick-Reply Buttons</h4>
-                          <p className="text-[10px] text-slate-500">
-                            WhatsApp మెసేజ్ క్రింద గరిష్టంగా 3 బటన్స్ ఇవ్వవచ్చు. ప్రతి బటన్ క్లిక్ చేస్తే ఏ దశకు వెళ్లాలో ఎంచుకోండి.
-                          </p>
-                        </div>
-                        {(activeNode?.config?.buttons?.length || 0) < 3 && (
-                          <button
-                            type="button"
-                            onClick={handleAddButton}
-                            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                            <span>+ బటన్ జోడించు</span>
-                          </button>
-                        )}
-                      </div>
-
-                      {(!activeNode?.config?.buttons || activeNode.config.buttons.length === 0) ? (
-                        <div className="p-6 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-center space-y-2">
-                          <p className="text-slate-500 text-xs">ఈ సందేశానికి ప్రస్తుతం బటన్స్ ఏవీ లేవు.</p>
-                          <button
-                            type="button"
-                            onClick={handleAddButton}
-                            className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold cursor-pointer inline-flex items-center gap-1"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                            <span>మొదటి బటన్ జోడించు</span>
-                          </button>
                         </div>
                       ) : (
+                        <div className="flex flex-col sm:flex-row items-center gap-2 p-3 bg-slate-50 border border-dashed border-slate-300 rounded-xl text-center sm:text-left justify-between">
+                          <div className="text-xs text-slate-500">
+                            ఈ మెసేజ్‌కి ఫోటో లేదా బ్యానర్ లేదు (ఐచ్ఛికం).
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setIsMediaPickerOpen(true)}
+                            className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                          >
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>+ ఫోటో ఎంచుకోండి లేదా అప్‌లోడ్ చేయండి</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Footer Text */}
+                    <div className="space-y-1 pt-1">
+                      <label className="text-[11px] font-semibold text-slate-700">
+                        Footer Caption (బాట్ ఫుటర్ క్యాప్షన్)
+                      </label>
+                      <input
+                        type="text"
+                        value={activeNode?.config?.footerText || ''}
+                        onChange={(e) => updateActiveNode({ footerText: e.target.value })}
+                        placeholder="చౌటుప్పల్ యాప్ 24/7 బాట్"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* CARD 2: Interactive Customer Response (Buttons / List / None) */}
+                  <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-4 shadow-2xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                          <span>2. కస్టమర్ రెస్పాన్స్ ఎంపిక (Interactive Action)</span>
+                        </h4>
+                        <p className="text-[10px] text-slate-500">
+                          WhatsApp మెసేజ్ క్రింద కస్టమర్ ఎంచుకునే బటన్లు లేదా లిస్ట్ మెనూని ఎంచుకోండి.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Segmented 3-way toggle */}
+                    <div className="grid grid-cols-3 p-1 bg-slate-100 rounded-xl text-xs font-semibold gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleSetResponseMode('buttons')}
+                        className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                          activeNode?.config?.buttons && activeNode.config.buttons.length > 0
+                            ? 'bg-white text-emerald-700 shadow-2xs font-bold border border-slate-200'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <span>🔘 క్విక్ బటన్లు (1-3)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSetResponseMode('list')}
+                        className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                          activeNode?.config?.listSections && activeNode.config.listSections.length > 0
+                            ? 'bg-white text-emerald-700 shadow-2xs font-bold border border-slate-200'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <ListOrdered className="w-3.5 h-3.5" />
+                        <span>📋 లిస్ట్ మెనూ (1-10)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSetResponseMode('none')}
+                        className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                          (!activeNode?.config?.buttons || activeNode.config.buttons.length === 0) &&
+                          (!activeNode?.config?.listSections || activeNode.config.listSections.length === 0)
+                            ? 'bg-white text-slate-800 shadow-2xs font-bold border border-slate-200'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        <span>💬 కేవలం టెక్స్ట్</span>
+                      </button>
+                    </div>
+
+                    {/* Sub-section: Quick-Reply Buttons */}
+                    {activeNode?.config?.buttons && activeNode.config.buttons.length > 0 && (
+                      <div className="space-y-3 pt-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-slate-700">
+                            బటన్లు (గరిష్టంగా 3 బటన్లు - Meta WhatsApp API పరిమితి)
+                          </span>
+                          {(activeNode?.config?.buttons?.length || 0) < 3 && (
+                            <button
+                              type="button"
+                              onClick={handleAddButton}
+                              className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>+ బటన్ జోడించు</span>
+                            </button>
+                          )}
+                        </div>
+
                         <div className="space-y-2.5">
                           {activeNode.config.buttons.map((btn, bi) => (
-                            <div key={btn.id || bi} className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                              <div className="flex items-center justify-between">
-                                <span className="font-bold text-slate-700 text-xs flex items-center gap-1">
-                                  <span>బటన్ #{bi + 1}</span>
-                                  <span className={`text-[10px] px-1.5 rounded font-mono ${
-                                    btn.title.length > 20 ? 'bg-red-100 text-red-700' : 'bg-slate-200 text-slate-600'
-                                  }`}>
-                                    {btn.title.length}/20 chars
+                            <div
+                              key={btn.id || bi}
+                              className="p-3 bg-slate-50/80 rounded-xl border border-slate-200 space-y-2"
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-emerald-700 font-mono text-[11px] bg-emerald-100 px-2 py-0.5 rounded-full">
+                                    బటన్ #{bi + 1}
                                   </span>
-                                </span>
+                                  <span
+                                    className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold ${
+                                      (btn.title?.length || 0) > 20
+                                        ? 'bg-red-100 text-red-700'
+                                        : (btn.title?.length || 0) >= 16
+                                        ? 'bg-amber-100 text-amber-700'
+                                        : 'bg-slate-200/80 text-slate-600'
+                                    }`}
+                                  >
+                                    {btn.title?.length || 0}/20 అక్షరాలు
+                                  </span>
+                                </div>
                                 <button
                                   type="button"
                                   onClick={() => handleRemoveButton(bi)}
-                                  className="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-slate-200/60 transition-colors cursor-pointer"
-                                  title="Remove button"
+                                  className="text-slate-400 hover:text-red-500 p-1 rounded hover:bg-red-50 transition-colors cursor-pointer"
+                                  title="Delete Button"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                               </div>
 
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <div className="space-y-1">
-                                  <label className="text-[10px] text-slate-500 font-medium">Button Title (శీర్షిక)</label>
+                                  <label className="text-[10px] font-semibold text-slate-600">
+                                    బటన్ పేరు (Button Label - max 20)
+                                  </label>
                                   <input
                                     type="text"
                                     maxLength={20}
                                     value={btn.title}
                                     onChange={(e) => handleUpdateButton(bi, { title: e.target.value })}
-                                    placeholder="e.g. సేవలు / వివరాలు"
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
+                                    placeholder="e.g. సేవలు"
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500 shadow-2xs"
                                   />
                                 </div>
+
                                 <div className="space-y-1">
-                                  <label className="text-[10px] text-slate-500 font-medium">Target Next Step (తదుపరి దశ)</label>
+                                  <label className="text-[10px] font-semibold text-slate-600">
+                                    నొక్కితే ఏ దశకు వెళ్ళాలి? (Next Step Target)
+                                  </label>
                                   <select
                                     value={btn.nextNodeId || 'end_terminal'}
                                     onChange={(e) => handleUpdateButton(bi, { nextNodeId: e.target.value })}
-                                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
+                                    className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:border-emerald-500 shadow-2xs"
                                   >
-                                    <option value="end_terminal">-- పూర్తి (End Conversation) --</option>
+                                    <option value="end_terminal">🏁 సంభాషణ పూర్తి (End Conversation)</option>
                                     {messageSteps
                                       .filter((s) => s.id !== activeNode.id)
                                       .map((s, si) => (
                                         <option key={s.id} value={s.id}>
-                                          {s.name || `Step ${si + 1}`} ({s.id})
+                                          ➔ {s.name || `Step ${si + 1}`} ({s.id})
                                         </option>
                                       ))}
                                   </select>
@@ -1638,75 +1929,56 @@ export default function CRMFlowsPage() {
                             </div>
                           ))}
                         </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* TAB 3: Interactive List Menu */}
-                  {activeStepTab === 'list' && (
-                    <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-4 shadow-2xs">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-                        <div>
-                          <h4 className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
-                            <ListOrdered className="w-4 h-4 text-emerald-600" />
-                            <span>WhatsApp Interactive List Menu</span>
-                          </h4>
-                          <p className="text-[10px] text-slate-500">
-                            యూజర్ &quot;మెనూ చూడండి&quot; క్లిక్ చేసినప్పుడు డ్రావర్‌లో 10 ఆప్షన్స్ వరకు కేటగిరీలుగా కనిపిస్తాయి.
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleAddListSection}
-                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 shrink-0 shadow-2xs"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>+ కొత్త విభాగం (Add Section)</span>
-                        </button>
                       </div>
+                    )}
 
-                      {/* Main List Button Text */}
-                      <div className="p-3 bg-emerald-50/60 rounded-xl border border-emerald-200 space-y-1.5">
+                    {/* Sub-section: Interactive List Menu */}
+                    {activeNode?.config?.listSections && activeNode.config.listSections.length > 0 && (
+                      <div className="space-y-3.5 pt-1">
+                        {/* Main List Button Text */}
+                        <div className="p-3 bg-emerald-50/70 rounded-xl border border-emerald-200 space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <label className="text-[11px] font-bold text-emerald-950">
+                              List Menu Button Title (బటన్ పై కనిపించే పేరు)
+                            </label>
+                            <span
+                              className={`text-[10px] px-1.5 rounded font-mono font-bold ${
+                                (activeNode?.config?.listButtonText?.length || 0) > 20
+                                  ? 'bg-red-100 text-red-700'
+                                  : 'text-emerald-700'
+                              }`}
+                            >
+                              {activeNode?.config?.listButtonText?.length || 0}/20 chars
+                            </span>
+                          </div>
+                          <input
+                            type="text"
+                            maxLength={20}
+                            value={activeNode?.config?.listButtonText || ''}
+                            onChange={(e) => updateActiveNode({ listButtonText: e.target.value })}
+                            placeholder="e.g. మెనూ చూడండి / View Menu"
+                            className="w-full bg-white border border-emerald-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500 shadow-2xs"
+                          />
+                        </div>
+
                         <div className="flex items-center justify-between">
-                          <label className="text-[11px] font-bold text-emerald-900">
-                            List Menu Button Title (బటన్ పై కనిపించే పేరు)
-                          </label>
-                          <span className={`text-[10px] px-1.5 rounded font-mono ${
-                            (activeNode?.config?.listButtonText?.length || 0) > 20
-                              ? 'bg-red-100 text-red-700 font-bold'
-                              : 'text-emerald-700'
-                          }`}>
-                            {activeNode?.config?.listButtonText?.length || 0}/20 chars
+                          <span className="text-[11px] font-bold text-slate-700">
+                            విభాగాలు &amp; ఆప్షన్స్ (గరిష్టంగా 10 ఆప్షన్స్)
                           </span>
-                        </div>
-                        <input
-                          type="text"
-                          maxLength={20}
-                          value={activeNode?.config?.listButtonText || ''}
-                          onChange={(e) => updateActiveNode({ listButtonText: e.target.value })}
-                          placeholder="e.g. మెనూ చూడండి / View Menu"
-                          className="w-full bg-white border border-emerald-200 rounded-lg px-3 py-2 text-xs text-slate-900 font-bold focus:outline-none focus:border-emerald-500 shadow-2xs"
-                        />
-                      </div>
-
-                      {/* Sections and Rows */}
-                      {(!activeNode?.config?.listSections || activeNode.config.listSections.length === 0) ? (
-                        <div className="p-6 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-center space-y-2">
-                          <p className="text-slate-500 text-xs">ఈ సందేశానికి ఇంటరాక్టివ్ లిస్ట్ మెనూ ఇంకా లేదు.</p>
                           <button
                             type="button"
                             onClick={handleAddListSection}
-                            className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold cursor-pointer inline-flex items-center gap-1"
+                            className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
                           >
                             <Plus className="w-3.5 h-3.5" />
-                            <span>లిస్ట్ విభాగం జోడించు</span>
+                            <span>+ కొత్త విభాగం (Add Section)</span>
                           </button>
                         </div>
-                      ) : (
-                        <div className="space-y-4">
+
+                        {/* Sections and Rows */}
+                        <div className="space-y-3">
                           {activeNode.config.listSections.map((sec, si) => (
-                            <div key={si} className="p-3.5 bg-slate-50/90 rounded-2xl border border-slate-200 space-y-3">
-                              {/* Section Header */}
+                            <div key={si} className="p-3 bg-slate-50/90 rounded-2xl border border-slate-200 space-y-2.5">
                               <div className="flex items-center justify-between gap-2 border-b border-slate-200 pb-2">
                                 <div className="flex items-center gap-2 flex-1">
                                   <span className="font-bold text-slate-700 text-xs shrink-0">
@@ -1718,7 +1990,7 @@ export default function CRMFlowsPage() {
                                     value={sec.title}
                                     onChange={(e) => handleUpdateListSectionTitle(si, e.target.value)}
                                     placeholder="Section Title (e.g. ప్రధాన సేవలు)"
-                                    className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-900 focus:outline-none focus:border-emerald-500"
+                                    className="flex-1 bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-900 focus:outline-none focus:border-emerald-500 shadow-2xs"
                                   />
                                 </div>
                                 <button
@@ -1731,8 +2003,7 @@ export default function CRMFlowsPage() {
                                 </button>
                               </div>
 
-                              {/* Rows in Section */}
-                              <div className="space-y-2 pl-2 border-l-2 border-emerald-300">
+                              <div className="space-y-2 pl-2 border-l-2 border-emerald-400">
                                 {sec.rows?.map((row, ri) => (
                                   <div key={row.id || ri} className="p-2.5 bg-white rounded-xl border border-slate-200 space-y-1.5 shadow-2xs">
                                     <div className="flex items-center justify-between gap-2">
@@ -1747,13 +2018,13 @@ export default function CRMFlowsPage() {
                                     </div>
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                       <div className="space-y-0.5">
-                                        <label className="text-[9px] text-slate-500 font-medium">Row Title (max 24)</label>
+                                        <label className="text-[9px] text-slate-500 font-medium">Title (max 24)</label>
                                         <input
                                           type="text"
                                           maxLength={24}
                                           value={row.title}
                                           onChange={(e) => handleUpdateListRow(si, ri, { title: e.target.value })}
-                                          placeholder="e.g. రియల్ ఎస్టేట్ & ప్లాట్లు"
+                                          placeholder="e.g. రియల్ ఎస్టేట్"
                                           className="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1 text-[11px] text-slate-900 focus:outline-none focus:border-emerald-500"
                                         />
                                       </div>
@@ -1764,12 +2035,12 @@ export default function CRMFlowsPage() {
                                           maxLength={72}
                                           value={row.description || ''}
                                           onChange={(e) => handleUpdateListRow(si, ri, { description: e.target.value })}
-                                          placeholder="e.g. చౌటుప్పల్ పరిసరాల్లో వెంచర్లు"
+                                          placeholder="e.g. స్థలాలు & వెంచర్లు"
                                           className="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1 text-[11px] text-slate-900 focus:outline-none focus:border-emerald-500"
                                         />
                                       </div>
                                       <div className="space-y-0.5">
-                                        <label className="text-[9px] text-slate-500 font-medium">Next Step (తదుపరి దశ)</label>
+                                        <label className="text-[9px] text-slate-500 font-medium">Next Step</label>
                                         <select
                                           value={row.nextNodeId || 'end_terminal'}
                                           onChange={(e) => handleUpdateListRow(si, ri, { nextNodeId: e.target.value })}
@@ -1801,54 +2072,71 @@ export default function CRMFlowsPage() {
                             </div>
                           ))}
                         </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* TAB 4: Directory Listings & Sort Order */}
-                  {activeStepTab === 'listings' && (
-                    <div className="bg-white border border-slate-200 rounded-2xl p-4 space-y-4 shadow-2xs">
-                      {/* Directory Listing Binding */}
-                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <Building2 className="w-4 h-4 text-amber-500" />
-                          <span className="font-semibold text-slate-800">Attach Single Directory Listing (Optional)</span>
-                        </div>
-                        <p className="text-[11px] text-slate-500">
-                          Select a live business listing to dynamically inject its name, contact phone, address, and cover image.
-                        </p>
-                        <select
-                          value={selectedListingId}
-                          onChange={(e) => setSelectedListingId(e.target.value)}
-                          className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
-                        >
-                          <option value="">-- No single listing attached --</option>
-                          {listings.map((l) => (
-                            <option key={l.id} value={l.id}>
-                              {l.title} ({l.categoryName} • {l.phone})
-                            </option>
-                          ))}
-                        </select>
                       </div>
+                    )}
 
-                      {/* Business Listing Order & Pagination Section */}
-                      <div className="p-4 bg-emerald-50/50 rounded-2xl border border-emerald-200 space-y-3">
-                        <div className="flex items-center justify-between">
+                    {/* Sub-section: Text Only */}
+                    {(!activeNode?.config?.buttons || activeNode.config.buttons.length === 0) &&
+                      (!activeNode?.config?.listSections || activeNode.config.listSections.length === 0) && (
+                        <div className="p-4 bg-slate-50 rounded-xl border border-dashed border-slate-300 text-center space-y-1">
+                          <p className="text-slate-700 text-xs font-medium">💬 కేవలం సందేశం మాత్రమే (Text Only)</p>
+                          <p className="text-slate-500 text-[11px]">
+                            ఈ సందేశానికి ఎలాంటి బటన్లు లేదా లిస్ట్ మెనూ జతచేయబడలేదు. కస్టమర్ సందేశాన్ని చదివి ఏదైనా టెక్స్ట్ టైప్ చేయవచ్చు.
+                          </p>
+                        </div>
+                      )}
+                  </div>
+
+                  {/* CARD 3: Advanced Directory Settings (Collapsible Accordion) */}
+                  <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => setIsAdvancedExpanded(!isAdvancedExpanded)}
+                      className="w-full flex items-center justify-between p-3.5 bg-slate-50/80 hover:bg-slate-100 text-left transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="p-1 bg-slate-200 text-slate-700 rounded-md">
+                          <Building2 className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs font-bold text-slate-800">
+                          అధునాతన డైరెక్టరీ సెట్టింగ్స్ (Business Listing &amp; Sequence - ఐచ్ఛికం)
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-slate-400">
+                        <span className="text-[10px] font-mono text-slate-500">
+                          {selectedListingId ? '1 Listing Attached' : 'డిఫాల్ట్'}
+                        </span>
+                        {isAdvancedExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                      </div>
+                    </button>
+
+                    {isAdvancedExpanded && (
+                      <div className="p-4 border-t border-slate-200 space-y-4 text-xs">
+                        {/* Directory Listing Binding */}
+                        <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                           <div className="flex items-center gap-2">
-                            <div className="p-1.5 bg-emerald-500/10 text-emerald-600 rounded-lg border border-emerald-500/20">
-                              <ArrowUpDown className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-slate-900 text-xs">Business Listing Order</h4>
-                              <p className="text-[10px] text-slate-500">
-                                Admin-controlled sequence for businesses and categories presented to customers.
-                              </p>
-                            </div>
+                            <Building2 className="w-4 h-4 text-amber-500" />
+                            <span className="font-semibold text-slate-800">Attach Single Directory Listing (Optional)</span>
                           </div>
+                          <p className="text-[11px] text-slate-500">
+                            Select a live business listing to dynamically inject its name, contact phone, address, and cover image.
+                          </p>
+                          <select
+                            value={selectedListingId}
+                            onChange={(e) => setSelectedListingId(e.target.value)}
+                            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
+                          >
+                            <option value="">-- No single listing attached --</option>
+                            {listings.map((l) => (
+                              <option key={l.id} value={l.id}>
+                                {l.title} ({l.categoryName} • {l.phone})
+                              </option>
+                            ))}
+                          </select>
                         </div>
 
-                        {/* Mode Selector & Category Scoping */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                        {/* Business Listing Order & Sorting */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <div className="space-y-1">
                             <label className="text-[11px] font-semibold text-slate-700">Sorting Mode</label>
                             <select
@@ -1865,7 +2153,7 @@ export default function CRMFlowsPage() {
                           </div>
 
                           <div className="space-y-1">
-                            <label className="text-[11px] font-semibold text-slate-700">Category Filter (Optional)</label>
+                            <label className="text-[11px] font-semibold text-slate-700">Category Filter</label>
                             <select
                               value={listingCategory}
                               onChange={(e) => setListingCategory(e.target.value)}
@@ -1897,68 +2185,9 @@ export default function CRMFlowsPage() {
                             />
                           </div>
                         </div>
-
-                        {/* MANUAL MODE: Explicit Reordering List */}
-                        {listingSortMode === 'manual' && (
-                          <div className="space-y-2.5 pt-1">
-                            <div className="flex gap-2">
-                              <select
-                                value={selectedListingToAddToOrder}
-                                onChange={(e) => setSelectedListingToAddToOrder(e.target.value)}
-                                className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
-                              >
-                                <option value="">-- Choose business to add to sequence --</option>
-                                {listings
-                                  .filter((l) => !listingSortOrder.includes(l.id))
-                                  .map((l) => (
-                                    <option key={l.id} value={l.id}>
-                                      {l.title} ({l.categoryName} • {l.phone})
-                                    </option>
-                                  ))}
-                              </select>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  if (selectedListingToAddToOrder && !listingSortOrder.includes(selectedListingToAddToOrder)) {
-                                    setListingSortOrder([...listingSortOrder, selectedListingToAddToOrder])
-                                    setSelectedListingToAddToOrder('')
-                                  }
-                                }}
-                                disabled={!selectedListingToAddToOrder}
-                                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer"
-                              >
-                                + Add to Order
-                              </button>
-                            </div>
-
-                            {listingSortOrder.length > 0 && (
-                              <div className="space-y-1 max-h-36 overflow-y-auto">
-                                {listingSortOrder.map((lId, idx) => {
-                                  const item = listings.find((l) => l.id === lId)
-                                  return (
-                                    <div
-                                      key={lId}
-                                      className="flex items-center justify-between gap-2 p-1.5 bg-white rounded-lg border border-slate-200 text-xs text-slate-900"
-                                    >
-                                      <span className="font-bold font-mono text-emerald-600 text-[10px]">#{idx + 1}</span>
-                                      <span className="truncate flex-1 font-medium">{item?.title || lId}</span>
-                                      <button
-                                        type="button"
-                                        onClick={() => setListingSortOrder(listingSortOrder.filter((id) => id !== lId))}
-                                        className="text-slate-400 hover:text-red-500 p-0.5"
-                                      >
-                                        <X className="w-3.5 h-3.5" />
-                                      </button>
-                                    </div>
-                                  )
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        )}
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
 
                 {/* Right Column: Live WhatsApp Phone Preview (5 cols) */}
@@ -2009,7 +2238,7 @@ export default function CRMFlowsPage() {
                         <div className="bg-[#202c33] text-slate-100 rounded-r-xl rounded-tl-xl text-xs max-w-[92%] shadow-md border border-slate-700/40 overflow-hidden">
                           {/* Media Preview if provided */}
                           {activeNode?.config?.mediaUrl && (
-                            <div className="w-full bg-black/40 max-h-40 overflow-hidden flex items-center justify-center border-b border-slate-700/50">
+                            <div className="w-full bg-black/40 max-h-44 overflow-hidden flex items-center justify-center border-b border-slate-700/50">
                               {activeNode.config.mediaType === 'video' ? (
                                 <div className="p-4 text-center text-slate-400 text-xs flex items-center gap-2">
                                   <span>📹 Video:</span>
@@ -2019,7 +2248,7 @@ export default function CRMFlowsPage() {
                                 <img
                                   src={activeNode.config.mediaUrl}
                                   alt="Media"
-                                  className="w-full h-auto max-h-40 object-cover"
+                                  className="w-full h-auto max-h-44 object-cover"
                                   onError={(e) => {
                                     ;(e.target as any).style.display = 'none'
                                   }}
@@ -2031,11 +2260,9 @@ export default function CRMFlowsPage() {
                           {/* Message Body */}
                           <div className="p-3 space-y-1.5">
                             <div className="whitespace-pre-wrap leading-relaxed text-[11px] text-slate-100 font-sans">
-                              {(activeNode?.config?.text || editingFlow?.initial_message || 'సందేశం ఇక్కడ కనిపిస్తుంది...')
-                                .replace(/{{contact\.name}}/g, 'రాకేష్ గారు')
-                                .replace(/{{listing\.title}}/g, 'శ్రీ లక్ష్మి నిలయం')
-                                .replace(/{{town\.name}}/g, 'చౌటుప్పల్')
-                                .replace(/{{town\.url}}/g, 'https://choutuppal.in')}
+                              {renderWhatsAppFormattedText(
+                                activeNode?.config?.text || editingFlow?.initial_message || 'సందేశం ఇక్కడ కనిపిస్తుంది...'
+                              )}
                             </div>
 
                             {/* Footer Text */}
@@ -2113,7 +2340,7 @@ export default function CRMFlowsPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t border-slate-200 flex items-center justify-between bg-slate-50/90">
+            <div className="p-4 border-t border-slate-200 flex items-center justify-between bg-slate-50/90 shrink-0">
               <div className="text-[11px] text-slate-500 font-mono">
                 {messageSteps.length} Steps configured • Status: {editingFlow.status || 'draft'}
               </div>
@@ -2364,6 +2591,86 @@ export default function CRMFlowsPage() {
           alert(`Successfully imported ${count} custom WhatsApp flows!`)
         }}
       />
+
+            {/* Smart Flow Templates Preset Selector Modal */}
+      {isTemplatesModalOpen && (
+        <div className="fixed inset-0 z-60 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200 text-slate-900">
+            <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 bg-amber-100 text-amber-700 rounded-xl">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-sm">స్మార్ట్ ఫ్లో టెంప్లేట్లు (Smart Templates)</h3>
+                  <p className="text-[11px] text-slate-500">
+                    సిద్ధంగా ఉన్న టెంప్లేట్‌ను ఎంచుకోండి. 1-క్లిక్‌తో మెసేజ్, బటన్స్ మరియు ఫార్మాటింగ్ సెట్ అవుతాయి.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsTemplatesModalOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-4 sm:p-5 space-y-3 overflow-y-auto flex-1">
+              {SMART_TEMPLATES.map((tmpl) => (
+                <div
+                  key={tmpl.id}
+                  className="p-4 bg-slate-50 hover:bg-emerald-50/40 rounded-2xl border border-slate-200 hover:border-emerald-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
+                >
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <span className="text-2xl p-2 bg-white rounded-xl shadow-2xs border border-slate-200 shrink-0">
+                      {tmpl.icon}
+                    </span>
+                    <div className="space-y-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-bold text-slate-900 text-xs sm:text-sm">{tmpl.nameTe}</h4>
+                        <span className="text-[10px] text-slate-500 font-mono">({tmpl.name})</span>
+                        <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-semibold rounded-full">
+                          {tmpl.badge}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        {tmpl.description}
+                      </p>
+                      <div className="flex items-center gap-2 pt-1 text-[10px] text-slate-500 font-mono">
+                        {tmpl.buttons && <span>🔘 {tmpl.buttons.length} Buttons</span>}
+                        {tmpl.listSections && (
+                          <span>📋 {tmpl.listSections.reduce((acc, s) => acc + (s.rows?.length || 0), 0)} List Rows</span>
+                        )}
+                        {tmpl.mediaUrl && <span>• 📷 Banner Image</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleApplyTemplate(tmpl)}
+                    className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shrink-0 flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>ఈ టెంప్లేట్ వర్తింపజేయి</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-3.5 border-t border-slate-200 bg-slate-50 flex justify-end shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsTemplatesModalOpen(false)}
+                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-semibold cursor-pointer"
+              >
+                రద్దు చేయండి (Cancel)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Media Gallery & Auto-Compress R2 Upload Modal */}
       <MediaPickerModal
