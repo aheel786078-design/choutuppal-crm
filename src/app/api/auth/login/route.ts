@@ -13,6 +13,13 @@ const MAX_ATTEMPTS = 10
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now()
+  if (rateLimitMap.size > 200) {
+    for (const [key, value] of rateLimitMap.entries()) {
+      if (now - value.start > RATE_LIMIT_WINDOW_MS) {
+        rateLimitMap.delete(key)
+      }
+    }
+  }
   const record = rateLimitMap.get(ip)
   if (!record || now - record.start > RATE_LIMIT_WINDOW_MS) {
     rateLimitMap.set(ip, { count: 1, start: now })

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
 const DEFAULT_SUPABASE_URL = 'https://llcfxewxqrmdzlvnzzxm.supabase.co'
 const DEFAULT_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxsY2Z4ZXd4cXJtZHpsdm56enhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMxOTQwNDIsImV4cCI6MjEwODc3MDA0Mn0.O8kfgtGpQCESZss9lAuB2c_qaN9dlQYUgPfPmZChxhA'
@@ -12,17 +12,31 @@ export const isSupabaseConfigured = Boolean(
   supabaseUrl && !supabaseUrl.includes('your-project') && supabaseAnonKey
 )
 
-export function getSupabaseBrowserClient() {
+let browserClient: SupabaseClient | null = null
+let adminClient: SupabaseClient | null = null
+
+export function getSupabaseBrowserClient(): SupabaseClient | null {
   if (!isSupabaseConfigured) return null
-  return createClient(supabaseUrl, supabaseAnonKey)
+  if (!browserClient) {
+    browserClient = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    })
+  }
+  return browserClient
 }
 
-export function getSupabaseAdminClient() {
+export function getSupabaseAdminClient(): SupabaseClient | null {
   if (!isSupabaseConfigured || !supabaseServiceRole) return null
-  return createClient(supabaseUrl, supabaseServiceRole, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  })
+  if (!adminClient) {
+    adminClient = createClient(supabaseUrl, supabaseServiceRole, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    })
+  }
+  return adminClient
 }

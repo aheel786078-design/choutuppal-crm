@@ -19,7 +19,7 @@ function parseSessionCookie(cookieValue?: string): any | null {
   if (!cookieValue || !cookieValue.includes('.')) return null
   try {
     const [payloadB64] = cookieValue.split('.')
-    const jsonStr = atob(payloadB64.replace(/-/g, '+').replace(/_/g, '/'))
+    const jsonStr = Buffer.from(payloadB64, 'base64url').toString('utf-8')
     const payload = JSON.parse(jsonStr)
     if (!payload.expiresAt || payload.expiresAt < Date.now()) {
       return null

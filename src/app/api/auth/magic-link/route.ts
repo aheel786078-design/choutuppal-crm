@@ -12,6 +12,13 @@ const MAX_REQUESTS_PER_WINDOW = 5
 
 function checkRateLimit(key: string): boolean {
   const now = Date.now()
+  if (rateLimitMap.size > 200) {
+    for (const [k, value] of rateLimitMap.entries()) {
+      if (now - value.start > RATE_LIMIT_WINDOW_MS) {
+        rateLimitMap.delete(k)
+      }
+    }
+  }
   const record = rateLimitMap.get(key)
   if (!record || now - record.start > RATE_LIMIT_WINDOW_MS) {
     rateLimitMap.set(key, { count: 1, start: now })

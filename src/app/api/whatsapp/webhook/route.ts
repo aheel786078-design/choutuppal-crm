@@ -49,12 +49,19 @@ export async function GET(req: Request) {
   } catch {}
 
   const envToken = (process.env.WHATSAPP_VERIFY_TOKEN || '').trim().replace(/^["']|["']$/g, '')
-  const validTokens = [envToken, storeVerifyToken, 'choutuppal_verify_token'].filter(Boolean)
+  const envWebhookToken = (process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN || '').trim().replace(/^["']|["']$/g, '')
+  const validTokens = [envToken, envWebhookToken, storeVerifyToken, 'choutuppal_verify_token'].filter(Boolean)
 
   if (mode === 'subscribe' && token && validTokens.includes(token)) {
-    return new Response(challenge, { status: 200 })
+    return new Response(challenge || '', {
+      status: 200,
+      headers: { 'Content-Type': 'text/plain' },
+    })
   }
-  return new Response('Verification token mismatch', { status: 403 })
+  return new Response('Verification token mismatch', {
+    status: 403,
+    headers: { 'Content-Type': 'text/plain' },
+  })
 }
 
 export async function POST(req: Request) {
