@@ -307,7 +307,9 @@ export default function SharedInboxPage() {
                         <div className="flex items-center justify-between">
                           <h5 className="font-semibold text-xs text-slate-900 truncate">{c.contactName}</h5>
                           <span className="text-[10px] text-slate-500 font-mono">
-                            {new Date(c.lastMessageAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {c.lastMessageAt && !isNaN(new Date(c.lastMessageAt).getTime())
+                              ? new Date(c.lastMessageAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                              : ''}
                           </span>
                         </div>
                         <div className="flex items-center justify-between mt-0.5">
@@ -446,7 +448,9 @@ export default function SharedInboxPage() {
                             <p className="whitespace-pre-wrap leading-relaxed">{m.messageText}</p>
                             <div className="flex items-center justify-end gap-1.5 mt-1 text-[9px] text-slate-500 font-mono">
                               <span>
-                                {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                {m.createdAt && !isNaN(new Date(m.createdAt).getTime())
+                                  ? new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                  : ''}
                               </span>
                               {isOut && (
                                 <CheckCheck

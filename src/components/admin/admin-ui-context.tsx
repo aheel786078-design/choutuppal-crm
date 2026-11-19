@@ -96,10 +96,22 @@ export function AdminUIProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
+const defaultAdminUIContext: AdminUIContextType = {
+  isSidebarCollapsed: false,
+  toggleSidebarCollapse: () => {},
+  setSidebarCollapsed: () => {},
+  isMobileNavOpen: false,
+  openMobileNav: () => {},
+  closeMobileNav: () => {},
+  isCommandPaletteOpen: false,
+  setCommandPaletteOpen: () => {},
+  toggleCommandPalette: () => {},
+}
+
 export function useAdminUI() {
   const context = useContext(AdminUIContext)
   if (!context) {
-    throw new Error('useAdminUI must be used within an AdminUIProvider')
+    return defaultAdminUIContext
   }
   return context
 }

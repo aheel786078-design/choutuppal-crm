@@ -2,6 +2,8 @@ import React from 'react'
 import { redirect } from 'next/navigation'
 import { getAuthenticatedUser } from '@/lib/auth-server'
 import { CRMSidebar } from '@/components/crm/crm-sidebar'
+import { AdminUIProvider } from '@/components/admin/admin-ui-context'
+import { AdminCommandPalette } from '@/components/admin/admin-command-palette'
 
 export default async function CRMLayout({
   children,
@@ -24,11 +26,14 @@ export default async function CRMLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50 text-slate-900">
-      <CRMSidebar />
-      <main className="flex-1 min-w-0 flex flex-col bg-slate-50 overflow-y-auto">
-        {children}
-      </main>
-    </div>
+    <AdminUIProvider>
+      <div className="flex min-h-screen bg-slate-50 text-slate-900 relative">
+        <CRMSidebar />
+        <main className="flex-1 min-w-0 flex flex-col bg-slate-50 overflow-y-auto">
+          {children}
+        </main>
+        <AdminCommandPalette />
+      </div>
+    </AdminUIProvider>
   )
 }
