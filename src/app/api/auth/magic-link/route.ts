@@ -46,14 +46,25 @@ export async function POST(req: Request) {
     }
 
     const cleanPhone = phone.replace(/\D/g, '')
-    const userRole = role || (cleanPhone === '9441348175' || cleanPhone === '9494348175' ? 'SUPER_ADMIN' : 'FRANCHISE_ADMIN')
+    const isSuperAdmin = cleanPhone === '9441348175'
+    const isOperator = cleanPhone === '9494348175'
+    const isKnownFranchise = cleanPhone === '9848012345' || cleanPhone === '9848098765'
+    const defaultRole = isSuperAdmin ? 'SUPER_ADMIN' : isOperator ? 'PLATFORM_OPERATOR' : isKnownFranchise ? 'FRANCHISE_ADMIN' : 'USER'
+    const userRole = role || defaultRole
+
     const token = generateMagicToken({
       phone: cleanPhone,
-      territoryId: territoryId || (cleanPhone === '9441348175' ? FLAGSHIP_TERRITORY_ID : undefined),
+      territoryId: territoryId || (isSuperAdmin ? FLAGSHIP_TERRITORY_ID : undefined),
       role: userRole,
     })
 
-    const targetRedirect = body.redirect || (userRole === 'SUPER_ADMIN' || userRole === 'FRANCHISE_ADMIN' ? '/admin/dashboard' : '/dashboard')
+    const isPrivileged =
+      userRole === 'SUPER_ADMIN' ||
+      userRole === 'PLATFORM_OPERATOR' ||
+      userRole === 'FRANCHISE_ADMIN' ||
+      userRole === 'FRANCHISE_STAFF' ||
+      userRole === 'STAFF'
+    const targetRedirect = body.redirect || (isPrivileged ? '/admin/dashboard' : '/dashboard')
     const magicLink = `https://choutuppal.in/login?magic=${encodeURIComponent(token)}`
     const verifyUrl = `/api/auth/magic-link?token=${encodeURIComponent(token)}&redirect=${encodeURIComponent(targetRedirect)}`
 
@@ -119,8 +130,12 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: false, error: result.error || 'Invalid or expired token.' }, { status: 401 })
     }
 
-    const userPhone = result.phone || ''
-    const userRole = result.role || (userPhone === '9441348175' || userPhone === '9494348175' ? 'SUPER_ADMIN' : 'FRANCHISE_ADMIN')
+    const userPhone = (result.phone || '').replace(/\D/g, '')
+    const isSuperAdmin = userPhone === '9441348175'
+    const isOperator = userPhone === '9494348175'
+    const isKnownFranchise = userPhone === '9848012345' || userPhone === '9848098765'
+    const defaultRole = isSuperAdmin ? 'SUPER_ADMIN' : isOperator ? 'PLATFORM_OPERATOR' : isKnownFranchise ? 'FRANCHISE_ADMIN' : 'USER'
+    const userRole = result.role || defaultRole
     const territoryId = result.territoryId || FLAGSHIP_TERRITORY_ID
 
     // Create cryptographically signed HMAC session token
@@ -131,10 +146,21 @@ export async function GET(req: Request) {
     })
 
     // Validate safe redirect target to prevent Open Redirects (CWE-601)
-    let defaultDest = userRole === 'SUPER_ADMIN' || userRole === 'FRANCHISE_ADMIN' ? '/admin/dashboard' : '/dashboard'
+    const isPrivileged =
+      userRole === 'SUPER_ADMIN' ||
+      userRole === 'PLATFORM_OPERATOR' ||
+      userRole === 'FRANCHISE_ADMIN' ||
+      userRole === 'FRANCHISE_STAFF' ||
+      userRole === 'STAFF'
+    let defaultDest = isPrivileged ? '/admin/dashboard' : '/dashboard'
     let safeRedirect = defaultDest
     if (redirectUrl && redirectUrl.startsWith('/') && !redirectUrl.startsWith('//') && !redirectUrl.includes('://')) {
-      safeRedirect = redirectUrl
+      // If non-privileged user requested admin route, divert safely to merchant/user dashboard
+      if (!isPrivileged && (redirectUrl.startsWith('/admin') || redirectUrl.startsWith('/crm'))) {
+        safeRedirect = '/dashboard'
+      } else {
+        safeRedirect = redirectUrl
+      }
     }
 
     const acceptHeader = req.headers.get('accept') || ''

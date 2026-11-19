@@ -26,8 +26,8 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: 'any',
       },
       {
-        src: '/assets/choutuppal-app-logo.png',
-        sizes: '500x500',
+        src: '/assets/choutuppal-favicon.png',
+        sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',
       },

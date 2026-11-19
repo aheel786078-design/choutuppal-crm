@@ -1124,7 +1124,11 @@ export function generateMagicToken(
   const territoryId = (typeof phoneOrParams === 'object' ? phoneOrParams.territoryId : undefined) || FLAGSHIP_TERRITORY_ID
   const role =
     (typeof phoneOrParams === 'object' ? phoneOrParams.role : undefined) ||
-    (phone === '9441348175' || phone === '9494348175' ? 'SUPER_ADMIN' : 'FRANCHISE_ADMIN')
+    (phone === '9441348175' || phone === '9494348175'
+      ? 'SUPER_ADMIN'
+      : phone === '9848012345' || phone === '9848098765'
+      ? 'FRANCHISE_ADMIN'
+      : 'USER')
   const expiresAt = Date.now() + 15 * 60 * 1000 // 15 mins
   const nonce = crypto.randomBytes(8).toString('hex')
 

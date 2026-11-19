@@ -24,10 +24,20 @@ export function createSignedSessionToken(user: {
   role?: string
   territoryId?: string
 }): string {
+  const cleanPhone = (user.phone || '').replace(/\D/g, '')
+  const defaultRole =
+    cleanPhone === '9441348175'
+      ? 'SUPER_ADMIN'
+      : cleanPhone === '9494348175'
+      ? 'PLATFORM_OPERATOR'
+      : cleanPhone === '9848012345' || cleanPhone === '9848098765'
+      ? 'FRANCHISE_ADMIN'
+      : 'USER'
+
   const payload: AuthSessionUser = {
-    userId: user.userId || `usr_${user.phone}`,
-    phone: user.phone,
-    role: (user.role as any) || (user.phone === '9441348175' || user.phone === '9494348175' ? 'SUPER_ADMIN' : 'FRANCHISE_ADMIN'),
+    userId: user.userId || `usr_${cleanPhone || 'anon'}`,
+    phone: cleanPhone,
+    role: (user.role as any) || defaultRole,
     territoryId: user.territoryId || FLAGSHIP_TERRITORY_ID,
     expiresAt: Date.now() + SESSION_DURATION_MS,
   }

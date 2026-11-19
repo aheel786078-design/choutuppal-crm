@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
   LogIn,
@@ -24,6 +25,35 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [magicSent, setMagicSent] = useState(false)
 
+  // If already authenticated, redirect to appropriate destination immediately
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          const role = data.user.role
+          const isAdmin =
+            role === 'SUPER_ADMIN' ||
+            role === 'PLATFORM_OPERATOR' ||
+            role === 'FRANCHISE_ADMIN' ||
+            role === 'FRANCHISE_STAFF' ||
+            role === 'STAFF'
+          const params = new URLSearchParams(window.location.search)
+          const redirectParam = params.get('redirect')
+          if (redirectParam && redirectParam.startsWith('/') && !redirectParam.startsWith('//') && !redirectParam.includes('://')) {
+            if ((redirectParam.startsWith('/admin') || redirectParam.startsWith('/crm')) && !isAdmin) {
+              router.replace('/dashboard')
+              return
+            }
+            router.replace(redirectParam)
+            return
+          }
+          router.replace(isAdmin ? '/admin/dashboard' : '/dashboard')
+        }
+      })
+      .catch(() => {})
+  }, [router])
+
   // Automatically redeem magic token if present in query string
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -38,7 +68,13 @@ export default function LoginPage() {
         .then((data) => {
           if (data.success) {
             toast.success('Successfully authenticated via WhatsApp Magic Link!')
-            const dest = data.role === 'SUPER_ADMIN' || data.role === 'FRANCHISE_ADMIN' ? '/admin/dashboard' : '/dashboard'
+            const isAdmin =
+              data.role === 'SUPER_ADMIN' ||
+              data.role === 'PLATFORM_OPERATOR' ||
+              data.role === 'FRANCHISE_ADMIN' ||
+              data.role === 'FRANCHISE_STAFF' ||
+              data.role === 'STAFF'
+            const dest = isAdmin ? '/admin/dashboard' : '/dashboard'
             router.push(data.redirect || dest)
           } else {
             toast.error(data.error || 'Magic link is invalid or has expired.')
@@ -72,7 +108,13 @@ export default function LoginPage() {
       }
 
       toast.success(data.message || 'Login successful! Redirecting to dashboard...')
-      const dest = data.role === 'SUPER_ADMIN' || data.role === 'FRANCHISE_ADMIN' ? '/admin/dashboard' : '/dashboard'
+      const isAdmin =
+        data.role === 'SUPER_ADMIN' ||
+        data.role === 'PLATFORM_OPERATOR' ||
+        data.role === 'FRANCHISE_ADMIN' ||
+        data.role === 'FRANCHISE_STAFF' ||
+        data.role === 'STAFF'
+      const dest = isAdmin ? '/admin/dashboard' : '/dashboard'
       router.push(data.redirect || dest)
     } catch (err: any) {
       toast.error(err.message || 'Login failed. Please check credentials.')
@@ -117,10 +159,13 @@ export default function LoginPage() {
 
       if (verifyData.success) {
         toast.success('Successfully authenticated! Redirecting...')
-        const dest =
-          verifyData.role === 'SUPER_ADMIN' || verifyData.role === 'FRANCHISE_ADMIN'
-            ? '/admin/dashboard'
-            : '/dashboard'
+        const isAdmin =
+          verifyData.role === 'SUPER_ADMIN' ||
+          verifyData.role === 'PLATFORM_OPERATOR' ||
+          verifyData.role === 'FRANCHISE_ADMIN' ||
+          verifyData.role === 'FRANCHISE_STAFF' ||
+          verifyData.role === 'STAFF'
+        const dest = isAdmin ? '/admin/dashboard' : '/dashboard'
         router.push(verifyData.redirect || dest)
         return
       } else {
@@ -144,9 +189,16 @@ export default function LoginPage() {
         </Link>
 
         <div className="flex items-center justify-center gap-2.5">
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-black text-xl shadow-lg shadow-emerald-600/25">
-            CP
-          </span>
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white border border-slate-200/80 p-1 shadow-md shadow-emerald-600/10 shrink-0">
+            <Image
+              src="/assets/choutuppal-favicon.png"
+              alt="Choutuppal Pin"
+              width={40}
+              height={40}
+              className="h-10 w-10 object-contain"
+              priority
+            />
+          </div>
           <span className="text-2xl font-black text-slate-900 tracking-tight">
             Choutuppal<span className="text-emerald-600">.in</span>
           </span>

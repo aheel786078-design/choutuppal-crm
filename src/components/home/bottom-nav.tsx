@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Home, Clapperboard, Compass, User, Plus, Users, Newspaper } from 'lucide-react'
@@ -7,6 +8,20 @@ import { cn } from '@/lib/utils'
 
 export function BottomNav() {
   const pathname = usePathname()
+  const [sessionUser, setSessionUser] = useState<{ role?: string } | null>(null)
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setSessionUser(data.user)
+        } else {
+          setSessionUser(null)
+        }
+      })
+      .catch(() => setSessionUser(null))
+  }, [pathname])
 
   // Hide on admin, business detail, and franchise routes or subdomain
   if (pathname.startsWith('/admin') || pathname.startsWith('/crm') || pathname.startsWith('/business') || pathname.startsWith('/franchise')) return null
@@ -17,9 +32,19 @@ export function BottomNav() {
     if (href === '/explore' || href === '/listings') return pathname.startsWith('/listings') || pathname.startsWith('/explore')
     if (href === '/community') return pathname.startsWith('/community')
     if (href === '/news') return pathname.startsWith('/news') || pathname.startsWith('/blog')
-    if (href === '/dashboard') return pathname.startsWith('/dashboard')
+    if (href === '/dashboard' || href === '/admin/dashboard') return pathname.startsWith('/dashboard') || pathname.startsWith('/admin')
     return false
   }
+
+  const isAdmin =
+    sessionUser?.role === 'SUPER_ADMIN' ||
+    sessionUser?.role === 'PLATFORM_OPERATOR' ||
+    sessionUser?.role === 'FRANCHISE_ADMIN' ||
+    sessionUser?.role === 'FRANCHISE_STAFF' ||
+    sessionUser?.role === 'STAFF'
+
+  const userAccountHref = sessionUser ? (isAdmin ? '/admin/dashboard' : '/dashboard') : '/login'
+  const userAccountLabel = sessionUser ? (isAdmin ? 'Admin' : 'Account') : 'Login'
 
   return (
     <nav
@@ -99,12 +124,14 @@ export function BottomNav() {
       {/* You / Account */}
       <Link
         id="bottom-nav-you"
-        href="/login"
-        aria-label="Admin and user login"
+        href={userAccountHref}
+        aria-label={userAccountLabel}
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <User className={cn('h-5 w-5 transition-colors', isActive('/login') || isActive('/dashboard') ? 'text-emerald-700 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold transition-colors', isActive('/login') || isActive('/dashboard') ? 'text-emerald-700' : 'text-slate-600')}>Login</span>
+        <User className={cn('h-5 w-5 transition-colors', isActive(userAccountHref) ? 'text-emerald-700 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold transition-colors', isActive(userAccountHref) ? 'text-emerald-700' : 'text-slate-600')}>
+          {userAccountLabel}
+        </span>
       </Link>
     </nav>
   )
