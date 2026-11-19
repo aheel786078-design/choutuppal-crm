@@ -11241,7 +11241,14 @@
       },
       "triggerKeyword": "CHOUTUPPAL_OFFICIAL_BOT_V2",
       "trigger_keywords": [
-        "CHOUTUPPAL_OFFICIAL_BOT_V2"
+        "hi",
+        "hello",
+        "welcome",
+        "start",
+        "హాయ్",
+        "నమస్కారం",
+        "హలో",
+        "menu"
       ],
       "entry_node_id": "start",
       "entryNodeId": "start",
@@ -11572,18 +11579,46 @@
       "triggers": [
         {
           "type": "keyword",
-          "value": "CHOUTUPPAL_OFFICIAL_BOT_V2"
+          "value": "hi"
+        },
+        {
+          "type": "keyword",
+          "value": "hello"
+        },
+        {
+          "type": "keyword",
+          "value": "welcome"
+        },
+        {
+          "type": "keyword",
+          "value": "start"
+        },
+        {
+          "type": "keyword",
+          "value": "హాయ్"
+        },
+        {
+          "type": "keyword",
+          "value": "నమస్కారం"
+        },
+        {
+          "type": "keyword",
+          "value": "హలో"
+        },
+        {
+          "type": "keyword",
+          "value": "menu"
         }
       ],
       "triggerKeywords": [
         "hi",
         "hello",
-        "నమస్కారం",
+        "welcome",
+        "start",
         "హాయ్",
-        "నమస్తే",
-        "menu",
-        "మెనూ",
-        "start"
+        "నమస్కారం",
+        "హలో",
+        "menu"
       ],
       "edges": [
         {
@@ -11597,7 +11632,9 @@
           "source": "goto_stories",
           "target": "send_app_vcard"
         }
-      ]
+      ],
+      "isActive": true,
+      "is_active": true
     },
     {
       "id": "flow_category_browser",

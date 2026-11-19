@@ -373,6 +373,9 @@ export function loadStore(customPath?: string): AdminDataStore {
     if (!parsed.governmentContacts || !Array.isArray(parsed.governmentContacts) || parsed.governmentContacts.length === 0) {
       parsed.governmentContacts = getDefaultGovernmentContacts()
     }
+    if (!parsed.uploadedMedia || !Array.isArray(parsed.uploadedMedia)) {
+      parsed.uploadedMedia = []
+    }
 
     inMemoryStoreCache = parsed as AdminDataStore
     return inMemoryStoreCache
@@ -1096,6 +1099,7 @@ function getFallbackStore(): AdminDataStore {
     payments: [],
     webhookEvents: [],
     governmentContacts: getDefaultGovernmentContacts(),
+    uploadedMedia: [],
     settings: {
       whatsappToken: '',
       whatsappPhoneNumberId: '',

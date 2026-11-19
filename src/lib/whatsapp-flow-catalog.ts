@@ -288,6 +288,78 @@ export function sortListingsByPriority(listings: Listing[]): Listing[] {
  * Banner Image + Concise Telugu greeting + 3 Primary Interactive Buttons
  */
 export async function sendWelcomeCard(ctx: FlowCatalogContext) {
+  const store = ctx.store || (typeof loadStore === 'function' ? loadStore() : undefined)
+  const flows = store?.flows || []
+
+  // Check if there is an active published welcome flow from CRM Flow Editor
+  const welcomeFlow = flows.find((f: any) => {
+    const isPublished = f.status === 'published' || (f.isActive !== false && f.status !== 'draft' && f.status !== 'paused')
+    if (!isPublished) return false
+    const name = (f.name || '').toLowerCase()
+    const triggers = (f.triggers || []).map((t: any) => (t.value || '').toLowerCase())
+    const keywords = (f.triggerKeywords || f.trigger_keywords || []).map((k: any) => String(k).toLowerCase())
+    const allTriggers = [...triggers, ...keywords]
+    return (
+      name.includes('welcome') ||
+      name.includes('official bot') ||
+      name.includes('చౌటుప్పల్') ||
+      allTriggers.includes('hi') ||
+      allTriggers.includes('hello') ||
+      allTriggers.includes('welcome') ||
+      allTriggers.includes('నమస్కారం') ||
+      allTriggers.includes('start')
+    )
+  })
+
+  if (welcomeFlow) {
+    const nodes = welcomeFlow.nodes || []
+    const entryNode =
+      nodes.find((n: any) => n.id === welcomeFlow.entryNodeId) ||
+      nodes.find((n: any) => n.id === 'welcome_intro' || n.name === 'welcome_intro') ||
+      nodes.find((n: any) => n.type === 'send_buttons' || n.type === 'send_message') ||
+      nodes[0]
+
+    const messageText =
+      entryNode?.config?.text ||
+      welcomeFlow.initial_message ||
+      `నమస్కారం! చౌటుప్పల్ యాప్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం. 🙏\n\n*మన అందరం... మన చౌటుప్పల్!* 🚀\nమీ ఊరు.. మీ యాప్! చౌటుప్పల్ పట్టణంలోని స్థానిక దుకాణాలు, నా సేవలు, వోచర్లు & వీడియో ప్రకటనలను ఇక్కడ సులభంగా పొందవచ్చు.\n\n💡 క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:`
+
+    const imageUrl =
+      entryNode?.config?.mediaUrl ||
+      welcomeFlow.imageUrl ||
+      CHOUTUPPAL_BANNER_URL
+
+    const footerText =
+      entryNode?.config?.footer_text ||
+      welcomeFlow.footerText ||
+      'చౌటుప్పల్ యాప్ • choutuppal.in'
+
+    const rawButtons = entryNode?.config?.buttons || welcomeFlow.button_options || []
+    let buttons = rawButtons.slice(0, 3).map((b: any, idx: number) => ({
+      id: b.id || b.reply_id || `btn_${idx}`,
+      title: String(b.title || b.text || 'బటన్').slice(0, 20),
+    }))
+
+    if (buttons.length === 0) {
+      buttons = [
+        { id: 'btn_open_directory', title: '📋 ప్రధాన మెనూ' },
+        { id: 'btn_view_offers', title: '🎟️ ఆఫర్లు & డీల్స్' },
+        { id: 'btn_app_vcard', title: '📲 యాప్ & కాంటాక్ట్' },
+      ]
+    }
+
+    return await sendWhatsAppFlowMessage({
+      toPhone: ctx.toPhone,
+      messageText,
+      imageUrl,
+      buttons,
+      footerText,
+      territoryId: ctx.territory?.id || 'territory_choutuppal',
+      contactName: ctx.senderName,
+    }, store)
+  }
+
+  // Fallback default welcome card
   const welcomeText =
     `నమస్కారం! చౌటుప్పల్ యాప్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం. 🙏\n\n` +
     `*మన అందరం... మన చౌటుప్పల్!* 🚀\n` +

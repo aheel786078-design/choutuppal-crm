@@ -502,6 +502,17 @@ export interface BannerItem {
   endDate?: string
 }
 
+export interface UploadedMediaItem {
+  id: string
+  url: string
+  name: string
+  size?: number
+  mimeType?: string
+  uploadedAt: string
+  territoryId?: string
+  source?: 'banner' | 'flow' | 'listing' | 'manual'
+}
+
 export interface TickerItem {
   id: string
   text: string
@@ -815,6 +826,7 @@ export interface AdminDataStore {
   payments?: PaymentTransaction[]
   webhookEvents?: WebhookEvent[]
   governmentContacts?: GovernmentContact[]
+  uploadedMedia?: UploadedMediaItem[]
   settings: {
     whatsappToken: string
     whatsappPhoneNumberId: string

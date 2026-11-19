@@ -932,6 +932,60 @@ export async function POST(req: Request) {
         return NextResponse.json(withShadow({ status: 'emergency_menu_dispatched' }))
       }
 
+      // Action 6.5: Published CRM Flow Engine Execution (Prioritize Custom Flows & Button Transitions)
+      try {
+        const flowResult = evaluateFlow({
+          incomingText,
+          senderPhone,
+          senderName,
+          territory,
+          contact: existingContact,
+          storeFlows: store.flows,
+          storeListings: store.listings,
+          buttonPayload,
+          buttonTitle,
+        })
+
+        if (flowResult.matched && flowResult.messageText) {
+          const dispatchRes = await sendWhatsAppFlowMessage({
+            toPhone: senderPhone,
+            messageText: flowResult.messageText,
+            imageUrl: flowResult.imageUrl,
+            mediaUrl: flowResult.mediaUrl,
+            mediaType: flowResult.mediaType,
+            buttons: flowResult.buttons,
+            listSections: flowResult.listSections,
+            listButtonText: flowResult.listButtonText,
+            footerText: flowResult.footerText,
+            territoryId: territory.id,
+            contactName: senderName,
+          }, store)
+
+          if (existingContact) {
+            if (flowResult.tagToAdd && !existingContact.tags.includes(flowResult.tagToAdd)) {
+              existingContact.tags.push(flowResult.tagToAdd)
+            }
+            if (flowResult.stageToUpdate) {
+              existingContact.stage = flowResult.stageToUpdate as any
+            }
+          }
+
+          return NextResponse.json(
+            withShadow({
+              status: 'flow_executed',
+              flowId: flowResult.flowId,
+              flowName: flowResult.flowName,
+              nodeId: flowResult.nodeId,
+              nodeType: flowResult.nodeType,
+              providerDelivered: dispatchRes.providerDelivered,
+              territoryId: territory.id,
+            })
+          )
+        }
+      } catch (flowErr) {
+        console.warn('[Webhook] CRM Flow Engine evaluation exception, falling back to catalog:', flowErr)
+      }
+
       // Action 7: Welcome Card (Home, Start, Greetings)
       const isGreeting =
         buttonPayload === 'btn_home' ||

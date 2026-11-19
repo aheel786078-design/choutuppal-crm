@@ -37,6 +37,7 @@ import {
   AlignLeft,
 } from 'lucide-react'
 import { FlowImportModal } from '@/components/crm/flow-import-modal'
+import { MediaPickerModal } from '@/components/common/media-picker-modal'
 import type {
   WhatsAppFlow,
   FlowStatus,
@@ -84,6 +85,7 @@ export default function CRMFlowsPage() {
   const [selectedCatToAddToPriority, setSelectedCatToAddToPriority] = useState<string>('')
   const [isSaving, setIsSaving] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false)
 
   // Granular Step & Multi-message Editor State
   const [editorNodes, setEditorNodes] = useState<FlowNode[]>([])
@@ -1456,35 +1458,78 @@ export default function CRMFlowsPage() {
                       </div>
 
                       {/* Media Header (Image / Video) */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1 border-t border-slate-100">
-                        <div className="md:col-span-2 space-y-1">
+                      <div className="space-y-2 pt-2 border-t border-slate-100">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                           <label className="text-[11px] font-semibold text-slate-700">
-                            Hero Media URL (Image or Video)
+                            Hero Media (ఫోటో లేదా వీడియో)
                           </label>
-                          <input
-                            type="text"
-                            value={activeNode?.config?.mediaUrl || ''}
-                            onChange={(e) => updateActiveNode({ mediaUrl: e.target.value })}
-                            placeholder="https://images.unsplash.com/... or https://example.com/banner.mp4"
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs focus:outline-none focus:border-emerald-500"
-                          />
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setIsMediaPickerOpen(true)}
+                              className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                            >
+                              <Upload className="w-3.5 h-3.5" />
+                              <span>ఫోటో ఎంచుకోండి లేదా అప్‌లోడ్ చేయండి (Choose / Upload)</span>
+                            </button>
+                          </div>
                         </div>
-                        <div className="space-y-1">
-                          <label className="text-[11px] font-semibold text-slate-700">Media Type</label>
-                          <select
-                            value={activeNode?.config?.mediaType || 'image'}
-                            onChange={(e) =>
-                              updateActiveNode({
-                                mediaType: e.target.value as 'image' | 'video' | 'document',
-                              })
-                            }
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
-                          >
-                            <option value="image">Image (JPG/PNG/WebP)</option>
-                            <option value="video">Video (MP4)</option>
-                            <option value="document">Document (PDF)</option>
-                          </select>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <div className="md:col-span-2 space-y-1">
+                            <input
+                              type="text"
+                              value={activeNode?.config?.mediaUrl || ''}
+                              onChange={(e) => updateActiveNode({ mediaUrl: e.target.value })}
+                              placeholder="https://images.unsplash.com/... or choose from gallery"
+                              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-xs focus:outline-none focus:border-emerald-500"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <select
+                              value={activeNode?.config?.mediaType || 'image'}
+                              onChange={(e) =>
+                                updateActiveNode({
+                                  mediaType: e.target.value as 'image' | 'video' | 'document',
+                                })
+                              }
+                              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500"
+                            >
+                              <option value="image">Image (JPG/PNG/WebP)</option>
+                              <option value="video">Video (MP4)</option>
+                              <option value="document">Document (PDF)</option>
+                            </select>
+                          </div>
                         </div>
+
+                        {activeNode?.config?.mediaUrl && (
+                          <div className="flex items-center gap-3 p-2 bg-slate-50 border border-slate-200 rounded-xl">
+                            <div className="w-16 h-12 rounded-lg bg-slate-200 overflow-hidden shrink-0 border border-slate-300">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={activeNode.config.mediaUrl}
+                                alt="Media preview"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-0 text-xs">
+                              <span className="font-semibold text-slate-700 block truncate">
+                                {activeNode.config.mediaUrl}
+                              </span>
+                              <span className="text-[10px] text-emerald-600 font-medium">
+                                ✓ WhatsApp మెసేజ్ పైభాగంలో ఈ ఫోటో కనిపిస్తుంది
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => updateActiveNode({ mediaUrl: '' })}
+                              className="text-slate-400 hover:text-rose-600 p-1"
+                              title="Remove photo"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
                       </div>
 
                       {/* Footer Text */}
@@ -2318,6 +2363,16 @@ export default function CRMFlowsPage() {
           fetchFlows()
           alert(`Successfully imported ${count} custom WhatsApp flows!`)
         }}
+      />
+
+      {/* Media Gallery & Auto-Compress R2 Upload Modal */}
+      <MediaPickerModal
+        isOpen={isMediaPickerOpen}
+        onClose={() => setIsMediaPickerOpen(false)}
+        onSelect={(url) => updateActiveNode({ mediaUrl: url, mediaType: 'image' })}
+        currentValue={activeNode?.config?.mediaUrl || ''}
+        title="ఫ్లో మెసేజ్ ఫోటో ఎంచుకోండి (WhatsApp Flow Media)"
+        source="flow"
       />
     </div>
   )
