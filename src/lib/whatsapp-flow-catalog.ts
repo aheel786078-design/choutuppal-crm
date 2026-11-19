@@ -30,6 +30,7 @@ export interface CategoryConfig {
   icon: string
   fallbackCount: number
   imageUrl?: string
+  subcategories?: { name: string; telugu: string }[]
 }
 
 export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
@@ -43,6 +44,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '📱',
     fallbackCount: 1,
     imageUrl: 'https://images.choutuppal.in/categories/cat-electronics.jpg',
+    subcategories: [
+      { name: 'Smartphones & Mobile Sales', telugu: 'మొబైల్ సేల్స్' },
+      { name: 'Mobile Repair & Display', telugu: 'మొబైల్ రిపేరింగ్' },
+      { name: 'Mobile Accessories & Covers', telugu: 'మొబైల్ యాక్సెసరీస్' },
+      { name: 'Home Appliances', telugu: 'టీవీ, ఫ్రిజ్ & కూలర్స్' },
+    ],
   },
   automobile: {
     key: 'automobile',
@@ -54,6 +61,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '🚗',
     fallbackCount: 25,
     imageUrl: 'https://images.choutuppal.in/categories/cat-automobile.jpg',
+    subcategories: [
+      { name: 'Bike Service & Repair', telugu: 'టూ వీలర్ & బైక్ సర్వీస్' },
+      { name: 'Car Garage & Mechanics', telugu: 'కార్ గ్యారేజ్ & మెకానిక్' },
+      { name: 'Auto Spares & Batteries', telugu: 'స్పేర్ పార్ట్స్ & బ్యాటరీలు' },
+      { name: 'Tyre Puncture & Alignment', telugu: 'టైర్ వర్క్స్ & అలైన్‌మెంట్' },
+    ],
   },
   kirana: {
     key: 'kirana',
@@ -65,6 +78,11 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '🛒',
     fallbackCount: 10,
     imageUrl: 'https://images.choutuppal.in/categories/cat-retail.jpg',
+    subcategories: [
+      { name: 'Supermarkets & Kirana', telugu: 'సూపర్ మార్కెట్లు & కిరాణా' },
+      { name: 'General Stores', telugu: 'జనరల్ స్టోర్స్ & ప్రొవిజన్స్' },
+      { name: 'Vegetables & Fruits', telugu: 'కూరగాయలు & పండ్లు' },
+    ],
   },
   food: {
     key: 'food',
@@ -76,6 +94,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '🍽️',
     fallbackCount: 8,
     imageUrl: 'https://images.choutuppal.in/categories/cat-food.jpg',
+    subcategories: [
+      { name: 'Family Restaurants & Biryani', telugu: 'రెస్టారెంట్లు & బిర్యానీ' },
+      { name: 'Tiffin Centers & Breakfast', telugu: 'టిఫిన్ సెంటర్లు' },
+      { name: 'Bakeries & Cakes', telugu: 'బేకరీలు & కేక్స్' },
+      { name: 'Tea & Snacks', telugu: 'టీ & చాట్ సెంటర్లు' },
+    ],
   },
   health: {
     key: 'health',
@@ -87,6 +111,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '🏥',
     fallbackCount: 6,
     imageUrl: 'https://images.choutuppal.in/categories/cat-health.jpg',
+    subcategories: [
+      { name: 'Hospitals & Clinics', telugu: 'ఆస్పత్రులు & క్లినిక్స్' },
+      { name: 'Pharmacy & Medical Stores', telugu: 'మెడికల్ షాపులు' },
+      { name: 'Diagnostic Labs', telugu: 'ల్యాబ్స్ & టెస్టులు' },
+      { name: 'Dental Clinics', telugu: 'దంత వైద్యశాల' },
+    ],
   },
   electrical: {
     key: 'electrical',
@@ -98,6 +128,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '⚡',
     fallbackCount: 17,
     imageUrl: 'https://images.choutuppal.in/categories/cat-electrical.jpg',
+    subcategories: [
+      { name: 'Electrical Wiring & Goods', telugu: 'వైరింగ్ & ఫిట్టింగ్స్' },
+      { name: 'Motors & Pumps', telugu: 'మోటార్లు & పంపులు' },
+      { name: 'Hardware & Tools', telugu: 'హార్డ్‌వేర్ టూల్స్' },
+      { name: 'Solar & Inverters', telugu: 'ఇన్వర్టర్లు & సోలార్' },
+    ],
   },
   services: {
     key: 'services',
@@ -109,6 +145,13 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '🔧',
     fallbackCount: 16,
     imageUrl: 'https://images.choutuppal.in/categories/cat-services.jpg',
+    subcategories: [
+      { name: 'Electrician', telugu: 'ఎలక్ట్రీషియన్' },
+      { name: 'Plumber', telugu: 'ప్లంబర్' },
+      { name: 'AC & Fridge Repair', telugu: 'ఏసీ & ఫ్రిజ్ రిపేర్' },
+      { name: 'Carpenters', telugu: 'వడ్రంగి / కార్పెంటర్' },
+      { name: 'Painters', telugu: 'హౌస్ పెయింటర్స్' },
+    ],
   },
   internet: {
     key: 'internet',
@@ -120,6 +163,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '💻',
     fallbackCount: 27,
     imageUrl: 'https://images.choutuppal.in/categories/cat-internet.jpg',
+    subcategories: [
+      { name: 'MeeSeva Services', telugu: 'మీసేవ సేవలు' },
+      { name: 'Cyber Cafe & Online Forms', telugu: 'ఆన్‌లైన్ దరఖాస్తులు' },
+      { name: 'Xerox & DTP Printing', telugu: 'జెరాక్స్ & ప్రింటింగ్' },
+      { name: 'Aadhaar & PAN Services', telugu: 'ఆధార్ & పాన్ కార్డులు' },
+    ],
   },
   furniture: {
     key: 'furniture',
@@ -131,6 +180,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '🪑',
     fallbackCount: 20,
     imageUrl: 'https://images.choutuppal.in/categories/cat-furniture.jpg',
+    subcategories: [
+      { name: 'Wooden Cots & Furniture', telugu: 'చెక్క మంచాలు & టేబుల్స్' },
+      { name: 'Sofas & Living Sets', telugu: 'సోఫాలు & కుర్చీలు' },
+      { name: 'Mattresses & Bedding', telugu: 'పరుపులు & పిల్లోస్' },
+      { name: 'Steel Almirahs', telugu: 'స్టీల్ బీరువాలు' },
+    ],
   },
   realestate: {
     key: 'realestate',
@@ -142,6 +197,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '🏡',
     fallbackCount: 2,
     imageUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=80',
+    subcategories: [
+      { name: 'DTCP & HMDA Open Plots', telugu: 'ఓపెన్ ప్లాట్లు & వెంచర్లు' },
+      { name: 'Farmland & Agri Land', telugu: 'వ్యవసాయ భూములు' },
+      { name: 'Independent Houses & Villas', telugu: 'ఇళ్ళు & విల్లాలు' },
+      { name: 'Commercial Land & Rentals', telugu: 'కమర్షియల్ & అద్దె ఇళ్ళు' },
+    ],
   },
   jobs: {
     key: 'jobs',
@@ -153,6 +214,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '💼',
     fallbackCount: 0,
     imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=80',
+    subcategories: [
+      { name: 'Shop & Retail Staff', telugu: 'షాప్ & సేల్స్ స్టాఫ్' },
+      { name: 'Technicians & Drivers', telugu: 'డ్రైవర్లు & టెక్నీషియన్లు' },
+      { name: 'Office & Accounts Jobs', telugu: 'ఆఫీస్ & కంప్యూటర్ జాబ్స్' },
+      { name: 'Pharma & Factory Works', telugu: 'ఫ్యాక్టరీ & వర్కర్ జాబ్స్' },
+    ],
   },
   news: {
     key: 'news',
@@ -164,6 +231,11 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '📰',
     fallbackCount: 1,
     imageUrl: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop&q=80',
+    subcategories: [
+      { name: 'Town & Mandal News', telugu: 'పట్టణ & మండల వార్తలు' },
+      { name: 'Events & Public Notices', telugu: 'ప్రజా ప్రకటనలు & ఈవెంట్లు' },
+      { name: 'Crime & Traffic Alerts', telugu: 'ట్రాఫిక్ & పోలీస్ అలెర్ట్స్' },
+    ],
   },
   emergency: {
     key: 'emergency',
@@ -175,6 +247,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
     icon: '🚨',
     fallbackCount: 6,
     imageUrl: 'https://images.choutuppal.in/assets/choutuppal-app-logo.jpg',
+    subcategories: [
+      { name: 'Police Control (100)', telugu: 'పోలీస్ కంట్రోల్ రూమ్' },
+      { name: 'Ambulance (108)', telugu: 'అత్యవసర అంబులెన్స్' },
+      { name: 'Fire Station (101)', telugu: 'అగ్నిమాపక కేంద్రం' },
+      { name: 'Electricity (1912)', telugu: 'విద్యుత్ శాఖ ఫిర్యాదులు' },
+    ],
   },
 }
 
@@ -512,10 +590,16 @@ export async function sendCategoryShopList(
   if (sorted.length > 1) {
     // 1. First send high-resolution Category Photo Banner with verified count
     if (catConfig.imageUrl) {
+      const subcatText =
+        catConfig.subcategories && catConfig.subcategories.length > 0
+          ? `🏷️ *విభాగాలు:* ${catConfig.subcategories.map((s) => s.telugu).join(' • ')}\n`
+          : ''
+
       const bannerCaption =
         `${catConfig.icon} *చౌటుప్పల్ ${catConfig.teluguName}* 🏢\n` +
         `━━━━━━━━━━━━━━━━━━━━\n` +
         `📊 *మొత్తం వెరిఫైడ్ షాపులు:* ${sorted.length}\n` +
+        subcatText +
         `⭐ *ర్యాంకింగ్:* టాప్ రేటెడ్ & ప్రాధాన్యత క్రమంలో`
 
       await sendWhatsAppFlowMessage({

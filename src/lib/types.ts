@@ -1,3 +1,12 @@
+export interface SubCategory {
+  id: string
+  name: string
+  telugu: string
+  slug: string
+  icon?: string
+  description?: string
+}
+
 export interface Category {
   id: string
   name: string
@@ -5,6 +14,7 @@ export interface Category {
   slug: string
   icon: string
   description: string
+  subcategories?: SubCategory[]
 }
 
 export interface Village {

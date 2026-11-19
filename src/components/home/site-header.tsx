@@ -125,7 +125,12 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
   }
 
   const isLoggedIn = !!user
-  const isAdmin = user?.role === 'SUPER_ADMIN' || user?.role === 'FRANCHISE_ADMIN' || user?.role === 'STAFF'
+  const isAdmin =
+    user?.role === 'SUPER_ADMIN' ||
+    user?.role === 'PLATFORM_OPERATOR' ||
+    user?.role === 'FRANCHISE_ADMIN' ||
+    user?.role === 'FRANCHISE_STAFF' ||
+    user?.role === 'STAFF'
   const isMerchant = user?.role === 'MERCHANT' || (isLoggedIn && !isAdmin)
   const isDefault = tenant.id === DEFAULT_TENANT.id
 
@@ -199,27 +204,6 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2">
-          {/* Admin shortcuts ONLY for authenticated admins */}
-          {isAdmin && (
-            <>
-              <Link
-                href="/admin"
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition"
-              >
-                <LayoutDashboard className="h-3.5 w-3.5 text-blue-600" />
-                <span>Admin</span>
-              </Link>
-
-              <Link
-                href="/crm"
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 transition"
-              >
-                <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
-                <span>CRM</span>
-              </Link>
-            </>
-          )}
-
           {isLoggedIn ? (
             <>
               <Button
@@ -286,14 +270,11 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
           <MobileLink href="/community" icon={Users} label="కమ్యూనిటీ వార్డ్స్" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/government-contacts" icon={AlertTriangle} label="ప్రభుత్వ & అత్యవసర" onClick={() => setMobileOpen(false)} />
           <MobileLink href="/about" icon={Info} label="అబౌట్ అస్" onClick={() => setMobileOpen(false)} />
-          {/* Admin shortcuts ONLY if authenticated as admin */}
+          {/* Admin shortcut ONLY if strictly authenticated as admin */}
           {isAdmin && (
-            <>
-              <MobileLink href="/admin" icon={LayoutDashboard} label="అడ్మిన్ ప్యానెల్" onClick={() => setMobileOpen(false)} />
-              <MobileLink href="/crm" icon={MessageSquare} label="CRM ఫ్లో ఇంజిన్" onClick={() => setMobileOpen(false)} />
-            </>
+            <MobileLink href="/admin/dashboard" icon={LayoutDashboard} label="అడ్మిన్ ప్యానెల్" onClick={() => setMobileOpen(false)} />
           )}
-          {isMerchant && (
+          {isLoggedIn && !isAdmin && (
             <MobileLink href="/dashboard" icon={LayoutDashboard} label="నా డాష్‌బోర్డ్" onClick={() => setMobileOpen(false)} />
           )}
         </nav>

@@ -1,0 +1,931 @@
+================================================================================
+          CHOUTUPPAL SUPERAPP & CRM — ALL WHATSAPP FLOW MESSAGES, BUTTONS & CATEGORIES
+================================================================================
+Generated Date: 19/11/2026, 2:41:53 pm
+Project: Choutuppal Franchise WhatsApp CRM (https://choutuppal.in)
+Total Flow Messages & Categories: 46
+================================================================================
+
+
+################################################################################
+### SECTION: CRM ACTIVE FLOW
+################################################################################
+
+--------------------------------------------------------------------------------
+[#1] FLOW / SCREEN: Choutuppal Official Bot V2 (start)
+--------------------------------------------------------------------------------
+• Type: start
+• Status: published
+• Triggers / Keywords / Payload: hi,hello,welcome,start,హాయ్,నమస్కారం,హలో,menu
+• Message Text:
+"""
+
+"""
+• Notes: Next Node: welcome_intro
+
+--------------------------------------------------------------------------------
+[#2] FLOW / SCREEN: Choutuppal Official Bot V2 (welcome_intro)
+--------------------------------------------------------------------------------
+• Type: send_buttons
+• Status: published
+• Triggers / Keywords / Payload: hi,hello,welcome,start,హాయ్,నమస్కారం,హలో,menu
+• Message Text:
+"""
+నమస్కారం! 🙏 చౌటుప్పల్ యాప్‌కి స్వాగతం.
+
+మన చౌటుప్పల్ పట్టణ మరియు పరిసర ప్రాంతాల వ్యాపార సమాచారం, అత్యవసర సేవలు మరియు స్థానిక అప్‌డేట్స్ కోసం క్రింది ఆప్షన్ ఎంచుకోండి.
+"""
+• Buttons:
+  [Button 1] Title: "🔥 స్టోరీస్ & ఆఫర్స్" | ID: btn_stories | Next: goto_stories
+  [Button 2] Title: "డైరెక్టరీ" | ID: btn_dir | Next: goto_directory
+  [Button 3] Title: "వ్యాపారం" | ID: btn_biz | Next: goto_business
+• Footer: 🌐 https://choutuppal.in
+
+--------------------------------------------------------------------------------
+[#3] FLOW / SCREEN: Choutuppal Official Bot V2 (goto_directory)
+--------------------------------------------------------------------------------
+• Type: send_message
+• Status: published
+• Triggers / Keywords / Payload: hi,hello,welcome,start,హాయ్,నమస్కారం,హలో,menu
+• Message Text:
+"""
+🔍 *చౌటుప్పల్ లోకల్ డైరెక్టరీ*
+
+షాపులు, ఆస్పత్రులు, ఆటో/ట్యాక్సీ మరియు నిపుణుల సేవల కోసం 'డైరెక్టరీ' అని మెసేజ్ చేయండి లేదా డైరెక్టరీ మెనూని చూడండి.
+
+🌐 https://choutuppal.in/directory
+"""
+• Notes: Next Node: send_app_vcard
+
+--------------------------------------------------------------------------------
+[#4] FLOW / SCREEN: Choutuppal Official Bot V2 (goto_business)
+--------------------------------------------------------------------------------
+• Type: send_message
+• Status: published
+• Triggers / Keywords / Payload: hi,hello,welcome,start,హాయ్,నమస్కారం,హలో,menu
+• Message Text:
+"""
+💼 *మీ వ్యాపార ప్రమోషన్*
+
+మీ షాప్ లేదా సర్వీస్‌ను వేలాది మంది చౌటుప్పల్ ప్రజలకు చేరువ చేయండి!
+
+ప్రీమియం లిస్టింగ్, వీడియో రీల్స్, పోస్టర్ డిజైన్ వివరాల కోసం 'వ్యాపారం' అని పంపండి.
+🌐 https://choutuppal.in/business
+"""
+• Notes: Next Node: send_app_vcard
+
+--------------------------------------------------------------------------------
+[#5] FLOW / SCREEN: Choutuppal Official Bot V2 (goto_more_services)
+--------------------------------------------------------------------------------
+• Type: send_buttons
+• Status: published
+• Triggers / Keywords / Payload: hi,hello,welcome,start,హాయ్,నమస్కారం,హలో,menu
+• Message Text:
+"""
+✨ *ఇతర స్థానిక సేవలు*
+
+మీరు ఏ సమాచారం కోసం చూస్తున్నారు?
+"""
+• Buttons:
+  [Button 1] Title: "హెల్ప్‌లైన్" | ID: btn_helpline | Next: send_app_vcard
+  [Button 2] Title: "సేవల మెనూ" | ID: btn_services_menu | Next: services_info
+• Footer: 🌐 https://choutuppal.in
+
+--------------------------------------------------------------------------------
+[#6] FLOW / SCREEN: Choutuppal Official Bot V2 (services_info)
+--------------------------------------------------------------------------------
+• Type: send_message
+• Status: published
+• Triggers / Keywords / Payload: hi,hello,welcome,start,హాయ్,నమస్కారం,హలో,menu
+• Message Text:
+"""
+📋 *చౌటుప్పల్ యాప్ ప్రత్యేక సేవలు:*
+
+1. స్థానిక వ్యాపార డైరెక్టరీ
+2. రియల్ ఎస్టేట్ ప్లాట్లు & ఇళ్ళు
+3. లోకల్ ఉద్యోగ సమాచారం
+4. సోషల్ మీడియా రీల్స్ & ప్రమోషన్స్
+
+💡 మీ వ్యాపార వీడియో ప్రమోషన్ల కోసం: 9441348175
+🌐 https://choutuppal.in
+"""
+• Notes: Next Node: send_app_vcard
+
+--------------------------------------------------------------------------------
+[#7] FLOW / SCREEN: Choutuppal Official Bot V2 (send_app_vcard)
+--------------------------------------------------------------------------------
+• Type: send_contact
+• Status: published
+• Triggers / Keywords / Payload: hi,hello,welcome,start,హాయ్,నమస్కారం,హలో,menu
+• Message Text:
+"""
+Contact Name: Choutuppal App | Phone: [{"name":"Choutuppal App Helpline","phones":[{"phone":"+919441348175","type":"Helpline"},{"phone":"+919494348175","type":"Bot"}]}]
+"""
+• Notes: Next Node: vcard_completion
+
+--------------------------------------------------------------------------------
+[#8] FLOW / SCREEN: Choutuppal Official Bot V2 (vcard_completion)
+--------------------------------------------------------------------------------
+• Type: send_message
+• Status: published
+• Triggers / Keywords / Payload: hi,hello,welcome,start,హాయ్,నమస్కారం,హలో,menu
+• Message Text:
+"""
+✅ మా నంబర్‌ను సేవ్ చేసుకున్నందుకు ధన్యవాదాలు! ఏ సహాయం కావాలన్నా ఎప్పుడైనా ఇక్కడ మెసేజ్ చేయవచ్చు.
+"""
+• Notes: Next Node: end_welcome
+
+--------------------------------------------------------------------------------
+[#9] FLOW / SCREEN: Choutuppal Official Bot V2 (end_welcome)
+--------------------------------------------------------------------------------
+• Type: end
+• Status: published
+• Triggers / Keywords / Payload: hi,hello,welcome,start,హాయ్,నమస్కారం,హలో,menu
+• Message Text:
+"""
+
+"""
+
+--------------------------------------------------------------------------------
+[#10] FLOW / SCREEN: Choutuppal Official Bot V2 (goto_stories)
+--------------------------------------------------------------------------------
+• Type: send_message
+• Status: published
+• Triggers / Keywords / Payload: hi,hello,welcome,start,హాయ్,నమస్కారం,హలో,menu
+• Message Text:
+"""
+🔥 *చౌటుప్పల్ నేటి ప్రత్యేక స్టోరీస్ & ఆఫర్లు* 🛍️
+
+స్థానిక దుకాణాలు మరియు వ్యాపారాల డిస్కౌంట్లు & ఆఫర్లు ఇక్కడ చూడవచ్చు!
+
+👉 *మొబైల్ స్టేటస్ తరహాలో ఫుల్‌స్క్రీన్‌లో అన్ని స్టోరీలు చూడటానికి:*
+🌐 https://choutuppal.in/stories
+
+💡 మీ వ్యాపార ఆఫర్‌ను లేదా స్టోరీని WhatsApp ద్వారా పోస్ట్ చేయడానికి 'ఆఫర్ పోస్ట్' అని రిప్లై ఇవ్వండి.
+"""
+• Notes: Next Node: send_app_vcard
+
+
+################################################################################
+### SECTION: LIVE WHATSAPP FLOW CATALOG
+################################################################################
+
+--------------------------------------------------------------------------------
+[#11] FLOW / SCREEN: WhatsApp Live Catalog (card_welcome)
+--------------------------------------------------------------------------------
+• Type: Interactive Button Card
+• Status: Live Production
+• Triggers / Keywords / Payload: hi, hello, namaste, start, హాయ్, నమస్కారం, హలో, menu
+• Header / Media: https://choutuppal.in/assets/choutuppal-app-banner.jpg
+• Message Text:
+"""
+నమస్కారం! 🙏 చౌటుప్పల్ యాప్‌కి స్వాగతం.
+
+మన చౌటుప్పల్ పట్టణ మరియు పరిసర ప్రాంతాల వ్యాపార సమాచారం, అత్యవసర సేవలు మరియు స్థానిక అప్‌డేట్స్ కోసం క్రింది ఆప్షన్ ఎంచుకోండి.
+
+🌐 అధికారిక వెబ్‌సైట్: https://choutuppal.in
+"""
+• Buttons:
+  [Button 1] Title: "📋 ప్రధాన మెనూ" | ID: btn_open_directory
+  [Button 2] Title: "🎟️ ఆఫర్లు & డీల్స్" | ID: btn_view_offers
+  [Button 3] Title: "📲 యాప్ & కాంటాక్ట్" | ID: btn_app_vcard
+• Footer: చౌటుప్పల్ సూపర్ యాప్ • choutuppal.in
+• Notes: Triggered automatically on first message or "hi/hello/menu"
+
+--------------------------------------------------------------------------------
+[#12] FLOW / SCREEN: WhatsApp Live Catalog (card_directory_menu)
+--------------------------------------------------------------------------------
+• Type: Interactive List Menu
+• Status: Live Production
+• Triggers / Keywords / Payload: btn_open_directory, menu, directory, జాబితా, మెనూ
+• Message Text:
+"""
+🔍 *చౌటుప్పల్ లోకల్ సూపర్ మెనూ* 🏢
+రియల్ ఎస్టేట్, ఉద్యోగాలు, స్థానిక వార్తలు, దుకాణాలు & అత్యవసర సేవలు క్రింద ఉన్నాయి. కావలసిన ఆప్షన్‌ను క్రింది జాబితా నుండి ఎంచుకోండి:
+"""
+• List Menu Sections & Rows:
+  List Button: "📋 ఆప్షన్ ఎంచుకోండి"
+  [Section 1: 🌟 ప్రాపర్టీ, జాబ్స్ & న్యూస్] Rows: (row_cat_realestate) 🏡 రియల్ ఎస్టేట్ & ప్లాట్లు: ఓపెన్ ప్లాట్లు, ఇళ్ళు, పొలాలు & ఉచిత ప్రకటన, (row_cat_jobs) 💼 స్థానిక ఉద్యోగాలు: ఉద్యోగ ఖాళీలు, రిక్రూట్‌మెంట్ & అభ్యర్థుల నమోదు, (row_cat_news) 📰 స్థానిక వార్తలు (News): చౌటుప్పల్ తాజా విశేషాలు & వార్త పంపండి
+  [Section 2: 🛍️ దుకాణాలు & స్థానిక సేవలు] Rows: (row_cat_mobiles) 📱 మొబైల్స్ & ఎలక్ట్రానిక్స్: స్మార్ట్‌ఫోన్లు, సర్వీసింగ్ & సేల్స్, (row_cat_automobile) 🚗 ఆటోమొబైల్ & గ్యారేజ్: గ్యారేజ్ & బైక్/కార్ సర్వీసింగ్, (row_cat_services) 🔧 నా సేవలు (Services): ప్లంబర్, ఎలక్ట్రీషియన్, ఏసీ రిపేర్ & టెక్నీషియన్లు, (row_cat_emergency) 🚨 అత్యవసర హెల్ప్‌లైన్: పోలీస్ (100), అంబులెన్స్ (108), ఫైర్ (101)
+  [Section 3: 🎟️ ఆఫర్లు & ప్రకటనలు] Rows: (row_vouchers_deals) 🎟️ వోచర్లు & తాజా ఆఫర్లు: డిస్కౌంట్ కూపన్లు, క్యాష్‌బ్యాక్ & స్పెషల్ డీల్స్, (row_video_ads) 🎬 వీడియో అడ్స్ & రీల్స్: లోకల్ దుకాణాల 24h వీడియో ప్రకటనలు & స్టోరీలు, (row_add_listing) 📝 ఉచిత ప్రకటన ఇవ్వండి: షాప్, ప్రాపర్టీ, జాబ్ లేదా సర్వీస్ యాడ్ ఇవ్వండి
+• Footer: చౌటుప్పల్ యాప్ • choutuppal.in
+• Notes: Meta 10-Row Interactive List Menu
+
+--------------------------------------------------------------------------------
+[#13] FLOW / SCREEN: WhatsApp Live Catalog (card_category_shop_list)
+--------------------------------------------------------------------------------
+• Type: Category Shop List / Card
+• Status: Live Production
+• Triggers / Keywords / Payload: row_cat_mobiles, row_cat_automobile, row_cat_kirana, row_cat_food, row_cat_health, row_cat_electrical, row_cat_services, row_cat_internet, row_cat_furniture, row_cat_realestate, row_cat_jobs, row_cat_news
+• Header / Media: {category_image_url}
+• Message Text:
+"""
+🛍️ *చౌటుప్పల్ {కేటగిరీ పేరు} దుకాణాలు & నిపుణులు* 🏬
+
+ఈ కేటగిరీలో ధృవీకరించబడిన దుకాణాలు మరియు సేవలు అందుబాటులో ఉన్నాయి.
+క్రింది బటన్ నొక్కి వివరాలు చూడండి లేదా నేరుగా సంప్రదించండి:
+
+🌐 https://choutuppal.in/directory
+"""
+• Buttons:
+  [Button 1] Title: "📋 ఇతర కేటగిరీలు" | ID: btn_open_directory
+  [Button 2] Title: "🌐 సోషల్ మీడియా" | ID: btn_social_media
+  [Button 3] Title: "🏠 ప్రధాన మెనూ" | ID: btn_home
+• List Menu Sections & Rows:
+  List Button: "📋 షాపుల జాబితా"
+  Section: 🏪 {కేటగిరీ పేరు}
+  Rows: (listing_{id}) {షాప్ పేరు}: {చిరునామా / ఫోన్}
+• Footer: చౌటుప్పల్ యాప్ • choutuppal.in
+• Notes: Dynamic shop directory generator
+
+--------------------------------------------------------------------------------
+[#14] FLOW / SCREEN: WhatsApp Live Catalog (card_single_listing_details)
+--------------------------------------------------------------------------------
+• Type: Interactive Business Profile Card
+• Status: Live Production
+• Triggers / Keywords / Payload: btn_prof_{listing_id}, shop selection
+• Header / Media: {listing_cover_image}
+• Message Text:
+"""
+🏪 *{షాప్ పేరు}* (ధృవీకరించబడిన వ్యాపారం)
+
+📍 చిరునామా: {చిరునామా}, చౌటుప్పల్
+📞 ఫోన్: {ఫోన్ నంబర్}
+⭐ రేటింగ్: 4.8/5.0
+🕒 వేళలు: ఉదయం 9:00 - రాత్రి 9:00
+
+🌐 వెబ్‌సైట్ ప్రొఫైల్: https://choutuppal.in/business/{slug}
+"""
+• Buttons:
+  [Button 1] Title: "🌐 పూర్తి ప్రొఫైల్" | ID: btn_prof_{id}
+  [Button 2] Title: "📋 ఇతర షాపులు" | ID: btn_open_directory
+  [Button 3] Title: "🏠 ప్రధాన మెనూ" | ID: btn_home
+• Footer: చౌటుప్పల్ యాప్ • choutuppal.in
+• Notes: Zero-typing single business card
+
+--------------------------------------------------------------------------------
+[#15] FLOW / SCREEN: WhatsApp Live Catalog (card_app_vcard)
+--------------------------------------------------------------------------------
+• Type: Interactive vCard & App Info
+• Status: Live Production
+• Triggers / Keywords / Payload: btn_app_vcard, vcard, helpline, హెల్ప్‌లైన్
+• Header / Media: https://choutuppal.in/assets/choutuppal-app-logo.jpg
+• Message Text:
+"""
+📲 *చౌటుప్పల్ సూపర్ యాప్ అధికారిక నంబర్* 🏛️
+
+మా అధికారిక WhatsApp నంబర్‌ను మీ ఫోన్‌లో సేవ్ చేసుకోండి:
+👤 పేరు: Choutuppal App Helpline
+📞 ఫోన్: +91 9441348175 / +91 9494348175
+
+💡 మీ వ్యాపార ప్రకటనలు, వార్తలు, ఉద్యోగ సమాచారం కోసం ఈ నంబర్‌కు నేరుగా మెసేజ్ చేయవచ్చు.
+
+🌐 వెబ్‌సైట్: https://choutuppal.in
+"""
+• Buttons:
+  [Button 1] Title: "📋 ప్రధాన మెనూ" | ID: btn_open_directory
+  [Button 2] Title: "🌐 సోషల్ మీడియా" | ID: btn_social_media
+  [Button 3] Title: "🏠 హోమ్" | ID: btn_home
+• Footer: చౌటుప్పల్ యాప్ • choutuppal.in
+• Notes: Dispatches digital vCard file and contact card
+
+--------------------------------------------------------------------------------
+[#16] FLOW / SCREEN: WhatsApp Live Catalog (card_offers_deals)
+--------------------------------------------------------------------------------
+• Type: Interactive Offers Card
+• Status: Live Production
+• Triggers / Keywords / Payload: btn_view_offers, row_vouchers_deals, offers, deals, ఆఫర్లు
+• Header / Media: https://choutuppal.in/assets/choutuppal-app-banner.jpg
+• Message Text:
+"""
+🎟️ *చౌటుప్పల్ నేటి ప్రత్యేక ఆఫర్లు & డీల్స్* 🛍️
+
+స్థానిక దుకాణాల నుండి తాజా డిస్కౌంట్లు, కూపన్లు & పండుగ ఆఫర్లు ఇక్కడ చూడండి:
+
+👉 *పూర్తి స్క్రీన్‌లో స్టేటస్ స్టోరీలు చూడటానికి:*
+🌐 https://choutuppal.in/stories
+
+💡 మీ వ్యాపార ఆఫర్‌ను ప్రమోట్ చేయాలనుకుంటే క్రింది బటన్ నొక్కండి.
+"""
+• Buttons:
+  [Button 1] Title: "📋 ప్రధాన మెనూ" | ID: btn_open_directory
+  [Button 2] Title: "🎬 వీడియో రీల్స్" | ID: btn_video_ads
+  [Button 3] Title: "🏠 హోమ్" | ID: btn_home
+• Footer: చౌటుప్పల్ యాప్ • choutuppal.in
+• Notes: Shows active stories & discount vouchers
+
+--------------------------------------------------------------------------------
+[#17] FLOW / SCREEN: WhatsApp Live Catalog (card_emergency_menu)
+--------------------------------------------------------------------------------
+• Type: Interactive Emergency List Menu
+• Status: Live Production
+• Triggers / Keywords / Payload: row_cat_emergency, emergency, 100, 108, 101, అత్యవసరం
+• Message Text:
+"""
+🚨 *చౌటుప్పల్ మండల అత్యవసర & ప్రభుత్వ డైరెక్టరీ* 🏛️
+పోలీస్, ఫైర్, అంబులెన్స్, రెవెన్యూ మరియు ప్రభుత్వ అధికారుల సమాచారం కోసం క్రింది కేటగిరీని ఎంచుకోండి:
+"""
+• List Menu Sections & Rows:
+  List Button: "🚨 విభాగాలు చూడండి"
+  [Section 1: 🚨 అత్యవసర & రక్షణ సేవలు] Rows: (row_govt_emergency_top) 🚨 అత్యవసర నంబర్లు: 100, 108, 101, 104, 1912 & ఉమెన్స్ హెల్ప్‌లైన్, (row_govt_police) 👮 పోలీస్ శాఖ అధికారులు: చౌటుప్పల్ SI, భువనగిరి CI, షీ టీమ్ & కంట్రోల్ రూమ్, (row_govt_health) 🏥 ప్రభుత్వ ఆస్పత్రులు & డాక్టర్లు: చౌటుప్పల్ CHC, 108 అంబులెన్స్ & డయాలసిస్ సెంటర్
+  [Section 2: 🏛️ మునిసిపాలిటీ, రెవెన్యూ & విద్యుత్] Rows: (row_govt_revenue) 🌾 రెవెన్యూ & తహశీల్దార్ కార్యాలయం: MRO, డిప్యూటీ తహశీల్దార్ & VRO సమాచారం, (row_govt_municipal) 🏛️ మునిసిపల్ కార్యాలయం: కమిషనర్, శానిటరీ ఇన్‌స్పెక్టర్ & వాటర్ సప్లై, (row_govt_electricity) ⚡ విద్యుత్ శాఖ (TSSPDCL): ఫ్యూజ్ ఆఫ్ కాల్, AE, లైన్‌మన్ & సబ్‌స్టేషన్ నంబర్లు
+• Footer: చౌటుప్పల్ అధికారిక డైరెక్టరీ • choutuppal.in
+• Notes: Government & Emergency Hotline Directory
+
+--------------------------------------------------------------------------------
+[#18] FLOW / SCREEN: WhatsApp Live Catalog (card_emergency_top_hotlines)
+--------------------------------------------------------------------------------
+• Type: Interactive Emergency Hotlines Card
+• Status: Live Production
+• Triggers / Keywords / Payload: row_govt_emergency_top
+• Message Text:
+"""
+🚨 *చౌటుప్పల్ కీలక అత్యవసర హెల్ప్‌లైన్లు* 🚨
+
+🚔 పోలీస్ కంట్రోల్ రూమ్: 100
+🚑 అత్యవసర అంబులెన్స్: 108
+🚒 ఫైర్ స్టేషన్: 101
+🩺 ఉచిత ఆరోగ్య సలహా: 104
+⚡ విద్యుత్ ఫిర్యాదులు (TSSPDCL): 1912
+👩 మహిళా హెల్ప్‌లైన్: 181 / 1098
+
+👮 చౌటుప్పల్ పోలీస్ స్టేషన్: 08694-272233
+🏥 చౌటుప్పల్ కమ్యూనిటీ హెల్త్ సెంటర్ (CHC): 08694-272244
+
+🌐 పూర్తి వివరాలు: https://choutuppal.in/government-contacts
+"""
+• Buttons:
+  [Button 1] Title: "📋 విభాగాలు" | ID: btn_govt_directory
+  [Button 2] Title: "📝 వివరాలు చేర్చండి" | ID: btn_submit_govt_contact
+  [Button 3] Title: "🏠 ప్రధాన మెనూ" | ID: btn_home
+• Footer: చౌటుప్పల్ అత్యవసర సేవలు
+• Notes: Emergency hotlines single message
+
+--------------------------------------------------------------------------------
+[#19] FLOW / SCREEN: WhatsApp Live Catalog (card_real_estate_hub)
+--------------------------------------------------------------------------------
+• Type: Interactive Real Estate Card
+• Status: Live Production
+• Triggers / Keywords / Payload: row_cat_realestate, realestate, plots, lands, ప్లాట్లు, రియల్ ఎస్టేట్
+• Header / Media: https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=80
+• Message Text:
+"""
+🏡 *చౌటుప్పల్ రియల్ ఎస్టేట్ & ప్రాపర్టీ హబ్* 📍
+
+మన చౌటుప్పల్ పట్టణ మరియు హైవే పరిసర ప్రాంతాల ఓపెన్ ప్లాట్లు, విల్లాలు, వ్యవసాయ భూములు & ఇళ్ళు:
+
+👉 *తాజా వెంచర్లు & ప్లాట్ల వివరాలు చూడటానికి:*
+🌐 https://choutuppal.in/real-estate
+
+💡 మీ ప్లాట్, ఇల్లు లేదా ల్యాండ్‌ను ఉచితంగా అమ్మకానికి ఉంచడానికి 'ప్రాపర్టీ అడ్' అని పంపండి.
+"""
+• Buttons:
+  [Button 1] Title: "📝 ప్రాపర్టీ అడ్ ఇవ్వండి" | ID: btn_post_real_estate
+  [Button 2] Title: "📋 ప్రధాన మెనూ" | ID: btn_open_directory
+  [Button 3] Title: "🏠 హోమ్" | ID: btn_home
+• Footer: చౌటుప్పల్ రియల్ ఎస్టేట్ • choutuppal.in
+• Notes: Property & land hub
+
+--------------------------------------------------------------------------------
+[#20] FLOW / SCREEN: WhatsApp Live Catalog (card_real_estate_submission)
+--------------------------------------------------------------------------------
+• Type: Property Ad Submission Flow
+• Status: Live Production
+• Triggers / Keywords / Payload: btn_post_real_estate, property post
+• Message Text:
+"""
+📝 *చౌటుప్పల్ ప్రాపర్టీ ఉచిత ప్రకటన* 🏡
+
+మీ ప్లాట్, ఇల్లు లేదా పొలం వివరాలను క్రింది విధంగా మాకు WhatsApp చేయండి:
+
+1. ప్రాపర్టీ రకం (ఓపెన్ ప్లాట్ / ఇల్లు / వ్యవసాయ భూమి)
+2. ప్రాంతం / లొకేషన్ (ఉదా: లింగోజిగూడెం, తంగడపల్లి)
+3. కొలతలు / సైజు (గజాలు లేదా ఎకరాలు)
+4. ధర (Price per Sq.yd / Total)
+5. మీ మొబైల్ నంబర్
+
+👉 ఫోటోలు & డాక్యుమెంట్స్ ఉంటే ఇక్కడే సెండ్ చేయండి. మా టీమ్ వెరిఫై చేసి చౌటుప్పల్ యాప్‌లో పబ్లిష్ చేస్తుంది.
+"""
+• Buttons:
+  [Button 1] Title: "🏡 రియల్ ఎస్టేట్" | ID: row_cat_realestate
+  [Button 2] Title: "📋 ప్రధాన మెనూ" | ID: btn_open_directory
+  [Button 3] Title: "🏠 హోమ్" | ID: btn_home
+• Footer: చౌటుప్పల్ ప్రాపర్టీ సబ్మిషన్
+• Notes: Zero-friction WhatsApp property listing submission
+
+--------------------------------------------------------------------------------
+[#21] FLOW / SCREEN: WhatsApp Live Catalog (card_jobs_hub)
+--------------------------------------------------------------------------------
+• Type: Interactive Jobs Card
+• Status: Live Production
+• Triggers / Keywords / Payload: row_cat_jobs, jobs, recruitment, ఉద్యోగాలు, ఖాళీలు
+• Header / Media: https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=80
+• Message Text:
+"""
+💼 *చౌటుప్పల్ లోకల్ జాబ్స్ & రిక్రూట్‌మెంట్* 👨‍💼
+
+స్థానిక దుకాణాలు, కంపెనీలు, ఫార్మా యూనిట్లు మరియు ఆఫీసులలో ఉద్యోగ ఖాళీల సమాచారం:
+
+👉 *తాజా ఉద్యోగ ప్రకటనలు చూడటానికి:*
+🌐 https://choutuppal.in/jobs
+
+💡 మీ వ్యాపార సంస్థకు వర్కర్లు/స్టాఫ్ కావాలంటే ఇక్కడే జాబ్ నోటిఫికేషన్ పోస్ట్ చేయవచ్చు.
+"""
+• Buttons:
+  [Button 1] Title: "📢 జాబ్ ప్రకటన ఇవ్వండి" | ID: btn_post_job_ad
+  [Button 2] Title: "👨‍💼 ఉద్యోగం కావాలి" | ID: btn_job_seeker
+  [Button 3] Title: "📋 ప్రధాన మెనూ" | ID: btn_open_directory
+• Footer: చౌటుప్పల్ ఎంప్లాయ్‌మెంట్ హబ్
+• Notes: Local employment and hiring hub
+
+--------------------------------------------------------------------------------
+[#22] FLOW / SCREEN: WhatsApp Live Catalog (card_news_hub)
+--------------------------------------------------------------------------------
+• Type: Interactive Local News Card
+• Status: Live Production
+• Triggers / Keywords / Payload: row_cat_news, news, వార్తలు
+• Header / Media: https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&auto=format&fit=crop&q=80
+• Message Text:
+"""
+📰 *చౌటుప్పల్ లోకల్ న్యూస్ & లైవ్ విశేషాలు* 📢
+
+పట్టణ తాజా వార్తలు, అభివృద్ధి పనులు, ఈవెంట్లు మరియు ప్రజా సమాచారం:
+
+👉 *తాజా వార్తలు చదవడానికి:*
+🌐 https://choutuppal.in/news
+
+💡 మీ గ్రామం లేదా వార్డులోని ప్రజా సమస్యలు, వార్తలు మాకు పంపడానికి క్రింది బటన్ నొక్కండి.
+"""
+• Buttons:
+  [Button 1] Title: "📢 వార్త పంపండి" | ID: btn_submit_news
+  [Button 2] Title: "🌐 సోషల్ మీడియా" | ID: btn_social_media
+  [Button 3] Title: "📋 ప్రధాన మెనూ" | ID: btn_open_directory
+• Footer: చౌటుప్పల్ న్యూస్ డెస్క్ • choutuppal.in
+• Notes: Local news broadcast and user citizen reporting
+
+--------------------------------------------------------------------------------
+[#23] FLOW / SCREEN: WhatsApp Live Catalog (card_services_catalog)
+--------------------------------------------------------------------------------
+• Type: Interactive Business Promotion Services
+• Status: Live Production
+• Triggers / Keywords / Payload: btn_business, promotion, మార్కెటింగ్, వ్యాపార ప్రమోషన్
+• Header / Media: https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80
+• Message Text:
+"""
+🚀 *చౌటుప్పల్ వ్యాపార ప్రమోషన్ ప్యాకేజీలు* 💼
+
+మీ దుకాణం లేదా సర్వీస్‌ను వేలాది మంది కస్టమర్లకు చేరువ చేయడానికి మా ప్రత్యేక సేవలు:
+
+1️⃣ ప్రీమియం యాప్ లిస్టింగ్ & వెరిఫైడ్ బ్యాడ్జ్ (₹99/నెలకు)
+2️⃣ 4K ఇన్‌స్టాగ్రామ్ / యూట్యూబ్ రీల్ వీడియో షూట్ & ఎడిటింగ్ (₹199/వీడియో)
+3️⃣ లోకల్ వాట్సాప్ బ్రాడ్‌కాస్ట్ ప్రమోషన్ (₹299/క్యాంపెయిన్)
+4️⃣ డిజిటల్ పోస్టర్ & విజిటింగ్ కార్డ్ డిజైన్ (₹99)
+
+📞 మార్కెటింగ్ మేనేజర్ సంప్రదించండి: 9441348175
+🌐 https://choutuppal.in/business
+"""
+• Buttons:
+  [Button 1] Title: "📋 ప్రధాన మెనూ" | ID: btn_open_directory
+  [Button 2] Title: "🎟️ వోచర్లు & డీల్స్" | ID: btn_view_offers
+  [Button 3] Title: "🏠 హోమ్" | ID: btn_home
+• Footer: చౌటుప్పల్ బిజినెస్ సొల్యూషన్స్
+• Notes: Local merchant monetization and marketing catalog
+
+--------------------------------------------------------------------------------
+[#24] FLOW / SCREEN: WhatsApp Live Catalog (card_social_media)
+--------------------------------------------------------------------------------
+• Type: Interactive Social Media Hub
+• Status: Live Production
+• Triggers / Keywords / Payload: btn_social_media, youtube, instagram, సోషల్ మీడియా
+• Header / Media: https://choutuppal.in/assets/choutuppal-app-banner.jpg
+• Message Text:
+"""
+🌐 *చౌటుప్పల్ యాప్ సోషల్ మీడియా ఛానల్స్* 📱
+
+మన చౌటుప్పల్ తాజా వీడియోలు, షాపింగ్ రీల్స్ మరియు లోకల్ న్యూస్ కోసం మమ్మల్ని ఫాలో అవ్వండి:
+
+▶️ YouTube: https://youtube.com/@choutuppalapp
+📸 Instagram: https://instagram.com/choutuppalapp
+📘 Facebook: https://facebook.com/choutuppalapp
+🌐 Website: https://choutuppal.in
+"""
+• Buttons:
+  [Button 1] Title: "📋 మెనూ తెరవండి" | ID: btn_open_directory
+  [Button 2] Title: "🔥 నేటి ఆఫర్లు" | ID: btn_view_offers
+  [Button 3] Title: "🏠 ప్రధాన మెనూ" | ID: btn_home
+• Footer: చౌటుప్పల్ సోషల్ హబ్
+• Notes: Official YouTube, Instagram & Website links
+
+
+################################################################################
+### SECTION: WHATSAPP DIRECTORY CATEGORY
+################################################################################
+
+--------------------------------------------------------------------------------
+[#25] FLOW / SCREEN: Category List Options (row_cat_mobiles)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_mobiles
+• Message Text:
+"""
+Category: 📱 మొబైల్స్ & ఎలక్ట్రానిక్స్ (మొబైల్స్ & ఎలక్ట్రానిక్స్) — స్మార్ట్‌ఫోన్లు, సర్వీసింగ్ & సేల్స్
+"""
+• Buttons:
+  [Action] Opens Category Shop List for mobiles
+• List Menu Sections & Rows:
+  Row ID: row_cat_mobiles
+  Title: "📱 మొబైల్స్ & ఎలక్ట్రానిక్స్"
+  Description: "స్మార్ట్‌ఫోన్లు, సర్వీసింగ్ & సేల్స్"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: mobiles
+
+--------------------------------------------------------------------------------
+[#26] FLOW / SCREEN: Category List Options (row_cat_automobile)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_automobile
+• Message Text:
+"""
+Category: 🚗 ఆటోమొబైల్ & గ్యారేజ్ (ఆటోమొబైల్ & గ్యారేజ్) — గ్యారేజ్ & బైక్/కార్ సర్వీసింగ్
+"""
+• Buttons:
+  [Action] Opens Category Shop List for automobile
+• List Menu Sections & Rows:
+  Row ID: row_cat_automobile
+  Title: "🚗 ఆటోమొబైల్ & గ్యారేజ్"
+  Description: "గ్యారేజ్ & బైక్/కార్ సర్వీసింగ్"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: automobile
+
+--------------------------------------------------------------------------------
+[#27] FLOW / SCREEN: Category List Options (row_cat_kirana)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_kirana
+• Message Text:
+"""
+Category: 🛒 కిరాణా & సూపర్ మార్కెట్ (కిరాణా & సూపర్ మార్కెట్స్) — నిత్యావసరాలు & జనరల్ స్టోర్స్
+"""
+• Buttons:
+  [Action] Opens Category Shop List for kirana
+• List Menu Sections & Rows:
+  Row ID: row_cat_kirana
+  Title: "🛒 కిరాణా & సూపర్ మార్కెట్"
+  Description: "నిత్యావసరాలు & జనరల్ స్టోర్స్"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: kirana
+
+--------------------------------------------------------------------------------
+[#28] FLOW / SCREEN: Category List Options (row_cat_food)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_food
+• Message Text:
+"""
+Category: 🍽️ హోటల్స్ & రెస్టారెంట్లు (హోటల్స్ & రెస్టారెంట్లు) — టిఫిన్స్, బిర్యానీ & భోజనం
+"""
+• Buttons:
+  [Action] Opens Category Shop List for food
+• List Menu Sections & Rows:
+  Row ID: row_cat_food
+  Title: "🍽️ హోటల్స్ & రెస్టారెంట్లు"
+  Description: "టిఫిన్స్, బిర్యానీ & భోజనం"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: food
+
+--------------------------------------------------------------------------------
+[#29] FLOW / SCREEN: Category List Options (row_cat_health)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_health
+• Message Text:
+"""
+Category: 🏥 ఆస్పత్రులు & మెడికల్స్ (ఆస్పత్రులు & మెడికల్స్) — క్లినిక్స్, ఫార్మసీ & డయాగ్నస్టిక్స్
+"""
+• Buttons:
+  [Action] Opens Category Shop List for health
+• List Menu Sections & Rows:
+  Row ID: row_cat_health
+  Title: "🏥 ఆస్పత్రులు & మెడికల్స్"
+  Description: "క్లినిక్స్, ఫార్మసీ & డయాగ్నస్టిక్స్"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: health
+
+--------------------------------------------------------------------------------
+[#30] FLOW / SCREEN: Category List Options (row_cat_electrical)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_electrical
+• Message Text:
+"""
+Category: ⚡ ఎలక్ట్రికల్ & హార్డ్‌వేర్ (ఎలక్ట్రికల్ & హార్డ్‌వేర్) — వైరింగ్, మోటార్లు & టూల్స్
+"""
+• Buttons:
+  [Action] Opens Category Shop List for electrical
+• List Menu Sections & Rows:
+  Row ID: row_cat_electrical
+  Title: "⚡ ఎలక్ట్రికల్ & హార్డ్‌వేర్"
+  Description: "వైరింగ్, మోటార్లు & టూల్స్"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: electrical
+
+--------------------------------------------------------------------------------
+[#31] FLOW / SCREEN: Category List Options (row_cat_services)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_services
+• Message Text:
+"""
+Category: 🔧 సర్వీసెస్ & వర్కర్స్ (సర్వీసెస్ & వర్కర్స్) — ఎలక్ట్రీషియన్, ప్లంబర్, ఏసీ రిపేర్ & పెయింటింగ్
+"""
+• Buttons:
+  [Action] Opens Category Shop List for services
+• List Menu Sections & Rows:
+  Row ID: row_cat_services
+  Title: "🔧 సర్వీసెస్ & వర్కర్స్"
+  Description: "ఎలక్ట్రీషియన్, ప్లంబర్, ఏసీ రిపేర్ & పెయింటింగ్"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: services
+
+--------------------------------------------------------------------------------
+[#32] FLOW / SCREEN: Category List Options (row_cat_internet)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_internet
+• Message Text:
+"""
+Category: 💻 మీసేవ & ఆన్‌లైన్ సేవలు (మీసేవ & ఆన్‌లైన్ సేవలు) — మీసేవ, ఆధార్, పాన్ కార్డ్, జెరాక్స్ & డీటీపీ
+"""
+• Buttons:
+  [Action] Opens Category Shop List for internet
+• List Menu Sections & Rows:
+  Row ID: row_cat_internet
+  Title: "💻 మీసేవ & ఆన్‌లైన్ సేవలు"
+  Description: "మీసేవ, ఆధార్, పాన్ కార్డ్, జెరాక్స్ & డీటీపీ"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: internet
+
+--------------------------------------------------------------------------------
+[#33] FLOW / SCREEN: Category List Options (row_cat_furniture)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_furniture
+• Message Text:
+"""
+Category: 🪑 ఫర్నిచర్ & హోమ్ డెకర్ (ఫర్నిచర్ & హోమ్ డెకర్) — క్యాబినెట్స్, సోఫాలు, బెడ్స్ & డెకార్
+"""
+• Buttons:
+  [Action] Opens Category Shop List for furniture
+• List Menu Sections & Rows:
+  Row ID: row_cat_furniture
+  Title: "🪑 ఫర్నిచర్ & హోమ్ డెకర్"
+  Description: "క్యాబినెట్స్, సోఫాలు, బెడ్స్ & డెకార్"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: furniture
+
+--------------------------------------------------------------------------------
+[#34] FLOW / SCREEN: Category List Options (row_cat_realestate)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_realestate
+• Message Text:
+"""
+Category: 🏡 రియల్ ఎస్టేట్ & ప్లాట్లు (రియల్ ఎస్టేట్ & ప్లాట్లు) — ఓపెన్ ప్లాట్లు, ఇళ్ళు, పొలాలు & ఉచిత ప్రకటన
+"""
+• Buttons:
+  [Action] Opens Category Shop List for realestate
+• List Menu Sections & Rows:
+  Row ID: row_cat_realestate
+  Title: "🏡 రియల్ ఎస్టేట్ & ప్లాట్లు"
+  Description: "ఓపెన్ ప్లాట్లు, ఇళ్ళు, పొలాలు & ఉచిత ప్రకటన"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: realestate
+
+--------------------------------------------------------------------------------
+[#35] FLOW / SCREEN: Category List Options (row_cat_jobs)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_jobs
+• Message Text:
+"""
+Category: 💼 స్థానిక ఉద్యోగాలు (Jobs) (స్థానిక ఉద్యోగాలు) — ఉద్యోగ ఖాళీలు, రిక్రూట్‌మెంట్ & అభ్యర్థుల నమోదు
+"""
+• Buttons:
+  [Action] Opens Category Shop List for jobs
+• List Menu Sections & Rows:
+  Row ID: row_cat_jobs
+  Title: "💼 స్థానిక ఉద్యోగాలు (Jobs)"
+  Description: "ఉద్యోగ ఖాళీలు, రిక్రూట్‌మెంట్ & అభ్యర్థుల నమోదు"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: jobs
+
+--------------------------------------------------------------------------------
+[#36] FLOW / SCREEN: Category List Options (row_cat_news)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_news
+• Message Text:
+"""
+Category: 📰 స్థానిక వార్తలు (News) (స్థానిక వార్తలు) — చౌటుప్పల్ తాజా విశేషాలు & వార్త పంపండి
+"""
+• Buttons:
+  [Action] Opens Category Shop List for news
+• List Menu Sections & Rows:
+  Row ID: row_cat_news
+  Title: "📰 స్థానిక వార్తలు (News)"
+  Description: "చౌటుప్పల్ తాజా విశేషాలు & వార్త పంపండి"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: news
+
+--------------------------------------------------------------------------------
+[#37] FLOW / SCREEN: Category List Options (row_cat_emergency)
+--------------------------------------------------------------------------------
+• Type: List Category Row
+• Status: Active
+• Triggers / Keywords / Payload: row_cat_emergency
+• Message Text:
+"""
+Category: 🚨 అత్యవసర హెల్ప్‌లైన్ (అత్యవసర హెల్ప్‌లైన్) — పోలీస్ (100), అంబులెన్స్ (108), ఫైర్ (101)
+"""
+• Buttons:
+  [Action] Opens Category Shop List for emergency
+• List Menu Sections & Rows:
+  Row ID: row_cat_emergency
+  Title: "🚨 అత్యవసర హెల్ప్‌లైన్"
+  Description: "పోలీస్ (100), అంబులెన్స్ (108), ఫైర్ (101)"
+• Footer: చౌటుప్పల్ డైరెక్టరీ కేటగిరీ
+• Notes: Mapped to category key: emergency
+
+
+################################################################################
+### SECTION: FLOW STARTER TEMPLATE
+################################################################################
+
+--------------------------------------------------------------------------------
+[#38] FLOW / SCREEN: Choutuppal Welcome Menu (template_welcome_menu)
+--------------------------------------------------------------------------------
+• Type: Template Flow Definition
+• Status: Template Available
+• Triggers / Keywords / Payload: first_inbound_message
+• Message Text:
+"""
+నమస్కారం! 🙏 చౌటుప్పల్ యాప్‌కి స్వాగతం.
+మన చౌటుప్పల్ స్థానిక సేవలు మరియు వ్యాపారాల కోసం క్రింది ఆప్షన్ ఎంచుకోండి.
+"""
+• Buttons:
+  [1] డైరెక్టరీ (btn_dir)
+  [2] వ్యాపారం (btn_biz)
+  [3] స్టోరీస్ & ఆఫర్స్ (btn_stories)
+• Footer: చౌటుప్పల్ ఫ్లో టెంప్లేట్
+• Notes: Starter welcome bot with Directory, Business Promotion & Helpline options (Total Nodes: 5)
+
+--------------------------------------------------------------------------------
+[#39] FLOW / SCREEN: Local Directory Flow (template_local_directory)
+--------------------------------------------------------------------------------
+• Type: Template Flow Definition
+• Status: Template Available
+• Triggers / Keywords / Payload: keyword: directory, shops, దుకాణాలు, డైరెక్టరీ
+• Message Text:
+"""
+🔍 చౌటుప్పల్ లోకల్ డైరెక్టరీ: మీకు ఏ సేవ లేదా దుకాణం వివరాలు కావాలి?
+"""
+• Buttons:
+  [1] ఆటోమొబైల్
+  [2] దుకాణాలు
+  [3] హోటల్స్
+  [4] వైద్యం
+  [5] సేవలు
+  [6] రియల్ ఎస్టేట్
+• Footer: చౌటుప్పల్ ఫ్లో టెంప్లేట్
+• Notes: Interactive shopping & business finder by category with quick reply buttons (Total Nodes: 6)
+
+--------------------------------------------------------------------------------
+[#40] FLOW / SCREEN: My Business Registration Flow (template_my_business)
+--------------------------------------------------------------------------------
+• Type: Template Flow Definition
+• Status: Template Available
+• Triggers / Keywords / Payload: keyword: business, register, వ్యాపారం, షాప్ నమోదు
+• Message Text:
+"""
+💼 మీ షాప్ లేదా సర్వీస్‌ను చౌటుప్పల్ యాప్‌లో లిస్ట్ చేయండి! మీ షాప్ పేరు మరియు వివరాలను ఇక్కడ పంపండి.
+"""
+• Buttons:
+  [1] ఉచిత లిస్టింగ్
+  [2] ప్రీమియం ప్యాకేజ్
+  [3] ఏజెంట్ కాల్
+• Footer: చౌటుప్పల్ ఫ్లో టెంప్లేట్
+• Notes: Lead intake and registration flow for new merchants (Total Nodes: 4)
+
+--------------------------------------------------------------------------------
+[#41] FLOW / SCREEN: Premium Listing & Video Reels (template_premium_listing)
+--------------------------------------------------------------------------------
+• Type: Template Flow Definition
+• Status: Template Available
+• Triggers / Keywords / Payload: keyword: premium, video, రీల్స్, వీడియో ప్రకటన
+• Message Text:
+"""
+🎬 4K వీడియో రీల్స్ & ప్రమోషన్ ప్యాకేజీలు: మీ షాప్‌ను వేలమంది కస్టమర్లకు చేరువ చేయండి.
+"""
+• Buttons:
+  [1] బేసిక్ ప్లాన్ ₹99
+  [2] వీడియో రీల్ ₹199
+  [3] బండిల్ ₹599
+• Footer: చౌటుప్పల్ ఫ్లో టెంప్లేట్
+• Notes: Showcases monetization tiers and video promotional packages (Total Nodes: 4)
+
+--------------------------------------------------------------------------------
+[#42] FLOW / SCREEN: Real Estate Leads Flow (template_real_estate)
+--------------------------------------------------------------------------------
+• Type: Template Flow Definition
+• Status: Template Available
+• Triggers / Keywords / Payload: keyword: plot, land, realestate, ప్లాట్లు, భూమి
+• Message Text:
+"""
+🏡 చౌటుప్పల్ రియల్ ఎస్టేట్: ప్లాట్లు కొనడానికి లేదా అమ్మడానికి వివరాలను ఎంచుకోండి.
+"""
+• Buttons:
+  [1] ప్లాట్ కొనాలి
+  [2] ప్లాట్ అమ్మాలి
+  [3] వ్యవసాయ భూములు
+• Footer: చౌటుప్పల్ ఫ్లో టెంప్లేట్
+• Notes: Captures property buyer & seller requirements in Choutuppal mandal (Total Nodes: 5)
+
+--------------------------------------------------------------------------------
+[#43] FLOW / SCREEN: Local Jobs & Hiring Flow (template_jobs)
+--------------------------------------------------------------------------------
+• Type: Template Flow Definition
+• Status: Template Available
+• Triggers / Keywords / Payload: keyword: jobs, vacancy, ఉద్యోగాలు, పని కావాలి
+• Message Text:
+"""
+💼 చౌటుప్పల్ లోకల్ ఉద్యోగ సమాచారం: మీరు ఉద్యోగం కోసం చూస్తున్నారా లేక స్టాఫ్ కావాలా?
+"""
+• Buttons:
+  [1] ఉద్యోగం కావాలి
+  [2] స్టాఫ్ కావాలి
+  [3] రిజ్యూమ్ పంపండి
+• Footer: చౌటుప్పల్ ఫ్లో టెంప్లేట్
+• Notes: Matches job seekers with local business vacancies (Total Nodes: 5)
+
+--------------------------------------------------------------------------------
+[#44] FLOW / SCREEN: Service Technicians Hub (template_service_catalog)
+--------------------------------------------------------------------------------
+• Type: Template Flow Definition
+• Status: Template Available
+• Triggers / Keywords / Payload: keyword: service, repair, ఎలక్ట్రీషియన్, ప్లంబర్
+• Message Text:
+"""
+🔧 చౌటుప్పల్ నిపుణుల సేవలు: ప్లంబర్, ఎలక్ట్రీషియన్, ఏసీ టెక్నీషియన్ లేదా పెయింటర్స్ కోసం ఎంచుకోండి.
+"""
+• Buttons:
+  [1] ఎలక్ట్రీషియన్
+  [2] ప్లంబర్
+  [3] ఏసీ & ఫ్రిజ్ రిపేర్
+• Footer: చౌటుప్పల్ ఫ్లో టెంప్లేట్
+• Notes: Instant technician contacts for electrical, plumbing, AC repair & construction (Total Nodes: 5)
+
+--------------------------------------------------------------------------------
+[#45] FLOW / SCREEN: Choutuppal FAQ & Help Bot (template_faq_bot)
+--------------------------------------------------------------------------------
+• Type: Template Flow Definition
+• Status: Template Available
+• Triggers / Keywords / Payload: keyword: help, faq, సహాయం
+• Message Text:
+"""
+❓ చౌటుప్పల్ యాప్ సహాయ కేంద్రం: మీకు ఏ విషయంలో సమాచారం కావాలి?
+"""
+• Buttons:
+  [1] సమయాలు & వేళలు
+  [2] ఛార్జీల వివరాలు
+  [3] కస్టమర్ కేర్
+• Footer: చౌటుప్పల్ ఫ్లో టెంప్లేట్
+• Notes: Automated answers to common queries about timings, locations & app usage (Total Nodes: 4)
+
+--------------------------------------------------------------------------------
+[#46] FLOW / SCREEN: Automated Lead Capture (template_lead_capture)
+--------------------------------------------------------------------------------
+• Type: Template Flow Definition
+• Status: Template Available
+• Triggers / Keywords / Payload: keyword: contact, inquiry, వివరాలు
+• Message Text:
+"""
+📝 మీ పేరు మరియు ఫోన్ నంబర్‌ను ఇక్కడ పంపండి. మా ప్రతినిధి వెంటనే సంప్రదిస్తారు.
+"""
+• Buttons:
+  [1] వివరాలు సమర్పించండి
+  [2] రద్దు చేయండి
+• Footer: చౌటుప్పల్ ఫ్లో టెంప్లేట్
+• Notes: Collects customer name, phone and location for instant CRM follow-up (Total Nodes: 3)
+

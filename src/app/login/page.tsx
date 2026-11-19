@@ -323,7 +323,7 @@ export default function LoginPage() {
                     maxLength={10}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="9441348175"
+                    placeholder="9848012345"
                     className="w-full bg-slate-50/50 border border-slate-200 rounded-r-xl px-3 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition"
                   />
                 </div>

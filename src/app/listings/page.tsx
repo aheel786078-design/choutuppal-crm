@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { Search, MapPin, Phone, MessageCircle, CheckCircle2, Star, ArrowLeft, Filter } from 'lucide-react'
+import { Search, MapPin, Phone, MessageCircle, CheckCircle2, Star, ArrowLeft, Filter, Tag } from 'lucide-react'
 import { loadStore, FLAGSHIP_TERRITORY_ID, isListingPublished } from '@/lib/store'
 import { STANDARD_CATEGORIES, STANDARD_VILLAGES, getListingWhatsAppUrl } from '@/lib/constants'
 import { resolveListingEntitlements, isListingFeatured, isListingPremium } from '@/lib/entitlement-resolver'
-
+import { cn } from '@/lib/utils'
 import { sanitizeImageUrl } from '@/lib/home-data'
 
 export const dynamic = 'force-dynamic'
@@ -14,6 +14,8 @@ interface ListingsPageProps {
     q?: string
     cat?: string
     category?: string
+    sub?: string
+    subcat?: string
     village?: string
     territoryId?: string
     territory?: string
@@ -25,6 +27,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
   const q = (params.q || '').toLowerCase().trim()
   const rawCat = (params.cat || params.category || '').toLowerCase().trim()
   const cleanCat = rawCat.replace(/^cat-/, '')
+  const sub = (params.sub || params.subcat || '').toLowerCase().trim()
   const village = (params.village || '').toLowerCase().trim()
   const territoryId = params.territoryId || params.territory || ''
 
@@ -60,6 +63,15 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
     })
   }
 
+  if (sub) {
+    listings = listings.filter((l) => {
+      const titleMatch = l.title ? l.title.toLowerCase().includes(sub) : false
+      const descMatch = l.description ? l.description.toLowerCase().includes(sub) : false
+      const subMatch = (l as any).subCategory ? (l as any).subCategory.toLowerCase().includes(sub) : false
+      return titleMatch || descMatch || subMatch
+    })
+  }
+
   if (village && village !== 'all') {
     listings = listings.filter((l) => {
       const vid = (l.villageId || '').toLowerCase()
@@ -80,6 +92,11 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
     return b.views - a.views
   })
+
+  const activeCategory = STANDARD_CATEGORIES.find(
+    (c) => c.id === rawCat || c.id.replace(/^cat-/, '') === cleanCat || c.slug === cleanCat
+  )
+  const availableSubcategories = activeCategory?.subcategories || []
 
   return (
     <div className="min-h-screen bg-slate-50/60 pb-16">
@@ -136,6 +153,41 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
               Filter Listings
             </button>
           </form>
+
+          {/* SUBCATEGORIES CHIPS (ఉప-విభాగాలు) */}
+          {availableSubcategories.length > 0 && (
+            <div className="mt-4 pt-3 border-t border-white/15 flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              <span className="text-xs text-amber-300 font-bold shrink-0 flex items-center gap-1">
+                <Tag className="w-3.5 h-3.5" />
+                <span>విభాగాలు:</span>
+              </span>
+              <Link
+                href={`/listings?cat=${activeCategory.id}`}
+                className={cn(
+                  'px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition border',
+                  !sub
+                    ? 'bg-amber-400 text-slate-950 border-amber-300 font-bold shadow-xs'
+                    : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                )}
+              >
+                అన్నీ (All {activeCategory.telugu || activeCategory.name})
+              </Link>
+              {availableSubcategories.map((sc) => (
+                <Link
+                  key={sc.id}
+                  href={`/listings?cat=${activeCategory.id}&sub=${encodeURIComponent(sc.name)}`}
+                  className={cn(
+                    'px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition border',
+                    sub === sc.name.toLowerCase() || sub === sc.id
+                      ? 'bg-amber-400 text-slate-950 border-amber-300 font-bold shadow-xs'
+                      : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+                  )}
+                >
+                  {sc.telugu} ({sc.name})
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
