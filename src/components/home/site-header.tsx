@@ -145,7 +145,7 @@ export function SiteHeader({ tenant = DEFAULT_TENANT }: SiteHeaderProps) {
             />
           ) : isDefault ? (
             <Image
-              src="https://i.ibb.co/BVdvN5rB/Untitled-design-removebg-preview.png"
+              src="/assets/choutuppal-app-logo.png"
               alt="Choutuppal App"
               width={160}
               height={36}

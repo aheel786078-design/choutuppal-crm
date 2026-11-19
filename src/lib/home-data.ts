@@ -45,8 +45,8 @@ const DEFAULT_STORIES: UserStory[] = [
 const DEFAULT_BANNERS: BannerItem[] = [
   {
     id: 'bnr_default_1',
-    title: 'చౌటుప్పల్ యాప్ 2.0 లైవ్ | మీ వ్యాపారాన్ని ఉచితంగా రిజిస్టర్ చేసుకోండి',
-    imageUrl: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80',
+    title: 'చౌటుప్పల్ యాప్ లైవ్ | మీ వ్యాపారాన్ని ఉచితంగా రిజిస్టర్ చేసుకోండి',
+    imageUrl: 'https://choutuppal.in/assets/choutuppal-app-banner.jpg',
     linkUrl: '/register',
     isActive: true,
     type: 'TOP_BANNER',

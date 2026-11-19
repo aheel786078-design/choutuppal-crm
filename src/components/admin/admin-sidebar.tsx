@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
@@ -245,12 +246,18 @@ export function AdminSidebar() {
         {/* Mobile Header */}
         <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white font-black text-sm shadow-md shadow-emerald-500/20">
-              CP
+            <div className="h-9 w-9 rounded-xl bg-white border border-slate-200/80 p-0.5 flex items-center justify-center shadow-xs shrink-0 overflow-hidden">
+              <Image
+                src="/assets/choutuppal-app-logo.png"
+                alt="Choutuppal SuperApp"
+                width={36}
+                height={36}
+                className="h-full w-full object-contain"
+              />
             </div>
             <div className="min-w-0">
-              <h2 className="font-bold text-xs text-slate-900 truncate">Choutuppal Admin</h2>
-              <p className="text-[10px] text-emerald-700 font-medium">Franchise &amp; CRM Platform</p>
+              <h2 className="font-bold text-xs text-slate-900 truncate">చౌటుప్పల్ అడ్మిన్</h2>
+              <p className="text-[10px] text-emerald-700 font-medium">Franchise CRM Platform</p>
             </div>
           </div>
           <button
@@ -306,17 +313,24 @@ export function AdminSidebar() {
         {/* Desktop Brand Header */}
         <div className="p-3.5 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between gap-2 h-16">
           <div className="flex items-center gap-2.5 min-w-0 overflow-hidden">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white font-black shadow-md shadow-emerald-500/20 shrink-0 text-sm">
-              CP
+            <div className="h-9 w-9 rounded-xl bg-white border border-slate-200/80 p-0.5 flex items-center justify-center shadow-xs shrink-0 overflow-hidden">
+              <Image
+                src="/assets/choutuppal-app-logo.png"
+                alt="Choutuppal SuperApp"
+                width={36}
+                height={36}
+                className="h-full w-full object-contain"
+                priority
+              />
             </div>
             {!isSidebarCollapsed && (
               <div className="flex-1 min-w-0">
                 <h1 className="font-bold text-xs text-slate-900 tracking-wide truncate">
-                  Choutuppal Admin
+                  చౌటుప్పల్ CRM Admin
                 </h1>
                 <p className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1 truncate">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                  Franchise &amp; CRM Platform
+                  Franchise &amp; WhatsApp CRM
                 </p>
               </div>
             )}

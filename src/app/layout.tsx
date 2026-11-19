@@ -14,36 +14,43 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://choutuppal.in'
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Choutuppal App v2.0 — Business, Real Estate & Community',
-    template: '%s | Choutuppal App',
+    default: 'చౌటుప్పల్ యాప్ | Choutuppal SuperApp — Business, Real Estate & Community',
+    template: '%s | చౌటుప్పల్ యాప్ (Choutuppal App)',
   },
   description:
-    'Discover businesses, services, real estate, news and community in Choutuppal, Yadadri Bhuvanagiri, Telangana. Promote your business, list properties, and connect locally.',
+    'Discover businesses, services, real estate, jobs, news and local community in Choutuppal, Yadadri Bhuvanagiri, Telangana. చౌటుప్పల్ లోకల్ సూపర్ యాప్.',
   keywords: [
     'Choutuppal',
-    'Yadadri',
+    'చౌటుప్పల్',
+    'Yadadri Bhuvanagiri',
     'Telangana business',
     'real estate Choutuppal',
     'local services',
     'community',
+    'WhatsApp SuperApp',
   ],
   authors: [{ name: 'Choutuppal App Team' }],
   icons: {
-    icon: 'https://i.ibb.co/NgtRxPLw/Untitled-design.jpg',
-    apple: 'https://i.ibb.co/NgtRxPLw/Untitled-design.jpg',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/assets/choutuppal-app-logo.png', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
   openGraph: {
-    title: 'Choutuppal App v2.0 — Business, Real Estate & Community',
+    title: 'చౌటుప్పల్ యాప్ | Choutuppal SuperApp — Business, Real Estate & Community',
     description:
-      'Businesses, services, real estate, news & community for Choutuppal, Yadadri, Telangana.',
+      'Businesses, services, real estate, jobs, news & community for Choutuppal, Yadadri, Telangana.',
     url: SITE_URL,
-    siteName: 'Choutuppal App',
+    siteName: 'చౌటుప్పల్ యాప్ | Choutuppal App',
     images: [
       {
-        url: 'https://i.ibb.co/NgtRxPLw/Untitled-design.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Choutuppal App v2.0',
+        url: 'https://choutuppal.in/assets/choutuppal-app-banner.jpg',
+        width: 1138,
+        height: 640,
+        alt: 'చౌటుప్పల్ యాప్ | Choutuppal SuperApp',
       },
     ],
     type: 'website',
@@ -51,10 +58,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Choutuppal App v2.0',
+    title: 'చౌటుప్పల్ యాప్ | Choutuppal SuperApp',
     description:
-      'Businesses, services, real estate, news & community for Choutuppal, Yadadri, Telangana.',
-    images: ['https://i.ibb.co/NgtRxPLw/Untitled-design.jpg'],
+      'Businesses, services, real estate, jobs, news & community for Choutuppal, Yadadri, Telangana.',
+    images: ['https://choutuppal.in/assets/choutuppal-app-banner.jpg'],
   },
 }
 
@@ -71,6 +78,8 @@ export default function RootLayout({
   return (
     <html lang="te" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />

@@ -64,11 +64,11 @@ export function PwaInstallPrompt() {
     <div className="fixed bottom-20 left-4 right-4 z-50 flex items-center justify-between gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-yellow-500 p-3.5 text-white shadow-lg">
       <div className="flex items-center gap-2.5 min-w-0">
         <Image
-          src="https://i.ibb.co/NgtRxPLw/Untitled-design.jpg"
+          src="/assets/choutuppal-app-logo.png"
           alt="Choutuppal App Icon"
           width={40}
           height={40}
-          className="h-10 w-10 shrink-0 rounded-xl object-cover shadow-sm ring-1 ring-white/30"
+          className="h-10 w-10 shrink-0 rounded-xl object-contain shadow-sm ring-1 ring-white/30 bg-white"
           loading="lazy"
           decoding="async"
         />

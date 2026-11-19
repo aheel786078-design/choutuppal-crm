@@ -36,7 +36,7 @@ export function SiteFooter({ tenant = DEFAULT_TENANT }: SiteFooterProps) {
               {tenant.logoUrl ? (
                 <Image width={160} height={36} src={tenant.logoUrl} alt={tenant.name} className="h-9 w-auto object-contain" loading="lazy" decoding="async" />
               ) : isDefault ? (
-                <Image width={160} height={36} src="https://i.ibb.co/BVdvN5rB/Untitled-design-removebg-preview.png" alt="Choutuppal App" className="h-9 w-auto object-contain" loading="lazy" decoding="async" />
+                <Image width={160} height={36} src="/assets/choutuppal-app-logo.png" alt="Choutuppal App" className="h-9 w-auto object-contain" loading="lazy" decoding="async" />
               ) : (
                 <div className="font-black text-slate-900 text-base flex items-center gap-1.5">
                   <div

@@ -54,7 +54,7 @@ export const FLAGSHIP_CHOUTUPPAL_TERRITORY: Territory = {
   isFlagship: true,
   immutable: true,
   branding: {
-    logoUrl: 'https://i.ibb.co/BVdvN5rB/Untitled-design-removebg-preview.png',
+    logoUrl: 'https://choutuppal.in/assets/choutuppal-app-logo.png',
     primaryColor: '#059669',
     tagline: 'Mana Choutuppal Local Search & WhatsApp Super App',
     heroTitle: 'చౌటుప్పల్ లోకల్ బిజినెస్ & రియల్ ఎస్టేట్',
