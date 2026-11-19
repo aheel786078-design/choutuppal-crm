@@ -422,16 +422,18 @@ export async function POST(req: Request) {
       // 2. VENDOR MATCH vs REGULAR CITIZEN ROUTING
       if (matchedListing && (lower === 'hi' || lower === 'hello' || lower === 'నమస్కారం')) {
         const vendorClaimMsg =
-          `నమస్కారం ${senderName} గారు! 🙏\n\n` +
-          `${territoryName} యాప్ రికార్డులలో మీ వ్యాపారం క్రింది విధంగా నమోదై ఉంది:\n` +
+          `🙏 *నమస్కారం ${senderName} గారు!*\n\n` +
           `🏢 *${matchedListing.title}*\n` +
-          `📞 ఫోన్: ${matchedListing.phone}\n` +
-          `📍 చిరునామా: ${matchedListing.address}\n\n` +
-          `మీరు ఈ వ్యాపార యజమాని అయితే, వివరాలను సరిచూసుకొని నిర్ధారించండి లేదా మార్పులు చేయండి:\n` +
-          `1. 'QR' - మీ షాప్ కౌంటర్ QR స్టాండీని డౌన్‌లోడ్/ప్రింట్ చేయడానికి\n` +
-          `2. 'సవరించండి' - ఫోటోలు లేదా వివరాలు మార్చడానికి\n` +
-          `3. 'కన్ఫర్మ్' - వివరాలు సరైనవే అని ధృవీకరించడానికి\n\n` +
-          `🌐 Website: ${townUrl}`
+          `${territoryName} యాప్ అధికారిక రికార్డులలో మీ వ్యాపారం క్రింది విధంగా నమోదై ఉంది:\n\n` +
+          `• 📍 *చిరునామా:* ${matchedListing.address}\n` +
+          `• 📞 *ఫోన్ నంబర్:* ${matchedListing.phone}\n` +
+          `• 🌐 *వెబ్‌సైట్ ప్రొఫైల్:* ${townUrl}\n\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `💼 *వ్యాపార యజమానులకు ప్రత్యేక సేవలు:*\n` +
+          `• 1️⃣ *'QR'* — మీ షాప్ కస్టమర్ల కోసం డిజిటల్ QR స్టాండీ డౌన్‌లోడ్ చేయండి\n` +
+          `• 2️⃣ *'సవరించండి'* — ఫోటోలు, పనివేళలు లేదా వివరాలు మార్చడానికి\n` +
+          `• 3️⃣ *'కన్ఫర్మ్'* — వివరాలు సరైనవే అని ధృవీకరించడానికి\n\n` +
+          `💡 వివరాలు సవరించడానికి లేదా ధృవీకరించడానికి పైన పేర్కొన్న పదాన్ని టైప్ చేయండి.`
 
         await sendWhatsAppFlowMessage({
           toPhone: senderPhone,
@@ -2774,15 +2776,16 @@ export async function POST(req: Request) {
 
       // 7. WEBSITE AUTOMATED TRIGGER FALLBACK MATCHING
       // A. Taxi Booking
-      if (lower.includes('taxi') || lower.includes('cab')) {
+      if (lower.includes('taxi') || lower.includes('cab') || lower.includes('టాక్సీ') || lower.includes('క్యాబ్')) {
         const taxiReply =
-          `🚖 *${territoryName} 24/7 టాక్సీ & క్యాబ్ బుకింగ్*\n\n` +
-          `నమస్కారం ${senderName} గారు, ${territoryName} లో మీ ప్రయాణానికి అందుబాటులో ఉన్న టాక్సీలు:\n` +
-          `• హైదరాబాద్ ఎయిర్‌పోర్ట్ డ్రాప్స్\n` +
-          `• హైవే రౌండ్ ట్రిప్స్\n` +
-          `• స్విఫ్ట్ డిజైర్, ఇన్నోవా & ఎర్టిగా (AC)\n\n` +
-          `డ్రైవర్ నేరుగా మిమ్మల్ని సంప్రదిస్తారు. లేదా కాల్ చేయండి: ${territory.contactPhone || '9494348175'}\n` +
-          `🌐 ${townUrl}/services`
+          `🚕 *${territoryName} 24/7 హైవే టాక్సీ & క్యాబ్స్* ✈️\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `నమస్కారం ${senderName} గారు! మీ ప్రయాణానికి అందుబాటులో ఉన్న నమ్మకమైన టాక్సీ సేవలు:\n\n` +
+          `• ✈️ హైదరాబాద్ రాజీవ్ గాంధీ ఎయిర్‌పోర్ట్ డ్రాప్స్\n` +
+          `• 🛣️ NH-65 విజయవాడ-హైదరాబాద్ హైవే ట్రిప్పులు\n` +
+          `• 🚗 స్విఫ్ట్ డిజైర్, ఇన్నోవా, ఎర్టిగా (AC వాహనాలు)\n\n` +
+          `📞 *డైరెక్ట్ బుకింగ్ హెల్ప్‌లైన్:* ${territory.contactPhone || '9494348175'}\n` +
+          `🌐 ఆన్‌లైన్ వివరాలు: ${townUrl}/services`
 
         await sendWhatsAppFlowMessage({
           toPhone: senderPhone,
@@ -2798,10 +2801,13 @@ export async function POST(req: Request) {
       // B. Auto Booking
       if (lower.includes('auto') || lower.includes('ఆటో')) {
         const autoReply =
-          `🛺 *${territoryName} మెయిన్ ఆటో స్టాండ్ సర్వీస్*\n\n` +
-          `నమస్కారం ${senderName} గారు! లోకల్ టౌన్ మరియు పరిసర గ్రామాల కొరకు ఆటో అందుబాటులో ఉంది.\n` +
-          `మీ పికప్ లొకేషన్ పంపండి, సమీప ఆటో డ్రైవర్ త్వరలో చేరుకుంటారు.\n` +
-          `🌐 ${townUrl}/services`
+          `🛺 *${territoryName} మెయిన్ ఆటో స్టాండ్ సర్వీస్* 📍\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `నమస్కారం ${senderName} గారు! లోకల్ టౌన్ మరియు పరిసర గ్రామాల కొరకు ఆటోలు అందుబాటులో ఉన్నాయి:\n\n` +
+          `• 🛒 లోకల్ మార్కెట్, బస్టాండ్ & హాస్పిటల్ రైడ్స్\n` +
+          `• 🏡 పరిసర గ్రామాలకు సురక్షిత ప్రయాణం\n\n` +
+          `💬 మీ పికప్ లొకేషన్ పంపండి, సమీప ఆటో డ్రైవర్ త్వరలో చేరుకుంటారు.\n` +
+          `🌐 ఆన్‌లైన్ సర్వీసెస్: ${townUrl}/services`
 
         await sendWhatsAppFlowMessage({
           toPhone: senderPhone,
@@ -2816,10 +2822,14 @@ export async function POST(req: Request) {
       // C. Plumber Emergency
       if (lower.includes('plumber') || lower.includes('ప్లంబర్')) {
         const plumberReply =
-          `🔧 *${territoryName} ఎమర్జెన్సీ ప్లంబర్ సర్వీస్*\n\n` +
-          `నమస్కారం! పైప్ లీకేజీలు, వాటర్ ట్యాంక్ క్లీనింగ్, మోటార్ ఫిట్టింగ్ కొరకు ధృవీకరించబడిన ప్లంబర్లు సిద్ధంగా ఉన్నారు.\n` +
-          `మీ లొకేషన్ మరియు సమస్యను ఇక్కడ మెసేజ్ చేయండి.\n` +
-          `🌐 ${townUrl}/services`
+          `🔧 *${territoryName} ఎమర్జెన్సీ ప్లంబర్ సర్వీస్* 🛠️\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `పైప్ లీకేజీలు, వాటర్ ట్యాంక్ క్లీనింగ్, మోటార్ ఫిట్టింగ్ కొరకు ధృవీకరించిన నిపుణులు సిద్ధంగా ఉన్నారు:\n\n` +
+          `• 🚰 వాటర్ పైపుల లీకేజీ & ట్యాప్ రిపేర్లు\n` +
+          `• 🚿 బాత్‌రూమ్ ఫిట్టింగ్స్ & శానిటరీ వర్క్స్\n` +
+          `• ⚡ వాటర్ మోటార్ ఇన్స్టాలేషన్ & రిపేర్\n\n` +
+          `💬 మీ లొకేషన్ మరియు సమస్యను ఇక్కడ మెసేజ్ చేయండి.\n` +
+          `🌐 ఆన్‌లైన్ సర్వీసెస్: ${townUrl}/services`
 
         await sendWhatsAppFlowMessage({
           toPhone: senderPhone,
@@ -2834,9 +2844,14 @@ export async function POST(req: Request) {
       // D. Electrician Emergency
       if (lower.includes('electrician') || lower.includes('ఎలక్ట్రీషియన్')) {
         const electricianReply =
-          `⚡ *${territoryName} సర్టిఫైడ్ ఎలక్ట్రీషియన్ సర్వీస్*\n\n` +
-          `వైరింగ్, ఇన్వర్టర్ సెటప్, మోటార్ పంప్ రిపేర్ మరియు ఫ్యాన్ ఫిట్టింగ్ కోసం సర్వీస్ రెడీగా ఉంది.\n` +
-          `🌐 ${townUrl}/services`
+          `⚡ *${territoryName} సర్టిఫైడ్ ఎలక్ట్రీషియన్ సర్వీస్* 💡\n` +
+          `━━━━━━━━━━━━━━━━━━━━\n` +
+          `హౌస్ వైరింగ్, ఇన్వర్టర్ సెటప్, మోటార్ పంప్ మరియు విద్యుత్ సమస్యల కొరకు నమ్మకమైన నిపుణులు సిద్ధంగా ఉన్నారు:\n\n` +
+          `• 💡 హౌస్ వైరింగ్, ఎంసిబి & స్విచ్‌బోర్డ్ రిపేర్లు\n` +
+          `• 🔋 ఇన్వర్టర్ & బ్యాటరీ కనెక్షన్లు\n` +
+          `• 🌀 ఫ్యాన్, గీజర్ & వాటర్ హీటర్ ఫిట్టింగ్స్\n\n` +
+          `💬 మీ కాలనీ లేదా లొకేషన్ వివరాలను ఇక్కడ మెసేజ్ చేయండి.\n` +
+          `🌐 ఆన్‌లైన్ సర్వీసెస్: ${townUrl}/services`
 
         await sendWhatsAppFlowMessage({
           toPhone: senderPhone,
