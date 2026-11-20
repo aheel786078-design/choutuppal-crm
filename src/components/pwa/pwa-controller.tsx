@@ -87,14 +87,9 @@ export function PWAController() {
       navigator.storage.persisted().then((isPersisted) => setStorageGranted(isPersisted))
     }
 
-    // 6. Check if first open to show smart permissions setup
-    const permissionsPrompted = localStorage.getItem('cpl_permissions_prompted')
-    if (!permissionsPrompted) {
-      // Delay prompt slightly so page loads cleanly first
-      const timer = setTimeout(() => {
-        setShowPermissionsModal(true)
-      }, 3500)
-      return () => clearTimeout(timer)
+    // 6. Check if storage persistence can be requested non-intrusively
+    if (navigator.storage && navigator.storage.persist) {
+      navigator.storage.persist().catch(() => {})
     }
 
     return () => {
@@ -104,12 +99,24 @@ export function PWAController() {
 
   // Action: Trigger PWA Install
   const handleInstallClick = async () => {
+    // Proactively request background capabilities on install trigger
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          localStorage.setItem('cpl_user_lat', pos.coords.latitude.toString())
+          localStorage.setItem('cpl_user_lng', pos.coords.longitude.toString())
+        },
+        () => {},
+        { timeout: 5000 }
+      )
+    }
+
     if (!deferredPrompt) return
     deferredPrompt.prompt()
     const { outcome } = await deferredPrompt.userChoice
     if (outcome === 'accepted') {
       setShowInstallBanner(false)
-      // Open permissions setup after install acceptance
+      // Offer permissions setup after install acceptance if needed
       setShowPermissionsModal(true)
     }
     setDeferredPrompt(null)
@@ -249,8 +256,13 @@ export function PWAController() {
 
       {/* 3. Comprehensive Permissions & Offline Cache Onboarding Modal */}
       {showPermissionsModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-5 relative overflow-hidden">
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowPermissionsModal(false)
+          }}
+          className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-200"
+        >
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-5 relative overflow-hidden max-h-[88vh] overflow-y-auto">
             <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-amber-500" />
 
             <div className="flex items-center justify-between pt-1">
