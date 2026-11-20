@@ -1,26 +1,55 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
-const accountId = process.env.R2_ACCOUNT_ID || ''
-const accessKeyId = process.env.R2_ACCESS_KEY_ID || ''
-const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY || ''
-const bucketName = process.env.R2_BUCKET_NAME || 'choutuppal-media'
-const publicDomain = process.env.R2_PUBLIC_DOMAIN || 'https://images.choutuppal.in'
+function sanitizeEnv(val?: string): string {
+  if (!val) return ''
+  return val.trim().replace(/^["']|["']$/g, '').trim()
+}
+
+function sanitizeAccountId(val?: string): string {
+  return sanitizeEnv(val).replace(/\s+/g, '')
+}
+
+function sanitizePublicDomain(val?: string): string {
+  let domain = sanitizeEnv(val) || 'https://images.choutuppal.in'
+  domain = domain.replace(/\/+$/, '')
+  if (!domain.startsWith('http://') && !domain.startsWith('https://')) {
+    domain = `https://${domain}`
+  }
+  return domain
+}
+
+const accountId = sanitizeAccountId(process.env.R2_ACCOUNT_ID)
+const accessKeyId = sanitizeEnv(process.env.R2_ACCESS_KEY_ID)
+const secretAccessKey = sanitizeEnv(process.env.R2_SECRET_ACCESS_KEY)
+const bucketName = sanitizeEnv(process.env.R2_BUCKET_NAME) || 'choutuppal-media'
+const publicDomain = sanitizePublicDomain(process.env.R2_PUBLIC_DOMAIN)
 
 export const isR2Configured = Boolean(
   accountId && accessKeyId && secretAccessKey && !accountId.includes('your-cloudflare')
 )
 
+export function formatR2PublicUrl(key: string): string {
+  const cleanKey = key.replace(/^\/+/, '')
+  return `${publicDomain}/${cleanKey}`
+}
+
 function getR2Client(): S3Client | null {
   if (!isR2Configured) return null
-  return new S3Client({
-    region: 'auto',
-    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-    credentials: {
-      accessKeyId,
-      secretAccessKey,
-    },
-  })
+  try {
+    const endpoint = `https://${accountId}.r2.cloudflarestorage.com`
+    return new S3Client({
+      region: 'auto',
+      endpoint,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+    })
+  } catch (err) {
+    console.error('[R2 Storage] Failed to initialize S3Client:', err)
+    return null
+  }
 }
 
 /**
@@ -33,17 +62,23 @@ export async function getR2PresignedUploadUrl(
   const client = getR2Client()
   if (!client) return null
 
-  const key = `uploads/${Date.now()}-${filename.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-  const command = new PutObjectCommand({
-    Bucket: bucketName,
-    Key: key,
-    ContentType: contentType,
-  })
+  try {
+    const cleanFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_')
+    const key = `uploads/${Date.now()}-${cleanFilename}`
+    const command = new PutObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+      ContentType: contentType,
+    })
 
-  const uploadUrl = await getSignedUrl(client, command, { expiresIn: 3600 })
-  const publicUrl = `${publicDomain}/${key}`
+    const uploadUrl = await getSignedUrl(client, command, { expiresIn: 3600 })
+    const publicUrl = formatR2PublicUrl(key)
 
-  return { uploadUrl, publicUrl, key }
+    return { uploadUrl, publicUrl, key }
+  } catch (err) {
+    console.error('[R2 Storage] getR2PresignedUploadUrl error:', err)
+    return null
+  }
 }
 
 /**
@@ -55,17 +90,26 @@ export async function uploadBufferToR2(
   contentType: string,
 ): Promise<string | null> {
   const client = getR2Client()
-  if (!client) return null
+  if (!client) {
+    console.warn('[R2 Storage] R2 client is not configured or failed initialization.')
+    return null
+  }
 
-  const key = `uploads/${Date.now()}-${filename.replace(/[^a-zA-Z0-9.-]/g, '_')}`
-  await client.send(
-    new PutObjectCommand({
-      Bucket: bucketName,
-      Key: key,
-      Body: buffer,
-      ContentType: contentType,
-    }),
-  )
+  try {
+    const cleanFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_')
+    const key = `uploads/${Date.now()}-${cleanFilename}`
+    await client.send(
+      new PutObjectCommand({
+        Bucket: bucketName,
+        Key: key,
+        Body: buffer,
+        ContentType: contentType,
+      }),
+    )
 
-  return `${publicDomain}/${key}`
+    return formatR2PublicUrl(key)
+  } catch (err) {
+    console.error('[R2 Storage] uploadBufferToR2 error:', err)
+    return null
+  }
 }

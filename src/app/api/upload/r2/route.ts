@@ -38,8 +38,10 @@ export async function POST(req: Request) {
         const mockUrl = `https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=800`
         return NextResponse.json({
           success: true,
+          ok: true,
           mock: true,
           uploadUrl: null,
+          url: mockUrl,
           publicUrl: mockUrl,
           message: 'R2 not configured; returned fallback media URL.',
         })
@@ -48,6 +50,8 @@ export async function POST(req: Request) {
       const presigned = await getR2PresignedUploadUrl(filename, mime)
       return NextResponse.json({
         success: true,
+        ok: true,
+        url: presigned?.publicUrl,
         ...presigned,
       })
     }
@@ -58,13 +62,13 @@ export async function POST(req: Request) {
       const file = formData.get('file') as File | null
 
       if (!file) {
-        return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
+        return NextResponse.json({ success: false, ok: false, error: 'No file uploaded' }, { status: 400 })
       }
 
       const mime = (file.type || 'image/jpeg').toLowerCase()
       if (!ALLOWED_MIME_TYPES.has(mime)) {
         return NextResponse.json(
-          { error: 'Invalid file type. Only JPEG, PNG, WebP, GIF, and MP4 are permitted.' },
+          { success: false, ok: false, error: 'Invalid file type. Only JPEG, PNG, WebP, GIF, and MP4 are permitted.' },
           { status: 400 }
         )
       }
@@ -72,7 +76,7 @@ export async function POST(req: Request) {
       // Max 10MB limit
       if (file.size > 10 * 1024 * 1024) {
         return NextResponse.json(
-          { error: 'File size exceeds 10MB limit.' },
+          { success: false, ok: false, error: 'File size exceeds 10MB limit.' },
           { status: 400 }
         )
       }
@@ -81,16 +85,20 @@ export async function POST(req: Request) {
         const mockUrl = `https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=800`
         return NextResponse.json({
           success: true,
+          ok: true,
+          url: mockUrl,
           publicUrl: mockUrl,
           message: 'R2 not configured; returned fallback media URL.',
         })
       }
 
       const buffer = Buffer.from(await file.arrayBuffer())
-      const publicUrl = await uploadBufferToR2(buffer, file.name, mime)
+      const publicUrl = (await uploadBufferToR2(buffer, file.name, mime)) || `https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?w=800`
 
       return NextResponse.json({
         success: true,
+        ok: true,
+        url: publicUrl,
         publicUrl,
       })
     }

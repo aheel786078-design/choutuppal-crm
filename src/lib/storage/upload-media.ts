@@ -21,15 +21,24 @@ export async function uploadAccountMedia(
     const formData = new FormData()
     formData.append('file', file)
 
-    const res = await fetch('/api/upload/r2', {
+    let res = await fetch('/api/upload/r2', {
       method: 'POST',
       body: formData,
     })
 
+    if (!res.ok) {
+      // Fallback to /api/upload
+      res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+    }
+
     if (res.ok) {
       const data = await res.json()
-      if (data.url) {
-        return { url: data.url, publicUrl: data.url, path: data.url }
+      const returnedUrl = data.url || data.publicUrl || data.files?.[0]?.url
+      if (returnedUrl) {
+        return { url: returnedUrl, publicUrl: returnedUrl, path: returnedUrl }
       }
     }
   } catch (err) {

@@ -20,8 +20,10 @@ import {
   Share2,
   Eye,
   Lock,
+  Upload,
 } from 'lucide-react'
 import { AdminHeader } from '@/components/admin/admin-header'
+import { MediaPickerModal } from '@/components/common/media-picker-modal'
 import { UserStory, UserOffer } from '@/lib/types'
 import { PRESET_PHOTO_COVERS } from '@/lib/constants'
 import { Loader2, AlertCircle } from 'lucide-react'
@@ -34,6 +36,8 @@ export default function StoriesOffersPage() {
   const [error, setError] = useState<string | null>(null)
   const [actionMsg, setActionMsg] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false)
+  const [mediaTarget, setMediaTarget] = useState<'story' | 'offer'>('offer')
 
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false)
   const [storyForm, setStoryForm] = useState({
@@ -439,7 +443,20 @@ export default function StoriesOffersPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Story Media URL (Photo) *</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-slate-700">Story Media URL (Photo) *</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMediaTarget('story')
+                      setIsMediaPickerOpen(true)
+                    }}
+                    className="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-[11px] font-bold flex items-center gap-1 cursor-pointer"
+                  >
+                    <Upload className="w-3 h-3" />
+                    <span>Choose / Upload</span>
+                  </button>
+                </div>
                 <input
                   type="url"
                   required
@@ -546,7 +563,20 @@ export default function StoriesOffersPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Banner/Photo URL</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-slate-700">Banner/Photo URL</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMediaTarget('offer')
+                      setIsMediaPickerOpen(true)
+                    }}
+                    className="px-2 py-0.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-[11px] font-bold flex items-center gap-1 cursor-pointer"
+                  >
+                    <Upload className="w-3 h-3" />
+                    <span>Choose / Upload</span>
+                  </button>
+                </div>
                 <input
                   type="url"
                   value={offerForm.imageUrl}
@@ -588,6 +618,21 @@ export default function StoriesOffersPage() {
           </div>
         </div>
       )}
+      {/* Media Picker & Direct R2 Upload Modal */}
+      <MediaPickerModal
+        isOpen={isMediaPickerOpen}
+        onClose={() => setIsMediaPickerOpen(false)}
+        onSelect={(url) => {
+          if (mediaTarget === 'story') {
+            setStoryForm({ ...storyForm, mediaUrl: url })
+          } else {
+            setOfferForm({ ...offerForm, imageUrl: url })
+          }
+        }}
+        currentValue={mediaTarget === 'story' ? storyForm.mediaUrl : offerForm.imageUrl}
+        title={mediaTarget === 'story' ? 'స్టోరీ ఫోటో ఎంచుకోండి (Story Photo)' : 'ఆఫర్ బ్యానర్ ఫోటో ఎంచుకోండి (Offer Photo)'}
+        source="manual"
+      />
     </div>
   )
 }

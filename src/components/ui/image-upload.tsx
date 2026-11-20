@@ -114,10 +114,20 @@ export function ImageUpload({
 
   function handleUrlApply() {
     if (!urlInput.trim()) return
-    const cleanUrl = urlInput.trim()
-    onChange(cleanUrl)
-    setUrlInput('')
-    toast.success('Image URL applied!')
+    let cleanUrl = urlInput.trim()
+    if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://') && !cleanUrl.startsWith('/')) {
+      cleanUrl = `https://${cleanUrl}`
+    }
+    try {
+      if (!cleanUrl.startsWith('/')) {
+        new URL(cleanUrl)
+      }
+      onChange(cleanUrl)
+      setUrlInput('')
+      toast.success('Image URL applied!')
+    } catch {
+      toast.error('Invalid image URL format. Please enter a valid URL.')
+    }
   }
 
   return (

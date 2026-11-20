@@ -139,7 +139,10 @@ export function MediaPickerModal({
         throw new Error(data.error || 'R2 upload failed')
       }
 
-      const uploadedUrl = data.publicUrl
+      const uploadedUrl = data.publicUrl || data.url
+      if (!uploadedUrl) {
+        throw new Error('No valid URL returned from media server')
+      }
       setSelectedUrl(uploadedUrl)
       onSelect(uploadedUrl)
       onClose()
@@ -502,14 +505,18 @@ export function MediaPickerModal({
               <button
                 type="button"
                 onClick={() => {
-                  if (customUrlInput.trim()) {
-                    setSelectedUrl(customUrlInput.trim())
-                    onSelect(customUrlInput.trim())
+                  let url = customUrlInput.trim()
+                  if (url) {
+                    if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('/')) {
+                      url = `https://${url}`
+                    }
+                    setSelectedUrl(url)
+                    onSelect(url)
                     onClose()
                   }
                 }}
                 disabled={!customUrlInput.trim()}
-                className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-sm transition-all"
+                className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer"
               >
                 ఈ లింక్‌ను ఎంచుకోండి (Use URL)
               </button>

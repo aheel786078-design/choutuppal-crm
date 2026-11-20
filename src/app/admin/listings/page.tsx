@@ -34,6 +34,7 @@ import {
 } from 'lucide-react'
 import { AdminHeader } from '@/components/admin/admin-header'
 import { ListingDualPreview } from '@/components/admin/listing-preview-card'
+import { MediaPickerModal } from '@/components/common/media-picker-modal'
 import { Listing, Category, Village } from '@/lib/types'
 import { STANDARD_CATEGORIES, STANDARD_VILLAGES, PRESET_PHOTO_COVERS } from '@/lib/constants'
 
@@ -42,6 +43,7 @@ export default function ListingsPage() {
   const [categories, setCategories] = useState<Category[]>(STANDARD_CATEGORIES)
   const [villages, setVillages] = useState<Village[]>(STANDARD_VILLAGES)
   const [loading, setLoading] = useState(true)
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false)
 
   // View Mode: 'table' with dedicated photo column or 'grid'
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table')
@@ -997,21 +999,41 @@ export default function ListingsPage() {
 
                 {/* DEDICATED PHOTO ROW */}
                 <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                      <ImageIcon className="w-4 h-4" />
-                      <span>📸 Cover Photo URL (Flow &amp; Website Delivery) *</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                    <label className="text-xs font-bold text-emerald-700 flex items-center gap-1.5">
+                      <ImageIcon className="w-4 h-4 text-emerald-600" />
+                      <span>📸 Cover Photo (Flow &amp; Website Delivery) *</span>
                     </label>
-                    <span className="text-[10px] text-slate-500">Image will appear in WhatsApp card</span>
+                    <button
+                      type="button"
+                      onClick={() => setIsMediaPickerOpen(true)}
+                      className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs self-start sm:self-auto"
+                    >
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>ఫోటో ఎంచుకోండి లేదా అప్‌లోడ్ చేయండి (Choose / Upload)</span>
+                    </button>
                   </div>
                   <input
                     type="url"
                     required
                     value={formData.coverImage}
                     onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                    placeholder="https://images.unsplash.com/..."
+                    placeholder="https://images.choutuppal.in/uploads/... or https://images.unsplash.com/..."
                     className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 font-mono"
                   />
+                  {formData.coverImage && (
+                    <div className="h-28 w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-100 relative">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={formData.coverImage}
+                        alt="Listing Cover Preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          ;(e.currentTarget as HTMLImageElement).src = 'https://placehold.co/600x400?text=Invalid+Image+URL'
+                        }}
+                      />
+                    </div>
+                  )}
                   {/* Preset Photo Row */}
                   <div className="pt-1">
                     <span className="text-[10px] text-slate-400 block mb-1">Quick Select High-Res Cover:</span>
@@ -1397,6 +1419,15 @@ export default function ListingsPage() {
           </div>
         </div>
       )}
+      {/* Dedicated Media Picker & Direct R2 Upload Modal */}
+      <MediaPickerModal
+        isOpen={isMediaPickerOpen}
+        onClose={() => setIsMediaPickerOpen(false)}
+        onSelect={(url) => setFormData({ ...formData, coverImage: url })}
+        currentValue={formData.coverImage}
+        title="లిస్టింగ్ కవర్ ఫోటో ఎంచుకోండి (Listing Cover Photo)"
+        source="listing"
+      />
     </div>
   )
 }
