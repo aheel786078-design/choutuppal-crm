@@ -128,18 +128,26 @@ export function MediaPickerModal({
       formData.append('file', fileToUpload)
       formData.append('source', source)
 
-      const res = await fetch('/api/admin/media', {
+      let res = await fetch('/api/admin/media', {
         method: 'POST',
         body: formData,
       })
-
-      const data = await res.json()
+      let data = await res.json().catch(() => ({}))
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'R2 upload failed')
+        // Fallback to /api/upload
+        res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+        data = await res.json().catch(() => ({}))
       }
 
-      const uploadedUrl = data.publicUrl || data.url
+      if (!res.ok || (!data.success && !data.ok)) {
+        throw new Error(data.error || 'Photo upload failed. Please try again.')
+      }
+
+      const uploadedUrl = data.publicUrl || data.url || data.files?.[0]?.url
       if (!uploadedUrl) {
         throw new Error('No valid URL returned from media server')
       }
