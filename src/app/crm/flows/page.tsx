@@ -464,7 +464,11 @@ export default function CRMFlowsPage() {
   // Open Edit Modal
   const handleOpenEdit = (flow: WhatsAppFlow) => {
     setValidationError(null)
-    const entryNode = flow.nodes?.find((n) => n.id === 'entry_message' || n.id === flow.entryNodeId)
+    const nonStartNodes = flow.nodes?.filter((n) => n.type !== 'start' && n.type !== 'end') || []
+    const entryNode =
+      flow.nodes?.find((n) => (n.id === flow.entryNodeId || n.id === 'welcome_intro' || n.id === 'entry_message') && n.type !== 'start') ||
+      nonStartNodes[0] ||
+      flow.nodes?.[0]
     const boundListingId =
       entryNode?.config?.listingId || flow.listingId || ''
     const detectedMediaType: 'image' | 'video' | 'document' =
@@ -537,8 +541,15 @@ export default function CRMFlowsPage() {
       }))
     }
 
-    const entryId = flow.entryNodeId || 'entry_message'
-    let resolvedEntry = nodesToEdit.find((n) => n.id === entryId || n.id === 'entry_message')
+    const entryId =
+      (flow.entryNodeId && flow.entryNodeId !== 'start' ? flow.entryNodeId : undefined) ||
+      ((flow as any).entry_node_id && (flow as any).entry_node_id !== 'start' ? (flow as any).entry_node_id : undefined) ||
+      entryNode?.id ||
+      'welcome_intro'
+    let resolvedEntry =
+      nodesToEdit.find((n) => n.id === entryId && n.type !== 'start') ||
+      nodesToEdit.find((n) => (n.id === 'welcome_intro' || n.id === 'entry_message') && n.type !== 'start') ||
+      nodesToEdit.find((n) => n.type !== 'start' && n.type !== 'end')
     if (!resolvedEntry) {
       resolvedEntry = {
         id: 'entry_message',
@@ -559,16 +570,23 @@ export default function CRMFlowsPage() {
       nodesToEdit.push(resolvedEntry)
     }
 
-    // Ensure start node
+    // Ensure start node points to real entry message node
     if (!nodesToEdit.some((n) => n.id === 'start')) {
       nodesToEdit.unshift({
         id: 'start',
         type: 'start',
         name: 'Start',
-        config: { nextNodeId: resolvedEntry.id },
+        config: { nextNodeId: resolvedEntry.id, next_node_key: resolvedEntry.id },
         positionX: 100,
         positionY: 100,
       })
+    } else {
+      const sIdx = nodesToEdit.findIndex((n) => n.id === 'start')
+      nodesToEdit[sIdx].config = {
+        ...nodesToEdit[sIdx].config,
+        nextNodeId: resolvedEntry.id,
+        next_node_key: resolvedEntry.id,
+      }
     }
 
     // Ensure terminal node
@@ -928,20 +946,29 @@ export default function CRMFlowsPage() {
         }
       })
 
-      // Ensure start node points to entry node
-      const entryId = editingFlow.entryNodeId || 'entry_message'
+      // Ensure start node points to real entry message node
+      const firstMessageNode = finalNodes.find((n) => n.type !== 'start' && n.type !== 'end') || finalNodes[1] || finalNodes[0]
+      const entryId =
+        (editingFlow.entryNodeId && editingFlow.entryNodeId !== 'start')
+          ? editingFlow.entryNodeId
+          : (firstMessageNode?.id || 'welcome_intro')
+
       if (!finalNodes.some((n) => n.id === 'start')) {
         finalNodes.unshift({
           id: 'start',
           type: 'start',
           name: 'Entry Trigger',
-          config: { nextNodeId: entryId },
+          config: { nextNodeId: entryId, next_node_key: entryId },
           positionX: 100,
           positionY: 100,
         })
       } else {
         const startIdx = finalNodes.findIndex((n) => n.id === 'start')
-        finalNodes[startIdx].config = { ...finalNodes[startIdx].config, nextNodeId: entryId }
+        finalNodes[startIdx].config = {
+          ...finalNodes[startIdx].config,
+          nextNodeId: entryId,
+          next_node_key: entryId,
+        }
       }
 
       // Ensure terminal node exists
@@ -957,9 +984,34 @@ export default function CRMFlowsPage() {
       }
 
       // Find entry node config for backwards-compatible fields
-      const entryNode = finalNodes.find((n) => n.id === entryId || n.id === 'entry_message') || finalNodes[1]
-      const initial_message = entryNode?.config?.text || editingFlow.initial_message || 'Welcome to Choutuppal App!'
-      const button_options = entryNode?.config?.buttons ? entryNode.config.buttons.map((b) => b.title) : []
+      const entryNode = finalNodes.find((n) => n.id === entryId && n.type !== 'start') || firstMessageNode
+      const defaultTeluguWelcome =
+        `🙏 *నమస్కారం! చౌటుప్పల్ యాప్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం.*\n\n` +
+        `🚀 *మన అందరం... మన చౌటుప్పల్!* \n` +
+        `చౌటుప్పల్ పట్టణ ప్రజలకు, వ్యాపారులకు మరియు ప్రయాణికులకు అవసరమైన అన్ని సేవలు ఒకే చోట:\n\n` +
+        `• 🛍️ *స్థానిక దుకాణాలు:* షాపుల వివరాలు, ఫోన్ & లొకేషన్\n` +
+        `• 🚨 *24/7 అత్యవసర సేవలు:* పోలీస్, అంబులెన్స్ & కరెంట్ హెల్ప్‌లైన్లు\n` +
+        `• 🏡 *రియల్ ఎస్టేట్:* వెరిఫైడ్ ఓపెన్ ప్లాట్లు & ఇళ్ళ సమాచారం\n` +
+        `• 💼 *స్థానిక ఉద్యోగాలు:* తాజా లోకల్ జాబ్స్ & ఖాళీలు\n` +
+        `• 🎟️ *నేటి ఆఫర్లు & డీల్స్:* ప్రత్యేక రాయితీలు & వోచర్లు\n` +
+        `• 🎬 *వీడియో రీల్స్:* లోకల్ షాపుల 24 గంటల ఆఫర్ వీడియోలు\n\n` +
+        `━━━━━━━━━━━━━━━━━━━━\n` +
+        `👇 *క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:*`
+
+      let initial_message = entryNode?.config?.text || editingFlow.initial_message || ''
+      if (
+        !initial_message.trim() ||
+        initial_message.trim() === 'Welcome to Choutuppal App!' ||
+        initial_message.trim() === 'Welcome!'
+      ) {
+        if (editingFlow.id === 'flow_1793406931070_mooi' || entryId === 'welcome_intro') {
+          initial_message = defaultTeluguWelcome
+        }
+      }
+
+      const button_options = entryNode?.config?.buttons && entryNode.config.buttons.length > 0
+        ? entryNode.config.buttons.map((b) => b.title)
+        : (editingFlow.button_options && editingFlow.button_options.length > 0 ? editingFlow.button_options : ['🔥 స్టోరీస్ & ఆఫర్స్', 'డైరెక్టరీ', 'వ్యాపారం'])
       const imageUrl = entryNode?.config?.mediaUrl || editingFlow.imageUrl
 
       // Validate button titles and list rows limits

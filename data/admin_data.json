@@ -11250,8 +11250,8 @@
         "హలో",
         "menu"
       ],
-      "entry_node_id": "start",
-      "entryNodeId": "start",
+      "entry_node_id": "welcome_intro",
+      "entryNodeId": "welcome_intro",
       "flow_nodes": [
         {
           "id": "node_flow_1793406931070_mooi_1",
@@ -11259,7 +11259,8 @@
           "node_key": "start",
           "node_type": "start",
           "config": {
-            "next_node_key": "welcome_intro"
+            "next_node_key": "welcome_intro",
+            "nextNodeId": "welcome_intro"
           },
           "position_x": 100,
           "position_y": 100,
@@ -11272,25 +11273,35 @@
           "node_key": "welcome_intro",
           "node_type": "send_buttons",
           "config": {
-            "text": "నమస్కారం! 🙏 చౌటుప్పల్ యాప్‌కి స్వాగతం.\n\nమన చౌటుప్పల్ పట్టణ మరియు పరిసర ప్రాంతాల వ్యాపార సమాచారం, అత్యవసర సేవలు మరియు స్థానిక అప్‌డేట్స్ కోసం క్రింది ఆప్షన్ ఎంచుకోండి.",
+            "text": "🙏 *నమస్కారం! చౌటుప్పల్ యాప్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం.*\n\n🚀 *మన అందరం... మన చౌటుప్పల్!* \nచౌటుప్పల్ పట్టణ ప్రజలకు, వ్యాపారులకు మరియు ప్రయాణికులకు అవసరమైన అన్ని సేవలు ఒకే చోట:\n\n• 🛍️ *స్థానిక దుకాణాలు:* షాపుల వివరాలు, ఫోన్ & లొకేషన్\n• 🚨 *24/7 అత్యవసర సేవలు:* పోలీస్, అంబులెన్స్ & కరెంట్ హెల్ప్‌లైన్లు\n• 🏡 *రియల్ ఎస్టేట్:* వెరిఫైడ్ ఓపెన్ ప్లాట్లు & ఇళ్ళ సమాచారం\n• 💼 *స్థానిక ఉద్యోగాలు:* తాజా లోకల్ జాబ్స్ & ఖాళీలు\n• 🎟️ *నేటి ఆఫర్లు & డీల్స్:* ప్రత్యేక రాయితీలు & వోచర్లు\n• 🎬 *వీడియో రీల్స్:* లోకల్ షాపుల 24 గంటల ఆఫర్ వీడియోలు\n\n━━━━━━━━━━━━━━━━━━━━\n👇 *క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:*",
             "footer_text": "🌐 https://choutuppal.in",
             "buttons": [
               {
+                "id": "btn_stories",
+                "reply_id": "btn_stories",
+                "title": "🔥 స్టోరీస్ & ఆఫర్స్",
+                "payload": "btn_stories",
+                "nextNodeId": "goto_stories",
+                "next_node_key": "goto_stories"
+              },
+              {
+                "id": "btn_dir",
                 "reply_id": "btn_dir",
                 "title": "డైరెక్టరీ",
+                "payload": "btn_dir",
+                "nextNodeId": "goto_directory",
                 "next_node_key": "goto_directory"
               },
               {
+                "id": "btn_biz",
                 "reply_id": "btn_biz",
                 "title": "వ్యాపారం",
+                "payload": "btn_biz",
+                "nextNodeId": "goto_business",
                 "next_node_key": "goto_business"
-              },
-              {
-                "reply_id": "btn_more",
-                "title": "ఇతర సేవలు",
-                "next_node_key": "goto_more_services"
               }
-            ]
+            ],
+            "footerText": "🌐 https://choutuppal.in"
           },
           "position_x": 380,
           "position_y": 100,
@@ -11427,7 +11438,8 @@
           "name": "start",
           "type": "start",
           "config": {
-            "next_node_key": "welcome_intro"
+            "next_node_key": "welcome_intro",
+            "nextNodeId": "welcome_intro"
           },
           "positionX": 100,
           "positionY": 100
@@ -11441,21 +11453,31 @@
             "footer_text": "🌐 https://choutuppal.in",
             "buttons": [
               {
+                "id": "btn_stories",
                 "reply_id": "btn_stories",
                 "title": "🔥 స్టోరీస్ & ఆఫర్స్",
+                "payload": "btn_stories",
+                "nextNodeId": "goto_stories",
                 "next_node_key": "goto_stories"
               },
               {
+                "id": "btn_dir",
                 "reply_id": "btn_dir",
                 "title": "డైరెక్టరీ",
+                "payload": "btn_dir",
+                "nextNodeId": "goto_directory",
                 "next_node_key": "goto_directory"
               },
               {
+                "id": "btn_biz",
                 "reply_id": "btn_biz",
                 "title": "వ్యాపారం",
+                "payload": "btn_biz",
+                "nextNodeId": "goto_business",
                 "next_node_key": "goto_business"
               }
-            ]
+            ],
+            "footerText": "🌐 https://choutuppal.in"
           },
           "positionX": 380,
           "positionY": 100
@@ -11634,7 +11656,13 @@
         }
       ],
       "isActive": true,
-      "is_active": true
+      "is_active": true,
+      "initial_message": "🙏 *నమస్కారం! చౌటుప్పల్ యాప్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం.*\n\n🚀 *మన అందరం... మన చౌటుప్పల్!* \nచౌటుప్పల్ పట్టణ ప్రజలకు, వ్యాపారులకు మరియు ప్రయాణికులకు అవసరమైన అన్ని సేవలు ఒకే చోట:\n\n• 🛍️ *స్థానిక దుకాణాలు:* షాపుల వివరాలు, ఫోన్ & లొకేషన్\n• 🚨 *24/7 అత్యవసర సేవలు:* పోలీస్, అంబులెన్స్ & కరెంట్ హెల్ప్‌లైన్లు\n• 🏡 *రియల్ ఎస్టేట్:* వెరిఫైడ్ ఓపెన్ ప్లాట్లు & ఇళ్ళ సమాచారం\n• 💼 *స్థానిక ఉద్యోగాలు:* తాజా లోకల్ జాబ్స్ & ఖాళీలు\n• 🎟️ *నేటి ఆఫర్లు & డీల్స్:* ప్రత్యేక రాయితీలు & వోచర్లు\n• 🎬 *వీడియో రీల్స్:* లోకల్ షాపుల 24 గంటల ఆఫర్ వీడియోలు\n\n━━━━━━━━━━━━━━━━━━━━\n👇 *క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:*",
+      "button_options": [
+        "🔥 స్టోరీస్ & ఆఫర్స్",
+        "డైరెక్టరీ",
+        "వ్యాపారం"
+      ]
     },
     {
       "id": "flow_category_browser",

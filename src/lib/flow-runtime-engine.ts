@@ -1068,14 +1068,27 @@ export function evaluateFlow(
   const nodes = matchedFlow.nodes || []
   let activeNode: FlowNode | undefined
 
-  if (targetNodeId) {
+  if (targetNodeId && targetNodeId !== 'start') {
     activeNode = nodes.find((n) => n.id === targetNodeId)
   }
 
-  // If active node was 'start' or not found, advance to entry message
+  // If active node was 'start' or not found, advance to real entry message node
   if (!activeNode || activeNode.type === 'start') {
-    const entryId = activeNode?.config?.nextNodeId || matchedFlow.entryNodeId || 'entry_message'
-    activeNode = nodes.find((n) => n.id === entryId) || nodes[0]
+    const startNode = nodes.find((n) => n.id === 'start' || n.type === 'start')
+    const entryId =
+      activeNode?.config?.nextNodeId ||
+      (activeNode?.config as any)?.next_node_key ||
+      startNode?.config?.nextNodeId ||
+      (startNode?.config as any)?.next_node_key ||
+      (matchedFlow.entryNodeId && matchedFlow.entryNodeId !== 'start' ? matchedFlow.entryNodeId : undefined) ||
+      ((matchedFlow as any).entry_node_id && (matchedFlow as any).entry_node_id !== 'start' ? (matchedFlow as any).entry_node_id : undefined) ||
+      'welcome_intro'
+
+    activeNode =
+      nodes.find((n) => n.id === entryId && n.type !== 'start') ||
+      nodes.find((n) => (n.id === 'welcome_intro' || n.id === 'entry_message') && n.type !== 'start') ||
+      nodes.find((n) => n.type !== 'start' && n.type !== 'end') ||
+      nodes[0]
   }
 
   // Handle cross-flow routing (goto_flow_...)
@@ -1294,7 +1307,32 @@ export function evaluateFlow(
   }
 
   // 6. Interpolate Text Variables
-  const rawBody = activeNode.config.text || matchedFlow.initial_message || matchedFlow.description || ''
+  const fullTeluguWelcomeDefault =
+    `🙏 *నమస్కారం! చౌటుప్పల్ యాప్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం.*\n\n` +
+    `🚀 *మన అందరం... మన చౌటుప్పల్!* \n` +
+    `చౌటుప్పల్ పట్టణ ప్రజలకు, వ్యాపారులకు మరియు ప్రయాణికులకు అవసరమైన అన్ని సేవలు ఒకే చోట:\n\n` +
+    `• 🛍️ *స్థానిక దుకాణాలు:* షాపుల వివరాలు, ఫోన్ & లొకేషన్\n` +
+    `• 🚨 *24/7 అత్యవసర సేవలు:* పోలీస్, అంబులెన్స్ & కరెంట్ హెల్ప్‌లైన్లు\n` +
+    `• 🏡 *రియల్ ఎస్టేట్:* వెరిఫైడ్ ఓపెన్ ప్లాట్లు & ఇళ్ళ సమాచారం\n` +
+    `• 💼 *స్థానిక ఉద్యోగాలు:* తాజా లోకల్ జాబ్స్ & ఖాళీలు\n` +
+    `• 🎟️ *నేటి ఆఫర్లు & డీల్స్:* ప్రత్యేక రాయితీలు & వోచర్లు\n` +
+    `• 🎬 *వీడియో రీల్స్:* లోకల్ షాపుల 24 గంటల ఆఫర్ వీడియోలు\n\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `👇 *క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:*`
+
+  let rawCandidate = activeNode.config.text || matchedFlow.initial_message || matchedFlow.description || ''
+  if (
+    !rawCandidate.trim() ||
+    rawCandidate.trim() === 'Welcome to Choutuppal App!' ||
+    rawCandidate.trim() === 'Welcome!' ||
+    rawCandidate.trim() === 'Welcome to Choutuppal App WhatsApp Service.\n\nPlease select an option below:'
+  ) {
+    if (activeNode.id === 'welcome_intro' || activeNode.id === 'start' || matchedFlow.id === 'flow_1793406931070_mooi') {
+      rawCandidate = fullTeluguWelcomeDefault
+    }
+  }
+
+  const rawBody = rawCandidate
   let resolvedText = interpolateVariables(rawBody, {
     contactName: senderName,
     contactPhone: senderPhone,
@@ -1335,12 +1373,16 @@ export function evaluateFlow(
   // Interactive buttons
   const buttons: Array<{ id: string; title: string; payload?: string; nextNodeId?: string }> = []
   if (Array.isArray(activeNode.config.buttons) && activeNode.config.buttons.length > 0) {
-    activeNode.config.buttons.slice(0, 3).forEach((btn) => {
+    activeNode.config.buttons.slice(0, 3).forEach((btn: any) => {
+      const bId = btn.id || btn.payload || btn.reply_id || btn.title
+      const bTitle = String(btn.title || btn.text || 'బటన్').slice(0, 20)
+      const bPayload = btn.payload || btn.reply_id || btn.id || btn.title
+      const bNext = btn.nextNodeId || btn.next_node_key
       buttons.push({
-        id: btn.id || btn.payload || btn.title,
-        title: btn.title.slice(0, 20),
-        payload: btn.payload || btn.title,
-        nextNodeId: btn.nextNodeId,
+        id: bId,
+        title: bTitle,
+        payload: bPayload,
+        nextNodeId: bNext,
       })
     })
   } else if (Array.isArray(matchedFlow.button_options) && matchedFlow.button_options.length > 0) {
@@ -1352,6 +1394,12 @@ export function evaluateFlow(
         nextNodeId: `action_node_${i + 1}`,
       })
     })
+  } else if (activeNode.id === 'welcome_intro' || matchedFlow.id === 'flow_1793406931070_mooi') {
+    buttons.push(
+      { id: 'btn_stories', title: '🔥 స్టోరీస్ & ఆఫర్స్', payload: 'btn_stories', nextNodeId: 'goto_stories' },
+      { id: 'btn_dir', title: 'డైరెక్టరీ', payload: 'btn_dir', nextNodeId: 'goto_directory' },
+      { id: 'btn_biz', title: 'వ్యాపారం', payload: 'btn_biz', nextNodeId: 'goto_business' }
+    )
   } else if (
     !activeNode.config.listSections &&
     !dynamicListSections &&

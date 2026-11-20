@@ -391,15 +391,17 @@ export async function sendWelcomeCard(ctx: FlowCatalogContext) {
 
   if (welcomeFlow) {
     const nodes = welcomeFlow.nodes || []
+    const nonStartNodes = nodes.filter((n: any) => n.type !== 'start' && n.type !== 'end')
     const entryNode =
-      nodes.find((n: any) => n.id === welcomeFlow.entryNodeId) ||
-      nodes.find((n: any) => n.id === 'welcome_intro' || n.name === 'welcome_intro') ||
-      nodes.find((n: any) => n.type === 'send_buttons' || n.type === 'send_message') ||
+      (welcomeFlow.entryNodeId && welcomeFlow.entryNodeId !== 'start'
+        ? nodes.find((n: any) => n.id === welcomeFlow.entryNodeId && n.type !== 'start')
+        : undefined) ||
+      nodes.find((n: any) => (n.id === 'welcome_intro' || n.name === 'welcome_intro') && n.type !== 'start') ||
+      nodes.find((n: any) => (n.type === 'send_buttons' || n.type === 'send_message') && n.config?.text) ||
+      nonStartNodes[0] ||
       nodes[0]
 
-    const messageText =
-      entryNode?.config?.text ||
-      welcomeFlow.initial_message ||
+    const fullTeluguWelcome =
       `🙏 *నమస్కారం! చౌటుప్పల్ యాప్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం.*\n\n` +
       `🚀 *మన అందరం... మన చౌటుప్పల్!* \n` +
       `చౌటుప్పల్ పట్టణ ప్రజలకు, వ్యాపారులకు మరియు ప్రయాణికులకు అవసరమైన అన్ని సేవలు ఒకే చోట:\n\n` +
@@ -411,6 +413,10 @@ export async function sendWelcomeCard(ctx: FlowCatalogContext) {
       `• 🎬 *వీడియో రీల్స్:* లోకల్ షాపుల 24 గంటల ఆఫర్ వీడియోలు\n\n` +
       `━━━━━━━━━━━━━━━━━━━━\n` +
       `👇 *క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:*`
+
+    const rawMsg = entryNode?.config?.text || welcomeFlow.initial_message
+    const isBareEnglish = !rawMsg || rawMsg.trim() === 'Welcome to Choutuppal App!' || rawMsg.trim() === 'Welcome!'
+    const messageText = isBareEnglish ? fullTeluguWelcome : rawMsg
 
     const imageUrl =
       entryNode?.config?.mediaUrl ||
