@@ -10,7 +10,7 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: '/',
     display: 'standalone',
     display_override: ['standalone', 'window-controls-overlay'] as any,
-    background_color: '#094AA8',
+    background_color: '#FFFFFF',
     theme_color: '#094AA8',
     orientation: 'portrait',
     categories: ['business', 'shopping', 'lifestyle', 'news'],
@@ -28,10 +28,22 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: 'any',
       },
       {
-        src: '/assets/choutuppal-favicon.png',
+        src: '/icon-maskable-192.png',
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'maskable',
+      },
+      {
+        src: '/icon-maskable-512.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',
+      },
+      {
+        src: '/assets/choutuppal-favicon.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any',
       },
       {
         src: '/assets/choutuppal-app-logo.jpg',

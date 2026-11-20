@@ -1,9 +1,9 @@
-// Choutuppal App Progressive Web App (PWA) Service Worker v4.0
+// Choutuppal App Progressive Web App (PWA) Service Worker v5.0
 // High-performance intelligent offline caching, image persistence & resilient fallback
 
-const CACHE_NAME = 'choutuppal-app-shell-v4'
-const IMAGE_CACHE = 'choutuppal-images-v4'
-const DATA_CACHE = 'choutuppal-data-v4'
+const CACHE_NAME = 'choutuppal-app-shell-v5'
+const IMAGE_CACHE = 'choutuppal-images-v5'
+const DATA_CACHE = 'choutuppal-data-v5'
 
 const STATIC_PRECACHE = [
   '/',
@@ -14,6 +14,8 @@ const STATIC_PRECACHE = [
   '/assets/choutuppal-app-logo.jpg',
   '/icon-192.png',
   '/icon-512.png',
+  '/icon-maskable-192.png',
+  '/icon-maskable-512.png',
   '/apple-touch-icon.png',
 ]
 
