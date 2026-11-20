@@ -172,7 +172,7 @@ export function AdminSidebar() {
                         ? 'justify-center p-2.5'
                         : 'justify-between px-3 py-2',
                       isActive
-                        ? 'bg-emerald-600 text-white font-bold shadow-sm shadow-emerald-600/20'
+                        ? 'bg-gradient-to-r from-blue-700 to-blue-600 text-white font-bold shadow-sm shadow-blue-700/20'
                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                     )}
                   >
@@ -180,7 +180,7 @@ export function AdminSidebar() {
                       <Icon
                         className={cn(
                           'w-4 h-4 shrink-0 transition-transform group-hover:scale-110',
-                          isActive ? 'text-white' : 'text-slate-500 group-hover:text-emerald-700'
+                          isActive ? 'text-white' : 'text-slate-500 group-hover:text-blue-700'
                         )}
                       />
                       {(!isSidebarCollapsed || isMobile) && (
@@ -201,7 +201,7 @@ export function AdminSidebar() {
                               'text-[10px] px-1.5 py-0.5 rounded font-bold shrink-0',
                               isActive
                                 ? 'bg-white/20 text-white'
-                                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-blue-50 text-blue-700 border border-blue-200'
                             )}
                           >
                             {item.badge}
@@ -257,7 +257,7 @@ export function AdminSidebar() {
             </div>
             <div className="min-w-0">
               <h2 className="font-bold text-xs text-slate-900 truncate">చౌటుప్పల్ అడ్మిన్</h2>
-              <p className="text-[10px] text-emerald-700 font-medium">Franchise CRM Platform</p>
+              <p className="text-[10px] text-blue-700 font-medium">Franchise CRM Platform</p>
             </div>
           </div>
           <button
@@ -294,7 +294,7 @@ export function AdminSidebar() {
         {/* Mobile Footer */}
         <div className="p-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-600">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
             <span className="text-[11px] font-semibold text-slate-700">CRM Engine Active</span>
           </div>
           <span className="text-[10px] font-mono text-slate-400">v2.1</span>
@@ -328,8 +328,8 @@ export function AdminSidebar() {
                 <h1 className="font-bold text-xs text-slate-900 tracking-wide truncate">
                   చౌటుప్పల్ CRM Admin
                 </h1>
-                <p className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1 truncate">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <p className="text-[10px] text-blue-700 font-semibold flex items-center gap-1 truncate">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse shrink-0" />
                   Franchise &amp; WhatsApp CRM
                 </p>
               </div>
