@@ -73,8 +73,8 @@ export function RealEstateRail({ properties }: RealEstateRailProps) {
                 <Badge
                   className={`absolute left-2.5 top-2.5 z-10 ${
                     p.listingType === 'SALE'
-                      ? 'bg-emerald-500 text-white hover:bg-emerald-500'
-                      : 'bg-amber-500 text-white hover:bg-amber-500'
+                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-amber-500 text-white hover:bg-amber-600'
                   }`}
                 >
                   For {p.listingType === 'SALE' ? 'Sale' : 'Rent'}

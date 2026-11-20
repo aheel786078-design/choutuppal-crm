@@ -128,11 +128,11 @@
    ========================================================================== */
 
 :root {
-  /* Brand gradient stops */
-  --brand-blue: #1d4ed8; /* blue-700 */
-  --brand-blue-light: #3b82f6; /* blue-500 */
-  --brand-gold: #f59e0b; /* amber-500 */
-  --brand-gold-light: #fbbf24; /* amber-400 */
+  /* Brand gradient stops matching official logo */
+  --brand-blue: #094aa8; /* deep royal blue from logo top/left arc */
+  --brand-blue-light: #0a58ca; /* vibrant blue */
+  --brand-gold: #f59e0b; /* warm gold/amber from logo bottom pin */
+  --brand-gold-light: #fbbf24; /* bright gold */
 }
 
 html {

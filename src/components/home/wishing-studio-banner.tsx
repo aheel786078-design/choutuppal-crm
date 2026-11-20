@@ -93,12 +93,12 @@ const STUDIO_CARDS = [
 
 export function WishingStudioBanner() {
   return (
-    <section className="relative w-full overflow-hidden rounded-[2rem] border border-slate-200/80 bg-gradient-to-b from-white via-slate-50 to-emerald-50/40 p-4 sm:p-6 shadow-sm">
+    <section className="relative w-full overflow-hidden rounded-[2rem] border border-slate-200/80 bg-gradient-to-b from-white via-slate-50 to-blue-50/40 p-4 sm:p-6 shadow-sm">
       {/* Header section */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200/60 pb-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900">
+            <Sparkles className="h-3.5 w-3.5 text-amber-600" />
             <span>చౌటుప్పల్ ప్రమోషన్ &amp; విషింగ్ స్టూడియో</span>
           </div>
           <h2 className="mt-1.5 text-lg sm:text-2xl font-extrabold tracking-tight text-slate-900">
@@ -110,8 +110,8 @@ export function WishingStudioBanner() {
         </div>
 
         {/* 30-min delivery guarantee pill */}
-        <div className="inline-flex items-center gap-2 rounded-2xl border border-emerald-300 bg-white px-3.5 py-2 shadow-xs shrink-0">
-          <Clock className="h-5 w-5 text-emerald-600 shrink-0" />
+        <div className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-white px-3.5 py-2 shadow-xs shrink-0">
+          <Clock className="h-5 w-5 text-blue-600 shrink-0" />
           <div className="text-left">
             <p className="text-[11px] font-extrabold text-slate-900">30 నిమిషాల్లో లైవ్!</p>
             <p className="text-[10px] text-slate-500">ఫోటో అందిన వెంటనే పోస్టర్ రెడీ</p>
@@ -189,12 +189,12 @@ export function WishingStudioBanner() {
       </div>
 
       {/* Footer Trust Bar & Direct Payment Info */}
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5 rounded-xl bg-emerald-50/80 border border-emerald-200/60 px-4 py-2.5 text-xs text-slate-700">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5 rounded-xl bg-blue-50/80 border border-blue-200/60 px-4 py-2.5 text-xs text-slate-700">
         <div className="flex items-center gap-2">
-          <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+          <ShieldCheck className="h-4 w-4 text-blue-600 shrink-0" />
           <span>
             <strong>సులభమైన చెల్లింపు:</strong> PhonePe / GooglePay / UPI:{' '}
-            <code className="rounded bg-white px-1.5 py-0.5 font-mono font-bold text-emerald-700 border border-emerald-200">
+            <code className="rounded bg-white px-1.5 py-0.5 font-mono font-bold text-blue-700 border border-blue-200">
               9494348175@ybl
             </code>
           </span>
@@ -203,7 +203,7 @@ export function WishingStudioBanner() {
         <div className="flex items-center gap-2">
           <span>హెల్ప్‌లైన్: <strong>9494348175</strong></span>
           <span className="text-slate-400">•</span>
-          <span className="text-emerald-700 font-semibold">100% వెరిఫైడ్ సర్వీస్</span>
+          <span className="text-blue-700 font-semibold">100% వెరిఫైడ్ సర్వీస్</span>
         </div>
       </div>
     </section>

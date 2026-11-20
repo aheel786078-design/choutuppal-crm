@@ -60,8 +60,8 @@ export function BottomNav() {
         aria-label="Home page"
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <Home className={cn('h-5 w-5 transition-colors', isActive('/') ? 'text-emerald-600 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold transition-colors', isActive('/') ? 'text-emerald-600' : 'text-slate-600')}>Home</span>
+        <Home className={cn('h-5 w-5 transition-colors', isActive('/') ? 'text-blue-700 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold transition-colors', isActive('/') ? 'text-blue-700' : 'text-slate-600')}>Home</span>
       </Link>
 
       {/* Shorts */}
@@ -71,8 +71,8 @@ export function BottomNav() {
         aria-label="Local shorts and reels"
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <Clapperboard className={cn('h-5 w-5 transition-colors', isActive('/shorts') ? 'text-emerald-600 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold transition-colors', isActive('/shorts') ? 'text-emerald-600' : 'text-slate-600')}>Shorts</span>
+        <Clapperboard className={cn('h-5 w-5 transition-colors', isActive('/shorts') ? 'text-blue-700 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold transition-colors', isActive('/shorts') ? 'text-blue-700' : 'text-slate-600')}>Shorts</span>
       </Link>
 
       {/* Explore */}
@@ -82,8 +82,8 @@ export function BottomNav() {
         aria-label="Explore all businesses"
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <Compass className={cn('h-5 w-5 transition-colors', isActive('/listings') ? 'text-emerald-600 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold transition-colors', isActive('/listings') ? 'text-emerald-600' : 'text-slate-600')}>Explore</span>
+        <Compass className={cn('h-5 w-5 transition-colors', isActive('/listings') ? 'text-blue-700 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold transition-colors', isActive('/listings') ? 'text-blue-700' : 'text-slate-600')}>Explore</span>
       </Link>
 
       {/* Center FAB — Add Business */}
@@ -92,7 +92,7 @@ export function BottomNav() {
           id="bottom-nav-add"
           href="/register"
           aria-label="Register new business listing"
-          className="-mt-7 flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-full bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-700 text-white shadow-lg shadow-emerald-600/30 ring-2 ring-white transition active:scale-95"
+          className="-mt-7 flex h-12 w-12 min-h-[48px] min-w-[48px] items-center justify-center rounded-full bg-gradient-to-r from-blue-700 via-blue-600 to-amber-500 text-white shadow-lg shadow-blue-700/30 ring-2 ring-white transition active:scale-95"
         >
           <Plus className="h-7 w-7 stroke-[2.5]" />
         </Link>
@@ -105,8 +105,8 @@ export function BottomNav() {
         aria-label="Community forum"
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <Users className={cn('h-5 w-5 transition-colors', isActive('/community') ? 'text-emerald-700 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold transition-colors', isActive('/community') ? 'text-emerald-700' : 'text-slate-600')}>Community</span>
+        <Users className={cn('h-5 w-5 transition-colors', isActive('/community') ? 'text-blue-700 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold transition-colors', isActive('/community') ? 'text-blue-700' : 'text-slate-600')}>Community</span>
       </Link>
 
       {/* News & Blog */}
@@ -117,8 +117,8 @@ export function BottomNav() {
         aria-label="News and blog articles"
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <Newspaper className={cn('h-5 w-5 transition-colors', isActive('/news') ? 'text-emerald-700 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold whitespace-nowrap transition-colors', isActive('/news') ? 'text-emerald-700' : 'text-slate-600')}>News</span>
+        <Newspaper className={cn('h-5 w-5 transition-colors', isActive('/news') ? 'text-blue-700 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold whitespace-nowrap transition-colors', isActive('/news') ? 'text-blue-700' : 'text-slate-600')}>News</span>
       </Link>
 
       {/* You / Account */}
@@ -128,8 +128,8 @@ export function BottomNav() {
         aria-label={userAccountLabel}
         className="flex flex-col items-center justify-center gap-0.5 px-1 py-1 min-w-[44px] min-h-[48px] transition active:scale-95"
       >
-        <User className={cn('h-5 w-5 transition-colors', isActive(userAccountHref) ? 'text-emerald-700 stroke-[2.5]' : 'text-slate-600')} />
-        <span className={cn('text-[10px] font-bold transition-colors', isActive(userAccountHref) ? 'text-emerald-700' : 'text-slate-600')}>
+        <User className={cn('h-5 w-5 transition-colors', isActive(userAccountHref) ? 'text-blue-700 stroke-[2.5]' : 'text-slate-600')} />
+        <span className={cn('text-[10px] font-bold transition-colors', isActive(userAccountHref) ? 'text-blue-700' : 'text-slate-600')}>
           {userAccountLabel}
         </span>
       </Link>

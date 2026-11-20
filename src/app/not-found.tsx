@@ -29,12 +29,12 @@ export default function NotFound() {
             type="text"
             name="q"
             placeholder="Search shops, services, doctors..."
-            className="w-full rounded-2xl border border-slate-200 py-3 pl-4 pr-12 text-xs text-slate-800 placeholder-slate-400 focus:border-emerald-600 focus:outline-hidden"
+            className="w-full rounded-2xl border border-slate-200 py-3 pl-4 pr-12 text-xs text-slate-800 placeholder-slate-400 focus:border-blue-600 focus:outline-hidden"
           />
           <button
             type="submit"
             aria-label="Search directory"
-            className="absolute right-2 flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition"
+            className="absolute right-2 flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-r from-blue-700 to-blue-600 text-white hover:from-blue-800 transition"
           >
             <Search className="h-4 w-4" />
           </button>
@@ -46,12 +46,12 @@ export default function NotFound() {
             href="/"
             className="flex items-center justify-center gap-2 rounded-2xl bg-slate-100 border border-slate-200 py-3 px-4 text-xs font-bold text-slate-800 hover:bg-slate-200 transition shadow-xs"
           >
-            <Home className="h-4 w-4 text-slate-600" />
+            <Home className="h-4 w-4 text-blue-700" />
             Home (హోమ్)
           </Link>
           <Link
             href="/listings"
-            className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 py-3 px-4 text-xs font-bold text-white hover:bg-emerald-700 transition shadow-sm"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-amber-500 py-3 px-4 text-xs font-bold text-white hover:opacity-95 transition shadow-sm"
           >
             <Compass className="h-4 w-4" />
             All Listings
@@ -65,7 +65,7 @@ export default function NotFound() {
             href="https://wa.me/919494348175?text=Hello%20Mana%20Choutuppal%2C%20I%20need%20assistance."
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-bold text-emerald-600 hover:text-emerald-700"
+            className="inline-flex items-center gap-1 font-bold text-blue-700 hover:text-blue-800"
           >
             <MessageCircle className="h-3.5 w-3.5" />
             WhatsApp Helpline

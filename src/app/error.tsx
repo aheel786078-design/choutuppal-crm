@@ -40,8 +40,14 @@ export default function GlobalError({
         {/* ACTIONS */}
         <div className="grid grid-cols-2 gap-2.5 pt-2">
           <button
-            onClick={() => reset()}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 py-3 px-4 text-xs font-bold text-white hover:bg-emerald-700 transition shadow-sm active:scale-95"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.location.reload()
+              } else {
+                reset()
+              }
+            }}
+            className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-700 via-blue-600 to-amber-500 py-3 px-4 text-xs font-bold text-white hover:opacity-95 transition shadow-sm active:scale-95"
           >
             <RefreshCw className="h-4 w-4" />
             Retry (మళ్లీ ప్రయత్నించండి)
@@ -50,7 +56,7 @@ export default function GlobalError({
             href="/"
             className="flex items-center justify-center gap-2 rounded-2xl bg-slate-100 border border-slate-200 py-3 px-4 text-xs font-bold text-slate-800 hover:bg-slate-200 transition shadow-xs active:scale-95"
           >
-            <Home className="h-4 w-4 text-slate-600" />
+            <Home className="h-4 w-4 text-blue-700" />
             Home (హోమ్)
           </Link>
         </div>
@@ -62,7 +68,7 @@ export default function GlobalError({
             href="https://wa.me/919494348175?text=Hello%20Mana%20Choutuppal%2C%20I%20faced%20an%20issue%20on%20the%20website."
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-bold text-emerald-600 hover:text-emerald-700"
+            className="inline-flex items-center gap-1 font-bold text-blue-700 hover:text-blue-800"
           >
             <MessageCircle className="h-3.5 w-3.5" />
             WhatsApp Support

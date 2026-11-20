@@ -47,24 +47,24 @@ export function HeroQuickActions() {
   return (
     <section className="relative w-full overflow-hidden rounded-[2rem] border border-emerald-500/20 bg-gradient-to-br from-emerald-900/90 via-slate-900/95 to-slate-950 p-5 sm:p-7 shadow-xl text-white">
       {/* Background Decorative Glow */}
-      <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-20 -bottom-20 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-blue-600/25 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 -bottom-20 h-72 w-72 rounded-full bg-amber-500/20 blur-3xl" />
 
       <div className="relative z-10 flex flex-col gap-5">
         {/* Top Town Badge & Verified Metrics */}
         <div className="flex flex-wrap items-center justify-between gap-2.5">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3.5 py-1 text-xs font-semibold text-emerald-300 backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/15 px-3.5 py-1 text-xs font-semibold text-blue-200 backdrop-blur-md">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-500" />
             </span>
-            <MapPin className="h-3.5 w-3.5 text-emerald-400" />
+            <MapPin className="h-3.5 w-3.5 text-amber-400" />
             <span>మన చౌటుప్పల్ అధికారిక లోకల్ సూపర్ యాప్</span>
           </div>
 
           <div className="hidden sm:flex items-center gap-3 text-xs text-slate-300">
             <span className="flex items-center gap-1 font-medium">
-              <BadgeCheck className="h-4 w-4 text-emerald-400" /> 200+ వెరిఫైడ్ సేవలు
+              <BadgeCheck className="h-4 w-4 text-amber-400" /> 200+ వెరిఫైడ్ సేవలు
             </span>
             <span className="text-slate-600">•</span>
             <span className="flex items-center gap-1 font-medium">
@@ -92,11 +92,11 @@ export function HeroQuickActions() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="దుకాణాలు, ఆస్పత్రులు, డాక్టర్లు, టాక్సీ లేదా సేవల కోసం వెతకండి..."
-              className="h-13 sm:h-14 w-full rounded-2xl border border-white/20 bg-white/10 pl-11 pr-28 sm:pr-32 text-sm sm:text-base text-white placeholder:text-slate-400 backdrop-blur-md outline-none transition focus:border-emerald-400 focus:bg-white/15 focus:ring-4 focus:ring-emerald-500/20"
+              className="h-13 sm:h-14 w-full rounded-2xl border border-white/20 bg-white/10 pl-11 pr-28 sm:pr-32 text-sm sm:text-base text-white placeholder:text-slate-400 backdrop-blur-md outline-none transition focus:border-blue-400 focus:bg-white/15 focus:ring-4 focus:ring-blue-500/20"
             />
             <button
               type="submit"
-              className="absolute right-1.5 sm:right-2 h-10 sm:h-11 px-4 sm:px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-xs sm:text-sm font-bold text-white shadow-md transition hover:opacity-95 active:scale-95 flex items-center gap-1.5"
+              className="absolute right-1.5 sm:right-2 h-10 sm:h-11 px-4 sm:px-6 rounded-xl bg-gradient-to-r from-blue-700 via-blue-600 to-amber-500 text-xs sm:text-sm font-bold text-white shadow-md transition hover:opacity-95 active:scale-95 flex items-center gap-1.5"
             >
               <span>వెతకండి</span>
               <ArrowRight className="h-4 w-4 hidden sm:inline" />
@@ -111,7 +111,7 @@ export function HeroQuickActions() {
                 key={chip.query}
                 type="button"
                 onClick={() => handleChipClick(chip.query)}
-                className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] sm:text-xs font-medium text-slate-300 backdrop-blur-xs transition hover:border-emerald-400/50 hover:bg-emerald-500/10 hover:text-white active:scale-95"
+                className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] sm:text-xs font-medium text-slate-300 backdrop-blur-xs transition hover:border-amber-400/50 hover:bg-amber-500/10 hover:text-white active:scale-95"
               >
                 {chip.label}
               </button>

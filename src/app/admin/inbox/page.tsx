@@ -18,9 +18,11 @@ import {
   UserPlus,
   Briefcase,
   ExternalLink,
+  ArrowLeft,
 } from 'lucide-react'
 import { AdminHeader } from '@/components/admin/admin-header'
 import { WhatsAppMessage, ConversationSummary } from '@/lib/types'
+import { cn } from '@/lib/utils'
 
 export default function SharedInboxPage() {
   const [conversations, setConversations] = useState<ConversationSummary[]>([])
@@ -38,8 +40,13 @@ export default function SharedInboxPage() {
   const [providerNotice, setProviderNotice] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [inputText, setInputText] = useState('')
+  const [isMounted, setIsMounted] = useState(false)
 
   const chatEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -215,15 +222,15 @@ export default function SharedInboxPage() {
     }
   }
 
-  // Filter conversations by search input
+  // Filter conversations by search input with null safety
   const filteredConversations = conversations.filter((c) => {
+    if (!c) return false
     if (!searchQuery.trim()) return true
     const q = searchQuery.toLowerCase()
-    return (
-      c.contactName.toLowerCase().includes(q) ||
-      c.phone.includes(q) ||
-      c.lastMessage.toLowerCase().includes(q)
-    )
+    const name = (c.contactName || '').toLowerCase()
+    const phone = (c.phone || '')
+    const lastMsg = (c.lastMessage || '').toLowerCase()
+    return name.includes(q) || phone.includes(q) || lastMsg.includes(q)
   })
 
   return (
@@ -249,9 +256,14 @@ export default function SharedInboxPage() {
 
         <div className="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-xs flex-1 grid grid-cols-1 md:grid-cols-12 min-h-[620px]">
           {/* -------------------------------------------------------------- */}
-          {/* LEFT: CONVERSATION LIST (4 COLS) */}
+          {/* LEFT: CONVERSATION LIST (4 COLS on MD+, full-width mobile when no active phone) */}
           {/* -------------------------------------------------------------- */}
-          <div className="md:col-span-4 border-r border-slate-200 flex flex-col bg-slate-50/60">
+          <div
+            className={cn(
+              'md:col-span-4 border-r border-slate-200 flex flex-col bg-slate-50/60',
+              activePhone ? 'hidden md:flex' : 'flex'
+            )}
+          >
             {/* Search Header */}
             <div className="p-3 border-b border-slate-200 bg-white flex items-center gap-2">
               <div className="relative flex-1">
@@ -261,7 +273,7 @@ export default function SharedInboxPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search WhatsApp contacts..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-500"
                 />
               </div>
               <button
@@ -277,19 +289,19 @@ export default function SharedInboxPage() {
             <div className="divide-y divide-slate-100 overflow-y-auto flex-1">
               {loadingConversations ? (
                 <div className="p-8 text-center text-slate-500 text-xs flex flex-col items-center gap-2">
-                  <Loader2 className="w-5 h-5 animate-spin text-emerald-600" />
+                  <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
                   <span>Loading conversations...</span>
                 </div>
               ) : filteredConversations.length === 0 ? (
                 <div className="p-8 text-center text-slate-500 text-xs">
-                  <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-30 text-emerald-600" />
+                  <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-30 text-blue-600" />
                   <p className="font-semibold text-slate-800">No conversations found</p>
                   <p className="text-[11px] text-slate-500 mt-1">Inbound WhatsApp messages will appear here automatically.</p>
                 </div>
               ) : (
                 filteredConversations.map((c) => {
                   const isSelected = activePhone === c.phone
-                  const initial = (c.contactName || c.phone)[0].toUpperCase()
+                  const initial = (c.contactName || c.phone || 'C')[0]?.toUpperCase() || 'C'
 
                   return (
                     <button
@@ -297,17 +309,17 @@ export default function SharedInboxPage() {
                       type="button"
                       onClick={() => selectConversation(c.phone, c.contactName, c.territoryId)}
                       className={`w-full text-left p-3 transition-colors flex items-center gap-3 ${
-                        isSelected ? 'bg-emerald-50/80 border-l-2 border-emerald-600' : 'hover:bg-slate-100/70'
+                        isSelected ? 'bg-blue-50/90 border-l-3 border-blue-600' : 'hover:bg-slate-100/70'
                       }`}
                     >
-                      <div className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-700 to-blue-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
                         {initial}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between">
-                          <h5 className="font-semibold text-xs text-slate-900 truncate">{c.contactName}</h5>
-                          <span className="text-[10px] text-slate-500 font-mono">
-                            {c.lastMessageAt && !isNaN(new Date(c.lastMessageAt).getTime())
+                          <h5 className="font-semibold text-xs text-slate-900 truncate">{c.contactName || c.phone}</h5>
+                          <span className="text-[10px] text-slate-500 font-mono" suppressHydrationWarning>
+                            {isMounted && c.lastMessageAt && !isNaN(new Date(c.lastMessageAt).getTime())
                               ? new Date(c.lastMessageAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                               : ''}
                           </span>
@@ -315,7 +327,7 @@ export default function SharedInboxPage() {
                         <div className="flex items-center justify-between mt-0.5">
                           <p className="text-[11px] text-slate-500 truncate pr-2">{c.lastMessage}</p>
                           {c.unreadCount > 0 && (
-                            <span className="bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full shrink-0">
+                            <span className="bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full shrink-0">
                               {c.unreadCount}
                             </span>
                           )}
@@ -329,27 +341,41 @@ export default function SharedInboxPage() {
           </div>
 
           {/* -------------------------------------------------------------- */}
-          {/* RIGHT: ACTIVE CHAT THREAD (8 COLS) */}
+          {/* RIGHT: ACTIVE CHAT THREAD (8 COLS on MD+, full-width mobile when active phone) */}
           {/* -------------------------------------------------------------- */}
-          <div className="md:col-span-8 flex flex-col bg-[#f0f2f5] border-l border-slate-200">
+          <div
+            className={cn(
+              'md:col-span-8 flex flex-col bg-[#f0f2f5] border-l border-slate-200',
+              activePhone ? 'flex' : 'hidden md:flex'
+            )}
+          >
             {activePhone ? (
               <>
                 {/* Chat Header */}
                 <div className="p-3 bg-white border-b border-slate-200 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    {/* Mobile Back Button */}
+                    <button
+                      type="button"
+                      onClick={() => setActivePhone(null)}
+                      className="md:hidden p-1.5 -ml-1 text-slate-600 hover:text-blue-700 rounded-lg hover:bg-slate-100 transition"
+                      title="Back to conversations"
+                    >
+                      <ArrowLeft className="w-5 h-5 text-blue-700" />
+                    </button>
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-700 to-blue-500 text-white flex items-center justify-center font-bold text-xs shadow-2xs shrink-0">
                       <User className="w-4 h-4" />
                     </div>
-                    <div>
-                      <h4 className="font-bold text-xs text-slate-900 leading-tight">{activeContactName}</h4>
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-xs text-slate-900 leading-tight truncate">{activeContactName}</h4>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[10px] text-emerald-700 font-mono flex items-center gap-1 font-semibold">
+                        <span className="text-[10px] text-blue-700 font-mono flex items-center gap-1 font-semibold">
                           <Phone className="w-2.5 h-2.5" />
                           {activePhone}
                         </span>
                         {activeTerritoryId && (
                           <span className="text-[9px] bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded font-mono border border-slate-200">
-                            {activeTerritoryId.replace('territory_', '')}
+                            {String(activeTerritoryId).replace('territory_', '')}
                           </span>
                         )}
                       </div>
@@ -379,7 +405,7 @@ export default function SharedInboxPage() {
                       className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg flex items-center gap-1 transition shadow-2xs font-medium"
                       title="Open Contact Details"
                     >
-                      <User className="w-3 h-3 text-emerald-600" />
+                      <User className="w-3 h-3 text-blue-600" />
                       <span className="hidden sm:inline">Contact</span>
                     </Link>
 
@@ -388,7 +414,7 @@ export default function SharedInboxPage() {
                       className="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg flex items-center gap-1 transition shadow-2xs font-medium"
                       title="Open Deals Pipeline"
                     >
-                      <Briefcase className="w-3 h-3 text-blue-600" />
+                      <Briefcase className="w-3 h-3 text-amber-600" />
                       <span className="hidden sm:inline">Deals</span>
                     </Link>
 
@@ -419,7 +445,7 @@ export default function SharedInboxPage() {
                 <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#efeae2]/60">
                   {loadingMessages ? (
                     <div className="p-12 text-center text-slate-500 text-xs flex flex-col items-center gap-2">
-                      <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
+                      <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
                       <span>Loading messages...</span>
                     </div>
                   ) : messages.length === 0 ? (
@@ -435,7 +461,7 @@ export default function SharedInboxPage() {
                           <div
                             className={`max-w-[78%] rounded-2xl p-3 text-xs shadow-xs ${
                               isOut
-                                ? 'bg-[#d9fdd3] text-slate-900 border border-emerald-200/60'
+                                ? 'bg-[#d9fdd3] text-slate-900 border border-blue-200/60'
                                 : 'bg-white text-slate-900 border border-slate-200/80'
                             }`}
                           >
@@ -447,8 +473,8 @@ export default function SharedInboxPage() {
                             )}
                             <p className="whitespace-pre-wrap leading-relaxed">{m.messageText}</p>
                             <div className="flex items-center justify-end gap-1.5 mt-1 text-[9px] text-slate-500 font-mono">
-                              <span>
-                                {m.createdAt && !isNaN(new Date(m.createdAt).getTime())
+                              <span suppressHydrationWarning>
+                                {isMounted && m.createdAt && !isNaN(new Date(m.createdAt).getTime())
                                   ? new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                                   : ''}
                               </span>
@@ -479,12 +505,12 @@ export default function SharedInboxPage() {
                     onChange={(e) => setInputText(e.target.value)}
                     disabled={sending}
                     placeholder="Type WhatsApp reply to customer..."
-                    className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 text-xs px-3.5 py-2.5 rounded-xl outline-none placeholder:text-slate-400 focus:border-emerald-500 disabled:opacity-50"
+                    className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 text-xs px-3.5 py-2.5 rounded-xl outline-none placeholder:text-slate-400 focus:border-blue-500 disabled:opacity-50"
                   />
                   <button
                     type="submit"
                     disabled={sending || !inputText.trim()}
-                    className="p-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-colors shadow-xs flex items-center justify-center shrink-0"
+                    className="p-2.5 bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-colors shadow-xs flex items-center justify-center shrink-0"
                   >
                     {sending ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -496,7 +522,7 @@ export default function SharedInboxPage() {
               </>
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-500 text-xs bg-slate-50">
-                <MessageSquare className="w-12 h-12 mb-3 opacity-30 text-emerald-600" />
+                <MessageSquare className="w-12 h-12 mb-3 opacity-30 text-blue-600" />
                 <h4 className="text-sm font-semibold text-slate-800">Select a Conversation</h4>
                 <p className="text-[11px] text-slate-500 max-w-sm mt-1">
                   Choose a customer from the left list to review message history and reply securely.

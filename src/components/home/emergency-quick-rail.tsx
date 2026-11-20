@@ -64,8 +64,8 @@ const EMERGENCY_ITEMS: QuickEmergencyItem[] = [
     number: '1912',
     dialNumber: '1912',
     icon: Zap,
-    bgColor: 'from-emerald-600/20 to-emerald-900/30 border-emerald-500/30 text-emerald-400',
-    textColor: 'text-emerald-300',
+    bgColor: 'from-amber-600/20 to-amber-900/30 border-amber-500/30 text-amber-400',
+    textColor: 'text-amber-300',
     badgeText: 'Toll-Free',
   },
   {
@@ -99,7 +99,7 @@ export function EmergencyQuickRail() {
               <h2 className="text-base sm:text-lg font-black text-white tracking-tight">
                 అత్యవసర హెల్ప్‌లైన్లు (24/7 Emergency)
               </h2>
-              <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold text-emerald-300 border border-emerald-500/30">
+              <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30">
                 <ShieldCheck className="h-3 w-3" /> 100% Verified
               </span>
             </div>
@@ -146,7 +146,7 @@ export function EmergencyQuickRail() {
                   <span className="text-sm sm:text-base font-black text-white tracking-tight">
                     {item.number}
                   </span>
-                  <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-300 group-hover:bg-emerald-500 group-hover:text-white transition">
+                  <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-amber-500/20 text-amber-300 group-hover:bg-amber-500 group-hover:text-white transition">
                     <PhoneCall className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   </span>
                 </div>
@@ -159,7 +159,7 @@ export function EmergencyQuickRail() {
       {/* Footer Quick Action Banner */}
       <div className="mt-3.5 flex flex-col sm:flex-row items-center justify-between gap-2.5 rounded-xl bg-white/5 border border-white/10 px-3.5 py-2.5 text-xs text-slate-300">
         <div className="flex items-center gap-2">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-400"></span>
+          <span className="flex h-2 w-2 rounded-full bg-amber-400"></span>
           <span>
             పోలీస్ స్టేషన్, MRO, విద్యుత్ AE, మున్సిపల్ &amp; గ్రామ పంచాయతీ అధికారుల పూర్తి వివరాలు అందుబాటులో ఉన్నాయి.
           </span>
