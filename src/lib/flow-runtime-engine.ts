@@ -1361,9 +1361,31 @@ export function evaluateFlow(
     : undefined
 
   // Media resolution (Image or Video)
-  let imageUrl = activeNode.config.mediaUrl || matchedFlow.imageUrl
+  let imageUrl =
+    activeNode.config.mediaUrl ||
+    (activeNode.config as any).media_url ||
+    (activeNode.config as any).imageUrl ||
+    (activeNode.config as any).image_url ||
+    matchedFlow.imageUrl ||
+    (matchedFlow as any).mediaUrl ||
+    (matchedFlow as any).media_url
+
   if (!imageUrl && attachedListing?.coverImage) {
     imageUrl = attachedListing.coverImage
+  }
+
+  // Official Banner for Welcome / Entry message if not explicitly set
+  if (
+    !imageUrl &&
+    (activeNode.id === 'welcome_intro' ||
+      activeNode.id === 'start' ||
+      activeNode.id === 'entry_message' ||
+      (activeNode as any).node_key === 'welcome_intro' ||
+      matchedFlow.id === 'flow_1793406931070_mooi' ||
+      matchedFlow.trigger_keywords?.includes('hi') ||
+      matchedFlow.trigger_keywords?.includes('welcome'))
+  ) {
+    imageUrl = 'https://choutuppal.in/assets/choutuppal-app-banner.jpg'
   }
 
   const mediaType: 'image' | 'video' | 'document' =

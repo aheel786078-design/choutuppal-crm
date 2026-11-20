@@ -91,7 +91,7 @@ const SMART_TEMPLATES: SmartFlowTemplate[] = [
     icon: '👋',
     description: 'ఫోటో బ్యానర్, స్వాగత సందేశం మరియు 3 డైరెక్ట్ బటన్స్ (వ్యాపారాలు, ఆఫర్లు, ఎమర్జెన్సీ).',
     stepName: 'Step 1: స్వాగతం (Welcome)',
-    mediaUrl: '/assets/branding/choutuppal-banner.jpg',
+    mediaUrl: 'https://choutuppal.in/assets/choutuppal-app-banner.jpg',
     mediaType: 'image',
     footerText: 'చౌటుప్పల్ యాప్ 24/7 అధికారిక బాట్',
     text: `*నమస్కారం! చౌటుప్పల్ సూపర్ యాప్‌కు స్వాగతం* 🙏✨\n\nచౌటుప్పల్ మరియు పరిసర ప్రాంతాల సమగ్ర వ్యాపార సమాచారం, సేవలు, రియల్ ఎస్టేట్ మరియు అత్యవసర హెల్ప్‌లైన్ల కోసం మేము సిద్ధంగా ఉన్నాము.\n\nమీకు అవసరమైన సమాచారాన్ని వెంటనే తెలుసుకోవడానికి క్రింది బటన్ నొక్కండి:\n\n• స్థానిక వ్యాపారాలు & దుకాణాలు\n• తాజా ఆఫర్లు & డీల్స్\n• 24/7 అత్యవసర సేవలు\n\n🌐 అధికారిక పోర్టల్: https://choutuppal.in`,
@@ -499,9 +499,22 @@ export default function CRMFlowsPage() {
     const detectedCat =
       entryNode?.config?.listingCategory || ''
 
+    const isWelcomeFlow =
+      flow.id === 'flow_1793406931070_mooi' ||
+      flow.entryNodeId === 'welcome_intro' ||
+      entryNode?.id === 'welcome_intro' ||
+      flow.triggers?.some((t) => ['hi', 'hello', 'welcome', 'start'].includes(t.value.toLowerCase())) ||
+      flow.trigger_keywords?.some((k) => ['hi', 'hello', 'welcome', 'start'].includes(k.toLowerCase()))
+
+    let flowImg = flow.imageUrl || flow.mediaUrl || entryNode?.config?.mediaUrl || ''
+    if (!flowImg && isWelcomeFlow) {
+      flowImg = 'https://choutuppal.in/assets/choutuppal-app-banner.jpg'
+    }
+
     setEditingFlow({
       ...flow,
-      imageUrl: flow.imageUrl || entryNode?.config?.mediaUrl || '',
+      imageUrl: flowImg,
+      mediaUrl: flowImg,
       mediaType: detectedMediaType,
     })
 
@@ -568,6 +581,15 @@ export default function CRMFlowsPage() {
         positionY: 220,
       }
       nodesToEdit.push(resolvedEntry)
+    }
+
+    if (resolvedEntry) {
+      if (!resolvedEntry.config) resolvedEntry.config = {}
+      if (!resolvedEntry.config.mediaUrl && isWelcomeFlow) {
+        resolvedEntry.config.mediaUrl = 'https://choutuppal.in/assets/choutuppal-app-banner.jpg'
+        resolvedEntry.config.imageUrl = 'https://choutuppal.in/assets/choutuppal-app-banner.jpg'
+        resolvedEntry.config.mediaType = 'image'
+      }
     }
 
     // Ensure start node points to real entry message node
@@ -1012,7 +1034,23 @@ export default function CRMFlowsPage() {
       const button_options = entryNode?.config?.buttons && entryNode.config.buttons.length > 0
         ? entryNode.config.buttons.map((b) => b.title)
         : (editingFlow.button_options && editingFlow.button_options.length > 0 ? editingFlow.button_options : ['🔥 స్టోరీస్ & ఆఫర్స్', 'డైరెక్టరీ', 'వ్యాపారం'])
-      const imageUrl = entryNode?.config?.mediaUrl || editingFlow.imageUrl
+
+      let imageUrl = entryNode?.config?.mediaUrl || (entryNode?.config as any)?.imageUrl || editingFlow.imageUrl || editingFlow.mediaUrl
+      const isWelcomeFlow =
+        editingFlow.id === 'flow_1793406931070_mooi' ||
+        entryId === 'welcome_intro' ||
+        entryNode?.id === 'welcome_intro' ||
+        keywords.some((k) => ['hi', 'hello', 'welcome', 'start'].includes(k.toLowerCase()))
+
+      if (!imageUrl && isWelcomeFlow) {
+        imageUrl = 'https://choutuppal.in/assets/choutuppal-app-banner.jpg'
+      }
+
+      if (entryNode && isWelcomeFlow && !entryNode.config.mediaUrl) {
+        entryNode.config.mediaUrl = imageUrl
+        entryNode.config.imageUrl = imageUrl
+        entryNode.config.mediaType = 'image'
+      }
 
       // Validate button titles and list rows limits
       for (const node of finalNodes) {

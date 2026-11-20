@@ -151,10 +151,15 @@ export function buildWhatsAppPayload(options: WhatsAppSendOptions, cleanPhone: s
       },
     }
 
-    if (options.imageUrl && /^https?:\/\//i.test(options.imageUrl)) {
+    const rawImg = options.imageUrl || options.mediaUrl
+    if (rawImg && typeof rawImg === 'string' && rawImg.trim()) {
+      let cleanImg = rawImg.trim()
+      if (!cleanImg.startsWith('http://') && !cleanImg.startsWith('https://')) {
+        cleanImg = `https://choutuppal.in${cleanImg.startsWith('/') ? '' : '/'}${cleanImg}`
+      }
       payload.interactive.header = {
         type: 'image',
-        image: { link: options.imageUrl },
+        image: { link: cleanImg },
       }
     }
     if (options.footerText) {
@@ -332,9 +337,10 @@ export async function sendWhatsAppFlowMessage(
         body: JSON.stringify(payload),
       })
 
-      // If dispatch failed and options.imageUrl was provided, retry without image as pure interactive / text fallback
-      if (!res.ok && options.imageUrl) {
-        console.warn(`[WhatsApp Meta API] Dispatch failed with imageUrl (${res.status}), retrying without image header...`)
+      // If dispatch failed and (options.imageUrl || options.mediaUrl) was provided, retry without image as pure interactive / text fallback
+      const hasImage = Boolean(options.imageUrl || options.mediaUrl)
+      if (!res.ok && hasImage) {
+        console.warn(`[WhatsApp Meta API] Dispatch failed with image header (${res.status}), retrying without image header...`)
         const fallbackOptions = { ...options, imageUrl: undefined, mediaUrl: undefined }
         const fallbackPayload = buildWhatsAppPayload(fallbackOptions, cleanPhone)
         const fallbackRes = await fetch(url, {

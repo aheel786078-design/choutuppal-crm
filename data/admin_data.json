@@ -11230,6 +11230,8 @@
       "name": "Choutuppal Official Bot V2",
       "description": "",
       "status": "published",
+      "imageUrl": "https://choutuppal.in/assets/choutuppal-app-banner.jpg",
+      "mediaUrl": "https://choutuppal.in/assets/choutuppal-app-banner.jpg",
       "territoryId": "territory_choutuppal",
       "version": 1,
       "trigger_type": "keyword",
@@ -11273,6 +11275,9 @@
           "node_key": "welcome_intro",
           "node_type": "send_buttons",
           "config": {
+            "mediaUrl": "https://choutuppal.in/assets/choutuppal-app-banner.jpg",
+            "imageUrl": "https://choutuppal.in/assets/choutuppal-app-banner.jpg",
+            "mediaType": "image",
             "text": "🙏 *నమస్కారం! చౌటుప్పల్ యాప్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం.*\n\n🚀 *మన అందరం... మన చౌటుప్పల్!* \nచౌటుప్పల్ పట్టణ ప్రజలకు, వ్యాపారులకు మరియు ప్రయాణికులకు అవసరమైన అన్ని సేవలు ఒకే చోట:\n\n• 🛍️ *స్థానిక దుకాణాలు:* షాపుల వివరాలు, ఫోన్ & లొకేషన్\n• 🚨 *24/7 అత్యవసర సేవలు:* పోలీస్, అంబులెన్స్ & కరెంట్ హెల్ప్‌లైన్లు\n• 🏡 *రియల్ ఎస్టేట్:* వెరిఫైడ్ ఓపెన్ ప్లాట్లు & ఇళ్ళ సమాచారం\n• 💼 *స్థానిక ఉద్యోగాలు:* తాజా లోకల్ జాబ్స్ & ఖాళీలు\n• 🎟️ *నేటి ఆఫర్లు & డీల్స్:* ప్రత్యేక రాయితీలు & వోచర్లు\n• 🎬 *వీడియో రీల్స్:* లోకల్ షాపుల 24 గంటల ఆఫర్ వీడియోలు\n\n━━━━━━━━━━━━━━━━━━━━\n👇 *క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:*",
             "footer_text": "🌐 https://choutuppal.in",
             "buttons": [
@@ -11449,6 +11454,9 @@
           "name": "welcome_intro",
           "type": "send_buttons",
           "config": {
+            "mediaUrl": "https://choutuppal.in/assets/choutuppal-app-banner.jpg",
+            "imageUrl": "https://choutuppal.in/assets/choutuppal-app-banner.jpg",
+            "mediaType": "image",
             "text": "🙏 *నమస్కారం! చౌటుప్పల్ యాప్ అధికారిక వాట్సాప్ సేవలకు స్వాగతం.*\n\n🚀 *మన అందరం... మన చౌటుప్పల్!* \nచౌటుప్పల్ పట్టణ ప్రజలకు, వ్యాపారులకు మరియు ప్రయాణికులకు అవసరమైన అన్ని సేవలు ఒకే చోట:\n\n• 🛍️ *స్థానిక దుకాణాలు:* షాపుల వివరాలు, ఫోన్ & లొకేషన్\n• 🚨 *24/7 అత్యవసర సేవలు:* పోలీస్, అంబులెన్స్ & కరెంట్ హెల్ప్‌లైన్లు\n• 🏡 *రియల్ ఎస్టేట్:* వెరిఫైడ్ ఓపెన్ ప్లాట్లు & ఇళ్ళ సమాచారం\n• 💼 *స్థానిక ఉద్యోగాలు:* తాజా లోకల్ జాబ్స్ & ఖాళీలు\n• 🎟️ *నేటి ఆఫర్లు & డీల్స్:* ప్రత్యేక రాయితీలు & వోచర్లు\n• 🎬 *వీడియో రీల్స్:* లోకల్ షాపుల 24 గంటల ఆఫర్ వీడియోలు\n\n━━━━━━━━━━━━━━━━━━━━\n👇 *క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:*",
             "footer_text": "🌐 https://choutuppal.in",
             "buttons": [
