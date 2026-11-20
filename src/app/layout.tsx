@@ -6,6 +6,7 @@ import { SiteHeader } from '@/components/home/site-header'
 import { SiteFooter } from '@/components/home/site-footer'
 import { BottomNav } from '@/components/home/bottom-nav'
 import { WhatsAppFloat } from '@/components/home/whatsapp-float'
+import { PWAController } from '@/components/pwa/pwa-controller'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,12 +66,22 @@ export const metadata: Metadata = {
       'Businesses, services, real estate, jobs, news & community for Choutuppal, Yadadri, Telangana.',
     images: ['https://choutuppal.in/assets/choutuppal-app-banner.jpg'],
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'చౌటుప్పల్ యాప్',
+  },
+  applicationName: 'చౌటుప్పల్ యాప్',
+  formatDetection: {
+    telephone: true,
+  },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#059669',
+  themeColor: '#094AA8',
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 5,
   viewportFit: 'cover',
 }
 
@@ -96,6 +107,7 @@ export default function RootLayout({
           <SiteFooter />
           <BottomNav />
           <WhatsAppFloat />
+          <PWAController />
           <SonnerToaster position="top-center" richColors closeButton />
         </Providers>
       </body>
