@@ -8,7 +8,7 @@ import { getSupabaseAdminClient, getSupabaseBrowserClient, isSupabaseConfigured 
 import { mapListingFromDb } from '@/lib/supabase-dao'
 import type { Listing } from '@/lib/types'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 120
 
 interface BusinessPageProps {
   params: Promise<{

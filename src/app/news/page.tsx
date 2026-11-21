@@ -4,7 +4,7 @@ import { Newspaper, Calendar, Eye, ArrowLeft, ArrowRight, Share2 } from 'lucide-
 import { loadStore } from '@/lib/store'
 import { sanitizeImageUrl } from '@/lib/home-data'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 180
 
 export default async function NewsPage() {
   const store = loadStore()

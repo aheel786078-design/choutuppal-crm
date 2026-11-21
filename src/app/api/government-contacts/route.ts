@@ -45,19 +45,26 @@ export async function GET(req: NextRequest) {
       .sort((a, b) => (a.displayOrder ?? 99) - (b.displayOrder ?? 99))
       .map((c) => sanitizeGovtContactForPublic(c))
 
-    return NextResponse.json({
-      success: true,
-      contacts: sanitizedItems,
-      emergencyHelplines,
-      categories: GOVT_CONTACT_CATEGORIES,
-      villages: CHOUTUPPAL_MANDAL_VILLAGES,
-      pagination: {
-        page: result.page,
-        pageSize: result.pageSize,
-        total: result.total,
-        totalPages: result.totalPages,
+    return NextResponse.json(
+      {
+        success: true,
+        contacts: sanitizedItems,
+        emergencyHelplines,
+        categories: GOVT_CONTACT_CATEGORIES,
+        villages: CHOUTUPPAL_MANDAL_VILLAGES,
+        pagination: {
+          page: result.page,
+          pageSize: result.pageSize,
+          total: result.total,
+          totalPages: result.totalPages,
+        },
       },
-    })
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
+      }
+    )
   } catch (err: any) {
     return NextResponse.json(
       { success: false, error: err.message || 'Failed to fetch government contacts' },

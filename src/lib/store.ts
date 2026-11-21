@@ -186,9 +186,15 @@ export function getDataFilePath(): string {
 const DATA_FILE = getDataFilePath()
 
 let inMemoryStoreCache: AdminDataStore | null = null
+let inMemoryStoreCachedTime = 0
+const STORE_CACHE_TTL_MS = 5000 // 5-second in-memory TTL for high concurrency performance
 
 export function loadStore(customPath?: string): AdminDataStore {
   const targetFile = customPath || getDataFilePath()
+  const now = Date.now()
+  if (!customPath && inMemoryStoreCache && (now - inMemoryStoreCachedTime < STORE_CACHE_TTL_MS)) {
+    return inMemoryStoreCache
+  }
   try {
     let raw: string | null = null
     if (fs.existsSync(targetFile)) {
@@ -378,6 +384,7 @@ export function loadStore(customPath?: string): AdminDataStore {
     }
 
     inMemoryStoreCache = parsed as AdminDataStore
+    inMemoryStoreCachedTime = Date.now()
     return inMemoryStoreCache
   } catch (err) {
     console.error('[Admin Store] Read error:', err)
@@ -399,8 +406,20 @@ export function saveStore(store: AdminDataStore, customPath?: string): void {
     throw new Error('[Admin Store] Invariant Violation: refusing to save empty territories array')
   }
 
+  // Cap arrays to prevent unbounded JSON file growth under heavy traffic
+  if (store.messages && store.messages.length > 500) {
+    store.messages = store.messages.slice(0, 500)
+  }
+  if (store.webhookEvents && store.webhookEvents.length > 200) {
+    store.webhookEvents = store.webhookEvents.slice(0, 200)
+  }
+  if (store.auditLogs && store.auditLogs.length > 2000) {
+    store.auditLogs = store.auditLogs.slice(0, 2000)
+  }
+
   // Update in-memory cache immediately so concurrent and subsequent reads are up-to-date
   inMemoryStoreCache = store
+  inMemoryStoreCachedTime = Date.now()
 
   let targetFile = customPath || getDataFilePath()
 
