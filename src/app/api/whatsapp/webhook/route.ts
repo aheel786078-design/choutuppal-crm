@@ -181,6 +181,85 @@ export async function POST(req: Request) {
       })
     }
 
+    // ------------------------------------------------------------------------
+    // 2.5 WHATSAPP BUSINESS COEXISTENCE: MESSAGE ECHOES (smb_message_echoes)
+    // Fired when the business owner/agent replies manually from the mobile WhatsApp Business app.
+    // Syncs to CRM inbox as outbound message without triggering the bot auto-reply.
+    // ------------------------------------------------------------------------
+    const echoes = value?.message_echoes
+    if (echoes && Array.isArray(echoes) && echoes.length > 0) {
+      return await mutateStore(async (store) => {
+        if (!store.messages) store.messages = []
+        const supabase = getSupabaseAdminClient()
+        let processedCount = 0
+
+        for (const echo of echoes) {
+          const echoId = echo.id
+          if (!echoId) continue
+
+          // Prevent duplicate logging
+          const alreadyLogged = store.messages.some(
+            (m) => m.id === echoId || m.providerMessageId === echoId
+          )
+          if (alreadyLogged) continue
+
+          const recipientPhone = (echo.to || '').replace(/\D/g, '')
+          const textBody = (
+            echo.text?.body ||
+            echo.image?.caption ||
+            echo.video?.caption ||
+            echo.document?.caption ||
+            (echo.type ? `[${echo.type.toUpperCase()}]` : '') ||
+            ''
+          ).trim()
+
+          const outboundEchoMsg = {
+            id: echoId,
+            providerMessageId: echoId,
+            territoryId: FLAGSHIP_TERRITORY_ID,
+            phone: recipientPhone,
+            contactName: 'Citizen',
+            direction: 'outbound' as const,
+            messageText: textBody || '(Manual Reply from WhatsApp Business App)',
+            status: 'sent' as const,
+            sender: 'agent',
+            createdAt: echo.timestamp
+              ? new Date(parseInt(echo.timestamp, 10) * 1000).toISOString()
+              : new Date().toISOString(),
+          }
+
+          store.messages.unshift(outboundEchoMsg)
+          if (store.messages.length > 500) {
+            store.messages = store.messages.slice(0, 500)
+          }
+          processedCount++
+
+          // Sync to Supabase whatsapp_messages
+          if (supabase) {
+            try {
+              await supabase.from('whatsapp_messages').insert({
+                id: echoId,
+                provider_message_id: echoId,
+                territory_id: FLAGSHIP_TERRITORY_ID,
+                phone: recipientPhone,
+                direction: 'OUTBOUND',
+                sender: 'agent',
+                text: textBody || '(Manual Reply from WhatsApp Business App)',
+                status: 'sent',
+              })
+            } catch (sbEchoErr) {
+              console.warn('[Webhook] Supabase echo sync error:', sbEchoErr)
+            }
+          }
+        }
+
+        return NextResponse.json({
+          status: 'echoes_processed',
+          processedCount,
+        })
+      })
+    }
+
     const message = value?.messages?.[0]
     const contact = value?.contacts?.[0]
 
