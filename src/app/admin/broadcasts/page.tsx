@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Send, Users, Image as ImageIcon, CheckCircle2, X, Trash2, Calendar, Loader2, Sparkles } from 'lucide-react'
+import { Send, Users, Image as ImageIcon, CheckCircle2, X, Trash2, Calendar, Loader2, Sparkles, Upload } from 'lucide-react'
 import { AdminHeader } from '@/components/admin/admin-header'
+import { MediaPickerModal } from '@/components/common/media-picker-modal'
 import { PRESET_PHOTO_COVERS } from '@/lib/constants'
 import type { BroadcastCampaign } from '@/lib/types'
 
@@ -13,6 +14,7 @@ export default function BroadcastsAdminPage() {
   const [message, setMessage] = useState('')
   const [imageUrl, setImageUrl] = useState(PRESET_PHOTO_COVERS[4]?.url || '')
   const [targetAudience, setTargetAudience] = useState('ALL')
+  const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false)
   const [isSending, setIsSending] = useState(false)
   const [loading, setLoading] = useState(true)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
@@ -48,6 +50,11 @@ export default function BroadcastsAdminPage() {
     setErrorMsg(null)
     setSuccessMsg(null)
 
+    let finalImageUrl = imageUrl.trim()
+    if (finalImageUrl.startsWith('/')) {
+      finalImageUrl = `https://choutuppal.in${finalImageUrl}`
+    }
+
     try {
       const res = await fetch('/api/admin/broadcasts', {
         method: 'POST',
@@ -55,7 +62,7 @@ export default function BroadcastsAdminPage() {
         body: JSON.stringify({
           title: title.trim(),
           message: message.trim(),
-          imageUrl: imageUrl.trim() || undefined,
+          imageUrl: finalImageUrl || undefined,
           targetAudience,
         }),
       })
@@ -178,14 +185,24 @@ export default function BroadcastsAdminPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Media Attachment (Photo / Banner URL)
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-semibold text-slate-700">
+                Media Attachment (Photo / Banner URL)
+              </label>
+              <button
+                type="button"
+                onClick={() => setIsMediaPickerOpen(true)}
+                className="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+              >
+                <Upload className="w-3 h-3" />
+                <span>ఫోటో ఎంచుకోండి (Media Picker)</span>
+              </button>
+            </div>
             <input
-              type="url"
+              type="text"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://images.unsplash.com/..."
+              placeholder="https://... or /assets/choutuppal-banner.jpg"
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
             />
           </div>
@@ -273,6 +290,13 @@ export default function BroadcastsAdminPage() {
           )}
         </div>
       </div>
+
+      <MediaPickerModal
+        isOpen={isMediaPickerOpen}
+        onClose={() => setIsMediaPickerOpen(false)}
+        onSelect={(url) => setImageUrl(url)}
+        currentValue={imageUrl}
+      />
     </div>
   )
 }

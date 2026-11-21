@@ -204,6 +204,16 @@ export default function AdminFlowsPage() {
           </div>
 
           <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+            <Link href="/admin/inbox">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold cursor-pointer"
+              >
+                <MessageSquare className="h-3.5 w-3.5 mr-1 text-emerald-600" />
+                Live Inbox
+              </Button>
+            </Link>
             <Button
               variant="outline"
               size="sm"

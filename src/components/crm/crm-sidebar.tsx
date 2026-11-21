@@ -22,12 +22,13 @@ import { useAdminUI } from '@/components/admin/admin-ui-context'
 
 const CRM_LINKS = [
   { href: '/crm/dashboard', label: 'CRM Dashboard', icon: LayoutDashboard },
+  { href: '/crm/inbox', label: 'WhatsApp Live Inbox (ఇన్‌బాక్స్)', icon: MessageSquare, badge: 'Live' },
   { href: '/crm/flows', label: 'Interactive Flows', icon: Workflow, badge: '1 Flow' },
   { href: '/crm/automations', label: 'Automations (Rules)', icon: Zap, badge: '179 Draft' },
-  { href: '/crm/inbox', label: 'Team Inbox', icon: MessageSquare },
   { href: '/crm/contacts', label: 'Contacts & Tags', icon: Users },
   { href: '/crm/broadcasts', label: 'Broadcast Campaigns', icon: Send },
   { href: '/crm/pipelines', label: 'Sales Pipelines', icon: Kanban },
+  { href: '/admin/settings', label: 'WhatsApp API Settings', icon: Settings, badge: 'Meta' },
 ]
 
 export function CRMSidebar() {

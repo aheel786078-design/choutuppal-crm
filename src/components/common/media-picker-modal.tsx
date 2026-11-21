@@ -485,10 +485,10 @@ export function MediaPickerModal({
                   డైరెక్ట్ ఇమేజ్ లింక్ (Direct Image URL)
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   value={customUrlInput}
                   onChange={(e) => setCustomUrlInput(e.target.value)}
-                  placeholder="https://images.choutuppal.in/uploads/... or https://example.com/photo.jpg"
+                  placeholder="https://images.choutuppal.in/... or /assets/choutuppal-app-banner.jpg"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500"
                 />
               </div>
@@ -499,7 +499,7 @@ export function MediaPickerModal({
                   <div className="h-44 w-full bg-slate-100 rounded-xl overflow-hidden border border-slate-200 relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={customUrlInput}
+                      src={customUrlInput.startsWith('/') ? `https://choutuppal.in${customUrlInput}` : customUrlInput}
                       alt="Custom URL Preview"
                       className="w-full h-full object-contain"
                       onError={(e) => {
@@ -515,7 +515,9 @@ export function MediaPickerModal({
                 onClick={() => {
                   let url = customUrlInput.trim()
                   if (url) {
-                    if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('/')) {
+                    if (url.startsWith('/')) {
+                      url = `https://choutuppal.in${url}`
+                    } else if (!url.startsWith('http://') && !url.startsWith('https://')) {
                       url = `https://${url}`
                     }
                     setSelectedUrl(url)
@@ -555,7 +557,11 @@ export function MediaPickerModal({
                 disabled={!selectedUrl}
                 onClick={() => {
                   if (selectedUrl) {
-                    onSelect(selectedUrl)
+                    let finalUrl = selectedUrl.trim()
+                    if (finalUrl.startsWith('/')) {
+                      finalUrl = `https://choutuppal.in${finalUrl}`
+                    }
+                    onSelect(finalUrl)
                     onClose()
                   }
                 }}

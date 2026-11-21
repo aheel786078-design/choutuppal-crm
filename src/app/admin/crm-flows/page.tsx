@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import {
   GitBranch,
   Smartphone,
@@ -8,6 +9,7 @@ import {
   CheckCircle2,
   Phone,
   MessageCircle,
+  MessageSquare,
   ExternalLink,
   Layers,
   Save,
@@ -127,22 +129,31 @@ export default function CRMFlowsPage() {
             </div>
           </div>
 
-          <button
-            onClick={handleSaveFlowSettings}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm shadow-emerald-600/20 transition-all shrink-0 active:scale-95"
-          >
-            {isSaved ? (
-              <>
-                <Check className="w-4 h-4 text-white" />
-                <span>Flow Updated!</span>
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4" />
-                <span>Save Flow Settings</span>
-              </>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/admin/inbox"
+              className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer shadow-2xs"
+            >
+              <MessageSquare className="w-4 h-4 text-emerald-600" />
+              <span>Live Inbox</span>
+            </Link>
+            <button
+              onClick={handleSaveFlowSettings}
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm shadow-emerald-600/20 transition-all shrink-0 active:scale-95 cursor-pointer"
+            >
+              {isSaved ? (
+                <>
+                  <Check className="w-4 h-4 text-white" />
+                  <span>Flow Updated!</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  <span>Save Flow Settings</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* 2-Column Grid: Config Controls (Left) & WhatsApp Simulator (Right) */}

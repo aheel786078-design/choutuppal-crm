@@ -49,6 +49,13 @@ export default function BannersAdminPage() {
     e.preventDefault()
     if (!formData.title.trim()) return
 
+    let finalImageUrl = formData.imageUrl.trim()
+    if (finalImageUrl.startsWith('/')) {
+      finalImageUrl = `https://choutuppal.in${finalImageUrl}`
+    } else if (!finalImageUrl.startsWith('http://') && !finalImageUrl.startsWith('https://')) {
+      finalImageUrl = `https://${finalImageUrl}`
+    }
+
     try {
       setSaving(true)
       setError(null)
@@ -60,7 +67,7 @@ export default function BannersAdminPage() {
           action: 'create',
           item: {
             title: formData.title.trim(),
-            imageUrl: formData.imageUrl.trim(),
+            imageUrl: finalImageUrl,
             linkUrl: formData.linkUrl.trim(),
             type: formData.type,
             isActive: true,
@@ -260,11 +267,11 @@ export default function BannersAdminPage() {
                   <span className="text-[11px] text-slate-400">లేదా డైరెక్ట్ URL ఇవ్వండి</span>
                 </div>
                 <input
-                  type="url"
+                  type="text"
                   required
                   value={formData.imageUrl}
                   onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  placeholder="https://..."
+                  placeholder="https://... or /assets/choutuppal-app-banner.jpg"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
                 />
                 {formData.imageUrl && (
@@ -327,7 +334,7 @@ export default function BannersAdminPage() {
       <MediaPickerModal
         isOpen={isMediaPickerOpen}
         onClose={() => setIsMediaPickerOpen(false)}
-        onSelect={(url) => setFormData({ ...formData, imageUrl: url })}
+        onSelect={(url) => setFormData({ ...formData, imageUrl: url.startsWith('/') ? `https://choutuppal.in${url}` : url })}
         currentValue={formData.imageUrl}
         title="బ్యానర్ ఫోటో ఎంచుకోండి (Select Banner Photo)"
         source="banner"

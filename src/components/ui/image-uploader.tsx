@@ -68,13 +68,13 @@ export function ImageUploader({
   function handleUrlApply() {
     if (!urlInput.trim()) return
     let cleanUrl = urlInput.trim()
-    if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://') && !cleanUrl.startsWith('/')) {
+    if (cleanUrl.startsWith('/')) {
+      cleanUrl = `https://choutuppal.in${cleanUrl}`
+    } else if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
       cleanUrl = `https://${cleanUrl}`
     }
     try {
-      if (!cleanUrl.startsWith('/')) {
-        new URL(cleanUrl)
-      }
+      new URL(cleanUrl)
       onChange(cleanUrl)
       setUrlInput('')
       toast.success('Image URL set!')
@@ -182,11 +182,11 @@ export function ImageUploader({
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Input
-                  type="url"
+                  type="text"
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
                   placeholder={placeholder}
-                  className="text-xs"
+                  className="text-xs font-mono"
                   disabled={disabled}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {

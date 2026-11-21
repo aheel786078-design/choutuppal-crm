@@ -18,26 +18,34 @@ const ALLOWED_MIME_TYPES = new Set([
 export async function GET(req: Request) {
   try {
     const store = loadStore()
+    const SITE_DOMAIN = (process.env.NEXT_PUBLIC_APP_URL || 'https://choutuppal.in').replace(/\/+$/, '')
 
-    // 1. Official website branding assets
+    // 1. Official website branding assets (Full HTTPS URLs to prevent browser URL validation errors)
     const brandingMedia = [
       {
+        id: 'media_brand_app_banner',
+        url: `${SITE_DOMAIN}/assets/choutuppal-app-banner.jpg`,
+        name: 'Choutuppal Official App Banner (1138x640)',
+        category: 'branding',
+        source: 'official',
+      },
+      {
         id: 'media_brand_banner',
-        url: '/assets/choutuppal-banner.jpg',
-        name: 'Choutuppal Official Banner',
+        url: `${SITE_DOMAIN}/assets/choutuppal-banner.jpg`,
+        name: 'Choutuppal Official Banner (HD)',
         category: 'branding',
         source: 'official',
       },
       {
         id: 'media_brand_logo',
-        url: '/assets/choutuppal-logo.jpg',
-        name: 'Choutuppal Official Logo',
+        url: `${SITE_DOMAIN}/assets/choutuppal-logo.jpg`,
+        name: 'Choutuppal Official Logo (HD)',
         category: 'branding',
         source: 'official',
       },
       {
         id: 'media_brand_pin',
-        url: '/assets/choutuppal-favicon.png',
+        url: `${SITE_DOMAIN}/assets/choutuppal-favicon.png`,
         name: 'Choutuppal Location Pin Icon',
         category: 'branding',
         source: 'official',

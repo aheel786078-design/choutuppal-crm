@@ -172,8 +172,15 @@ export default function ListingsPage() {
 
     setIsSaving(true)
     try {
+      let coverImage = (formData.coverImage || '').trim()
+      if (coverImage.startsWith('/')) {
+        coverImage = `https://choutuppal.in${coverImage}`
+      } else if (coverImage && !coverImage.startsWith('http://') && !coverImage.startsWith('https://')) {
+        coverImage = `https://${coverImage}`
+      }
+      const cleanFormData = { ...formData, coverImage }
       const method = editingId ? 'PUT' : 'POST'
-      const payload = editingId ? { id: editingId, ...formData } : formData
+      const payload = editingId ? { id: editingId, ...cleanFormData } : cleanFormData
 
       const res = await fetch('/api/admin/listings', {
         method,
@@ -1014,11 +1021,11 @@ export default function ListingsPage() {
                     </button>
                   </div>
                   <input
-                    type="url"
+                    type="text"
                     required
                     value={formData.coverImage}
                     onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                    placeholder="https://images.choutuppal.in/uploads/... or https://images.unsplash.com/..."
+                    placeholder="https://images.choutuppal.in/uploads/... or /assets/..."
                     className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 font-mono"
                   />
                   {formData.coverImage && (

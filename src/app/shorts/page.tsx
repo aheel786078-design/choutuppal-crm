@@ -395,7 +395,7 @@ export default function ShortsPage() {
                   Video URL (Instagram Reel or YouTube Shorts) *
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   required
                   disabled={submitting}
                   placeholder="https://www.instagram.com/reel/... or https://youtube.com/shorts/..."

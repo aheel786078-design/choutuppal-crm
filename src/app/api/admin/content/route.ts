@@ -224,6 +224,22 @@ export async function POST(req: Request) {
       }
     }
 
+    // Auto-normalize relative media URLs to absolute HTTPS domain
+    const normalizeMediaUrl = (url?: string) => {
+      if (!url || typeof url !== 'string') return url
+      const trimmed = url.trim()
+      if (trimmed.startsWith('/')) {
+        return `https://choutuppal.in${trimmed}`
+      }
+      return trimmed
+    }
+
+    if (item.imageUrl) item.imageUrl = normalizeMediaUrl(item.imageUrl)
+    if (item.mediaUrl) item.mediaUrl = normalizeMediaUrl(item.mediaUrl)
+    if (item.coverImage) item.coverImage = normalizeMediaUrl(item.coverImage)
+    if (item.thumbnailUrl) item.thumbnailUrl = normalizeMediaUrl(item.thumbnailUrl)
+    if (item.videoUrl) item.videoUrl = normalizeMediaUrl(item.videoUrl)
+
     // Territory Enactment: Franchise Admins are locked to their own territory
     let targetTerritoryId = item.territoryId || auth.user.territoryId || FLAGSHIP_TERRITORY_ID
     if (auth.user.role !== 'SUPER_ADMIN' && auth.user.role !== 'PLATFORM_OPERATOR') {

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import {
   Settings,
   ShieldCheck,
@@ -20,6 +21,7 @@ import {
   XCircle,
   Building2,
   Radio,
+  MessageSquare,
 } from 'lucide-react'
 import { AdminHeader } from '@/components/admin/admin-header'
 
@@ -289,6 +291,33 @@ export default function SettingsAdminPage() {
             <span>{errorMsg}</span>
           </div>
         )}
+
+        {/* WhatsApp Live Inbox Direct Action Banner */}
+        <div className="p-5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white rounded-2xl shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-white/15 backdrop-blur-xs flex items-center justify-center shrink-0 border border-white/20">
+              <MessageSquare className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-sm text-white">WhatsApp Live Inbox (లైవ్ ఇన్‌బాక్స్)</h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white uppercase tracking-wider">
+                  2-Way Chat
+                </span>
+              </div>
+              <p className="text-xs text-emerald-100 mt-0.5">
+                కస్టమర్లతో నేరుగా 2-Way చాట్ చేయండి, రిప్లైలు పంపండి మరియు మెసేజ్ హిస్టరీని చూడండి.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/admin/inbox"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-emerald-800 hover:bg-emerald-50 active:bg-emerald-100 rounded-xl font-bold text-xs shadow-xs transition-all shrink-0 cursor-pointer"
+          >
+            <MessageSquare className="w-4 h-4 text-emerald-600" />
+            <span>ఓపెన్ లైవ్ ఇన్‌బాక్స్ (Open Inbox) →</span>
+          </Link>
+        </div>
 
         {/* 1. CREDENTIALS CONFIGURATION FORM */}
         <form onSubmit={handleSave} className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-5 shadow-xs">
@@ -651,14 +680,23 @@ export default function SettingsAdminPage() {
               <Activity className="w-4 h-4 text-emerald-600" />
               <h3 className="font-bold text-sm text-slate-900">ఇటీవలి WhatsApp సందేశాలు &amp; వెబ్‌హుక్ లాగ్‌లు</h3>
             </div>
-            <button
-              type="button"
-              onClick={fetchSettings}
-              className="text-xs font-semibold text-emerald-700 hover:text-emerald-900 flex items-center gap-1 cursor-pointer"
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>Refresh Logs</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/admin/inbox"
+                className="text-xs font-bold text-emerald-700 hover:text-emerald-900 flex items-center gap-1.5 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors"
+              >
+                <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                <span>ఓపెన్ లైవ్ ఇన్‌బాక్స్ (Inbox)</span>
+              </Link>
+              <button
+                type="button"
+                onClick={fetchSettings}
+                className="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1 cursor-pointer"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Refresh Logs</span>
+              </button>
+            </div>
           </div>
 
           <p className="text-[11px] text-slate-500">

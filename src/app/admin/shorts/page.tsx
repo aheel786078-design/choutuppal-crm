@@ -45,6 +45,16 @@ export default function ShortsAdminPage() {
     e.preventDefault()
     if (!formData.title.trim()) return
 
+    let finalVideoUrl = formData.videoUrl.trim() || 'https://www.youtube.com'
+    if (finalVideoUrl.startsWith('/')) {
+      finalVideoUrl = `https://choutuppal.in${finalVideoUrl}`
+    }
+
+    let finalThumbnailUrl = (formData.thumbnailUrl || PRESET_PHOTO_COVERS[0].url).trim()
+    if (finalThumbnailUrl.startsWith('/')) {
+      finalThumbnailUrl = `https://choutuppal.in${finalThumbnailUrl}`
+    }
+
     try {
       setSaving(true)
       setError(null)
@@ -56,8 +66,8 @@ export default function ShortsAdminPage() {
           action: 'create',
           item: {
             title: formData.title.trim(),
-            videoUrl: formData.videoUrl.trim() || 'https://www.youtube.com',
-            thumbnailUrl: formData.thumbnailUrl || PRESET_PHOTO_COVERS[0].url,
+            videoUrl: finalVideoUrl,
+            thumbnailUrl: finalThumbnailUrl,
             tags: formData.tags.split(',').map((t) => t.trim()).filter(Boolean),
             isActive: true,
           },
@@ -222,19 +232,21 @@ export default function ShortsAdminPage() {
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Video URL (YouTube / MP4)</label>
                 <input
-                  type="url"
+                  type="text"
                   required
                   value={formData.videoUrl}
                   onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                  placeholder="https://... or /assets/..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
                 />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Thumbnail Image URL</label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.thumbnailUrl}
                   onChange={(e) => setFormData({ ...formData, thumbnailUrl: e.target.value })}
+                  placeholder="https://... or /assets/..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
                 />
               </div>

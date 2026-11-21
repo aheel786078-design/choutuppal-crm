@@ -68,8 +68,8 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'CRM & Messaging',
     items: [
+      { href: '/admin/inbox', label: 'WhatsApp Live Inbox (ఇన్‌బాక్స్)', icon: MessageSquare, badge: 'Live' },
       { href: '/admin/contacts', label: 'Contacts & Leads', icon: Contact },
-      { href: '/admin/inbox', label: 'Shared WhatsApp Inbox', icon: MessageSquare },
       { href: '/admin/pipelines', label: 'Sales Pipelines (Kanban)', icon: Kanban },
       { href: '/admin/broadcasts', label: 'Broadcast Campaigns', icon: Send },
     ],
@@ -85,6 +85,8 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'WhatsApp Automation',
     items: [
+      { href: '/admin/inbox', label: 'WhatsApp Live Inbox (ఇన్‌బాక్స్)', icon: MessageSquare, badge: 'Live' },
+      { href: '/admin/settings', label: 'WhatsApp API & Settings', icon: Settings, badge: 'Meta' },
       { href: '/admin/flows', label: 'Flows Builder (Canvas)', icon: Workflow, badge: '11 Nodes' },
       { href: '/admin/crm-flows', label: 'WhatsApp Bot & Simulator', icon: GitBranch, badge: 'Cards' },
       { href: '/admin/automations', label: 'Automations (Rules)', icon: Zap, badge: 'Rules' },
@@ -94,10 +96,10 @@ const NAV_SECTIONS: NavSection[] = [
   {
     title: 'Website & Media',
     items: [
+      { href: '/admin/banners', label: 'Banners & Visuals', icon: ImageIcon },
       { href: '/admin/stories-offers', label: 'Stories & Offers', icon: Flame, badge: 'Expiring' },
       { href: '/admin/news', label: 'News & Updates', icon: Newspaper },
       { href: '/admin/shorts', label: 'Video Shorts (Reels)', icon: Clapperboard },
-      { href: '/admin/banners', label: 'Banners & Visuals', icon: ImageIcon },
       { href: '/admin/ticker', label: 'Ticker Bar Notices', icon: Radio },
       { href: '/admin/settings', label: 'Cloud API & R2 Settings', icon: Settings },
     ],

@@ -901,7 +901,7 @@ export default function GovernmentContactsAdminPage() {
                   <div>
                     <label className="block text-slate-300 font-semibold mb-1">Official Source URL</label>
                     <input
-                      type="url"
+                      type="text"
                       value={formData.sourceUrl}
                       onChange={(e) => setFormData({ ...formData, sourceUrl: e.target.value })}
                       placeholder="e.g. https://112.gov.in"
@@ -992,7 +992,7 @@ export default function GovernmentContactsAdminPage() {
                 <div>
                   <label className="block text-slate-300 font-semibold mb-1">Official Source URL</label>
                   <input
-                    type="url"
+                    type="text"
                     value={verifySourceUrl}
                     onChange={(e) => setVerifySourceUrl(e.target.value)}
                     placeholder="https://fire.telangana.gov.in"

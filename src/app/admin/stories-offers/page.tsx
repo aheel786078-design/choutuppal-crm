@@ -458,10 +458,11 @@ export default function StoriesOffersPage() {
                   </button>
                 </div>
                 <input
-                  type="url"
+                  type="text"
                   required
                   value={storyForm.mediaUrl}
                   onChange={(e) => setStoryForm({ ...storyForm, mediaUrl: e.target.value })}
+                  placeholder="https://... or /assets/..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
                 />
               </div>
@@ -578,9 +579,10 @@ export default function StoriesOffersPage() {
                   </button>
                 </div>
                 <input
-                  type="url"
+                  type="text"
                   value={offerForm.imageUrl}
                   onChange={(e) => setOfferForm({ ...offerForm, imageUrl: e.target.value })}
+                  placeholder="https://... or /assets/..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
                 />
               </div>
@@ -623,10 +625,11 @@ export default function StoriesOffersPage() {
         isOpen={isMediaPickerOpen}
         onClose={() => setIsMediaPickerOpen(false)}
         onSelect={(url) => {
+          const fullUrl = url.startsWith('/') ? `https://choutuppal.in${url}` : url
           if (mediaTarget === 'story') {
-            setStoryForm({ ...storyForm, mediaUrl: url })
+            setStoryForm({ ...storyForm, mediaUrl: fullUrl })
           } else {
-            setOfferForm({ ...offerForm, imageUrl: url })
+            setOfferForm({ ...offerForm, imageUrl: fullUrl })
           }
         }}
         currentValue={mediaTarget === 'story' ? storyForm.mediaUrl : offerForm.imageUrl}
