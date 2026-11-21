@@ -183,7 +183,7 @@ export default function ShortsPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 pb-20">
-      <Script src="https://www.instagram.com/embed.js" strategy="afterInteractive" />
+      <Script src="https://www.instagram.com/embed.js" strategy="lazyOnload" />
 
       {/* TOP BAR */}
       <div className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 px-4 py-3 shadow-2xs">
