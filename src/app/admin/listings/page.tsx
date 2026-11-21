@@ -172,7 +172,7 @@ export default function ListingsPage() {
 
     setIsSaving(true)
     try {
-      let coverImage = (formData.coverImage || '').trim()
+      let coverImage = (formData.coverImage || '').replace(/\s+/g, '').trim()
       if (coverImage.startsWith('/')) {
         coverImage = `https://choutuppal.in${coverImage}`
       } else if (coverImage && !coverImage.startsWith('http://') && !coverImage.startsWith('https://')) {
@@ -225,13 +225,14 @@ export default function ListingsPage() {
 
   const handleQuickChangePhoto = async (item: Listing, newUrl: string) => {
     try {
+      const cleanUrl = newUrl.replace(/\s+/g, '').trim()
       const res = await fetch('/api/admin/listings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: item.id,
-          coverImage: newUrl,
-          gallery: [newUrl, ...(item.gallery?.filter((g) => g !== newUrl) || [])],
+          coverImage: cleanUrl,
+          gallery: [cleanUrl, ...(item.gallery?.filter((g) => g !== cleanUrl) || [])],
         }),
       })
       const data = await res.json()

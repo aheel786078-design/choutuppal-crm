@@ -18,7 +18,8 @@ const ALLOWED_MIME_TYPES = new Set([
 export async function GET(req: Request) {
   try {
     const store = loadStore()
-    const SITE_DOMAIN = (process.env.NEXT_PUBLIC_APP_URL || 'https://choutuppal.in').replace(/\/+$/, '')
+    const rawDomain = (process.env.NEXT_PUBLIC_APP_URL || 'https://choutuppal.in').replace(/\s+/g, '').trim()
+    const SITE_DOMAIN = (rawDomain || 'https://choutuppal.in').replace(/\/+$/, '')
 
     // 1. Official website branding assets (Full HTTPS URLs to prevent browser URL validation errors)
     const brandingMedia = [

@@ -49,7 +49,7 @@ export default function BannersAdminPage() {
     e.preventDefault()
     if (!formData.title.trim()) return
 
-    let finalImageUrl = formData.imageUrl.trim()
+    let finalImageUrl = formData.imageUrl.replace(/\s+/g, '').trim()
     if (finalImageUrl.startsWith('/')) {
       finalImageUrl = `https://choutuppal.in${finalImageUrl}`
     } else if (!finalImageUrl.startsWith('http://') && !finalImageUrl.startsWith('https://')) {
@@ -334,7 +334,10 @@ export default function BannersAdminPage() {
       <MediaPickerModal
         isOpen={isMediaPickerOpen}
         onClose={() => setIsMediaPickerOpen(false)}
-        onSelect={(url) => setFormData({ ...formData, imageUrl: url.startsWith('/') ? `https://choutuppal.in${url}` : url })}
+        onSelect={(url) => {
+          const clean = url.replace(/\s+/g, '').trim()
+          setFormData({ ...formData, imageUrl: clean.startsWith('/') ? `https://choutuppal.in${clean}` : clean })
+        }}
         currentValue={formData.imageUrl}
         title="బ్యానర్ ఫోటో ఎంచుకోండి (Select Banner Photo)"
         source="banner"

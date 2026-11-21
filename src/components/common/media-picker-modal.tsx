@@ -513,7 +513,7 @@ export function MediaPickerModal({
               <button
                 type="button"
                 onClick={() => {
-                  let url = customUrlInput.trim()
+                  let url = customUrlInput.replace(/\s+/g, '').trim()
                   if (url) {
                     if (url.startsWith('/')) {
                       url = `https://choutuppal.in${url}`
@@ -557,7 +557,7 @@ export function MediaPickerModal({
                 disabled={!selectedUrl}
                 onClick={() => {
                   if (selectedUrl) {
-                    let finalUrl = selectedUrl.trim()
+                    let finalUrl = selectedUrl.replace(/\s+/g, '').trim()
                     if (finalUrl.startsWith('/')) {
                       finalUrl = `https://choutuppal.in${finalUrl}`
                     }
