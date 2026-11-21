@@ -8,8 +8,6 @@ import { BottomNav } from '@/components/home/bottom-nav'
 import { WhatsAppFloat } from '@/components/home/whatsapp-float'
 import { PWAController } from '@/components/pwa/pwa-controller'
 
-export const dynamic = 'force-dynamic'
-
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://choutuppal.in'
 
 export const metadata: Metadata = {
